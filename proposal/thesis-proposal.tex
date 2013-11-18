@@ -33,6 +33,8 @@
 
 \section{Introduction}
 
+\section{Deterministic-by-construction parallel programming}
+
 Parallel programming is notoriously difficult.  \lk{Difficult to who?}
 A fundamental reason for this notoriety is that programs can yield
 inconsistent results, or even crash, due to unpredictable interactions
@@ -56,6 +58,18 @@ deterministic-by-construction model will be to allow tasks to be
 scheduled dynamically and unpredictably, without allowing such
 \emph{schedule nondeterminism} to affect programs' observable
 behavior.
+
+\section{Existing approaches to determinism by construction}
+
+Shared state between computations allows the possibility for
+\emph{data races} that allow schedule nondeterminism to be
+observed---if one thread writes $3$ to a shared location while another
+writes $4$, then another thread that reads and returns the value will
+nondeterministically return $3$ or $4$ depending on how the threads
+are scheduled to run.  Therefore, deterministic parallel programming
+models necessarily limit sharing of mutable state between parallel
+tasks.
+
 
 Introduce the problem.
 
