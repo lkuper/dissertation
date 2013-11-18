@@ -70,7 +70,38 @@ This citation \cite{LVars-TR} is here to make LaTeX happy.
 
 \section{Technical overview}
 
+\section{Freezing, handlers, and quasideterminism}
+
 \section{LVars and CRDTs}
+
+In this section, I will discuss the relationship between the LVars
+model I've described and the mathematical framework of
+\emph{conflict-free replicated data types} that distributed systems
+research have developed for reasoning about and enforcing the eventual
+consistency of distributed replicated objects.
+
+\subsection{Replication}
+
+Distributed systems often involve \emph{replication} of data objects
+across a number of physical locations.  Reasons to replicate data may
+include:
+\begin{itemize}
+\item Robustness to failure: if multiple replicas of an object exist,
+  we are less likely to lose that object if part of our system fails.
+
+\item Proximity: objects should be close to clients who need them.
+
+\item Parallelism: different processes simultaneously operating on the
+  same object may each need their own copy. \lk{Explain how this is
+    different from the above point.}
+\end{itemize}
+If a system of distributed, replicated objects behaved
+indistinguishably from the model a lot of us are used to programming
+with, in which all our data and all our computation are on one
+machine, then we would not need to concern ourselves with special
+techniques to support replication.  \lk{This is worded awkwardly ---
+  look at the CRDT papers for inspiration?}  Unfortunately, this is
+not the case.
 
 \section{Related work}
 
