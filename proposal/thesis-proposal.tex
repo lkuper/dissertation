@@ -9,6 +9,9 @@
 \usepackage{fullpage}
 \usepackage{times}
 
+% Editing marks.
+\input{../latex_common/editingmarks}
+
 % Other presentational stuff
 \input{../latex_common/style}
 
@@ -29,6 +32,29 @@
 \end{abstract}
 
 \section{Introduction}
+
+Parallel programming is notoriously difficult.  \lk{Difficult to who?}
+A fundamental reason for this notoriety is that programs can yield
+inconsistent results, or even crash, due to unpredictable interactions
+between parallel tasks.  But it doesn't have to be this way:
+\emph{deterministic-by-construction} parallel programming models offer
+the promise of freedom from subtle, hard-to-reproduce nondeterministic
+bugs in parallel code.
+
+A deterministic-by-construction programming model is one that ensures
+that all programs written using the model have the same
+\emph{observable behavior} every time they are run.  What does
+``observable behavior'' mean?  There are many ways to define what is
+observable about a program.  Clearly, we do \emph{not} wish to
+preserve behaviors such as running time across multiple
+runs---ideally, a deterministic-by-construction parallel program will
+run faster when more parallel resources are available!  In this
+proposal, we define the observable behavior of a program to be the
+value to which it evaluates.  Specifically, we do not count the
+behavior of the scheduler as observable.  Indeed, the purpose of our
+deterministic-by-construction model will be to allow tasks to be
+scheduled dynamically and unpredictably, without allowing such
+\emph{schedule nondeterminism} to affect the observable behavior.
 
 Introduce the problem.
 
