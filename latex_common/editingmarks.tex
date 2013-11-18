@@ -1,0 +1,18 @@
+%%% Macros for editing marks.
+
+\newcommand{\lk}[1]{\pgwrapper{LK}{#1}}
+
+\InputIfFileExists{editingmarks}{}{
+    \def\noeditingmarks{}
+}
+
+\definecolor{comment-red}{rgb}{0.8,0,0}
+\ifx\noeditingmarks\undefined
+   \newcommand{\textred}[1]{\textcolor{comment-red}{#1}}
+   \newcommand{\pgwrapper}[2]{\textred{#1: #2}}
+   \newcommand{\new}[1]{\textcolor{blue}{#1}}
+\else
+   \newcommand{\textred}[1]{\textcolor{comment-red}{#1}}
+   \newcommand{\pgwrapper}[2]{}
+   \newcommand{\new}[1]{#1}
+\fi
