@@ -1,4 +1,4 @@
-thesis-proposal
-===============
+dissertation
+============
 
-My thesis proposal!
+My dissertation!

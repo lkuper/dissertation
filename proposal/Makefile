@@ -1,4 +1,4 @@
-PAPER=lindsey-kuper-thesis-proposal
+PAPER=thesis-proposal
 LATEX=pdflatex
 UNAME := $(shell uname)
 
