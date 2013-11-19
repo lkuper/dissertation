@@ -146,6 +146,42 @@ not the case.
 
 \section{Related work}
 
+\paragraph{Concurrent Revisions}
+
+The Concurrent Revisions (CR)~\cite{concurrent-revisions-haskell11}
+programming model uses \emph{isolation types} \cite{isolation-types}
+to distinguish regions of the heap shared by multiple mutators.
+Rather than enforcing exclusive access in the style of DPJ, CR clones
+a copy of the state for each mutator, using a deterministic ``merge
+function'' for resolving conflicts in local copies at join points.
+
+Variables can be annotated as being shared between a ``joiner'' thread
+and a ``joinee'' thread.  Unlike the least-upper-bound writes of
+LVars, CR merge functions are \emph{not} necessarily commutative;
+indeed, the default CR merge function is ``joiner wins''.  Determinism
+is enforced by the programming model allowing the programmer to
+specify which of two writing threads should prevail, regardless of the
+order in which those writes arrive.  Hence the states that such a
+shared variable take on need not form a lattice.
+
+Still, semilattices turn up in the metatheory of CR: in particular,
+Burckhardt and Leijen~\cite{semantics-concurrent-revisions} show that,
+for any two vertices in a CR revision diagram, there exists a
+\emph{greatest common ancestor} state which can be used to determine
+what changes each side has made---an interesting duality with our
+model (in which any two LVar states have a lub). \lk{TODO: Write to
+  them and ask them if it's a join-semilattice or a meet-semilattice!}
+
+If versioned variables used least upper bound as their merge function
+for conflicts\lk{TODO: see if ``versioned variables'' is the term they
+  use}, the CR programming model would match that of LVars.  \lk{Think
+  of a better way to word that last part.}  But it nevertheless
+differs from the LVars model in that, in CR, effects only become
+visible at the end of parallel regions. \lk{Check that this is true.}
+This precludes the use of traditional lock-free data structures as a
+representation for versioned variables.  LVars, on the other hand,
+allow asynchronous communication within parallel regions.
+
 \section{Road map}
 
 \bibliographystyle{abbrvnat}
