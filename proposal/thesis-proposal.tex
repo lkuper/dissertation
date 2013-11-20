@@ -9,6 +9,9 @@
 \usepackage{fullpage}
 \usepackage{times}
 
+% Stuff needed for typesetting LVish and its metatheory
+\input{../latex_common/lang}
+
 % Editing marks.
 \input{../latex_common/editingmarks}
 
@@ -129,6 +132,20 @@ Explain what the structure of this proposal will be.
 This citation \cite{LVars-TR} is here to make LaTeX happy.
 
 \section{Background}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{figures/example-lvar-lattices.pdf} 
+  \caption{Example LVar lattices: (a) positive integers ordered by
+    $\leq$; (b) IVar containing a positive integer; (c) pair of
+    natural-number-valued IVars, annotated with example threshold sets
+    that would correspond to a blocking read of the first or second
+    element of the pair.  Any state transition crossing the
+    ``tripwire'' for \termfont{getSnd} causes it to unblock and return
+    a result.}
+
+  \label{f:lattice-examples}
+\end{figure}
 
 \section{Thesis statement}
 

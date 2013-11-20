@@ -1,0 +1,60 @@
+%%% Macros for typesetting terms of the LVish language itself.
+
+% Sans-serif font for terms of the language
+\newcommand\termfont[1]{\mbox{\texttt{#1}}}
+
+% Amount to indent the next line of a 'let' expression.
+\newcommand{\letspace}{\hspace{1.1em}}
+\newcommand{\letparspace}{\hspace{3.7em}}
+
+%%% Language forms.
+
+\newcommand{\lam}[2]{\ensuremath{\lambda#1.\,#2}}
+\newcommand{\app}[2]{\ensuremath{#1~#2}}
+
+\newcommand{\unit}{\termfont{()}}
+
+\newcommand{\NEW}{\termfont{new}}
+
+\newcommand{\PUT}{\termfont{put}}
+\newcommand{\putexp}[2]{\ensuremath{\PUT~#1~#2}}
+
+\newcommand{\GET}{\termfont{get}}
+\newcommand{\getexp}[2]{\ensuremath{\GET~#1~#2}}
+
+\newcommand{\BUMP}{\termfont{bump}}
+\newcommand{\bumpexp}[1]{\ensuremath{\BUMP~#1}}
+
+\newcommand{\GETFSTORSND}{\termfont{getFstOrSnd}}
+\newcommand{\GETFST}{\termfont{getFst}}
+\newcommand{\getfstexp}[1]{\ensuremath{\GETFST~#1}}
+\newcommand{\GETSND}{\termfont{getSnd}}
+\newcommand{\getsndexp}[1]{\ensuremath{\GETSND~#1}}
+
+\newcommand{\FREEZE}{\termfont{freeze}}
+\newcommand{\AFTER}{~{\termfont{after}}}
+\newcommand{\WITH}{~{\termfont{with}}}
+
+\newcommand{\ADDHANDLER}{{\termfont{addHandler}}}
+\newcommand{\NEWPOOL}{{\termfont{newPool}}}
+\newcommand{\ADDHANDLERINPOOL}{{\termfont{addInPool}}}
+\newcommand{\QUIESCE}{{\termfont{quiesce}}}
+
+\newcommand{\FAW}{{\termfont{freeze}-\termfont{after}-\termfont{with}}}
+\newcommand{\freeze}[1]{\ensuremath{\FREEZE~#1}}
+\newcommand{\freezeafter}[3]{\ensuremath{\FREEZE~#1~\AFTER~#2~\WITH~#3}}
+\newcommand{\freezeafterfull}[5]{\ensuremath{\FREEZE~#1~\AFTER~#2~\WITH~#3, #4, #5}}
+
+\newcommand{\LET}{\termfont{let}}
+\newcommand{\PAR}{\termfont{par}}
+\newcommand{\LETPAR}{\termfont{\LET~\PAR}}
+\newcommand{\IN}{\termfont{in}}
+\newcommand{\letexp}[3]{\ensuremath{\LET~#1=#2~\IN~#3}}
+\newcommand{\letparexp}[5]{\ensuremath{\LETPAR~#1=#2;~#3=#4~\IN~#5}}
+
+\newcommand{\stateset}[1]{\ensuremath{\lbrace #1 \rbrace}}
+
+\newcommand{\UNIQUE}{\termfont{unique}}
+
+\newcommand{\lambdalvar}{\ensuremath{\lambda_{\textsf{LVar}}}}
+
