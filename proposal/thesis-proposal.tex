@@ -18,6 +18,9 @@
 % Other presentational stuff
 \input{../latex_common/style}
 
+%  Use the @ symbol for simple inline code within prose:
+\lstMakeShortInline[]@
+
 \begin{document}
 
 \title{Thesis Proposal: \\
@@ -83,12 +86,10 @@
   well as added.
 \end{abstract}
 
-\section{Introduction}
-
 \section{Deterministic-by-construction parallel programming}
 
 Parallel programming is notoriously difficult.  \lk{Difficult to who?}
-A fundamental reason for this notoriety is that programs can yield
+A fundamental reason for this difficulty is that programs can yield
 inconsistent results, or even crash, due to unpredictable interactions
 between parallel tasks.  But it doesn't have to be this way:
 \emph{deterministic-by-construction} parallel programming models offer
@@ -97,39 +98,91 @@ bugs in parallel code.
 
 A deterministic-by-construction programming model is one that ensures
 that all programs written using the model have the same
-\emph{observable behavior} every time they are run.  What does
-``observable behavior'' mean?  There are many ways to define what is
-observable about a program.  Clearly, we do \emph{not} wish to
-preserve behaviors such as running time across multiple
-runs---ideally, a deterministic-by-construction parallel program will
-run faster when more parallel resources are available!  In this
-proposal, we define the observable behavior of a program to be the
-value to which it evaluates.  Specifically, we do not count the
-behavior of the scheduler as observable.  Indeed, the purpose of our
-deterministic-by-construction model will be to allow tasks to be
-scheduled dynamically and unpredictably, without allowing such
-\emph{schedule nondeterminism} to affect programs' observable
+\emph{observable behavior} every time they are run.  How do we define
+what is observable about a program's behavior?  Clearly, we do
+\emph{not} wish to preserve behaviors such as running time across
+multiple runs---ideally, a deterministic-by-construction parallel
+program will run faster when more parallel resources are available!
+In this proposal, then, we define the observable behavior of a program
+to be the value to which the program evaluates.  In particular, we do
+not count the behavior of the scheduler as observable.  Indeed, the
+purpose of our deterministic-by-construction model will be to allow
+tasks to be scheduled dynamically and unpredictably, without allowing
+such \emph{schedule nondeterminism} to affect programs' observable
 behavior.
 
-\section{Existing approaches to determinism by construction}
+\subsection{Existing approaches to determinism by construction}
 
 Shared state between computations allows the possibility for
-\emph{data races} that allow schedule nondeterminism to be
-observed---if one thread writes $3$ to a shared location while another
-writes $4$, then another thread that reads and returns the value will
-nondeterministically return $3$ or $4$ depending on how the threads
-are scheduled to run.  Therefore, deterministic parallel programming
-models necessarily limit sharing of mutable state between parallel
-tasks.
+\emph{data races} that allow schedule nondeterminism to be observed.
+For intance, if one thread writes $3$ to a shared location while
+another writes $4$, then a third thread that reads and returns the
+value will nondeterministically return $3$ or $4$ depending on the
+order in which the threads are scheduled to run.  Therefore,
+deterministic parallel programming models necessarily limit sharing of
+mutable state between parallel tasks.
 
+The simplest approach is to allow \emph{no} shared mutable state
+between tasks, forcing concurrent tasks to produce values
+independently.  One approach to no-shared-state parallelism is
+functional programming with function-level task parallelism, such as
+in Haskell programs using futures by means of the @par@ and @pseq@
+combinators~\cite{marlow-par}.  Another is pure data parallelism, as
+in Data Parallel Haskell~\cite{dph}, and yet another is a programming
+model that forces references to be either immutable or uniquely owned
+by a task, as in Deterministic Parallel Java~\cite{dpj-oopsla}.
 
-Introduce the problem.
+But some algorithms are more naturally or efficiently written using
+shared state or message passing, and hence the development of
+deterministic parallel programming models that allow \emph{limited}
+sharing of mutable state.  Consider two classic deterministic parallel
+programming models, dating back to the late 60s and early 70s:
+\begin{itemize}
+\item In \emph{Kahn process networks} (KPNs)~\cite{Kahn-1974}, as well
+  as in the more restricted \emph{synchronous data flow}
+  systems~\cite{lee-sdn}, a network of independent, sequential
+  ``computing stations'' communicate with each other through blocking
+  FIFO channels.  KPNs are the basis for deterministic stream-processing
+  languages such as StreamIt~\cite{streamit-asplos}.
+\item In parallel \emph{single-assignment} languages, ``full/empty''
+  bits are associated with memory locations so that they may be
+  written to at most once. Single-assignment locations with blocking
+  read semantics are known as \emph{IVars}~\emph{IStructures} and are
+  a well-established mechanism for enforcing determinism in parallel
+  settings: they have appeared in Concurrent ML as
+  @SyncVar@s~\cite{reppy-cml-book}; in the Intel Concurrent
+  Collections (CnC) system~\cite{CnC}; and have even been implemented
+  in hardware in Cray MTA machines~\cite{cray-mta}.  Although most of
+  these uses incorporate IVars into already-nondeterministic
+  programming environments, the \emph{monad-par} Haskell
+  library~\cite{monad-par} uses IVars in a
+  deterministic-by-construction setting, allowing user-created threads
+  to communicate through IVars without requiring @IO@.  Operations
+  that read and write IVars can only run inside a @Par@ monad, thus
+  encapsulating them inside otherwise pure programs, and hence a
+  program in which the only effects are @Par@ effects is guaranteed to
+  be deterministic.
+\end{itemize}
+In KPNs and other data-flow models, communication takes place over
+FIFOs with ever-increasing \emph{channel histories}, while in
+IVar-based programming models such as CnC and monad-par, a shared data
+store of single-assignment memory locations grows monotonically.
+Hence \emph{monotonic data structures}---data structures to which
+information is only added, and never removed---emerge as a common
+theme of both data-flow and single-assignment models.
 
-Explain, at a high level, what my work does to solve the problem.
-
-Explain what the structure of this proposal will be.
-
-This citation \cite{LVars-TR} is here to make LaTeX happy.
+Because state modifications that only add information and never
+destroy it can be structured to commute with each other and thereby
+avoid race conditions, it stands to reason that diverse deterministic
+parallel programming models would leverage the principle of
+monotonicity.  Yet there is little in the way of a theory of monotonic
+data structures as a bais for deterministic parallelism.  As a result,
+systems like CnC and monad-par emerge independently, without
+recognition of their common basis.  Moreover, they lack
+\emph{generality}, because in each case, communication is only
+permitted through a single type of shared data structure---FIFO queues
+in KPNs, shared write-only tables in CnC---limiting the kinds of
+algorithms that can be easily expressed.
 
 \section{Background}
 
