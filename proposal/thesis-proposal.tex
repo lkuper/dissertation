@@ -18,7 +18,7 @@
 \begin{document}
 
 \title{Thesis Proposal: \\
-  Lattice-based Data Structures for \\
+  Lattice-based Data Structures for 
   Deterministic Parallel and Distributed Programming}
 
 \author{Lindsey Kuper \\ Indiana University}
@@ -28,7 +28,56 @@
 \maketitle
 
 \begin{abstract}
-  Abstract goes here.
+  Deterministic-by-construction parallel programming models guarantee
+  that programs written using them will have the same observable
+  behavior on every run, offering freedom from subtle,
+  hard-to-reproduce bugs caused by schedule nondeterminism.  In order
+  to guarantee determinism, though, deterministic-by-construction
+  models must sharply restrict the sharing of memory between parallel
+  tasks: shared memory, if it is allowed at all, is typically limited
+  either to single-assignment locations, or to a single type of shared
+  data structure, such as a blocking FIFO queue.
+
+  This thesis will show that \emph{lattice-based data structures}, or
+  \emph{LVars}, enable an expressive and useful style of
+  deterministic-by-construction parallel programming that generalizes
+  and unifies previously existing approaches.  LVars generalize
+  existing single-assignment models to allow multiple assignments that
+  are monotonically increasing with respect to an application-specific
+  lattice.  LVars ensure determinism by allowing only monotonic writes
+  and ``threshold'' reads that block until a lower bound is reached
+  and do not allow the order in which information is added to the LVar
+  to be observed.  After presenting the basic LVars model and showing
+  that it is deterministic, I will show how to extend it to allow
+  non-blocking ``freezing'' reads, resulting in a
+  \emph{quasi-deterministic} model in which programs are guaranteed to
+  behave deterministically modulo exceptions, and \emph{event
+    handlers}, which enable an expressive and useful style of
+  deterministic or quasi-deterministic programming.
+
+  Next, I will demonstrate the viability of the LVars approach with
+  \emph{LVish}, a Haskell library based on the LVars model.  LVish
+  provides a monad in which LVar computations run; it leverages
+  Haskell's type system to index such computations with an effect
+  level to ensure that only certain LVar effects can occur in a given
+  computation, hence statically enforcing determinism or
+  quasi-determinism.  I will illustrate the LVish programming model
+  with examples and present results from several case studies that
+  demonstrate the applicability of LVish.
+
+  Finally, I will investigate the relationship between LVars and
+  \emph{conflict-free replicated data types} (CRDTs), which are data
+  structures for reasoning about and enforcing the eventual
+  consistency of replicated objects in a distributed system.  In one
+  direction, I will investigate extending CRDTs to support LVar-style
+  threshold reads.  Threshold reads will guarantee that the order in
+  which information is added to a CRDT cannot be observed, ensuring a
+  greater degree of consistency (at the price of read availability).
+  In the other direction, I will use techniques from the CRDT
+  literature to implement LVar-based data structures that support
+  non-monotonic updates: PN-Counters, which can be decremented as well
+  as incremented, and OR-Sets, from which elements can be removed as
+  well as added.
 \end{abstract}
 
 \section{Introduction}
@@ -197,7 +246,7 @@ To complete the thesis, I plan to do the following:
 \end{itemize}
 \lk{Time estimates to be added.}
 
-\bibliographystyle{abbrvnat}
+\bibliographystyle{plain}
 \bibliography{../latex_common/refs}
 
 \end{document}
