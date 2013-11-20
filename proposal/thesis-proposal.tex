@@ -173,25 +173,80 @@ consistency of distributed replicated objects.
 \subsection{Replication and eventual consistency}
 
 Distributed systems often involve \emph{replication} of data objects
-across a number of physical locations.  Reasons to replicate data may
-include:
+across a number of physical locations.  Replication is of fundamental
+importance in distributed systems: it makes the system more robust to
+data loss and allows for good data locality.  Unfortunately, while it
+would be convenient if a system of distributed, replicated objects
+behaved indistinguishably from the familiar programming model in which
+all data is on one machine and and all computation takes place there,
+this is not and cannot be the case.  The famous CAP
+theorem~\cite{gilbert-lynch-cap} of distributed computing imposes a
+three-way tradeoff between:
 \begin{itemize}
-\item Robustness to failure: if multiple replicas of an object exist,
-  we are less likely to lose that object if part of our system fails.
-
-\item Proximity: objects should be close to clients who need them.
-
-\item Parallelism: different processes simultaneously operating on the
-  same object may each need their own copy. \lk{Explain how this is
-    different from the above point.}
+\item Consistency, in which every replica sees the same information;
+\item Availablility, in which all information is available for both
+  reading and writing by all replicas; and
+\item Partition tolerance, in which the system is robust to parts of
+  it being unable to communicate with one another.
 \end{itemize}
-If a system of distributed, replicated objects behaved
-indistinguishably from the model a lot of us are used to programming
-with, in which all our data and all our computation are on one
-machine, then we would not need to concern ourselves with special
-techniques to support replication.  \lk{This is worded awkwardly ---
-  look at the CRDT papers for inspiration?}  Unfortunately, this is
-not the case.
+An (oversimplified, but useful to a first approximation)
+interpretation of the CAP theorem is the slogan, ``Consistency,
+availability, and partition tolerance: pick at most two.''  In
+practice, real systems must be robust to network partitions and hence
+must compromise on at least one of consistency or availability.
+Moreover, though, consistency, availability, and partition tolerance
+are not binary properties; rather than having, for instance, either
+perfect availability or no availability at all, we can choose how much
+availability a system must have, then allow less conistency
+accordingly.  \emph{Highly available} distributed systems (\eg,
+Dynamo~\cite{dynamo}) give up on strict conistency in favor of
+\emph{eventual consistency}~\cite{vogels-ec}, in which replicas may
+not always agree, but if updates stop arriving, all replicas will
+\emph{eventually} come to agree, given enough time.
+
+\subsection{Resolving conflicts between replicas}
+
+How can eventually consistent systems ensure that all replicas of an
+object come to agree?  In particular, if replicas differ, how do we
+determine which is ``right''?  As a straw man proposal, we could
+vacuously satisfy the definition of eventual consistency by setting
+all replicas to some pre-determined value---but then, of course, we
+would lose all updates we had made to any of the replicas.
+
+As a more practical proposal, we could try to determine which replica
+was written most recently, and then have the last writer win.  But
+this approach is also less than ideal: even if we had a way of
+perfectly synchronizing clocks between replicas and could always
+determine which replica was written most recently, just having the
+last writer win might not make sense from a \emph{semantic} point of
+view.  The developers of Dynamo, Amazon's distributed key-value store,
+acknowledged this in their discussion of application-specific
+mechanisms for resolving conflicts between replicas~\cite{dynamo}:
+\begin{quote}
+  The next design choice is who performs the process of conflict
+  resolution. This can be done by the data store or the
+  application. If conflict resolution is done by the data store, its
+  choices are rather limited. In such cases, the data store can only
+  use simple policies, such as "last write wins", to resolve
+  conflicting updates. On the other hand, since the application is
+  aware of the data schema it can decide on the conflict resolution
+  method that is best suited for its client’s experience. For
+  instance, the application that maintains customer shopping carts can
+  choose to "merge" the conflicting versions and return a single
+  unified shopping cart.
+\end{quote}
+In other words, we can take advantage of the fact that, for a
+particular application, we know something about the meaning of the
+data we are storing, and then parameterize the data store by a
+pluggable, application-specific conflict resolution operation.
+
+This notion of application-specific conflict resolution is not without
+its problems, especially if implemented in an ad-hoc
+way.\footnote{Indeed, as noted in the Dynamo article~\cite{dynamo},
+  Amazon's shopping cart presents an anomaly whereby an item removed
+  from a cart may re-appear!}
+
+\lk{TODO: Write about CRDTs.}
 
 \section{Related work}
 
