@@ -33,59 +33,80 @@
 
 \maketitle
 
+%% Things I want to talk about:
+
+%%   * the basic LVars model: generalizes IVars
+
+%%   * Freezing makes the model more expressive but introduces
+%%   quasi-determinism
+
+%%   * Event handlers make it possible to express fixpoint computations
+%%   that are hard to express with the basic model
+
+%%   * Quasi-deterministic programs are a new interesting class of programs
+
+%%   * LVar threshold reads can be applied to CRDTs for greater
+%%   consistency (no observing of intermediate states)
+
+%%   * CRDTs that allow non-monotonic updates can be applied to LVars for
+%%   greater expressivity (now we can decrement counters, remove things
+%%   from sets, etc.)
+
 \begin{abstract}
   Deterministic-by-construction parallel programming models guarantee
   that programs written using them will have the same observable
-  behavior on every run, offering freedom from subtle,
-  hard-to-reproduce bugs caused by schedule nondeterminism.  In order
-  to guarantee determinism, though, deterministic-by-construction
-  models must sharply restrict the sharing of memory between parallel
-  tasks: shared memory, if it is allowed at all, is typically limited
-  either to single-assignment locations, or to a single type of shared
-  data structure, such as a blocking FIFO queue.
+  behavior on every run.  Such models offer the promise of freedom
+  from subtle, hard-to-reproduce bugs caused by schedule
+  nondeterminism.  In order to guarantee determinism, though,
+  deterministic-by-construction models must sharply restrict the
+  sharing of state between parallel tasks.  Shared state, if it is
+  allowed at all, is typically restricted to a single type of shared
+  data structure, such as single-assignment locations or blocking FIFO
+  queues.  These approaches limit the kinds of algorithms that can be
+  easily or efficiently expressed: some would-be deterministic
+  parallel programs are ruled out by the model.
 
   This thesis will show that \emph{lattice-based data structures}, or
-  \emph{LVars}, enable an expressive and useful style of
-  deterministic-by-construction parallel programming
-  that generalizes and unifies previously existing approaches.  LVars
-  generalize existing single-assignment models to allow multiple
-  assignments that are monotonically increasing with respect to an
-  application-specific lattice.  They ensure determinism by allowing
-  only monotonic writes and ``threshold'' reads that block until a
-  lower bound is reached and do not allow the order of writes to be
-  observed.  After presenting the basic LVars model and showing that
-  it is deterministic, I will show how to extend it to allow
-  non-blocking ``freezing'' reads, resulting in a
-  \emph{quasi-deterministic} model in which programs are guaranteed to
-  behave deterministically modulo exceptions, and \emph{event
-    handlers}, which make it easier to express fixpoint computations
-  with LVars.
+  \emph{LVars}, form the foundation for a style of
+  deterministic-by-construction parallel programming that allows a
+  more general form of communication between tasks than previously
+  existing approaches allowed.  LVars generalize existing
+  single-assignment models to allow multiple assignments that are
+  monotonically increasing with respect to an application-specific
+  lattice.  They ensure determinism by allowing only monotonic writes
+  and ``threshold'' reads that block until a lower bound is reached
+  and do not allow the order of writes to be observed.  After
+  presenting the basic LVars model and showing that it is
+  deterministic, I will show how to extend it to allow non-blocking
+  ``freezing'' reads, resulting in a \emph{quasi-deterministic} model
+  in which programs are guaranteed to behave deterministically modulo
+  exceptions, and \emph{event handlers}, which make it easier to
+  express fixpoint computations with LVars.
 
-  Next, I will demonstrate the viability of the LVars model with
+  Next, I will investigate the relationship between LVars and
+  \emph{conflict-free replicated data types} (CRDTs), which are data
+  structures for reasoning about and enforcing the eventual
+  consistency of replicated objects in a distributed system.  First, I
+  will show how LVar-style threshold reads apply to the setting of
+  CRDTs.  Threshold reads will guarantee that the order in which
+  information is added to a CRDT cannot be observed, ensuring a
+  greater degree of consistency at the price of read availability.
+  Second, I will show how to apply techniques from the CRDT literature
+  to develop LVars that support non-monotonic updates: PN-Counters,
+  which can be decremented as well as incremented, and OR-Sets, from
+  which elements can be removed as well as added.
+
+  Finally, I will demonstrate the viability of the LVars model with
   \emph{LVish}, a Haskell library based on it.  The LVish library
-  provides a monad in which LVar computations run and a work-stealing
-  scheduler that runs user-created threads, together with a library of
-  lattice-based data structures.  LVish leverages Haskell's type
+  provides a collection of lattice-based data structures, a
+  work-stealing scheduler that runs user-created threads, and a monad
+  in which LVar computations run.  LVish leverages Haskell's type
   system to index such computations with an \emph{effect level} to
   ensure that only certain LVar effects can occur in a given
   computation, hence statically enforcing determinism or
   quasi-determinism.  I will illustrate the LVish library with running
-  examples and present benchmarking results and several case studies
-  that demonstrate its applicability.
-
-  Finally, I will investigate the relationship between LVars and
-  \emph{conflict-free replicated data types} (CRDTs), which are data
-  structures for reasoning about and enforcing the eventual
-  consistency of replicated objects in a distributed system.  In one
-  direction, I will investigate extending CRDTs to support LVar-style
-  threshold reads.  Threshold reads will guarantee that the order in
-  which information is added to a CRDT cannot be observed, ensuring a
-  greater degree of consistency at the price of read availability.
-  In the other direction, I will use techniques from the CRDT
-  literature to implement data structures in LVish that support
-  non-monotonic updates: PN-Counters, which can be decremented as well
-  as incremented, and OR-Sets, from which elements can be removed as
-  well as added.
+  examples and present several case studies that demonstrate its
+  applicability.
 \end{abstract}
 
 \section{Introduction}\label{s:intro}
@@ -104,13 +125,13 @@ what is observable about a program's behavior?  Clearly, we do
 \emph{not} wish to preserve behaviors such as running time across
 multiple runs---ideally, a deterministic-by-construction parallel
 program will run faster when more parallel resources are available!
-In this proposal, then, we define the observable behavior of a program
-to be the value to which the program evaluates.  In particular, we do
-not count the behavior of the scheduler as observable.  Indeed, the
-purpose of our deterministic-by-construction model will be to allow
-tasks to be scheduled dynamically and unpredictably, without allowing
-such \emph{schedule nondeterminism} to affect programs' observable
-behavior.
+Moreover, we do not count the behavior of the scheduler as observable.
+Indeed, the goal of the deterministic-by-construction model presented
+in this proposal will be to allow tasks to be scheduled dynamically
+and unpredictably, but without allowing such \emph{schedule
+  nondeterminism} to affect the outcome of a program.  Therefore, in
+this proposal we define the observable behavior of a program to be the
+value to which the program evaluates.
 
 \subsection{Existing approaches to determinism by construction}
 
@@ -130,12 +151,11 @@ function-level task parallelism, or \emph{futures}---for instance, in
 Haskell programs that use futures by means of the @par@ and @pseq@
 combinators~\cite{marlow-par}.  Another approach is pure data
 parallelism, as in Data Parallel Haskell~\cite{dph}, and yet another
-is forcing references to shared locations to be either immutable or
-uniquely owned by a task, as in Deterministic Parallel
-Java~\cite{dpj-oopsla}.
+is to ensure that the state accessed by concurrent threads is
+disjoint, as in Deterministic Parallel Java~\cite{dpj-oopsla}.
 
-Still, some algorithms are more naturally or efficiently written using
-shared state or message passing, and hence the development of
+However, some algorithms are more naturally or efficiently written
+using shared state or message passing, and hence the development of
 deterministic parallel programming models that allow \emph{limited}
 sharing of mutable state.  Consider two classic deterministic parallel
 programming models, dating back to the late 60s and early 70s:
@@ -187,16 +207,17 @@ recognition of their common basis.  Moreover, they lack
 \emph{generality}, since in each case, communication is only permitted
 through a single type of shared data structure---FIFO queues in KPNs,
 for instance, or tables of write-once locations in CnC---limiting the
-kinds of algorithms that can be easily expressed.
+kinds of algorithms that can be easily or efficiently expressed.
 
 \subsection{LVars: lattice-based monotonic data structures}
 
 In this thesis, I will show that \emph{lattice-based} data structures,
-or \emph{LVars}, enable an expressive and useful style of
-deterministic parallel programming that generalizes and unifies
-previous existing approaches.  LVars generalize IVars and are so named
-because the states an LVar can take on are elements of an
-application-specific \emph{lattice}.\footnote{As I will explain in
+or \emph{LVars}, form the foundation of a model of
+deterministic-by-construction parallel programming that allows a more
+general form of communication between tasks than previously existing
+approaches allowed.  LVars generalize IVars and are so named because
+the states an LVar can take on are elements of an application-specific
+\emph{lattice}.\footnote{As I will explain in
   Section~\ref{s:lattices}, this ``lattice'' need only be a {\em
     bounded join-semilattice} augmented with a greatest element
   $\top$, in which every two elements have a least upper bound but not
@@ -221,12 +242,15 @@ explain in detail in Section~\ref{s:lattices}):
 \end{itemize}
 Together, monotonically increasing writes via @put@ and threshold
 reads via @get@ yield a deterministic-by-construction programming
-model.  We use LVars to define the \emph{LVish calculus}, a
-deterministic parallel calculus with shared state. \lk{I think I
-  should call it $\lambda_{LVish}$.}
-LVish is expressive enough to subsumes existing deterministic parallel
-programming models because it is parameterized by the choice of
-lattice.  For example, a lattice of channel histories with a prefix
+model.  We use LVars to define $\lambdaLVish$, a deterministic
+parallel calculus with shared state.\footnote{$\lambdaLVish$ is the
+  \emph{LVish calculus} described in Kuper \etal~\cite{Freeze-paper}.
+  I call it $\lambdaLVish$ here to avoid confusion with the LVish
+  library discussed in Section~\ref{s:lvish}.}
+
+$\lambdaLVish$ is expressive enough to subsumes existing deterministic
+parallel programming models because it is parameterized by the choice
+of lattice.  For example, a lattice of channel histories with a prefix
 ordering allows LVars to represent FIFO channels that implement a Kahn
 process network, whereas instantiating LVish with a lattice with
 ``empty'' and ``full'' states (where $\mathit{empty} < \mathit{full}$)
@@ -239,33 +263,41 @@ parallel languages.
 
 \lk{Figure out how to include stuff about CRDTs in the intro.}
 
-\section{Thesis statement}
+\section{Thesis statement}\label{s:thesis}
 
 \lk{This format ripped off from Josh Dunfield.}
 
 With the above background, I can state my thesis:
-
-\lk{``novel, feasible and useful''}
-
-\lk{ ``Lattice-based data structures, whose contents grow
-  monotonically with respect to an application-specific lattice and
-  for which the order in which information is added is not observable,
-  are a novel, feasible, and useful means of guaranteeing the
-  determinism of parallel programs.''  This isn't right.  It's not
-  ``here's a parallel program, let's apply lattice-based data
-  structures to it and guarantee its determinism that way!''  It's,
-  ``Let's build lattice-based data structures into the programming
-  model to start.''  }
-
 \begin{quote}
-  Lattice-based data structures\lk{, whose contents grow monotonically
-  with respect to an application-specific lattice and for which the
-  order in which information is added is not observable,} are a
-  practical, flexible, and mathematically rigorous foundation for
-  deterministic parallel and distributed programming.
+  Lattice-based data structures are a general and practical foundation
+  for guaranteed-deterministic and quasi-deterministic parallel and
+  distributed programming.
 \end{quote}
+My dissertation will defend this thesis as follows:
+\begin{itemize}
+  \item \emph{Lattice-based data structures}: I will explain and
+    formally define lattice-based data structures (LVars).
 
-\lk{Better...I'm still unsure about ``and distributed''.}
+  \item \emph{general}: I will defend the generality of LVars by
+    showing how existing determnistic parallel models can be expressed
+    using them.
+
+  \item \emph{practical}: I will defend the practicality of LVars by
+    demonstrating how they are used in the LVish library with several
+    case studies.
+
+  \item \emph{guaranteed-deterministic and quasi-deterministic}: I
+    will defend the claim that LVars guarantee determinism and
+    quasi-determinism by giving a proof of determinism for
+    $\lambdaLVish$ (without the additions of freezing and event
+    handlers) and a proof of quasi-determinism with those additions.
+
+  \item \emph{distributed programming}: I will defend the claim that
+    LVars are applicable to distributed programming by showing how
+    LVar-style threshold reads apply to the setting of conflict-free
+    replicated data types in a system of distributed replicated
+    objects.
+\end{itemize}
 
 \section{Lattices, stores, and determinism}\label{s:lattices}
 
@@ -277,25 +309,21 @@ With the above background, I can state my thesis:
     natural-number-valued IVars, annotated with example threshold sets
     that would correspond to a blocking read of the first or second
     element of the pair.  Any state transition crossing the
-    ``tripwire'' for \termfont{getSnd} causes it to unblock and return
-    a result.}
+    ``tripwire'' for \lstinline{getSnd} causes it to unblock and
+    return a result.}
 
   \label{f:lattice-examples}
 \end{figure}
 
 \section{Freezing, event handlers, and quasi-determinism}\label{s:freezing}
 
-\section{The LVish library}
-
-\subsection{Case studies}
-
-\section{LVars and CRDTs}
+\section{Joining forces: LVars and conflict-free replicated data types}\label{s:crdts}
 
 In this section, I will discuss the relationship between the LVars
 model I've described and the mathematical framework of
-\emph{conflict-free replicated data types} that distributed systems
-research have developed for reasoning about and enforcing the eventual
-consistency of distributed replicated objects.
+\emph{conflict-free replicated data types}, which are data structures
+for reasoning about and enforcing the eventual consistency of
+replicated objects in a distributed system.
 
 \subsection{Replication and eventual consistency}
 
@@ -375,8 +403,12 @@ way.\footnote{Indeed, as noted in the Dynamo article~\cite{dynamo},
 
 \lk{TODO: Write about CRDTs.}
 
-\section{Related work}
 
+\section{The LVish library}\label{s:lvish}
+
+\subsection{Case studies}
+
+\section{Related work}\label{s:related}
 
 \subsection{Deterministic Parallel Java (DPJ)}
 
