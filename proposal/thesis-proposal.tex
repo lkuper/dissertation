@@ -24,7 +24,7 @@
 \begin{document}
 
 \title{Thesis Proposal: \\
-  Lattice-based Data Structures for 
+  Lattice-based Data Structures for \\
   Deterministic Parallel and Distributed Programming}
 
 \author{Lindsey Kuper \\ Indiana University}
@@ -46,30 +46,32 @@
 
   This thesis will show that \emph{lattice-based data structures}, or
   \emph{LVars}, enable an expressive and useful style of
-  deterministic-by-construction parallel programming that generalizes
-  and unifies previously existing approaches.  LVars generalize
-  existing single-assignment models to allow multiple assignments that
-  are monotonically increasing with respect to an application-specific
-  lattice.  LVars ensure determinism by allowing only monotonic writes
-  and ``threshold'' reads that block until a lower bound is reached
-  and do not allow the order in which information is added to the LVar
-  to be observed.  After presenting the basic LVars model and showing
-  that it is deterministic, I will show how to extend it to allow
+  deterministic-by-construction parallel programming
+  that generalizes and unifies previously existing approaches.  LVars
+  generalize existing single-assignment models to allow multiple
+  assignments that are monotonically increasing with respect to an
+  application-specific lattice.  They ensure determinism by allowing
+  only monotonic writes and ``threshold'' reads that block until a
+  lower bound is reached and do not allow the order of writes to be
+  observed.  After presenting the basic LVars model and showing that
+  it is deterministic, I will show how to extend it to allow
   non-blocking ``freezing'' reads, resulting in a
   \emph{quasi-deterministic} model in which programs are guaranteed to
   behave deterministically modulo exceptions, and \emph{event
-    handlers}, which enable an expressive and useful style of
-  deterministic or quasi-deterministic programming.
+    handlers}, which make it easier to express fixpoint computations
+  with LVars.
 
-  Next, I will demonstrate the viability of the LVars approach with
-  \emph{LVish}, a Haskell library based on the LVars model.  LVish
-  provides a monad in which LVar computations run; it leverages
-  Haskell's type system to index such computations with an effect
-  level to ensure that only certain LVar effects can occur in a given
+  Next, I will demonstrate the viability of the LVars model with
+  \emph{LVish}, a Haskell library based on it.  The LVish library
+  provides a monad in which LVar computations run and a work-stealing
+  scheduler that runs user-created threads, together with a library of
+  lattice-based data structures.  LVish leverages Haskell's type
+  system to index such computations with an \emph{effect level} to
+  ensure that only certain LVar effects can occur in a given
   computation, hence statically enforcing determinism or
-  quasi-determinism.  I will illustrate the LVish programming model
-  with examples and present results from several case studies that
-  demonstrate the applicability of LVish.
+  quasi-determinism.  I will illustrate the LVish library with running
+  examples and present benchmarking results and several case studies
+  that demonstrate its applicability.
 
   Finally, I will investigate the relationship between LVars and
   \emph{conflict-free replicated data types} (CRDTs), which are data
@@ -78,9 +80,9 @@
   direction, I will investigate extending CRDTs to support LVar-style
   threshold reads.  Threshold reads will guarantee that the order in
   which information is added to a CRDT cannot be observed, ensuring a
-  greater degree of consistency (at the price of read availability).
+  greater degree of consistency at the price of read availability.
   In the other direction, I will use techniques from the CRDT
-  literature to implement LVar-based data structures that support
+  literature to implement data structures in LVish that support
   non-monotonic updates: PN-Counters, which can be decremented as well
   as incremented, and OR-Sets, from which elements can be removed as
   well as added.
@@ -91,10 +93,9 @@
 Parallel programming is notoriously difficult.  \lk{Difficult to who?}
 A fundamental reason for this difficulty is that programs can yield
 inconsistent results, or even crash, due to unpredictable interactions
-between parallel tasks.  But it doesn't have to be this way:
-\emph{deterministic-by-construction} parallel programming models offer
-the promise of freedom from subtle, hard-to-reproduce nondeterministic
-bugs in parallel code.
+between parallel tasks.  \emph{Deterministic-by-construction} parallel
+programming models, though, offer the promise of freedom from subtle,
+hard-to-reproduce nondeterministic bugs in parallel code.
 
 A deterministic-by-construction programming model is one that ensures
 that all programs written using the model have the same
@@ -114,25 +115,26 @@ behavior.
 \subsection{Existing approaches to determinism by construction}
 
 Shared state between computations allows the possibility for
-\emph{data races} that allow schedule nondeterminism to be observed.
-For intance, if one thread writes $3$ to a shared location while
-another writes $4$, then a third thread that reads and returns the
-value will nondeterministically return $3$ or $4$ depending on the
+\emph{race conditions} that allow schedule nondeterminism to be
+observed.  For instance, if one thread writes $3$ to a shared location
+while another writes $4$, then a third thread that reads and returns
+the value will nondeterministically return $3$ or $4$ depending on the
 order in which the threads are scheduled to run.  Therefore,
 deterministic parallel programming models necessarily limit sharing of
 mutable state between parallel tasks.
 
-The simplest approach is to allow \emph{no} shared mutable state
-between tasks, forcing concurrent tasks to produce values
-independently.  One approach to no-shared-state parallelism is
-functional programming with function-level task parallelism, such as
-in Haskell programs using futures by means of the @par@ and @pseq@
-combinators~\cite{marlow-par}.  Another is pure data parallelism, as
-in Data Parallel Haskell~\cite{dph}, and yet another is a programming
-model that forces references to be either immutable or uniquely owned
-by a task, as in Deterministic Parallel Java~\cite{dpj-oopsla}.
+One approach is to allow \emph{no} shared mutable state between tasks,
+forcing concurrent tasks to produce values independently.  An example
+of no-shared-state parallelism is functional programming with
+function-level task parallelism, or \emph{futures}---for instance, in
+Haskell programs that use futures by means of the @par@ and @pseq@
+combinators~\cite{marlow-par}.  Another approach is pure data
+parallelism, as in Data Parallel Haskell~\cite{dph}, and yet another
+is forcing references to shared locations to be either immutable or
+uniquely owned by a task, as in Deterministic Parallel
+Java~\cite{dpj-oopsla}.
 
-But some algorithms are more naturally or efficiently written using
+Still, some algorithms are more naturally or efficiently written using
 shared state or message passing, and hence the development of
 deterministic parallel programming models that allow \emph{limited}
 sharing of mutable state.  Consider two classic deterministic parallel
@@ -142,7 +144,10 @@ programming models, dating back to the late 60s and early 70s:
   as in the more restricted \emph{synchronous data flow}
   systems~\cite{lee-sdn}, a network of independent, sequential
   ``computing stations'' communicate with each other through blocking
-  FIFO channels.  KPNs are the basis for deterministic stream-processing
+  FIFO channels.  Each station computes a monotonic function from the
+  \emph{history} of its input channels (\ie, the input received so
+  far) to the history of its output channels (the output produced so
+  far).  KPNs are the basis for deterministic stream-processing
   languages such as StreamIt~\cite{streamit-asplos}.
 \item In parallel \emph{single-assignment} languages, ``full/empty''
   bits are associated with memory locations so that they may be
@@ -168,23 +173,76 @@ FIFOs with ever-increasing \emph{channel histories}, while in
 IVar-based programming models such as CnC and monad-par, a shared data
 store of single-assignment memory locations grows monotonically.
 Hence \emph{monotonic data structures}---data structures to which
-information is only added, and never removed---emerge as a common
-theme of both data-flow and single-assignment models.
+information is only added and never removed---emerge as a common theme
+of both data-flow and single-assignment models.
 
 Because state modifications that only add information and never
 destroy it can be structured to commute with each other and thereby
 avoid race conditions, it stands to reason that diverse deterministic
 parallel programming models would leverage the principle of
 monotonicity.  Yet there is little in the way of a theory of monotonic
-data structures as a bais for deterministic parallelism.  As a result,
-systems like CnC and monad-par emerge independently, without
+data structures as a basis for deterministic parallelism.  As a
+result, systems like CnC and monad-par emerge independently, without
 recognition of their common basis.  Moreover, they lack
-\emph{generality}, because in each case, communication is only
-permitted through a single type of shared data structure---FIFO queues
-in KPNs, shared write-only tables in CnC---limiting the kinds of
-algorithms that can be easily expressed.
+\emph{generality}, since in each case, communication is only permitted
+through a single type of shared data structure---FIFO queues in KPNs,
+for instance, or tables of write-once locations in CnC---limiting the
+kinds of algorithms that can be easily expressed.
 
-\section{Background}
+\subsection{LVars: lattice-based monotonic data structures}
+
+In this thesis, I will show that \emph{lattice-based} data structures,
+or \emph{LVars}, enable an expressive and useful style of
+deterministic parallel programming that generalizes and unifies
+previous existing approaches.
+
+LVars generalize IVars and are so named because the states an LVar can
+take on are elements of an application-specific
+\emph{lattice}.\footnote{As I will explain in
+  Section~\ref{section:technical-overview}, this ``lattice'' need only
+  be a {\em bounded join-semilattice} augmented with a greatest
+  element $\top$, in which every two elements have a least upper bound
+  but not necessarily a greatest lower bound.  For brevity, I use the
+  term ``lattice'' here and in the rest of this proposal.}
+
+This application-specific lattice determines the semantics of the
+@put@ and @get@ operations that comprise the interface to LVars (which
+I will explain in detail in Section~\ref{section:technical-overview}):
+\begin{itemize}
+\item The @put@ operation can only change an LVar's state in a way
+  that is {\em monotonically increasing} with respect to the
+  user-specified lattice, because it takes the least upper bound of
+  the current state and the new state.
+
+\item The @get@ operation allows only limited observations of the
+  state of an LVar.  It requires the user to specify a \emph{threshold
+    set} of minimum values that can be read from the LVar, where every
+  two elements in the threshold set must have the lattice's greatest
+  element $\top$ as their least upper bound.  A call to @get@ blocks
+  until the LVar in question reaches a (unique) value in the threshold
+  set, then unblocks and returns that value.
+\end{itemize}
+Together, monotonically increasing writes via @put@ and threshold
+reads via @get@ yield a deterministic-by-construction programming
+model.  We use LVars to define the \emph{LVish calculus}, a
+deterministic parallel calculus with shared state. \lk{I think I
+  should call it $\lambda_{LVish}$.}
+LVish is expressive enough to subsumes existing deterministic parallel
+programming models because it is parameterized by the choice of
+lattice.  For example, a lattice of channel histories with a prefix
+ordering allows LVars to represent FIFO channels that implement a Kahn
+process network, whereas instantiating LVish with a lattice with
+``empty'' and ``full'' states (where $\mathit{empty} < \mathit{full}$)
+results in a parallel single-assignment language.  Different
+instantiations of the lattice result in a family of deterministic
+parallel languages.
+
+\lk{Figure out how to include stuff about freezing and handlers in the
+  intro.}
+
+\lk{Figure out how to include stuff about CRDTs in the intro.}
+
+\section{Lattices, stores, and determinism}
 
 \begin{figure}
 \centering
@@ -199,6 +257,12 @@ algorithms that can be easily expressed.
 
   \label{f:lattice-examples}
 \end{figure}
+
+\section{Freezing, event handlers, and quasi-determinism}
+
+\section{The LVish library}
+
+\subsection{Case studies}
 
 \section{Thesis statement}
 
@@ -227,10 +291,6 @@ With the above background, I can state my thesis:
 \end{quote}
 
 \lk{Better...I'm still unsure about ``and distributed''.}
-
-\section{Technical overview}
-
-\section{Freezing, handlers, and quasideterminism}
 
 \section{LVars and CRDTs}
 
