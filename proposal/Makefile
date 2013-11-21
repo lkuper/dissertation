@@ -6,6 +6,9 @@ default: quick
 
 all: paper
 
+#---------------------------------------------------------------------
+# These targets just build the paper without changing the build state:
+
 quick:
 	${LATEX} ${PAPER}.tex
 	${MAKE} open
@@ -17,6 +20,23 @@ paper:
 	bibtex ${PAPER}
 	${LATEX} ${PAPER}.tex
 	${MAKE} open
+
+#-----------------------------------------------
+# These targets actually change the build state:
+
+ed: editingmarks
+
+editingmarks:
+	touch editingmarks.tex
+	${MAKE} paper
+
+plain: 
+	rm -f editingmarks.tex
+	${MAKE} paper
+	cp ${PAPER}.pdf plain.pdf
+
+#-----------------------------------------------
+# Others:
 
 open: ${PAPER}.pdf
 ifeq (${UNAME}, Darwin)
