@@ -88,7 +88,7 @@
   well as added.
 \end{abstract}
 
-\section{Deterministic-by-construction parallel programming}
+\section{Deterministic-by-construction parallel programming}\label{s:intro}
 
 Parallel programming is notoriously difficult.  \lk{Difficult to who?}
 A fundamental reason for this difficulty is that programs can yield
@@ -194,20 +194,17 @@ kinds of algorithms that can be easily expressed.
 In this thesis, I will show that \emph{lattice-based} data structures,
 or \emph{LVars}, enable an expressive and useful style of
 deterministic parallel programming that generalizes and unifies
-previous existing approaches.
-
-LVars generalize IVars and are so named because the states an LVar can
-take on are elements of an application-specific
-\emph{lattice}.\footnote{As I will explain in
-  Section~\ref{section:technical-overview}, this ``lattice'' need only
-  be a {\em bounded join-semilattice} augmented with a greatest
-  element $\top$, in which every two elements have a least upper bound
-  but not necessarily a greatest lower bound.  For brevity, I use the
-  term ``lattice'' here and in the rest of this proposal.}
-
-This application-specific lattice determines the semantics of the
-@put@ and @get@ operations that comprise the interface to LVars (which
-I will explain in detail in Section~\ref{section:technical-overview}):
+previous existing approaches.  LVars generalize IVars and are so named
+because the states an LVar can take on are elements of an
+application-specific \emph{lattice}.\footnote{As I will explain in
+  Section~\ref{s:lattices}, this ``lattice'' need only be a {\em
+    bounded join-semilattice} augmented with a greatest element
+  $\top$, in which every two elements have a least upper bound but not
+  necessarily a greatest lower bound.  For brevity, I use the term
+  ``lattice'' here and in the rest of this proposal.}  This
+application-specific lattice determines the semantics of the @put@ and
+@get@ operations that comprise the interface to LVars (which I will
+explain in detail in Section~\ref{s:lattices}):
 \begin{itemize}
 \item The @put@ operation can only change an LVar's state in a way
   that is {\em monotonically increasing} with respect to the
@@ -242,7 +239,7 @@ parallel languages.
 
 \lk{Figure out how to include stuff about CRDTs in the intro.}
 
-\section{Lattices, stores, and determinism}
+\section{Lattices, stores, and determinism}\label{s:lattices}
 
 \begin{figure}
 \centering
