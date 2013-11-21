@@ -255,7 +255,7 @@ parallel languages.
   \label{f:lattice-examples}
 \end{figure}
 
-\section{Freezing, event handlers, and quasi-determinism}
+\section{Freezing, event handlers, and quasi-determinism}\label{s:freezing}
 
 \section{The LVish library}
 
@@ -377,7 +377,60 @@ way.\footnote{Indeed, as noted in the Dynamo article~\cite{dynamo},
 
 \section{Related work}
 
-\paragraph{Concurrent Revisions}
+
+\subsection{Deterministic Parallel Java (DPJ)}
+
+DPJ \cite{dpj-oopsla, dpj-hotpar09} is a deterministic language
+consisting of a system of annotations for Java code.  A sophisticated
+region-based type system ensures that a mutable region of the heap is,
+essentially, passed linearly to an exclusive writer, thereby ensuring
+that the state accessed by concurrent threads is disjoint.  DPJ does,
+however, provide a way to unsafely assert that operations commute with
+one another (using the @commuteswith@ form) to enable concurrent
+mutation.
+
+The LVars model differs from DPJ in that it allows overlapping shared
+state between threads as the default.  Moreover, since LVar effects
+are already commutative, we avoid the need for @commuteswith@
+annotations.  Finally, it is worth noting that while in DPJ,
+commutativity annotations have to appear in application-level code, in
+LVish only the data-structure author needs to write trusted code. The
+application programmer can run untrusted code that still enjoys a
+(quasi-)determinism guarantee, because only (quasi-)deterministic
+programs can be expressed as LVish @Par@ computations.
+
+More recently, Bocchino \etal~\cite{dpj-popl} proposed a type and
+effect system that allows for the incorporation of nondeterministic
+sections of code in DPJ.  The goal here is different from ours: while
+they aim to support \emph{intentionally} nondeterministic computations
+such as those arising from optimization problems like branch-and-bound
+search, the quasi-determinism in LVish arises as a result of schedule
+nondeterminism.
+
+\subsection{FlowPools}
+
+Prokopec \etal~\cite{flowpools} recently proposed a data structure
+with an API closely related to LVars extended with freezing and
+handlers: a FlowPool is a bag that allows concurrent insertions but
+forbids removals, a @seal@ operation that forbids further updates,
+and combinators like @foreach@ that invoke callbacks as data
+arrives in the pool.  To retain determinism, the @seal@ operation
+requires explicitly passing the expected bag \emph{size} as an
+argument, and the program will raise an exception if the bag goes over
+the expected size.
+
+While this interface has a flavor similar to that described in
+Section~\ref{s:freezing}, it lacks the ability to detect quiescence,
+which is crucial for expressing algorithms like graph traversal, and
+the @seal@ operation is awkward to use when the structure of data is
+not known in advance.  By contrast, the @freeze@ operation on LVars
+does not require such advance knowledge, but moves the model into the
+realm of quasi-determinism.  Another important difference is the fact
+that LVars are \emph{data structure-generic}: both our formalism and
+our library support an unlimited collection of data structures,
+whereas FlowPools are specialized to bags.
+
+\subsection{Concurrent Revisions}
 
 The Concurrent Revisions (CR)~\cite{concurrent-revisions-haskell11}
 programming model uses \emph{isolation types} \cite{isolation-types}
