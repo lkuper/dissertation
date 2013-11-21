@@ -88,7 +88,7 @@
   well as added.
 \end{abstract}
 
-\section{Deterministic-by-construction parallel programming}\label{s:intro}
+\section{Introduction}\label{s:intro}
 
 Parallel programming is notoriously difficult.  \lk{Difficult to who?}
 A fundamental reason for this difficulty is that programs can yield
@@ -239,28 +239,6 @@ parallel languages.
 
 \lk{Figure out how to include stuff about CRDTs in the intro.}
 
-\section{Lattices, stores, and determinism}\label{s:lattices}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.75\textwidth]{figures/example-lvar-lattices.pdf} 
-  \caption{Example LVar lattices: (a) positive integers ordered by
-    $\leq$; (b) IVar containing a positive integer; (c) pair of
-    natural-number-valued IVars, annotated with example threshold sets
-    that would correspond to a blocking read of the first or second
-    element of the pair.  Any state transition crossing the
-    ``tripwire'' for \termfont{getSnd} causes it to unblock and return
-    a result.}
-
-  \label{f:lattice-examples}
-\end{figure}
-
-\section{Freezing, event handlers, and quasi-determinism}\label{s:freezing}
-
-\section{The LVish library}
-
-\subsection{Case studies}
-
 \section{Thesis statement}
 
 \lk{This format ripped off from Josh Dunfield.}
@@ -288,6 +266,28 @@ With the above background, I can state my thesis:
 \end{quote}
 
 \lk{Better...I'm still unsure about ``and distributed''.}
+
+\section{Lattices, stores, and determinism}\label{s:lattices}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{figures/example-lvar-lattices.pdf} 
+  \caption{Example LVar lattices: (a) positive integers ordered by
+    $\leq$; (b) IVar containing a positive integer; (c) pair of
+    natural-number-valued IVars, annotated with example threshold sets
+    that would correspond to a blocking read of the first or second
+    element of the pair.  Any state transition crossing the
+    ``tripwire'' for \termfont{getSnd} causes it to unblock and return
+    a result.}
+
+  \label{f:lattice-examples}
+\end{figure}
+
+\section{Freezing, event handlers, and quasi-determinism}\label{s:freezing}
+
+\section{The LVish library}
+
+\subsection{Case studies}
 
 \section{LVars and CRDTs}
 
