@@ -218,14 +218,14 @@ general form of communication between tasks than previously existing
 guaranteed-deterministic models allowed.  LVars generalize IVars and
 are so named because the states an LVar can take on are elements of an
 application-specific \emph{lattice}.\footnote{As I will explain in
-  Section~\ref{s:lattices}, this ``lattice'' need only be a {\em
-    bounded join-semilattice} augmented with a greatest element
+  Section~\ref{s:technical-overview}, this ``lattice'' need only be a
+  {\em bounded join-semilattice} augmented with a greatest element
   $\top$, in which every two elements have a least upper bound but not
   necessarily a greatest lower bound.  For brevity, I use the term
   ``lattice'' here and in the rest of this proposal.}  This
 application-specific lattice determines the semantics of the @put@ and
 @get@ operations that comprise the interface to LVars (which I will
-explain in detail in Section~\ref{s:lattices}):
+explain in detail in Section~\ref{s:technical-overview}):
 \begin{itemize}
 \item The @put@ operation can only change an LVar's state in a way
   that is {\em monotonically increasing} with respect to the
@@ -243,37 +243,20 @@ Together, monotonically increasing writes via @put@ and threshold
 reads via @get@ yield a deterministic-by-construction programming
 model.  That is, a program in which @put@ and @get@ on LVars are the
 only side effects will have the same observable result in spite of
-parallel execution and schedule nondetermininism.  \lk{I'm not sure if
-  this stuff should go here?} I will demonstrate this by defining
-$\lambdaLVish$, a parallel calculus with LVars, and proving
-determinism for it.  \footnote{$\lambdaLVish$ is the \emph{LVish
-    calculus} described in Kuper \etal~\cite{Freeze-paper}.  I call it
-  $\lambdaLVish$ here to avoid confusion with the LVish library
-  discussed in Section~\ref{s:lvish}.}  $\lambdaLVish$ is expressive
-enough to subsume previously existing deterministic parallel
-programming models because it is parameterized by the choice of
-lattice.  For example, a lattice of channel histories with a prefix
-ordering allows LVars to represent FIFO channels that implement a Kahn
-process network, whereas instantiating $\lambdaLVish$ with a lattice
-with ``empty'' and ``full'' states (where $\mathit{empty} <
-\mathit{full}$) results in a parallel single-assignment language.
-Different instantiations of the lattice result in a family of
-deterministic parallel languages.
+parallel execution and schedule nondetermininism.
 
-\subsection{Extending LVars with freezing and event handlers}
+\subsection{Quasi-deterministic programming with LVars}
 
-The LVars model guarantees determinism, supports an unlimited variety
-of data structures (anything viewable as a lattice), and provides a
-familiar API.  Unfortunately, it is not as general-purpose as one
-might hope.
-
-Consider an unordered graph traversal.  A typical implementation
-involves a monotonically growing set of ``seen nodes''; neighbors of
-seen nodes are fed back into the set until it reaches a fixed point.
-Such fixpoint computations are ubiquitous, and would seem to be a
-perfect match for the LVars model due to their use of monotonicity.
-But they are not expressible using the threshold read and
-least-upper-bound write operations described above.
+The LVars model described above guarantees determinism and supports an
+unlimited variety of shared data structures (anything viewable as a
+lattice).  However, it is not as general-purpose as one might hope.
+Consider an algorithm for unordered graph traversal.  A typical
+implementation involves a monotonically growing set of ``seen nodes'';
+neighbors of seen nodes are fed back into the set until it reaches a
+fixed point.  Such fixpoint computations are ubiquitous, and would
+seem to be a perfect match for the LVars model due to their use of
+monotonicity.  But they are not expressible using the threshold @get@
+and least-upper-bound @put@ operations described above.
 
 The problem is that these computations rely on \emph{negative}
 information about a monotonic data structure, \ie, on the
@@ -282,50 +265,67 @@ traversal, for example, neighboring nodes should only be explored if
 the current node is \emph{not yet} in the set; a fixpoint is reached
 only if no new neighbors are found; and, of course, at the end of the
 computation it must be possible to learn exactly which nodes were
-reachable (which entails learning that certain nodes were not).  But
-in the LVars model, asking whether a node is in a set means waiting
-until the node \emph{is} in the set, and it is not clear how to lift
-this restriction while retaining determinism.
+reachable (which entails learning that certain nodes were not).  I
+will describe two extensions to the LVars model that make such
+computations possible:
+\begin{itemize}
+\item First, I will describe how to add a primitive for
+  \emph{freezing} an LVar, which allows its contents to be read
+  immediately and exactly, rather than the blocking threshold read
+  that @get@ allows.  Freezing imposes the following tradeoff: once an
+  LVar is frozen, any further writes that would change its value
+  instead throw an exception; on the other hand, it becomes possible
+  to discover the exact value of the LVar, learning both positive and
+  negative information about it, without blocking.  LVar programs with
+  freezing are \emph{not} guaranteed to be deterministic, they do
+  satisfy a related property, \emph{quasi-determinism}: all executions
+  that produce an final value produce the \emph{same} final value.
+\item Second, I will describe how to add the ability to attach
+  \emph{event handlers} to an LVar.  When an event handler has been
+  registered with an LVar, it invokes a \emph{callback function} to
+  run, asynchronously, whenever events arrive (in the form of
+  monotonic updates to the LVar).  Crucially, it is possible to check
+  for \emph{quiescence} of a handler, discovering that no callbacks
+  are currently enabled---a transient, negative property.  Since
+  quiescence means that there are no further changes to respond to, it
+  can be used to tell that a fixpoint has been reached.
+\end{itemize}
+In Section~\ref{s:technical-overview}, I will explain freezing and
+handlers in detail and show how, together, they enable an expressive
+and useful style of parallel programming that makes posible fixpoint
+computations like the graph traversal described above.
 
-I will describe two extensions to the LVars model that make such
-computations possible.
+\subsection{LVars and conflict-free replicated data types}
 
-First, I will describe \emph{event handlers}, a mechanism for
-attaching a callback function to an LVar that runs, asynchronously,
-whenever events arrive (in the form of monotonic updates to the LVar).
-Ordinary LVar reads encourage a synchronous, \emph{pull} model of
-programming in which threads ask specific questions of an LVar,
-potentially blocking until the answer is ``yes''.  Handlers, by
-contrast, support an asynchronous, \emph{push} model of programming.
-Crucially, it is possible to check for \emph{quiescence} of a handler,
-discovering that no callbacks are currently enabled---a transient,
-negative property.  Since quiescence means that there are no further
-changes to respond to, it can be used to tell that a fixpoint has been
-reached.
+The LVars model I've described is closely related to the mathematical
+framework of \emph{conflict-free replicated data types}
+(CRDTs)~\cite{crdts, crdts-sss2011}, which are data structures for
+reasoning about and enforcing the \emph{eventual
+  consistency}~\cite{vogels-ec} of replicated objects in a distributed
+system.  In particular, \emph{state-based} CRDTs leverage the
+mathematical properties of join-semilattices to guarantee that all
+replicas of an object in a distributed database eventually agree.
+Unlike LVars, CRDTs allow intermediate states to be observed: if two
+replicas are updated independently, reads of those replicas may
+disagree until a (least-upper-bound) merge operation takes place.
+Various data-structure-specific techniques can ensure that
+non-monotonic updates (such as removal of elements from a set) are not
+lost.
 
-Second, I'll describe how to add a primitive for \emph{freezing} an
-LVar, which comes with the following tradeoff: once an LVar is frozen,
-any further writes that would change its value instead throw an
-exception; on the other hand, it becomes possible to discover the
-exact value of the LVar, learning both positive and negative
-information about it, without blocking.
-
-Unfortunately, freezing does not commute with writes that change an
-LVar.\footnote{The same is true for quiescence detection; see
-  Section~\ref{sec:quiescence-informal}.}  If a freeze is interleaved
-before such a write, the write will raise an exception; if it is
-interleaved afterwards, the program will proceed normally.  However,
-although LVar programs with freezing are not guaranteed to be
-deterministic, they do satisfy a related property that we call
-\emph{quasi-determinism}: all executions that produce a final value
-produce the \emph{same} final value.  To put it another way, a
-quasi-deterministic program can be trusted to never change its answer
-due to nondeterminism; at worst, it might raise an exception on some
-runs.
-
-\subsection{Joining forces: LVars and conflict-free replicated data types}
-
-\lk{TODO.}
+In the way that both leverage lattice properties, CRDTs are to
+eventual consistency as LVars are to deterministic parallelism.  I
+will exploit this relationship in both directions:
+\begin{itemize}
+\item First, I will show how LVar-style threshold reads apply to the
+  setting of CRDTs.  Since threshold reads guarantee that the order in
+  which updates occur cannot be observed, they will prevent
+  intermediate states from being observed, ensuring a greater degree
+  of consistency at the price of read availability.
+\item Second, I will show how to apply techniques from the CRDT
+  literature to develop LVars that support non-monotonic updates:
+  PN-Counters, which can be decremented as well as incremented, and
+  OR-Sets, from which elements can be removed as well as added.
+\end{itemize}
 
 \subsection{The LVish library}
 
@@ -345,15 +345,28 @@ My dissertation will defend this thesis as follows:
 \begin{itemize}
   \item \emph{Lattice-based data structures}: I will explain and
     formally define lattice-based data structures (LVars) and use them
-    to define $\lambdaLVish$.
+    to define $\lambdaLVish$, a parallel calculus based on
+    LVars.\footnote{$\lambdaLVish$ is the \emph{LVish calculus}
+      described in Kuper \etal~\cite{Freeze-paper}.  I call it
+      $\lambdaLVish$ here to avoid confusion with the LVish library
+      discussed in Section~\ref{s:lvish}.}
 
-  \item \emph{general}: I will defend the generality of LVars by
-    showing how existing determnistic parallel models can be expressed
-    using $\lambdaLVish$.
+  \item \emph{general}: I will defend the generality of the LVars
+    model by showing how $\lambdaLVish$ is general enough to subsume
+    previously existing deterministic parallel programming models
+    because it is parameterized by the choice of lattice.  For
+    example, a lattice of channel histories with a prefix ordering
+    allows LVars to represent FIFO channels that implement a Kahn
+    process network, whereas instantiating $\lambdaLVish$ with a
+    lattice with ``empty'' and ``full'' states (where $\mathit{empty}
+    < \mathit{full}$) results in a parallel single-assignment
+    language.  Different instantiations of the lattice result in a
+    family of deterministic parallel languages.
 
   \item \emph{practical}: I will defend the practicality of LVars by
-    introducing the LVish Haskell library based on them and
-    demonstrating how it is used with several case studies.
+    introducing the LVish Haskell library based on $\lambdaLVish$ and
+    demonstrating how it is used for practical programming with
+    several case studies, including performance results.
 
   \item \emph{guaranteed-deterministic and quasi-deterministic}: I
     will defend the claim that LVars guarantee determinism and
@@ -368,7 +381,7 @@ My dissertation will defend this thesis as follows:
     objects.
 \end{itemize}
 
-\section{Lattices, stores, and determinism}\label{s:lattices}
+\section{Technical overview}\label{s:technical-overview}
 
 \begin{figure}
 \centering
@@ -383,8 +396,6 @@ My dissertation will defend this thesis as follows:
 
   \label{f:lattice-examples}
 \end{figure}
-
-\section{Freezing, event handlers, and quasi-determinism}\label{s:freezing}
 
 \section{Joining forces: LVars and conflict-free replicated data types}\label{s:crdts}
 
