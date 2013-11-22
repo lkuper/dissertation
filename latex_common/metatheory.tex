@@ -1,0 +1,102 @@
+%%% Macros for typesetting lambdaLVar semantics and metatheory.
+
+%%% BNF grammar stuff
+\newcommand{\bnfdef}{\ensuremath{::=}}
+\newcommand{\bnfsep}{\ensuremath{\ \ | \ \ }}
+\newcommand{\setsep}{\ensuremath{\ | \ }}
+\newcommand{\sep}{\bnfsep}
+
+%%% Metafunctions
+\newcommand{\subst}[3]{\ensuremath{#1[#2 := #3]}}
+\newcommand{\dom}[1]{\ensuremath{\mathit{dom}(#1)}}
+\newcommand{\incomp}[1]{\ensuremath{\mathit{incomp}(#1)}}
+\newcommand{\pred}[1]{\ensuremath{\mathit{pred}(#1)}}
+\newcommand{\userlub}[2]{\ensuremath{#1 \sqcup #2}}
+\newcommand{\lubp}[2]{\ensuremath{#1 \sqcup_p #2}}
+\newcommand{\qexist}[2]{\ensuremath{\exists\,#1.~#2}}
+\newcommand{\qforall}[2]{\ensuremath{\forall\,#1.~#2}}
+\newcommand{\userelements}{\ensuremath{\mathit{Elements}}}
+\newcommand{\userleq}{\ensuremath{\sqsubseteq}}
+\newcommand{\nuserleq}{\ensuremath{\not \sqsubseteq}}
+\newcommand{\usergeq}{\ensuremath{\sqsupseteq}}
+\newcommand{\userlt}{\ensuremath{\sqsubset}}
+\newcommand{\leqp}{\ensuremath{\sqsubseteq_p}}
+\newcommand{\ltp}{\ensuremath{\sqsubset_p}}
+\newcommand{\botp}{\ensuremath{\bot_{p}}}
+\newcommand{\topp}{\ensuremath{\top\hspace{-0.85mm}_{p}}}
+
+%%% Evaluation / operational semantics
+\newcommand*{\longhookrightarrow}{\ensuremath{\lhook\joinrel\relbar\joinrel\rightarrow}}
+\newcommand{\parstepsto}{\ensuremath{\longhookrightarrow}}
+\newcommand{\parstepstoeq}{\ensuremath{\longhookrightarrow^{?}}}
+\newcommand{\evalctxt}[2]{\ensuremath{#1\hspace{-1mm}\left[#2\right]}}
+\newcommand{\E}[1]{\ensuremath{\evalctxt{E}{#1}}}
+
+%%% Stores and store operations
+\newcommand{\StoreVal}{\ensuremath{\mathit{StoreVal}}}
+\newcommand{\fmap}{\ensuremath{\stackrel{\textrm{fin}}{\rightarrow}}}
+\newcommand{\eqstore}[2]{\ensuremath{#1 =_S #2}}
+\newcommand{\leqstore}[2]{\ensuremath{#1 \userleq_S #2}}
+\newcommand{\neqstore}[2]{\ensuremath{#1 \not =_S #2}}
+\newcommand{\nleqstore}[2]{\ensuremath{#1 \not \userleq_S #2}}
+\newcommand{\ltstore}[2]{\ensuremath{#1 \userlt_S #2}}
+\newcommand{\lubstore}[2]{\ensuremath{#1 \sqcup_{S} #2}}
+\newcommand{\glbstore}[2]{\ensuremath{#1 \sqcap_{S} #2}}
+\newcommand{\storebindingRaw}[2]{\ensuremath{#1 \mapsto #2}}
+\newcommand{\storebinding}[3]{\storebindingRaw{#1}{\state{#2}{#3}}}
+\newcommand{\state}[2]{\ensuremath{(#1, #2)}}
+\newcommand{\store}[1]{\left[ #1 \right]}
+\newcommand{\extS}[4]{#1[\storebinding{#2}{#3}{#4}]}
+\newcommand{\extSp}[3]{#1[\storebindingRaw{#2}{#3}]}
+\newcommand{\storeset}{\mathcal{S}}
+\newcommand{\status}{\ensuremath{\mathit{frz}}}
+\newcommand{\statuseq}{\ensuremath{=_{\textit{frz}}}} % textit looks better than mathit at the subscript size
+\newcommand{\statusneq}{\ensuremath{\neq_{\textit{frz}}}} % textit looks better than mathit at the subscript size
+\newcommand{\frozentrue}{\ensuremath{\textsf{true}}}
+\newcommand{\frozenfalse}{\ensuremath{\textsf{false}}}
+\newcommand{\Loc}{\mathit{Loc}}
+\newcommand{\topS}{\ensuremath{\top\hspace{-0.85mm}_{S}}}
+\newcommand{\LVar}{\mathit{LVar}}
+
+%% It would be really nice to be able to typeset stores like
+
+%%        \store{l_1, l_2, l_3}{3, 4, 5}
+
+%% producing
+
+%%        {l_1 -> 3, l_2 -> 4, l_3 -> 5}
+
+%% but to do that, I think we need something like what's done in
+%% http://stackoverflow.com/questions/2402354/split-comma-separated-parameters-in-latex,
+%% and I haven't figured out how to do it just yet :(
+
+%%% States and configurations
+\newcommand{\conf}{\ensuremath{\sigma}}
+\newcommand{\config}[2]{\ensuremath{\langle #1;\, #2 \rangle}}
+\newcommand{\error}{\ensuremath{\textbf{\textsf{error}}}}
+
+\newcommand{\handledBy}{\hookrightarrow}
+
+%%% Assorted math stuff
+\newcommand{\defeq}{\stackrel{\triangle}{=}} % "defined-as"
+\newcommand{\pfn}{\rightharpoonup}
+\newcommand{\bag}[1]{\Lbag #1 \Rbag}
+\newcommand{\setof}[1]{\left\{#1\right\}}
+\newcommand{\comprehend}[2]{\setof{{#1}\;\middle|\;{#2}}}
+\newcommand{\power}[1]{\mathcal{P}(#1)}
+\newcommand{\inlop}{\mathsf{inl}}
+\newcommand{\inl}[1]{\inlop\,{#1}}
+\newcommand{\inrop}{\mathsf{inr}}
+\newcommand{\inr}[1]{\inrop\,{#1}}
+\newcommand{\letv}[2]{\mathsf{let}\;{#1} = {#2}}
+\newcommand{\Freeze}[1]{\mathrm{Freeze}(#1)}
+\newcommand{\piinv}{\pi^{-1}}
+
+%%% Formatting of definitions, theorems, etc.
+\newtheorem{lem}{Lemma}
+\newtheorem{cor}{Corollary}
+\newtheorem{thm}{Theorem}
+
+\renewcommand{\thelem}{\arabic{lem}}
+\renewcommand{\thecor}{\arabic{cor}}
+\renewcommand{\thethm}{\arabic{thm}}

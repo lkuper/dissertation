@@ -9,16 +9,23 @@
 \usepackage{fullpage}
 \usepackage{times}
 
-% Stuff needed for typesetting LVish and its metatheory
+% Stuff needed for typesetting lambdaLVish and its metatheory
 \input{../latex_common/lang}
+\input{../latex_common/metatheory}
 
-% Editing marks.
+% For typesetting inference rules
+\usepackage{../latex_common/mathpartir}
+
+% Syntax and semantics of lambdaLVish
+\input{../latex_common/lambdaLVish-definition}
+
+% Editing marks
 \input{../latex_common/editingmarks}
 
 % Other presentational stuff
 \input{../latex_common/style}
 
-%  Use the @ symbol for simple inline code within prose:
+% Use the @ symbol for simple inline code within prose:
 \lstMakeShortInline[]@
 
 \begin{document}
@@ -456,6 +463,14 @@ My dissertation will defend this thesis as follows:
 \end{itemize}
 
 \section{Technical overview}\label{s:technical-overview}
+
+In this section I discuss the key technical aspects of my approach.
+Most of the omitted details can be found in already-published
+work~\cite{LVars-paper, LVars-TR, Freeze-paper, Freeze-TR}.
+
+\FigLambdaLVishGrammar
+
+\FigLambdaLVishSemantics
 
 \lk{TODO.}
 
