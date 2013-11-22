@@ -317,7 +317,7 @@ question in both directions:
   which updates occur cannot be observed, they will prevent
   intermediate states from being observed, ensuring a greater degree
   of consistency at the price of read availability.
-\item Second, I will show how to apply techniques from the CRDT
+\item Second, I will show how to use techniques from the CRDT
   literature to develop LVars that support non-monotonic updates:
   PN-Counters, which can be decremented as well as incremented, and
   OR-Sets, from which elements can be removed as well as added.
@@ -375,9 +375,10 @@ My dissertation will defend this thesis as follows:
 
   \item \emph{distributed programming}: I will defend the claim that
     LVars are applicable to distributed programming by showing how
-    LVar-style threshold reads apply to the setting of conflict-free
-    replicated data types in a system of distributed replicated
-    objects.
+    LVar-style threshold reads apply to the setting of CRDTs, and by
+    showing how techniques for implementing CRDTs that support
+    non-monotonic operations can be used to implement LVars that
+    support non-monotonic operations as well.
 \end{itemize}
 
 \section{Technical overview}\label{s:technical-overview}
@@ -402,9 +403,8 @@ My dissertation will defend this thesis as follows:
 
 In this section, I will discuss the relationship between the LVars
 model I've described and the mathematical framework of
-\emph{conflict-free replicated data types}, which are data structures
-for reasoning about and enforcing the eventual consistency of
-replicated objects in a distributed system.
+\emph{conflict-free replicated data types}, and explain how I will
+leverage this relationship.
 
 \subsection{Replication and eventual consistency}
 
@@ -480,9 +480,23 @@ This notion of application-specific conflict resolution is not without
 its problems, especially if implemented in an ad-hoc
 way.\footnote{Indeed, as noted in the Dynamo article~\cite{dynamo},
   Amazon's shopping cart presents an anomaly whereby an item removed
-  from a cart may re-appear!}
+  from a cart may re-appear!}  Fortunately, we need not implement it
+in an ad-hoc way: \emph{conflict-free replicated data types} (CRDTs)
+give us a simple mathematical framework for reasoning about and
+enforcing the eventual consistency of replicated objects in a
+distributed system.
 
-\lk{TODO: Write about CRDTs.}
+\subsection{Conflict-free replicated data types}
+
+\lk{TODO: Explain CRDTs.}
+
+\subsection{Threshold reads for CRDTs}
+
+\lk{TODO: Explain how threshold reads for CRDTs will work.}
+
+\subsection{Using CRDT techniques for LVars}
+
+\lk{TODO: Explain how using CRDT techniques for LVars will work.}
 
 \section{Related work}\label{s:related}
 
