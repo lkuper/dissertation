@@ -635,8 +635,22 @@ allow asynchronous communication within parallel regions.
 I have already completed substantial work towards my thesis:
 
 \begin{itemize}
-\item \lk{Some stuff about original LVars paper}
-\item \lk{Some stuff about Freeze paper}
+  \item Formally defined a parallel calculus,
+    $\lambda_{\textrm{LVar}}$, based on the basic LVars model (with
+    @put@ and @get@ operations), and implemented it in PLT
+    Redex~\cite{LVars-paper}.
+
+  \item Proved determinism for
+    $\lambda_{\textrm{LVar}}$~\cite{LVars-paper, LVars-TR}.
+
+  \item Formally defined the LVish calculus, which extends the basic
+    LVars model with @freeze@ and event handlers, and implemented it
+    in PLT Redex~\cite{Freeze-paper}.
+
+  \item Proved quasi-determinism for the LVish
+    calculus~\cite{Freeze-paper, Freeze-TR}.
+
+  \item Released the LVish Haskell library.
 \end{itemize}
 To complete the thesis, I plan to do the following:
 \begin{itemize}
