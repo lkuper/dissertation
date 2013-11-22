@@ -328,7 +328,47 @@ approach these tasks.
 
 \subsection{The LVish library}
 
-\lk{TODO.}
+To demonstrate the practicality of the LVars programming model, I will
+describe \emph{LVish},\footnote{Available at
+  \url{http://hackage.haskell.org/package/lvish}.} a Haskell library
+for deterministic and quasi-deterministic programming with LVars.  We
+describe the implementation of LVish in Kuper
+\etal~\cite{Freeze-paper}; rather than covering implementation
+internals, I will focus on describing the LVish API through examples
+and case studies.
+
+LVish provides a @Par@ monad for encapsulating parallel computation,
+and enables a notion of lightweight, library-level threads to be
+employed with a custom work-stealing scheduler.\footnote{The
+  \lstinline|Par| monad exposed by LVish generalizes the original
+  \lstinline|Par| monad exposed by the \emph{monad-par} library
+  ({\scriptsize\url{http://hackage.haskell.org/package/monad-par}}),
+  which allowed determinism-preserving communication between threads,
+  but only through IVars, rather than LVars.}  LVar computations run
+inside the @Par@ monad, which is indexed by an \emph{effect level},
+allowing fine-grained specification of the effects that a given
+computation is allowed to perform.  For instance, since @freeze@
+introduces quasi-determinism, a computation marked as deterministic is
+not allowed to use @freeze@.  Thus, the \emph{static type} of an LVish
+computation reflects its determinism or quasi-determinism guarantee.
+Furthermore, if a @freeze@ is guaranteed to be the \emph{last} effect
+that occurs in a computation, then it is impossible for that @freeze@
+to race with a @put@, ruling out the possibility of a run-time
+@put@-after-@freeze@ exception.  Hence a computation in which any
+occurrence of @freeze@ is guaranteed to occur last is deterministic,
+and LVish exposes a @runParThenFreeze@ operation that captures this
+``freeze-last'' idiom.
+
+LVish also provides a variety of lattice-based data structures (\eg,
+sets, maps, graphs) that support concurrent insertion, but not
+deletion, during @Par@ computations.  In addition to those that LVish
+provides, users may implement their own lattice-based data structures,
+and LVish provides tools to facilitate the definition of user-defined
+LVars.  I will describe the proof obligations for data structure
+implementors and give examples of applications that use user-defined
+LVars as well as those that the library provides.
+
+\lk{TODO: say something about case studies}
 
 \section{Thesis statement}\label{s:thesis}
 
