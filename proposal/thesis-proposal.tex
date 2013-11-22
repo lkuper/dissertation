@@ -406,7 +406,18 @@ studies, all of which will make use of handlers and freezing:
   will contrast the LVish implementation with the original sequential
   implementation and give performance results.
 \item Third, I will describe our experience using LVish to parallelize
-  PhyBin~\cite{PhyBin}. \lk{TODO: write about PhyBin}
+  \emph{PhyBin}~\cite{PhyBin}, a bioinformatics application for
+  comparing genealogical histories (phylogenetic trees) that relies
+  heavily on a parallel tree-edit distance algorithm~\cite{hashrf}.
+  In addition to handlers and freezing, the PhyBin application relies
+  on the ability to perform writes that are commutative and
+  inflationary with respect to the lattice, but \emph{not} idempotent
+  (in contrast to the least-upper-bound writes discussed above, which
+  are idempotent).  I will show that these non-idempotent writes,
+  which we call @bump@ operations, preserve determinism as long as
+  programs do not use @put@ and @bump@ on the same LVar, a property
+  which can be statically enforced by the aforementioned effect
+  specification system in LVish.
 \end{itemize}
 
 \section{Thesis statement}\label{s:thesis}
