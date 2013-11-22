@@ -193,21 +193,14 @@ FIFOs with ever-increasing \emph{channel histories}, while in
 IVar-based programming models such as CnC and monad-par, a shared data
 store of single-assignment memory locations grows monotonically.
 Hence \emph{monotonic data structures}---data structures to which
-information is only added and never removed---emerge as a common theme
-of both data-flow and single-assignment models.
-
-Because state modifications that only add information and never
-destroy it can be structured to commute with each other and thereby
-avoid race conditions, it stands to reason that diverse deterministic
-parallel programming models would leverage the principle of
-monotonicity.  Yet there is little in the way of a theory of monotonic
-data structures as a basis for deterministic parallelism.  As a
-result, systems like CnC and monad-par emerge independently, without
-recognition of their common basis.  Moreover, they lack
-\emph{generality}, since in each case, communication is only permitted
-through a single type of shared data structure---FIFO queues in KPNs,
-for instance, or tables of write-once locations in CnC---limiting the
-kinds of algorithms that can be easily or efficiently expressed.
+information is only added and never removed---are a common theme of
+both data-flow and single-assignment models.  Yet systems like CnC and
+monad-par emerge independently, without recognition of their common
+basis.  Moreover, they lack \emph{generality}, since in each case,
+communication is only permitted through a single type of shared data
+structure---FIFO queues in KPNs, for instance, or tables of write-once
+locations in CnC---limiting the kinds of algorithms that can be easily
+or efficiently expressed.
 
 \subsection{LVars: lattice-based monotonic data structures}
 
@@ -248,15 +241,15 @@ parallel execution and schedule nondetermininism.
 \subsection{Quasi-deterministic programming with LVars}
 
 The LVars model described above guarantees determinism and supports an
-unlimited variety of shared data structures (anything viewable as a
-lattice).  However, it is not as general-purpose as one might hope.
-Consider an algorithm for unordered graph traversal.  A typical
-implementation involves a monotonically growing set of ``seen nodes'';
-neighbors of seen nodes are fed back into the set until it reaches a
-fixed point.  Such fixpoint computations are ubiquitous, and would
-seem to be a perfect match for the LVars model due to their use of
-monotonicity.  But they are not expressible using the threshold @get@
-and least-upper-bound @put@ operations described above.
+unlimited variety of shared data structures: anything viewable as a
+lattice.  However, it is not as general-purpose as one might hope.
+Consider, for instance, an algorithm for unordered graph traversal.  A
+typical implementation involves a monotonically growing set of ``seen
+nodes''; neighbors of seen nodes are fed back into the set until it
+reaches a fixed point.  Such fixpoint computations are ubiquitous, and
+would seem to be a perfect match for the LVars model due to their use
+of monotonicity.  But they are not expressible using the threshold
+@get@ and least-upper-bound @put@ operations described above.
 
 The problem is that these computations rely on \emph{negative}
 information about a monotonic data structure, \ie, on the
@@ -299,7 +292,7 @@ computations like the graph traversal described above.
 
 The LVars model I've described is closely related to the mathematical
 framework of \emph{conflict-free replicated data types}
-(CRDTs)~\cite{crdts, crdts-sss2011}, which are data structures for
+(CRDTs)~\cite{crdts}, which are data structures for
 reasoning about and enforcing the \emph{eventual
   consistency}~\cite{vogels-ec} of replicated objects in a distributed
 system.  In particular, \emph{state-based} CRDTs leverage the
@@ -312,9 +305,12 @@ Various data-structure-specific techniques can ensure that
 non-monotonic updates (such as removal of elements from a set) are not
 lost.
 
-In the way that both leverage lattice properties, CRDTs are to
-eventual consistency as LVars are to deterministic parallelism.  I
-will exploit this relationship in both directions:
+Since CRDTs leverage lattice properties to ensure eventual consistency
+in the same way that LVars do so to ensure determinism, a sensible
+next research question is: can we use lessons from the growing
+literature on CRDTs~\cite{crdts, crdts-tr, rdts-popl14} to
+improve the LVars model, and vice versa?  I will approach this
+question in both directions:
 \begin{itemize}
 \item First, I will show how LVar-style threshold reads apply to the
   setting of CRDTs.  Since threshold reads guarantee that the order in
@@ -326,6 +322,9 @@ will exploit this relationship in both directions:
   PN-Counters, which can be decremented as well as incremented, and
   OR-Sets, from which elements can be removed as well as added.
 \end{itemize}
+In Section~\ref{s:crdts} I give additional background on eventual
+consistency and CRDTs and discuss further details of how I plan to
+approach these tasks.
 
 \subsection{The LVish library}
 
