@@ -334,8 +334,8 @@ describe \emph{LVish},\footnote{Available at
 for deterministic and quasi-deterministic programming with LVars.  We
 describe the implementation of LVish in Kuper
 \etal~\cite{Freeze-paper}; rather than covering implementation
-internals, I will focus on describing the LVish API through examples
-and case studies.
+internals in detail, I will focus on describing the LVish API through
+examples and case studies.
 
 LVish provides a @Par@ monad for encapsulating parallel computation,
 and enables a notion of lightweight, library-level threads to be
@@ -343,7 +343,7 @@ employed with a custom work-stealing scheduler.\footnote{The
   \lstinline|Par| monad exposed by LVish generalizes the original
   \lstinline|Par| monad exposed by the \emph{monad-par} library
   ({\scriptsize\url{http://hackage.haskell.org/package/monad-par}}),
-  which allowed determinism-preserving communication between threads,
+  which allowes determinism-preserving communication between threads,
   but only through IVars, rather than LVars.}  LVar computations run
 inside the @Par@ monad, which is indexed by an \emph{effect level},
 allowing fine-grained specification of the effects that a given
@@ -368,7 +368,39 @@ LVars.  I will describe the proof obligations for data structure
 implementors and give examples of applications that use user-defined
 LVars as well as those that the library provides.
 
-\lk{TODO: say something about case studies}
+I will illustrate the LVars programming model through three case
+studies, all of which will make use of handlers and freezing:
+\begin{itemize}
+\item First, I will describe using LVish to implement a parallel,
+  pipelined, breadth-first graph traversal in which a (possibly
+  expensive) function @f@ is mapped over each node in a connected
+  component of a graph.  The idea is that the set of results of
+  applying @f@ to nodes become incrementally available to other
+  computations.  For this case study, I will reimplement the
+  breadth-first traversal algorithm that appears in Kuper and
+  Newton~\cite{LVars-paper}, which I will update in two ways.  First,
+  the original version uses @runParIO@ and a ``consume'' operation
+  that was a precursor to @freeze@, and I will refactor it to use the
+  safer @runParThenFreeze@.  Second, although the original version is
+  pipelined in that it begins \emph{invoking} @f@ on already-found
+  nodes before all the nodes in the component have been traversed, it
+  does not take advantage of this early invocation to do something
+  useful with the early result of @f@; however, it should be
+  straightforward to do so using event handlers.
+\item Second, I will describe our experience using LVish to
+  parallelize a control flow analysis ($k$-CFA) algorithm.  The goal
+  of $k$-CFA is to compute the flow of values to expressions in a
+  program.  The $k$-CFA algorithm proceeds in two phases: first, it
+  explores a graph of \emph{abstract states} of the program; then, it
+  summarizes the results of the first phase.  Using LVish, these two
+  phases can be pipelined in a manner similar to the pipelined
+  breadth-first graph traversal described above; moreover, the
+  original graph exploration phase can be internally parallelized.  I
+  will contrast the LVish implementation with the original sequential
+  implementation and give performance results.
+\item Third, I will describe our experience using LVish to parallelize
+  PhyBin~\cite{PhyBin}. \lk{TODO: write about PhyBin}
+\end{itemize}
 
 \section{Thesis statement}\label{s:thesis}
 
