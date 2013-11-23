@@ -978,15 +978,21 @@ types from the work of Shapiro \etal~\cite{crdts, crdts-tr}.
 
 Informally, a conflict-free replicated data type (CRDT) is a
 replicated data type that satisfies sufficient conditions for
-\emph{strong convergence}, meaning that all correct replicas to which
-the same updates have been delivered have equivalent state.  CRDTs can
-be specified in two ``styles'': \emph{state-based}, also known as
+\emph{strong convergence}, meaning that correct replicas to which the
+same updates have been delivered have equivalent state.\footnote{The
+  ``strong'' in strong convergence distinguishes it from ordinary
+  convegence, in which correct replicas to which the same updates have
+  been delivered \emph{eventually} have equivalent state.  A system
+  might be convergent but not strongly convergent if, for example, it
+  executes an update immediately and then later rolls back the update
+  after discovering that it conflicts with another.}  CRDTs can be
+specified in two ``styles'': \emph{state-based}, also known as
 \emph{convergent} or \emph{operation-based}, also known as
 \emph{commutative}.  CRDTs specified in the convergent style are also
 called ``convergent replicated data types'', abbreviated ``CvRDTs''.
-I focus on the state-based style here because it is closer to the
-LVars model, although state-based specifications can emulate
-operation-based ones, and vice versa.\lk{Explain this better.}
+I begin with the state-based style here because it is closer to the
+LVars model, although, as we will see, state-based specifications can
+emulate operation-based ones, and vice versa.
 
 Shapiro \etal~\cite{crdts, crdts-tr} specify a \emph{state-based
   object} as a tuple $(S, s^0, q, u, m)$, where $S$ is a set of
@@ -1011,11 +1017,13 @@ properties:
 \item $S$ forms a join-semilattice ordered by $\leq$.
 \item The merge method $m$ computes the least upper bound of the two
   states.
-\item State is monotonically non-decreasing across updates: if $u$
-  updates a state $s$ to $s'$, then $s \leq s'$.
+\item State is inflationary across updates: if $u$ updates a state $s$
+  to $s'$, then $s \leq s'$.
 \end{itemize}
-As we can see from this definition, CvRDTs have much in common with
-LVars; but they also have the following differences:
+Shapiro \etal show that a state-based object that meets the criteria
+for a CvRDT is strongly convergent~\cite{crdts}.  As is clear from
+their definition, CvRDTs have much in common with LVars; but they also
+have the following differences:
 \begin{itemize}
 \item In the CvRDT model, there is no notion of threshold reads; the
   query operation $q$ reads the exact contents of its local replica,
@@ -1033,17 +1041,25 @@ LVars; but they also have the following differences:
 These differences, however, suggest several possibilities for
 extending both the LVars and CvRDT models, among them the following:
 \begin{itemize}
-\item \lk{TODO.}
-\item \lk{TODO.}
+\item Add a mechanism for specifying threshold reads to CvRDT
+  specifications---say, by adding a $t$ operation to the
+  specification.  Threshold reads will guarantee that the order in
+  which information is added to a CRDT cannot be observed, ensuring a
+  greater degree of consistency at the price of read availability.  My
+  hypothesis is that, for a CvRDT where \emph{all} reads are threshold
+  reads made via the $t$ operation, we can guarantee something more
+  than strong convergence, and additionally guarantee that all reads
+  will be consistent.  In practice, a combination of threshold reads
+  and regular reads may make the most sense.
+\item Extend the LVars model to allow non-lub update operations, that
+  is, update operations other than @put@.  In fact, the @bump@
+  operation discussed in Section~\ref{ss:lvish}---which is already
+  part of the LVish library, but not yet formalized in
+  $\lambdaLVish$---is one such non-lub update operation.
 \end{itemize}
-
-\subsection{Threshold reads for CRDTs}
-
-\lk{TODO: Explain how threshold reads for CRDTs will work.}
-
-\subsection{Using CRDT techniques for LVars}
-
-\lk{TODO: Explain how using CRDT techniques for LVars will work.}
+But there is also another interesting possibility.  As I mentioned
+above,
+\lk{TODO: finish this up.}
 
 \section{Related work}\label{s:related}
 
