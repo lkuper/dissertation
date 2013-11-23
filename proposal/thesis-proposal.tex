@@ -86,14 +86,15 @@
   existing single-assignment models to allow multiple assignments that
   are monotonically increasing with respect to an application-specific
   lattice.  They ensure determinism by allowing only monotonic writes
-  and ``threshold'' reads that block until a lower bound is reached
-  and do not allow the order of writes to be observed.  After
+  and ``threshold'' reads that block until a lower bound is reached,
+  preventing the order of writes from being observed.  After
   presenting the basic LVars model and showing that it is
-  deterministic, I will show how to extend it to allow non-blocking
-  ``freezing'' reads, resulting in a \emph{quasi-deterministic} model
-  in which programs are guaranteed to behave deterministically modulo
-  exceptions, and \emph{event handlers}, which make it easier to
-  express fixpoint computations with LVars.
+  deterministic, I will show how to extend it in two ways: first, to
+  allow non-blocking ``freezing'' reads, resulting in a
+  \emph{quasi-deterministic} model in which programs are guaranteed to
+  behave deterministically modulo exceptions, and second, to allow
+  \emph{event handlers}, which make it easier to express fixpoint
+  computations with LVars, especially in conjunction with freezing.
 
   Next, I will investigate the relationship between LVars and
   \emph{conflict-free replicated data types} (CRDTs), which are data
@@ -143,7 +144,8 @@ in this proposal will be to allow tasks to be scheduled dynamically
 and unpredictably, but without allowing such \emph{schedule
   nondeterminism} to affect the outcome of a program.  Therefore, in
 this proposal we define the observable behavior of a program to be the
-value to which the program evaluates.
+value to which the program evaluates.\footnote{We assume that programs
+  have no side effects other than state.}
 
 \subsection{Existing approaches to determinism by construction}
 
@@ -170,7 +172,7 @@ However, some algorithms are more naturally or efficiently written
 using shared state or message passing, and hence the development of
 deterministic parallel programming models that allow \emph{limited}
 sharing of mutable state.  Consider two classic deterministic parallel
-programming models, dating back to the late 60s and early 70s:
+programming models, dating back to the late 1960s and early 1970s:
 \begin{itemize}
 \item In \emph{Kahn process networks} (KPNs)~\cite{Kahn-1974}, as well
   as in the more restricted \emph{synchronous data flow}
@@ -184,7 +186,7 @@ programming models, dating back to the late 60s and early 70s:
 \item In parallel \emph{single-assignment} languages, ``full/empty''
   bits are associated with memory locations so that they may be
   written to at most once. Single-assignment locations with blocking
-  read semantics are known as \emph{IVars}~\emph{IStructures} and are
+  read semantics are known as \emph{IVars}~\cite{IStructures} and are
   a well-established mechanism for enforcing determinism in parallel
   settings: they have appeared in Concurrent ML as
   @SyncVar@s~\cite{reppy-cml-book}; in the Intel Concurrent
@@ -194,11 +196,11 @@ programming models, dating back to the late 60s and early 70s:
   programming environments, the \emph{monad-par} Haskell
   library~\cite{monad-par} uses IVars in a
   deterministic-by-construction setting, allowing user-created threads
-  to communicate through IVars without requiring @IO@.  Operations
-  that read and write IVars can only run inside a @Par@ monad, thus
-  encapsulating them inside otherwise pure programs, and hence a
-  program in which the only effects are @Par@ effects is guaranteed to
-  be deterministic.
+  to communicate through IVars without requiring the @IO@ monad.
+  Operations that read and write IVars can only run inside a @Par@
+  monad, thus encapsulating them inside otherwise pure programs, and
+  hence a program in which the only effects are @Par@ effects is
+  guaranteed to be deterministic.
 \end{itemize}
 In KPNs and other data-flow models, communication takes place over
 FIFOs with ever-increasing \emph{channel histories}, while in
@@ -299,7 +301,7 @@ computations possible:
 \end{itemize}
 I will explain freezing and handlers in detail and show how, together,
 they enable an expressive and useful style of parallel programming
-that makes posible fixpoint computations like the graph traversal
+that makes possible fixpoint computations like the graph traversal
 described above.  Furthermore, I will show how at the implementation
 level, it is possible to recover determinism for a computation that
 uses freezing by ensuring that the freeze happens \emph{after} all
@@ -374,7 +376,7 @@ to race with a @put@, ruling out the possibility of a run-time
 @put@-after-@freeze@ exception.  Hence a computation in which any
 occurrence of @freeze@ is guaranteed to occur last is deterministic,
 and LVish exposes a @runParThenFreeze@ operation that captures this
-``freeze-last'' idiom.
+``freeze-last'' idiom and has a deterministic effect level.
 
 LVish also provides a variety of lattice-based data structures (\eg,
 sets, maps, graphs) that support concurrent insertion, but not
@@ -385,8 +387,9 @@ LVars.  I will describe the proof obligations for data structure
 implementors and give examples of applications that use user-defined
 LVars as well as those that the library provides.
 
-I will illustrate LVish through three case studies, all of which will
-make use of handlers and freezing:
+I will illustrate LVish through three case studies, drawn from my
+collaborators' and my experience using the LVish library, all of which
+will make use of handlers and freezing:
 \begin{itemize}
 \item First, I will describe using LVish to implement a parallel,
   pipelined, breadth-first graph traversal in which a (possibly
@@ -404,18 +407,18 @@ make use of handlers and freezing:
   does not take advantage of this early invocation to do something
   useful with the early result of @f@; however, it should be
   straightforward to do so using event handlers.
-\item Second, I will describe our experience using LVish to
-  parallelize a control flow analysis ($k$-CFA) algorithm.  The goal
-  of $k$-CFA is to compute the flow of values to expressions in a
-  program.  The $k$-CFA algorithm proceeds in two phases: first, it
-  explores a graph of \emph{abstract states} of the program; then, it
-  summarizes the results of the first phase.  Using LVish, these two
-  phases can be pipelined in a manner similar to the pipelined
-  breadth-first graph traversal described above; moreover, the
-  original graph exploration phase can be internally parallelized.  I
-  will contrast the LVish implementation with the original sequential
-  implementation and give performance results.
-\item Third, I will describe our experience using LVish to parallelize
+\item Second, I will describe using LVish to parallelize a control
+  flow analysis ($k$-CFA) algorithm.  The goal of $k$-CFA is to
+  compute the flow of values to expressions in a program.  The $k$-CFA
+  algorithm proceeds in two phases: first, it explores a graph of
+  \emph{abstract states} of the program; then, it summarizes the
+  results of the first phase.  Using LVish, these two phases can be
+  pipelined in a manner similar to the pipelined breadth-first graph
+  traversal described above; moreover, the original graph exploration
+  phase can be internally parallelized.  I will contrast the LVish
+  implementation with the original sequential implementation and give
+  performance results.
+\item Third, I will describe using LVish to parallelize
   \emph{PhyBin}~\cite{PhyBin}, a bioinformatics application for
   comparing genealogical histories (phylogenetic trees) that relies
   heavily on a parallel tree-edit distance algorithm~\cite{hashrf}.
@@ -509,7 +512,7 @@ work~\cite{LVars-paper, LVars-TR, Freeze-paper, Freeze-TR}.
 The application-specific lattice is given as a 4-tuple $(D, \userleq,
 \bot, \top)$ where $D$ is a set, $\userleq$ is a partial order on the
 elements of $D$, $\bot$ is the least element of $D$ according to
-$\userleq$ and $\top$ is the greatest.  The $\bot$ element represents
+$\userleq$, and $\top$ is the greatest.  The $\bot$ element represents
 the initial ``empty'' state of every LVar, while $\top$ represents the
 ``error'' state that would result from conflicting updates to an LVar.
 The partial order $\userleq$ represents the order in which an LVar may
@@ -571,8 +574,8 @@ element of the application-specific set $D$ and $\status$ is a
 ``status bit'' of either $\frozentrue$ or $\frozenfalse$.  We can
 define an ordering $\leqp$ on LVar states $\state{d}{\status}$ in
 terms of the application-specific ordering $\userleq$ on elements of
-$D$.  Every element of $D$ is ``freezable'' except $\top$.
-Informally:
+$D$.  Every element of $D$ except $\top$ corresponds to a value at
+which the LVar is ``freezable''.  Informally:
 \begin{itemize}
 \item Two unfrozen states are ordered according to the
   application-specific $\userleq$; that is, $\state{d}{\frozenfalse}
@@ -748,12 +751,12 @@ possible to use LVars to safely read parts of an incomplete data
 structure---say, an object that is in the process of being initialized
 by a constructor.
 
-\subsection{Semantics of freezing and event handlers}
+\subsection{Semantics of freezing and event handling}
 
 The $\lambdaLVish$ calculus includes a simple form of @freeze@ that
 immediately freezes an LVar (see {\sc E-Freeze-Simple}).  More
 interesting is the $\FAW$ primitive, which models the use of freezing
-together with event handlers.  The expression $\freezeafter{e_{\rm
+together with event handling.  The expression $\freezeafter{e_{\rm
     lv}}{e_{\rm events}}{e_{\rm cb}}$ has the following semantics:
 \begin{itemize}
 \item It attaches the callback $e_{\rm cb}$ to the LVar $e_{\rm lv}$.
@@ -903,8 +906,8 @@ while it would be convenient if a system of distributed, replicated
 objects behaved indistinguishably from the more familiar programming
 model in which all data is on one machine and and all computation
 takes place there, this is not the case.  The well-known \emph{CAP
-  theorem}~\cite{gilbert-lynch-cap} of distributed computing imposes a
-three-way tradeoff between:
+  theorem}~\cite{gilbert-lynch-cap} of distributed computing describes
+a three-way tradeoff between:
 \begin{itemize}
 \item Consistency, in which every replica sees the same information;
 \item Availablility, in which all information is available for both
@@ -1129,13 +1132,13 @@ nondeterminism.
 
 Prokopec \etal~\cite{flowpools} recently proposed a data structure
 with an API closely related to LVars extended with freezing and
-handlers: a FlowPool is a bag that allows concurrent insertions but
-forbids removals, a @seal@ operation that forbids further updates,
-and combinators like @foreach@ that invoke callbacks as data
-arrives in the pool.  To retain determinism, the @seal@ operation
-requires explicitly passing the expected bag \emph{size} as an
-argument, and the program will raise an exception if the bag goes over
-the expected size.
+handlers: a FlowPool is a bag (that is, a multiset) that allows
+concurrent insertions but forbids removals, a @seal@ operation that
+forbids further updates, and combinators like @foreach@ that invoke
+callbacks as data arrives in the pool.  To retain determinism, the
+@seal@ operation requires explicitly passing the expected bag
+\emph{size} as an argument, and the program will raise an exception if
+the bag goes over the expected size.
 
 While this interface has a flavor similar to that of LVars, it lacks
 the ability to detect quiescence, which is crucial for expressing
@@ -1226,7 +1229,7 @@ work towards my thesis:
     proved quasi-determinism for it~\cite{Freeze-paper, Freeze-TR}.
 
   \item Implemented and released the LVish Haskell library based on
-    the formalism~\cite{Freeze-paper}.
+    the formal LVars model~\cite{Freeze-paper}.
 \end{itemize}
 To complete the thesis, I plan to do the following:
 \begin{itemize}
