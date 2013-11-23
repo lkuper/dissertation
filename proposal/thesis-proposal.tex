@@ -968,14 +968,74 @@ its problems, especially if implemented in an ad-hoc
 way.\footnote{Indeed, as noted in the Dynamo article~\cite{dynamo},
   Amazon's shopping cart presents an anomaly whereby an item removed
   from a cart may re-appear!}  Fortunately, we need not implement it
-in an ad-hoc way: \emph{conflict-free replicated data types} (CRDTs)
-give us a simple mathematical framework for reasoning about and
-enforcing the eventual consistency of replicated objects in a
-distributed system.
+in an ad-hoc way: \emph{conflict-free replicated data types} give us a
+simple mathematical framework for reasoning about and enforcing the
+eventual consistency of replicated objects in a distributed system.
+Next, I review some of the basics of conflict-free replicated data
+types from the work of Shapiro \etal~\cite{crdts, crdts-tr}.
 
 \subsection{Conflict-free replicated data types}
 
-\lk{TODO: Explain CRDTs.}
+Informally, a conflict-free replicated data type (CRDT) is a
+replicated data type that satisfies sufficient conditions for
+\emph{strong convergence}, meaning that all correct replicas to which
+the same updates have been delivered have equivalent state.  CRDTs can
+be specified in two ``styles'': \emph{state-based}, also known as
+\emph{convergent} or \emph{operation-based}, also known as
+\emph{commutative}.  CRDTs specified in the convergent style are also
+called ``convergent replicated data types'', abbreviated ``CvRDTs''.
+I focus on the state-based style here because it is closer to the
+LVars model, although state-based specifications can emulate
+operation-based ones, and vice versa.\lk{Explain this better.}
+
+Shapiro \etal~\cite{crdts, crdts-tr} specify a \emph{state-based
+  object} as a tuple $(S, s^0, q, u, m)$, where $S$ is a set of
+states, $s^0$ is the initial state, $q$ is the \emph{query method},
+$u$ is the \emph{update method}, and $m$ is the \emph{merge method}.
+Objects are replicated across some finite number of processes, with
+one replica at each process.  We assume that each replica begins in
+the initial state $s^0$.  Over time, replicas may be queried via the
+method $q$; more interestingly for our purposes, they may be updated
+via the update method $u$.  Methods execute at a single replica, but
+the merge method $m$ can merge the state from a remote replica with
+the local replica; we assume that every replica
+regularly\footnote{``Infinitely often'', according to Shapiro \etal}
+sends its local state to some other replica, and that eventually every
+update reaches every replica, whether directly or indirectly.
+
+A \emph{state-based} or \emph{convergent} replicated data type
+(CvRDT), then, is a state-based object equipped with a partial order
+$\leq$, written $(S, \leq, s^0, q, u, m)$, that has the following
+properties:
+\begin{itemize}
+\item $S$ forms a join-semilattice ordered by $\leq$.
+\item The merge method $m$ computes the least upper bound of the two
+  states.
+\item State is monotonically non-decreasing across updates: if $u$
+  updates a state $s$ to $s'$, then $s \leq s'$.
+\end{itemize}
+As we can see from this definition, CvRDTs have much in common with
+LVars; but they also have the following differences:
+\begin{itemize}
+\item In the CvRDT model, there is no notion of threshold reads; the
+  query operation $q$ reads the exact contents of its local replica,
+  and therefore different replicas may see different states of the
+  same value at different times, if not all updates have been
+  propagated yet.
+\item In the LVars model, there is no ``update'' operation that is
+  distinct from ``merge''---since LVar @put@s compute the least upper
+  bound of the old and new values, an LVar update is the equivalent of
+  a CvRDT merge operation.
+\item In the LVars model, we do not have to contend with replication!
+  The LVars model is a shared-memory model, and when an LVar is
+  updated, all reading threads immediately see the update.
+\end{itemize}
+These differences, however, suggest several possibilities for
+extending both the LVars and CvRDT models, among them the following:
+\begin{itemize}
+\item \lk{TODO.}
+\item \lk{TODO.}
+\end{itemize}
 
 \subsection{Threshold reads for CRDTs}
 
