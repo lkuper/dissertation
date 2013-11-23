@@ -1,0 +1,146 @@
+\newcommand{\DefStability}{
+  \begin{definition}[Stable Configurations]
+    A configuration $\config{S}{e}$ is \emph{stable} if the free locations of $e$ are a subset of $\dom{S}$. 
+  \end{definition}
+}
+
+
+
+
+\newcommand{\DefLatticeFreezing}{
+\begin{definition}[Lattice freezing]\label{def:lattice-freezing}
+Suppose $(D, \userleq, \bot, \top)$ is a lattice.  We define an
+operation $\Freeze{D, \userleq, \bot, \top} \defeq (D_p, \leqp, \botp,
+\topp)$ as follows: {\small
+\begin{enumerate}
+\item $D_p$ is a set defined as follows:
+\begin{equation*}
+\begin{split}
+  D_p  \defeq & \setof{ \state{d}{\status} \sep d \in (D - \setof{\top}) \land \status
+    \in \setof{\frozentrue, \frozenfalse} } \\
+  & \cup \setof{(\top, \frozenfalse)}
+\end{split}
+\end{equation*}
+
+\item $\leqp \;\in\, \power{D_p \times D_p}$ is a binary relation
+  defined as follows:
+\begin{displaymath}
+  \begin{array}{lclcl}
+    \state{d}{\frozenfalse} & \leqp & \state{d'}{\frozenfalse} & \iff & d \userleq d' \\ 
+    \state{d}{\frozentrue} & \leqp & \state{d'}{\frozentrue} & \iff & d = d' \\
+    \state{d}{\frozenfalse} & \leqp & \state{d'}{\frozentrue}  & \iff & d \userleq d' \\
+    \state{d}{\frozentrue} & \leqp & \state{d'}{\frozenfalse}  & \iff & d' = \top 
+  \end{array}
+\end{displaymath}
+
+\item $\botp \defeq \state{\bot}{\frozenfalse}$.
+
+\item $\topp \defeq \state{\top}{\frozenfalse}$.
+\end{enumerate}
+}%
+\end{definition}
+}
+
+\newcommand{\DefLubP}{
+\begin{definition}\label{def:lubp}
+We define a binary operator $\lubp{}{} \in D_p \times D_p \to D_p$ as
+follows:{\small
+  \begin{displaymath}
+    \begin{array}{lcl}
+      \lubp{\state{d_1}{\frozenfalse}}{\state{d_2}{\frozenfalse}} & = & \state{\userlub{d_1}{d_2}}{\frozenfalse} \\ 
+      \lubp{\state{d_1}{\frozentrue}}{\state{d_2}{\frozentrue}} & = & \left\{
+                                       \begin{array}{ll}
+                                         \state{d_1}{\frozentrue} & \mbox{if } d_1 = d_2 \\ 
+                                         \state{\top}{\frozenfalse} & \mbox{otherwise}
+                                       \end{array}
+                                     \right. \\
+      \lubp{\state{d_1}{\frozenfalse}}{\state{d_2}{\frozentrue}}    & = & \left\{
+                                       \begin{array}{ll}
+                                         \state{d_2}{\frozentrue} & \mbox{if } d_1 \userleq d_2 \\ 
+                                         \state{\top}{\frozenfalse} & \mbox{otherwise}
+                                       \end{array}
+                                     \right. \\
+      \lubp{\state{d_1}{\frozentrue}}{\state{d_2}{\frozenfalse}}    & = & \left\{
+                                       \begin{array}{ll}
+                                         \state{d_1}{\frozentrue} & \mbox{if } d_2 \userleq d_1 \\ 
+                                         \state{\top}{\frozenfalse} & \mbox{otherwise}
+                                       \end{array}
+                                     \right. \\
+    \end{array}
+  \end{displaymath}}
+\end{definition}
+}
+
+
+\newcommand{\DefStore}{
+\begin{definition}\label{def:store}
+A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
+- \setof{\topp})$, or the distinguished element $\topS$.
+\end{definition}
+}
+
+\newcommand{\DefEqStore}{
+\begin{definition}\label{def:eqstore}
+  Two stores $S$ and $S'$ are \emph{equal} iff:
+  \begin{enumerate}
+    \item $S = \topS$ and $S' = \topS$, or
+    \item $\dom{S} = \dom{S'}$ and for all $l \in \dom{S}$, $S(l) =
+      S'(l)$.
+  \end{enumerate}
+\end{definition}
+}
+
+\newcommand{\DefLeqStore}{
+\begin{definition}\label{def:leqstore}
+  A store $S$ is \emph{less than or equal to} a store $S'$ (written
+  $\leqstore{S}{S'}$) iff:
+  \begin{itemize}
+  \item $S' = \topS$, or
+  \item $\dom{S} \subseteq \dom{S'}$ and for all $l
+    \in \dom{S}$, $S(l) \leqp S'(l)$.
+  \end{itemize}
+\end{definition}
+}
+
+\newcommand{\DefLubStore}{
+\begin{definition}\label{def:lubstore}
+
+  The \emph{least upper bound (lub)} of two stores $S_1$ and $S_2$ (written
+  $\lubstore{S_1}{S_2}$) is defined as follows:
+{\small  
+  \begin{itemize}
+  \item $\lubstore{S_1}{S_2} = \topS$ iff $S_1 = \topS$ or $S_2 = \topS$.
+  \item $\lubstore{S_1}{S_2} = \topS$ iff there exists some $l \in
+    \dom{S_1} \cap \dom{S_2}$ such that $\lubp{S_1(l)}{S_2(l)} = \topp$.
+  \item Otherwise, $\lubstore{S_1}{S_2}$ is the store $S$ such that:
+
+  \begin{itemize}
+  \item $\dom{S} = \dom{S_1} \cup \dom{S_2}$, and
+  \item For all $l \in \dom{S}$:
+  \end{itemize}
+    \begin{displaymath}
+      S(l) = \left\{ \begin{array}{ll}
+        \lubp{S_1(l)}{S_2(l)} & \textrm{if $l \in \dom{S_1} \cap \dom{S_2}$} \\
+        S_1(l) & \textrm{if $l \notin \dom{S_2}$} \\
+        S_2(l) & \textrm{if $l \notin \dom{S_1}$}
+        \end{array} \right.
+    \end{displaymath}
+  \end{itemize}}
+\end{definition}
+}
+
+\newcommand{\DefEqualStatus}{
+\begin{definition}\label{def:equal-status}
+  Two stores $S$ and $S'$ are \emph{equal in status}
+  (written $S \statuseq S'$) iff for all $l \in (\dom{S} \cap \dom{S'})$, \\
+  if $S(l) = \state{d}{\status}$ and $S'(l) = \state{d'}{\status'}$, then $\status = \status'$.
+\end{definition}
+}
+
+\newcommand{\DefNonConflicting}{
+\begin{definition}\label{def:non-conflicting}
+  A store $S''$ is \emph{non-conflicting} with the transition
+  $\config{S}{e} \parstepsto \config{S'}{e'}$ iff $(\dom{S'} -
+  \dom{S}) \cap \dom{S''} = \emptyset$.
+\end{definition}
+}

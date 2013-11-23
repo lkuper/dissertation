@@ -12,12 +12,17 @@
 % Stuff needed for typesetting lambdaLVish and its metatheory
 \input{../latex_common/lang}
 \input{../latex_common/metatheory}
+\input{../latex_common/theoremstyle}
 
 % For typesetting inference rules
 \usepackage{../latex_common/mathpartir}
 
 % Syntax and semantics of lambdaLVish
 \input{../latex_common/lambdaLVish-definition}
+
+% Definitions, lemmas, theorems
+\input{../latex_common/lambdaLVish-defs}
+\input{../latex_common/lambdaLVish-thms}
 
 % Editing marks
 \input{../latex_common/editingmarks}
@@ -824,7 +829,66 @@ that does so, and thereby guarantees full determinism.
 
 \subsection{Quasi-determinism proof outline}
 
-\lk{TODO.}
+The proof of quasi-determinism for $\lambdaLVish$ formalizes the claim
+in Section~\ref{s:intro} that, for a given program, although some
+executions may raise exceptions, all executions that produce a final
+result will produce the same final result.  In this section, I give
+the statements of the main quasi-determinism theorem and the two most
+important supporting lemmas.  The statements of the remaining lemmas,
+and proofs of all our theorems and lemmas, are included in our
+technical report \cite{Freeze-TR}.
+
+The main result, Theorem~\ref{thm:quasi-determinism}, says that if two
+executions starting from a configuration $\conf$ terminate in
+configurations $\conf'$ and $\conf''$, then $\conf'$ and $\conf''$ are
+the same configuration, or one of them is $\error$.
+
+\ThmQuasiDeterminism
+
+\noindent Theorem~\ref{thm:quasi-determinism} follows from a series of
+\emph{quasi-confluence} lemmas.  The most important of these, Strong
+Local Quasi-Confluence
+(Lemma~\ref{lem:strong-local-quasi-confluence}), says that if a
+configuration steps to two different configurations, then either there
+exists a single third configuration to which they both step (in at
+most one step), or one of them steps to $\error$.  Additional lemmas
+generalize Lemma~\ref{lem:strong-local-quasi-confluence}'s result to
+multiple steps by induction on the number of steps, eventually
+building up to Theorem~\ref{thm:quasi-determinism}.
+
+\LemStrongLocalQuasiConfluence
+
+\noindent In order to show
+Lemma~\ref{lem:strong-local-quasi-confluence}, we need a ``frame
+property'' for $\lambdaLVish$ that captures the idea that independent
+effects commute with each other.  Lemma~\ref{lem:independence}, the
+Independence lemma, establishes this property.  Consider an expression
+$e$ that runs starting in store $S$ and steps to $e'$, updating the
+store to $S'$.  The Independence lemma allows us to make a
+double-edged guarantee about what will happen if we run $e$ starting
+from a larger store $\lubstore{S}{S''}$: first, it will update the
+store to $\lubstore{S'}{S''}$; second, it will step to $e'$ as it did
+before.  Here $\lubstore{S}{S''}$ is the least upper bound of the
+original $S$ and some other store $S''$ that is ``framed on'' to $S$;
+intuitively, $S''$ is the store resulting from some other
+independently-running computation.
+
+\LemIndependence
+
+\noindent Lemma~\ref{lem:independence} requires as a precondition that
+the stores $\lubstore{S'}{S''}$ and $S$ are \emph{equal in
+  status}---that, for all the locations shared between them, the
+status bits of those locations agree.  This assumption rules out
+interference from freezing.  Finally, the store $S''$ must be
+\emph{non-conflicting} with the original transition from
+$\config{S}{e}$ to $\config{S'}{e'}$, meaning that locations in $S''$
+cannot share names with locations newly allocated during the
+transition; this rules out location name conflicts caused by
+allocation.
+
+\DefEqualStatus
+
+\DefNonConflicting
 
 \section{Joining forces: LVars and conflict-free replicated data types}\label{s:crdts}
 

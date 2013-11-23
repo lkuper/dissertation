@@ -1,0 +1,258 @@
+\newcommand{\LemPartitionOfDp}{
+\begin{lem}[Partition of $D_p$]\label{lem:partition-of-Dp}
+Suppose $(D, \userleq, \bot, \top)$ is a lattice, and that $(D_p,
+\leqp, \botp, \topp) = \Freeze{D, \userleq, \bot, \top}$, and let $X =
+D - \setof{\top}$.  Then every member of $D_p$ is either
+\begin{itemize}
+  \item $(d, \textup{\frozenfalse})$, with $d \in D$, or
+  \item $(x, \textup{\frozentrue})$, with $x \in X$.
+\end{itemize}
+\end{lem}
+\begin{proof}
+  Immediate from Definition~\ref{def:lattice-freezing}.
+\end{proof}
+}
+
+\newcommand{\LemLatticeStructureConcise}{
+\begin{lem}[Lattice structure]\label{lem:lattice-structure-concise}
+If $(D, \userleq, \bot, \top)$ is a lattice then $\Freeze{D, \userleq,
+  \bot, \top}$ is as well.
+\end{lem}
+}
+\newcommand{\LemLatticeStructure}{
+\begin{lem}[Lattice structure]\label{lem:lattice-structure}
+
+(This lemma is a more detailed version of
+  Lemma~\ref{lem:lattice-structure-concise} from the main text of the
+  paper.)
+
+Suppose that $(D, \userleq, \bot, \top)$ is a lattice, and that $(D_p,
+\leqp, \botp, \topp) = \Freeze{D, \userleq, \bot, \top}$. Then:
+
+\begin{enumerate}
+  \item $\leqp$ is a partial order over $D_p$.
+   
+  \item Every nonempty finite subset of $D_p$ has a least upper bound.
+
+  \item $\botp$ is the least element of $D_p$.
+
+  \item $\topp$ is the greatest element of $D_p$.
+\end{enumerate}
+
+Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
+\end{lem}
+}
+
+\newcommand{\LemMonotonicity}{
+\begin{lem}[Monotonicity]\label{lem:monotonicity}
+  If $\config{S}{e} \parstepsto \config{S'}{e'}$,
+  then $\leqstore{S}{S'}$.
+\end{lem}
+}
+
+\newcommand{\LemDecompositionPreservation}{
+\begin{lem}[Decomposition Preservation]\label{lem:decomposition-preservation}
+Suppose $e = E_0[e_0]$ and $e = E_1[e_1]$, where $E_0$ and $E_1$ are
+distinct evaluation contexts and $e_0$ and $e_1$ are redexes. Then,
+for all $e'_0$, there exists an evaluation context $E'_1$ such that
+$E_0[e'_0] = E'_1[e_1]$.
+\end{lem}
+}
+
+\newcommand{\LemAlwaysCrash}{
+\begin{lem}[Always Crash]\label{lem:always-crash}
+Suppose $\config{S}{e} \parstepsto \error$. Then if $\config{S}{e}$ goes to a halting state,
+then that state will be $\error$. 
+\end{lem}
+}
+
+\newcommand{\LemErrorPreservation}{
+\begin{lem}[Error Preservation]\label{lem:error-preservation}
+  If $\config{S}{e} \parstepsto \textup{\error}$ and
+  $\leqstore{S}{S'}$, then $\config{S'}{e} \parstepsto
+  \textup{\error}$.
+\end{lem}
+}
+
+
+
+\newcommand{\LemRenaming}{
+  \begin{lem}[Renaming]\label{lem:renaming}
+    If $\pi$ is a permutation and $\sigma \parstepsto \sigma'$, then 
+    $\pi(\sigma) \parstepsto \pi(\sigma')$.    
+  \end{lem}
+}
+
+\newcommand{\LemStabilityPreservation}{
+  \begin{lem}[Stability Preservation]\label{lem:stability-preservation}
+    If $\conf$ is stable and $\conf \parstepsto \conf'$, then $\conf'$ is stable.    
+  \end{lem}
+}
+
+
+\newcommand{\LemIndependence}{
+\begin{lem}[Independence]\label{lem:independence}
+  If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
+  $\config{S'}{e'} \neq \textup{\error}$), then we have that:
+   
+  $\config{\lubstore{S}{S''}}{e} \parstepsto \config{\lubstore{S'}{S''}}{e'}$,
+
+  where $S''$ is any store meeting the following conditions:
+  \begin{itemize}
+    \item $S''$ is non-conflicting with $\config{S}{e} \parstepsto \config{S'}{e'}$,
+    \item $\lubstore{S'}{S''} \statuseq S$, and
+    \item$\lubstore{S'}{S''} \neq \topS$.
+  \end{itemize}
+\end{lem}
+}
+
+\newcommand{\LemClash}{
+\begin{lem}[Clash]\label{lem:clash}
+  If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
+  $\config{S'}{e'} \neq \textup{\error}$), then:
+
+  $\config{\lubstore{S}{S''}}{e} \parstepsto^i \textup{\error}$, where
+  $i \leq 1$,
+
+  where $S''$ is any store meeting the following conditions:
+  \begin{itemize}
+    \item $S''$ is non-conflicting with $\config{S}{e} \parstepsto \config{S'}{e'}$,
+    \item $\lubstore{S'}{S''} \statuseq S$, and
+    \item$\lubstore{S'}{S''} = \topS$.
+  \end{itemize}
+
+  \lk{This lemma *may* not actually need the $\lubstore{S'}{S''}
+    \statuseq S$ assumption.  Still to be determined.}
+\end{lem}
+}
+
+\newcommand{\FrameRenaming}{
+\begin{lem}[Frame Renaming]\label{lem:frame-renaming}
+  If $\config{S}{e} \parstepsto \config{S'}{e'}$ and $\lubstore{S'}{S''}
+  \neq \topS$, then:
+
+  There is a permutation $\pi$ such that:
+  \begin{enumerate}
+  \item $\pi(S) = S$,
+  \item $\pi(S'')$ is non-conflicting with $\config{S}{e} \parstepsto \config{S'}{e'}$, and
+  \item $\lubstore{\pi(S'')}{S'} \neq \topS$.
+  \end{enumerate}
+\end{lem}
+}
+
+\newcommand{\LemReordering}{
+\begin{lem}[Reordering]\label{lem:reordering}
+If  $\config{S}{e_a} \parstepsto \config{S_a}{e'_a}$
+and $\config{S}{e_b} \parstepsto \config{S_b}{e'_b}$,
+then either 
+  \begin{itemize} 
+  \item There exists $S'$ and permutations $\pi_a$ and $\pi_b$ such that $\pi_a(S) = \pi_b(S) = S$ and 
+    \begin{enumerate}
+    \item $\config{\pi_b(S_b)}{e_a} \parstepsto \config{S'}{\pi_a(e'_a)}$ and
+    \item $\config{\pi_a(S_a)}{e_b} \parstepsto \config{S'}{\pi_b(e'_b)}$ and
+    \item $\pi_b(\pi_a(e'_a)) = \pi_a(e'_a)$ and $\pi_a(\pi_b(e'_b)) = \pi_b(e'_b)$,
+    \end{enumerate}
+    or
+  \item $\config{S_b}{e_a} \parstepsto \textup{\error}$ or
+    $\config{S_a}{e_b} \parstepsto \textup{\error}$.
+  \end{itemize}
+\end{lem}
+}
+
+\newcommand{\LemCtxExtension}{
+  \begin{lem}[Context Extension]\label{lem:ctx-extension}
+    If $\config{S}{e} \parstepsto \config{S'}{e'}$, then $\config{S}{E[e]} \parstepsto \config{S'}{E[e']}$. 
+  \end{lem}
+}
+
+\newcommand{\LemCtxReordering}{
+  \begin{lem}[Contextual Reordering]\label{lem:ctx-reordering}
+    If $\conf \equiv \config{S}{e} \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$ using the {\sc E-Eval-Ctxt} rules,
+    then either 
+    \begin{itemize}
+    \item there exists $\pi_a$ and $\pi_b$ such that $\pi_a(S) = \pi_b(S) = S$ and $\conf'$ such that $\pi_a(\conf_a) \parstepsto \conf'$ and $\pi_b(\conf_b) \parstepsto \conf'$, or 
+    \item $\conf_a \parstepsto \textup{\error}$ or $\conf_b \parstepsto \textup{\error}$.
+    \end{itemize}
+  \end{lem}
+}
+
+\newcommand{\LemStrongLocalQuasiDiamond}{
+\begin{lem}[Strong Local Quasi-Diamond]\label{lem:strong-local-quasi-diamond}
+  If $\conf \equiv \config{S}{e} \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$, then
+  either:
+  \begin{enumerate}
+  \item there exist $i,j, \pi_a$, $\pi_b$ and $\conf_c$ such that $\pi_a(S) = \pi_b(S) = S$ and  $\pi_a(\conf_a) \parstepsto^i
+    \conf_c$ and $\pi_b(\conf_b) \parstepsto^j \conf_c$  and $i \leq 1$ and $j \leq 1$, or
+  \item $\conf_a \parstepsto \textup{\error}$ or $\conf_b
+    \parstepsto \textup{\error}$.
+  \end{enumerate}
+\end{lem}
+}
+
+
+\newcommand{\LemStrongLocalQuasiConfluence}{
+\begin{lem}[Strong Local Quasi-Confluence]\label{lem:strong-local-quasi-confluence}
+  If $\conf \equiv \config{S}{e} \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$, then
+  either:
+  \begin{enumerate}
+  \item there exist $\pi, i,j$ and $\conf_c$ such that  $\conf_a \parstepsto^i
+    \conf_c$ and $\conf_b \parstepsto^j \pi(\conf_c)$  and $i \leq 1$ and $j \leq 1$, or
+  \item $\conf_a \parstepsto \textup{\error}$ or $\conf_b
+    \parstepsto \textup{\error}$.
+  \end{enumerate}
+\end{lem}
+}
+
+\newcommand{\LemStrongOneSidedQuasiConfluence}{
+\begin{lem}[Strong One-Sided Quasi-Confluence]\label{lem:strong-one-sided-quasi-confluence}
+  If $\conf \parstepsto \conf'$ and $\conf \parstepsto^m \conf''$,
+  where $1 \leq m$, then either:
+  \begin{enumerate}
+    \item there exist $\pi, \conf_c, i, j$ such that  $\conf' \parstepsto^i
+      \conf_c$ and $\conf'' \parstepsto^j \pi(\conf_c)$ and $i \leq m$ and
+      $j \leq 1$, or
+    \item there exists $k \leq m$ such that $\conf'
+      \parstepsto^k \textup{\error}$, or there exists $k \leq 1$ such
+      that $\conf'' \parstepsto^k \textup{\error}$.
+  \end{enumerate}
+\end{lem}
+}
+
+\newcommand{\LemStrongQuasiConfluence}{
+\begin{lem}[Strong Quasi-Confluence]\label{lem:strong-quasi-confluence}
+  If $\conf \parstepsto^n \conf'$ and $\conf \parstepsto^m
+  \conf''$, where $1 \leq n$ and $1 \leq m$, then either:
+  \begin{enumerate}
+    \item there exist $\pi, \conf_c, i, j$ such that $\conf' \parstepsto^i
+      \conf_c$ and $\conf'' \parstepsto^j \pi(\conf_c)$ and $i \leq m$ and
+      $j \leq n$, or
+  \item there exists $k \leq m$ such that $\conf' \parstepsto^k
+    \textup{\error}$, or there exists $k \leq n$ such that $\conf''
+    \parstepsto^k \textup{\error}$.
+  \end{enumerate}
+\end{lem}
+}
+
+\newcommand{\LemQuasiConfluence}{
+\begin{lem}[Quasi-Confluence]\label{lem:quasi-confluence}
+  If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^*
+  \conf''$, then either: 
+  \begin{enumerate}
+  \item there exists $\pi, \conf_c$ such that $\conf' \parstepsto^*
+    \conf_c$ and $\conf'' \parstepsto^* \conf_c$ up to a location renaming $\pi$, or
+  \item $\conf' = \textup{\error}$ or $\conf'' = \textup{\error}$.
+  \end{enumerate}
+\end{lem}
+}
+
+\newcommand{\ThmQuasiDeterminism}{
+\begin{thm}[Quasi-Determinism]\label{thm:quasi-determinism}
+  If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^* \conf''$,
+  and neither $\conf'$ nor $\conf''$ can take a step,
+  then either:
+  \begin{enumerate}
+    \item $\conf' = \conf''$ up to a permutation on locations $\pi$, or
+    \item $\conf' = \textup{\error}$ or $\conf'' = \textup{\error}$.
+  \end{enumerate}
+\end{thm}
+}
