@@ -484,15 +484,148 @@ My dissertation will defend this thesis as follows:
 
 \section{Technical overview}\label{s:technical-overview}
 
-In this section I discuss the key technical aspects of my approach.
-Most of the omitted details can be found in already-published
+In this section I summarize the key technical aspects of the
+$\lambdaLVish$ calculus and its quasi-determinism proof.
+$\lambdaLVish$ is a quasi-deterministic, parallel, call-by-value
+$\lambda$-calculus extended with a store containing LVars.  Its
+definition is parameterized by an application-specific lattice,
+representing the set of states that LVars in the calculus can take on
+and the ordering in which they can be taken on.\footnote{In practice,
+  different LVars will correspond to different lattices.  Multiple
+  lattices can in principle be encoded using a sum construction, so
+  the choice of parameterizing the language by a single lattice is
+  just to keep the presentation simple; in any case, the LVish library
+  implementation supports multiple lattices natively.}
+
+For brevity, I have omitted some details from this section; complete
+details can be found in our previously published
 work~\cite{LVars-paper, LVars-TR, Freeze-paper, Freeze-TR}.
 
-\FigLambdaLVishGrammar
+\subsection{Lattices}
 
-\FigLambdaLVishSemantics
+The application-specific lattice is given as a 4-tuple $(D, \userleq,
+\bot, \top)$ where $D$ is a set, $\userleq$ is a partial order on the
+elements of $D$, $\bot$ is the least element of $D$ according to
+$\userleq$ and $\top$ is the greatest.  The $\bot$ element represents
+the initial ``empty'' state of every LVar, while $\top$ represents the
+``error'' state that would result from conflicting updates to an LVar.
+The partial order $\userleq$ represents the order in which an LVar may
+take on states.  It induces a binary \emph{least upper bound} (lub)
+operation $\userlub{}{}$ on the elements of $D$.  We require that
+every two elements of $D$ have a least upper bound in $D$.
+Intuitively, the existence of a lub for every two elements of $D$
+means that it is possible for two subcomputations to independently
+update an LVar, and then deterministically merge the results by taking
+the lub of the resulting two states.  Formally, this makes $(D,
+\userleq, \bot, \top)$ a \emph{bounded join-semilattice} with a
+designated greatest element ($\top$).  For brevity, we use the term
+``lattice'' as shorthand for ``bounded join-semilattice with a
+designated greatest element''.
 
-\lk{TODO.}
+\subsection{Freezing}
+ 
+To model freezing, the representation of an LVar must include
+information about whether it is ``frozen'' or not.  Thus, in our model
+an LVar's \emph{state} is a pair $\state{d}{\status}$, where $d$ is an
+element of the application-specific set $D$ and $\status$ is a
+``status bit'' of either $\frozentrue$ or $\frozenfalse$.  We can
+define an ordering $\leqp$ on LVar states $\state{d}{\status}$ in
+terms of the application-specific ordering $\userleq$ on elements of
+$D$.  Every element of $D$ is ``freezable'' except $\top$.
+Informally:
+\begin{itemize}
+\item Two unfrozen states are ordered according to the
+  application-specific $\userleq$; that is, $\state{d}{\frozenfalse}
+  \leqp \state{d'}{\frozenfalse}$ exactly when $d \userleq d'$.
+\item Two frozen states do not have an order, unless they are equal:
+  $\state{d}{\frozentrue} \leqp \state{d'}{\frozentrue}$ exactly when
+  $d = d'$.
+\item An unfrozen state $\state{d}{\frozenfalse}$ is less than or
+  equal to a frozen state $\state{d'}{\frozentrue}$ exactly when $d
+  \userleq d'$.
+\item The only situation in which a frozen state is less than an
+  unfrozen state is if the unfrozen state is $\top$; that is,
+  $\state{d}{\frozentrue} \leqp \state{d'}{\frozenfalse}$ exactly when
+  $d' = \top$.
+\end{itemize}
+The addition of status bits to the application-specific lattice
+results in a new lattice $(D_p, \leqp, \botp, \topp)$, and we write
+$\lubp{}{}$ for the least upper bound operation that $\leqp$ induces.
+
+\subsection{Stores}
+
+During the evaluation of $\lambdaLVish$ programs, a \emph{store} $S$
+keeps track of the states of LVars.  Each LVar is represented by a
+binding from a location $l$, drawn from a set $\Loc$, to its state,
+which is some pair $\state{d}{\status}$ from the set $D_p$.
+
+We use the notation $\extS{S}{l}{d}{\status}$ to denote extending $S$
+with a binding from $l$ to $\state{d}{\status}$.  If $l \in \dom{S}$,
+then $\extS{S}{l}{d}{\status}$ denotes an update to the existing
+binding for $l$, rather than an extension.  We can also denote a store
+by explicitly writing out all its bindings, using the notation
+$\store{\storebinding{l_1}{d_1}{\status_1},
+  \storebinding{l_2}{d_2}{\status_2}, \dots}$.  It is straightforward
+to lift the $\leqp$ operations defined on elements of $D_p$ to a
+$\leqstore{}{}$ operation defined on stores.  Stores ordered by
+$\leqstore{}{}$ also form a lattice (with bottom element $\emptyset$
+and top element $\topS$); we write $\lubstore{}{}$ for the induced lub
+operation. If, for example,
+\[ \lubp{\state{d_1}{\status_1}}{\state{d_2}{\status_2}} = \topp, \]
+then
+\[ \lubstore{\store{\storebinding{l}{d_1}{\status_1}}}{\store{\storebinding{l}{d_2}{\status_2}}} =
+\topS. \] A store containing a binding
+$\storebinding{l}{\top}{\status}$ can never arise during the execution
+of an $\lambdaLVish$ program, because, as we will see in
+Section~\ref{subsection:newputget}, an attempted @put@ that would
+take the value of $l$ to $\top$ will raise an error.
+
+\subsection{Syntax and semantics of $\lambdaLVish$}
+
+\FigLambdaLVishGrammar[t]
+
+\FigLambdaLVishSemantics[t]
+
+The syntax and operational semantics of the $\lambdaLVish$ calculus
+appear in Figures \ref{f:lambdaLVish-syntax} and
+\ref{f:lambdaLVish-semantics}, respectively.  As we have noted, both
+the syntax and semantics are parameterized by the lattice $(D,
+\userleq, \bot, \top)$.  The reduction relation $\parstepsto$ is
+defined on \emph{configurations} $\config{S}{e}$ comprising a store
+and an expression.  The \emph{error configuration}, written $\error$,
+is a unique element added to the set of configurations, but we
+consider $\config{\topS}{e}$ to be equal to $\error$ for all
+expressions $e$.  The metavariable $\conf$ ranges over configurations.
+
+$\lambdaLVish$ uses a reduction semantics based on evaluation
+contexts.  The {\sc E-Eval-Ctxt} rule is a standard context rule,
+allowing reductions to apply within a context.  The choice of context
+determines where evaluation can occur; in $\lambdaLVish$, the order of
+evaluation is nondeterministic (that is, a given expression can
+generally reduce in various ways), and so it is generally \emph{not}
+the case that an expression has a unique decomposition into redex and
+context.  For example, in an application $\app{e_1}{e_2}$, either
+$e_1$ or $e_2$ might reduce first.  The nondeterminism in choice of
+evaluation context reflects the nondeterminism of scheduling between
+concurrent threads, and in $\lambdaLVish$, the arguments to @get@,
+@put@, @freeze@, and application expressions are \emph{implicitly}
+evaluated concurrently.
+
+Arguments must be fully evaluated, however, before function
+application ($\beta$-reduction, modeled by the {\sc E-Beta} rule) can
+occur.  We can exploit this property to define $\LETPAR$ as syntactic
+sugar:
+\[
+\LETPAR ~x = e_1;~~y = e_2~\IN~e_3 \;\;\defeq\;\;
+\app{(\app{(\lam{x}{(\lam{y}{e_3})})}{e_1})}{e_2}
+\]
+Because we do not reduce under $\lambda$-terms, we can sequentially
+compose $e_1$ before $e_2$ by writing $\letexp{\_}{e_1}{e_2}$, which
+desugars to $\app{(\lam{\_}{e_2})}{e_1}$.  Sequential composition is
+useful, for instance, when allocating a new LVar before beginning a
+set of side-effecting @put@/@get@/@freeze@ operations on it.
+
+\subsection{Semantics of $\NEW$, $\PUT$, and $\GET$}\label{subsection:newputget}
 
 \begin{figure}
 \centering
@@ -507,6 +640,130 @@ work~\cite{LVars-paper, LVars-TR, Freeze-paper, Freeze-TR}.
 
   \label{f:lattice-examples}
 \end{figure}
+
+In $\lambdaLVish$, the @new@, @put@, and @get@ operations respectively
+create, write to, and read from LVars in the store:
+\begin{itemize}
+\item @new@ (implemented by the {\sc E-New} rule) extends the store
+  with a binding for a new LVar whose initial state is $(\bot,
+  \frozenfalse)$, and returns the location $l$ of that LVar (\ie, a
+  pointer to the LVar).
+\item @put@ (implemented by the {\sc E-Put} and {\sc E-Put-Err} rules)
+  takes a pointer to an LVar and a new lattice element $d_2$ and
+  updates the LVar's state to the {\em least upper bound} of the
+  current state and $\state{d_2}{\frozenfalse}$, potentially pushing
+  the state of the LVar upward in the lattice.  Any update that would
+  take the state of an LVar to $\topp$ results in the program
+  immediately stepping to $\error$.
+\item @get@ (implemented by the {\sc E-Get} rule) performs a blocking
+  threshold read.  It takes a pointer to an LVar and a \emph{threshold
+    set} $P$, which is a non-empty set of LVar states that must be
+  \emph{pairwise incompatible}, expressed by the premise $\incomp{P}$.
+  A threshold set $P$ is pairwise incompatible iff the lub of any two
+  distinct elements in $P$ is $\topp$.  If the LVar's state $p_1$ in
+  the lattice is {\em at or above} some $p_2 \in P$, the @get@
+  operation unblocks and returns $p_2$.  Note that $p_2$ is a unique
+  element of $P$, for if there is another $p'_2 \neq p_2$ in the
+  threshold set such that $p'_2 \leqp p_1$, it would follow that
+  $\lubp{p_2}{p'_2} = p_1 \neq \topp$, which contradicts the
+  requirement that $P$ be pairwise incompatible.\footnote{Although
+    $\incomp{P}$ is given as a premise of the {\sc E-Get} reduction
+    rule (suggesting that it is checked at runtime), in the LVish
+    library implementation threshold sets are not written explicitly,
+    and it is the data structure author's responsibility to ensure
+    that any provided read operations have threshold semantics.}
+\end{itemize}
+Is the @get@ operation deterministic?  Consider two lattice elements
+$p_1$ and $p_2$ that have no ordering and have $\topp$ as their lub,
+and suppose that @put@s of $p_1$ and $p_2$ and a @get@ with
+$\setof{p_1, p_2}$ as its threshold set all race for access to an LVar
+$lv$.  Eventually, the program is guaranteed to raise an exception,
+because $\lubp{p_1}{p_2} = \topp$, but in the meantime,
+$\getexp{lv}{\setof{p_1, p_2}}$ could return either $p_1$ or $p_2$.
+Therefore, @get@ \emph{can} behave nondeterministically---but this
+behavior is not observable in the final answer of the program, which
+is guaranteed to subsequently raise an exception.
+
+Figure~\ref{f:lattice-examples}
+
+\subsection{Semantics of freezing and event handlers}
+
+The $\lambdaLVish$ calculus includes a simple form of @freeze@ that
+immediately freezes an LVar (see {\sc E-Freeze-Simple}).  More
+interesting is the $\FAW$ primitive, which models the use of freezing
+together with event handlers.  The expression $\freezeafter{e_{\rm
+    lv}}{e_{\rm events}}{e_{\rm cb}}$ has the following semantics:
+\begin{itemize}
+\item It attaches the callback $e_{\rm cb}$ to the LVar $e_{\rm lv}$.
+  The expression $e_{\rm events}$ must evaluate to a event set $Q$;
+  the callback will be executed, once, for each lattice element in $Q$
+  that the LVar's state reaches or surpasses.  The callback $e_{\rm
+    cb}$ is a function that takes a lattice element as its argument.
+  Its return value is ignored, so it runs solely for effect.  For
+  instance, a callback might itself do a @put@ to the LVar to which it
+  is attached, triggering yet more callbacks.
+\item If the handler reaches a quiescent state, the LVar $e_{\rm lv}$
+  is frozen, and its \emph{exact} state is returned (rather than an
+  underapproximation of the state, as with @get@).
+\end{itemize}
+\noindent
+To keep track of the running callbacks, $\lambdaLVish$ uses an
+auxiliary form,
+\[
+   \freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e, \dots}}{H}
+\]
+where:
+\begin{itemize}
+\item The value $l$ is the LVar being handled/frozen;
+\item The set $Q$ (a subset of the lattice $D$) is the event set;
+\item The value $\lam{x}{e_0}$ is the callback function;
+\item The set of expressions $\setof{e, \dots}$ are the running callbacks; and
+\item The set $H$ (a subset of the lattice $D$) represents those values in $Q$
+  for which callbacks have already been launched.
+\end{itemize}
+Due to the use of evaluation contexts, any running callback can
+execute at any time, as if each is running in its own thread.
+
+The rule {\sc E-Spawn-Handler} launches a new callback thread any time
+the LVar's current value is at or above some element in $Q$ that has
+not already been handled.  This step can be taken nondeterministically
+at any time after the relevant @put@ has been performed.
+
+The rule {\sc E-Freeze-Final} detects quiescence by checking that two
+properties hold.  First, every event of interest (lattice element in
+$Q$) that has occurred (is bounded by the current LVar state) must be
+handled (be in $H$).  Second, all existing callback threads must have
+terminated with a value.  In other words, every enabled callback has
+completed.  When such a quiescent state is detected, {\sc
+  E-Freeze-Final} freezes the LVar's state.  Like {\sc
+  E-Spawn-Handler}, the rule can fire at any time,
+nondeterministically, that the handler appears quiescent---a transient
+property!  But after being frozen, any further @put@s that would have
+enabled additional callbacks will instead fault, raising $\error$ by
+way of the {\sc E-Put-Err} rule.  \lk{N.B. This is the first place in
+  the paper where the word ``fault'' appears, and it doesn't appear
+  anywhere else aside from this section, so I thought I should explain
+  what it means.}
+
+Therefore, freezing is a way of ``betting'' that once a collection of callbacks
+have completed, no further @put@s that change the LVar's value will occur.  For
+a given run of a program, either all @put@s to an LVar arrive before it has
+been frozen, in which case the value returned by $\FAW$ is the lub of those
+values, or some @put@ arrives after the LVar has been frozen, in which case the
+program will fault.  And thus we have arrived at \emph{quasi-determinism}: a
+program will always either evaluate to the same answer or it will fault.
+
+To ensure that we will win our bet, we need to guarantee that quiescence is a
+\emph{permanent} state, rather than a transient one---that is, we need to
+perform all @put@s either prior to $\FAW$, or by the callback function within it
+(as will be the case for fixpoint computations).  In practice, freezing is
+usually the very last step of an algorithm, permitting its result to be
+extracted. Our implementation provides a special \termfont{runParThenFreeze}
+function that does so, and thereby guarantees full determinism.
+
+\subsection{Quasi-determinism proof outline}
+
+\lk{TODO.}
 
 \section{Joining forces: LVars and conflict-free replicated data types}\label{s:crdts}
 
