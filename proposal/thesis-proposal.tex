@@ -1079,32 +1079,49 @@ allow asynchronous communication within parallel regions.
 
 \section{Road map}
 
-I have already completed substantial work towards my thesis:
+Together with my collaborators, I have already completed substantial
+work towards my thesis:
 
 \begin{itemize}
   \item Formally defined a parallel calculus,
-    $\lambda_{\textrm{LVar}}$, based on the basic LVars model (with
-    @put@ and @get@ operations), and implemented it in PLT
-    Redex~\cite{LVars-paper}.
+    $\lambda_{\textrm{LVar}}$, that demonstrates the basic LVars model
+    (with @put@ and @get@ operations), implemented it in PLT Redex,
+    and proved determinism for it~\cite{LVars-paper, LVars-TR}.
 
-  \item Proved determinism for
-    $\lambda_{\textrm{LVar}}$~\cite{LVars-paper, LVars-TR}.
+  \item Formally defined the LVish calculus (called $\lambdaLVish$ in
+    this proposal), which extend $\lambda_{\textrm{LVar}}$ with
+    freezing and event handlers, implemented it in PLT Redex, and
+    proved quasi-determinism for it~\cite{Freeze-paper, Freeze-TR}.
 
-  \item Formally defined the LVish calculus, which extends the basic
-    LVars model with @freeze@ and event handlers, and implemented it
-    in PLT Redex~\cite{Freeze-paper}.
-
-  \item Proved quasi-determinism for the LVish
-    calculus~\cite{Freeze-paper, Freeze-TR}.
-
-  \item Released the LVish Haskell library.
+  \item Implemented and released the LVish Haskell library based on
+    the formalism~\cite{Freeze-paper}.
 \end{itemize}
 To complete the thesis, I plan to do the following:
 \begin{itemize}
-\item \lk{Some stuff about CRDTs and LVars.}
-\item \lk{Write the dissertation.}
+\item Formally define the semantics of @bump@ and add it to
+  $\lambdaLVish$.  Prove determinism for the subset of $\lambdaLVish$
+  that includes @bump@, but does not include freezing and event
+  handlers (this proof should largely be a straightforward refactoring
+  of the existing determinism proof for
+  $\lambda_{\textrm{LVar}}$\footnote{Indeed, the updated version of
+    the proof will be simpler because $\lambda_{\textrm{LVar}}$ has
+    simultaneous parallel reductions, requiring a large amount of
+    proof bookkeeping with regard to renaming of store locations,
+    whereas $\lambdaLVish$ models parallelism with interleaving (as is
+    the standard approach) and therefore is easier to reason about.}).
+  Update the existing quasi-determinism proof for $\lambdaLVish$ to
+  account for @bump@.  (Time estimate: 1 month.)
+
+\item Show how LVar-style threshold reads apply to the setting of
+  CRDTs.  Extend the LVish library with implementations of PN-Counters
+  and OR-Sets, and release a new version of LVish with these
+  extensions. Implement at least one application that makes use of
+  these CRDT-inspired LVars.  Write a paper on my work on combining
+  LVars and CRDTs.  (Time estimate: 5 months.)
+
+\item Write the dissertation. (Time estimate: 3 months.)
 \end{itemize}
-\lk{Time estimates to be added.}
+This plan puts me on track to defend in September 2014.
 
 \bibliographystyle{plain}
 \bibliography{../latex_common/refs}
