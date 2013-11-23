@@ -803,20 +803,18 @@ completed.  When such a quiescent state is detected, {\sc
   E-Spawn-Handler}, the rule can fire at any time,
 nondeterministically, that the handler appears quiescent---a transient
 property!  But after being frozen, any further @put@s that would have
-enabled additional callbacks will instead fault, raising $\error$ by
-way of the {\sc E-Put-Err} rule.  \lk{N.B. This is the first place in
-  the paper where the word ``fault'' appears, and it doesn't appear
-  anywhere else aside from this section, so I thought I should explain
-  what it means.}
+enabled additional callbacks will instead raise $\error$ by way of the
+{\sc E-Put-Err} rule.
 
 Therefore, freezing is a way of ``betting'' that once a collection of
 callbacks have completed, no further @put@s that change the LVar's
 value will occur.  For a given run of a program, either all @put@s to
 an LVar arrive before it has been frozen, in which case the value
 returned by $\FAW$ is the lub of those values, or some @put@ arrives
-after the LVar has been frozen, in which case the program will fault.
-And thus we have arrived at \emph{quasi-determinism}: a program will
-always either evaluate to the same answer or it will fault.
+after the LVar has been frozen, in which case the program will stepp
+to $\error$.  And thus we have arrived at \emph{quasi-determinism}: a
+program will always either evaluate to the same answer or it will
+raise an exception.
 
 To ensure that we will win our bet, we need to guarantee that
 quiescence is a \emph{permanent} state, rather than a transient
