@@ -357,14 +357,14 @@ and enables a notion of lightweight, library-level threads to be
 employed with a custom work-stealing scheduler.\footnote{The
   \lstinline|Par| monad exposed by LVish generalizes the original
   \lstinline|Par| monad exposed by the \emph{monad-par} library
-  ({\scriptsize\url{http://hackage.haskell.org/package/monad-par}}),
-  which allows determinism-preserving communication between threads,
-  but only through IVars, rather than LVars.}  LVar computations run
-inside the @Par@ monad, which is indexed by an \emph{effect level},
-allowing fine-grained specification of the effects that a given
-computation is allowed to perform.  For instance, since @freeze@
-introduces quasi-determinism, a computation marked as deterministic is
-not allowed to use @freeze@.  Thus, the \emph{static type} of an LVish
+  ({\url{http://hackage.haskell.org/package/monad-par}}), which allows
+  determinism-preserving communication between threads, but only
+  through IVars, rather than LVars.}  LVar computations run inside the
+@Par@ monad, which is indexed by an \emph{effect level}, allowing
+fine-grained specification of the effects that a given computation is
+allowed to perform.  For instance, since @freeze@ introduces
+quasi-determinism, a computation marked as deterministic is not
+allowed to use @freeze@.  Thus, the \emph{static type} of an LVish
 computation reflects its determinism or quasi-determinism guarantee.
 Furthermore, if a @freeze@ is guaranteed to be the \emph{last} effect
 that occurs in a computation, then it is impossible for that @freeze@
