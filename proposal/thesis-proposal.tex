@@ -97,9 +97,9 @@
   computations with LVars, especially in conjunction with freezing.
 
   Next, I will investigate the relationship between LVars and
-  \emph{conflict-free replicated data types} (CRDTs), which are data
-  structures for reasoning about and enforcing the eventual
-  consistency of replicated objects in a distributed system.  First, I
+  \emph{conflict-free replicated data types} (CRDTs), which provide a
+  framework for specifying the behavior of \emph{eventually
+    consistent} replicated objects in a distributed system.  First, I
   will show how LVar-style threshold reads apply to the setting of
   CRDTs.  Threshold reads will guarantee that the order in which
   information is added to a CRDT cannot be observed, ensuring a
@@ -118,7 +118,7 @@
   ensure that only certain LVar effects can occur in a given
   computation, hence statically enforcing determinism or
   quasi-determinism.  I will illustrate the LVish library with running
-  examples and present several case studies that demonstrate its
+  examples and present three case studies that demonstrate its
   applicability.
 \end{abstract}
 
@@ -134,7 +134,7 @@ hard-to-reproduce nondeterministic bugs in parallel code.
 A deterministic-by-construction programming model is one that ensures
 that all programs written using the model have the same
 \emph{observable behavior} every time they are run.  How do we define
-what is observable about a program's behavior?  Clearly, we do
+what is observable about a program's behavior?  Certainly, we do
 \emph{not} wish to preserve behaviors such as running time across
 multiple runs---ideally, a deterministic-by-construction parallel
 program will run faster when more parallel resources are available!
@@ -248,7 +248,7 @@ Together, monotonically increasing writes via @put@ and threshold
 reads via @get@ yield a deterministic-by-construction programming
 model.  That is, a program in which @put@ and @get@ on LVars are the
 only side effects will have the same observable result in spite of
-parallel execution and schedule nondetermininism.
+parallel execution and schedule nondeterminism.
 
 \subsection{Quasi-deterministic programming with LVars}
 
@@ -279,7 +279,7 @@ computations possible:
   \emph{freezing} an LVar, which allows its contents to be read
   immediately and exactly, rather than the blocking threshold read
   that @get@ allows.  The @freeze@ primitive imposes the following
-  tradeoff: once an LVar has been frozen, any further writes that
+  trade-off: once an LVar has been frozen, any further writes that
   would change its value instead raise an exception; on the other
   hand, it becomes possible to discover the exact value of the LVar,
   learning both positive and negative information about it, without
@@ -311,18 +311,14 @@ writes have occurred; see Section~\ref{ss:lvish}.
 
 The LVars model I've described is closely related to the mathematical
 framework of \emph{conflict-free replicated data types}
-(CRDTs)~\cite{crdts}, which are data structures for
-reasoning about and enforcing the \emph{eventual
-  consistency}~\cite{vogels-ec} of replicated objects in a distributed
+(CRDTs)~\cite{crdts}, for specifying the behavior of \emph{eventually
+  consistent}~\cite{vogels-ec} replicated objects in a distributed
 system.  In particular, \emph{state-based} CRDTs leverage the
 mathematical properties of join-semilattices to guarantee that all
 replicas of an object in a distributed database eventually agree.
 Unlike LVars, CRDTs allow intermediate states to be observed: if two
 replicas are updated independently, reads of those replicas may
 disagree until a (least-upper-bound) merge operation takes place.
-Various data-structure-specific techniques can ensure that
-non-monotonic updates (such as removal of elements from a set) are not
-lost.
 
 Since CRDTs leverage lattice properties to ensure eventual consistency
 in the same way that LVars do so to ensure determinism, a sensible
@@ -362,7 +358,7 @@ employed with a custom work-stealing scheduler.\footnote{The
   \lstinline|Par| monad exposed by LVish generalizes the original
   \lstinline|Par| monad exposed by the \emph{monad-par} library
   ({\scriptsize\url{http://hackage.haskell.org/package/monad-par}}),
-  which allowes determinism-preserving communication between threads,
+  which allows determinism-preserving communication between threads,
   but only through IVars, rather than LVars.}  LVar computations run
 inside the @Par@ monad, which is indexed by an \emph{effect level},
 allowing fine-grained specification of the effects that a given
@@ -645,14 +641,14 @@ contexts.  The {\sc E-Eval-Ctxt} rule is a standard context rule,
 allowing reductions to apply within a context.  The choice of context
 determines where evaluation can occur; in $\lambdaLVish$, the order of
 evaluation is nondeterministic (that is, a given expression can
-generally reduce in various ways), and so it is generally \emph{not}
-the case that an expression has a unique decomposition into redex and
-context.  For example, in an application $\app{e_1}{e_2}$, either
-$e_1$ or $e_2$ might reduce first.  The nondeterminism in choice of
-evaluation context reflects the nondeterminism of scheduling between
-concurrent threads, and in $\lambdaLVish$, the arguments to @get@,
-@put@, @freeze@, and application expressions are \emph{implicitly}
-evaluated concurrently.
+generally reduce in more than one way), and so it is generally
+\emph{not} the case that an expression has a unique decomposition into
+redex and context.  For example, in an application $\app{e_1}{e_2}$,
+either $e_1$ or $e_2$ might reduce first.  The nondeterminism in
+choice of evaluation context reflects the nondeterminism of scheduling
+between concurrent threads, and in $\lambdaLVish$, the arguments to
+@get@, @put@, @freeze@, and application expressions are
+\emph{implicitly} evaluated concurrently.
 
 Arguments must be fully evaluated, however, before function
 application ($\beta$-reduction, modeled by the {\sc E-Beta} rule) can
@@ -812,7 +808,7 @@ callbacks have completed, no further @put@s that change the LVar's
 value will occur.  For a given run of a program, either all @put@s to
 an LVar arrive before it has been frozen, in which case the value
 returned by $\FAW$ is the lub of those values, or some @put@ arrives
-after the LVar has been frozen, in which case the program will stepp
+after the LVar has been frozen, in which case the program will step
 to $\error$.  And thus we have arrived at \emph{quasi-determinism}: a
 program will always either evaluate to the same answer or it will
 raise an exception.
@@ -821,8 +817,8 @@ To ensure that we will win our bet, we need to guarantee that
 quiescence is a \emph{permanent} state, rather than a transient
 one---that is, we need to perform all @put@s either prior to $\FAW$,
 or by the callback function within it (as will be the case for
-fixpoint computations).  In practice, freezing is usually the very
-last step of an algorithm, permitting its result to be extracted. Our
+fixpoint computations).  In practice, freezing is usually the last
+step of an algorithm, permitting its result to be extracted. Our
 implementation provides a special \termfont{runParThenFreeze} function
 that does so, and thereby guarantees full determinism.
 
@@ -901,16 +897,16 @@ leverage this relationship.
 Distributed systems often involve \emph{replication} of data objects
 across a number of physical locations.  Replication is of fundamental
 importance in distributed systems: it makes the system more robust to
-data loss and allows for good data locality.  Unfotunately, though,
+data loss and allows for good data locality.  Unfortunately, though,
 while it would be convenient if a system of distributed, replicated
 objects behaved indistinguishably from the more familiar programming
-model in which all data is on one machine and and all computation
-takes place there, this is not the case.  The well-known \emph{CAP
+model in which all data is on one machine and all computation takes
+place there, this is not the case.  The well-known \emph{CAP
   theorem}~\cite{gilbert-lynch-cap} of distributed computing describes
-a three-way tradeoff between:
+a three-way trade-off between:
 \begin{itemize}
 \item Consistency, in which every replica sees the same information;
-\item Availablility, in which all information is available for both
+\item Availability, in which all information is available for both
   reading and writing by all replicas; and
 \item Partition tolerance, in which the system is robust to parts of
   it being unable to communicate with one another.
@@ -923,9 +919,9 @@ must compromise on at least one of consistency or availability.
 Moreover, though, consistency, availability, and partition tolerance
 are not binary properties; rather than having, for instance, either
 perfect availability or no availability at all, we can choose how much
-availability a system must have, then allow less conistency
+availability a system must have, then allow less consistency
 accordingly.  \emph{Highly available} distributed systems (\eg,
-Dynamo~\cite{dynamo}) give up on strict conistency in favor of
+Dynamo~\cite{dynamo}) give up on strict consistency in favor of
 \emph{eventual consistency}~\cite{vogels-ec}, in which replicas may
 not always agree, but if updates stop arriving, all replicas will
 \emph{eventually} come to agree, given enough time.
@@ -953,12 +949,12 @@ mechanisms for resolving conflicts between replicas~\cite{dynamo}:
   resolution. This can be done by the data store or the
   application. If conflict resolution is done by the data store, its
   choices are rather limited. In such cases, the data store can only
-  use simple policies, such as "last write wins", to resolve
+  use simple policies, such as ``last write wins'', to resolve
   conflicting updates. On the other hand, since the application is
   aware of the data schema it can decide on the conflict resolution
   method that is best suited for its client’s experience. For
   instance, the application that maintains customer shopping carts can
-  choose to "merge" the conflicting versions and return a single
+  choose to ``merge'' the conflicting versions and return a single
   unified shopping cart.
 \end{quote}
 In other words, we can take advantage of the fact that, for a
@@ -975,21 +971,22 @@ in an ad-hoc way: \emph{conflict-free replicated data types} give us a
 simple mathematical framework for reasoning about and enforcing the
 eventual consistency of replicated objects in a distributed system.
 Next, I review some of the basics of conflict-free replicated data
-types from the work of Shapiro \etal~\cite{crdts, crdts-tr}.
+types from the work of Shapiro \etal~\cite{crdts, crdts-tr}, and
+discuss the relationship to LVars.
 
 \subsection{Conflict-free replicated data types}
 
-Informally, a conflict-free replicated data type (CRDT) is a
-replicated data type that satisfies sufficient conditions for
-\emph{strong convergence}, meaning that correct replicas to which the
-same updates have been delivered have equivalent state.\footnote{The
-  ``strong'' in strong convergence distinguishes it from ordinary
-  convegence, in which correct replicas to which the same updates have
-  been delivered \emph{eventually} have equivalent state.  A system
-  might be convergent but not strongly convergent if, for example, it
-  executes an update immediately and then later rolls back the update
-  after discovering that it conflicts with another.}  CRDTs can be
-specified in two ``styles'': \emph{state-based}, also known as
+A \emph{conflict-free replicated data type} (CRDT) is a replicated
+data type that satisfies the conditions for \emph{strong convergence},
+meaning that correct replicas to which the same updates have been
+delivered have equivalent state.\footnote{The ``strong'' in strong
+  convergence distinguishes it from ordinary convergence, in which
+  correct replicas to which the same updates have been delivered
+  \emph{eventually} have equivalent state.  A system might be
+  convergent but not strongly convergent if, for example, it executes
+  an update immediately and then later rolls back the update after
+  discovering that it conflicts with another.}  CRDTs can be specified
+in two ``styles'': \emph{state-based}, also known as
 \emph{convergent}; or \emph{operation-based} (or ``op-based''), also
 known as \emph{commutative}.  CRDTs specified in the former style are
 also called \emph{convergent replicated data types}, abbreviated
@@ -1005,14 +1002,14 @@ states, $s^0$ is the initial state, $q$ is the \emph{query method},
 $u$ is the \emph{update method}, and $m$ is the \emph{merge method}.
 Objects are replicated across some finite number of processes, with
 one replica at each process.  We assume that each replica begins in
-the initial state $s^0$.  Over time, replicas may be queried via the
-method $q$; more interestingly for our purposes, they may be updated
-via the update method $u$.  Methods execute at a single replica, but
-the merge method $m$ can merge the state from a remote replica with
-the local replica; we assume that every replica
-regularly\footnote{``Infinitely often'', according to Shapiro \etal}
-sends its local state to some other replica, and that eventually every
-update reaches every replica, whether directly or indirectly.
+the initial state $s^0$.  The state of a local replica may be queried
+via the method $q$ and updated via the update method $u$.  Methods
+execute locally, at a single replica, but the merge method $m$ can
+merge the state from a remote replica with the local replica; we
+assume that every replica regularly\footnote{``Infinitely often'',
+  according to Shapiro \etal} sends its local state to some other
+replica, and that eventually every update reaches every replica,
+whether directly or indirectly.
 
 A \emph{state-based} or \emph{convergent} replicated data type
 (CvRDT), then, is a state-based object equipped with a partial order
@@ -1025,16 +1022,15 @@ properties:
 \item State is inflationary across updates: if $u$ updates a state $s$
   to $s'$, then $s \leq s'$.
 \end{itemize}
-Shapiro \etal show that a state-based object that meets the criteria
+Shapiro \etal~show that a state-based object that meets the criteria
 for a CvRDT is strongly convergent~\cite{crdts}.  As is clear from
 their definition, CvRDTs have much in common with LVars; but they also
 have the following differences:
 \begin{itemize}
 \item In the CvRDT model, there is no notion of threshold reads; the
   query operation $q$ reads the exact contents of its local replica,
-  and therefore different replicas may see different states of the
-  same value at different times, if not all updates have been
-  propagated yet.
+  and therefore different replicas may see different states at the
+  same time, if not all updates have been propagated yet.
 \item In the LVars model, there is no ``update'' operation that is
   distinct from ``merge''---since LVar @put@s compute the least upper
   bound of the old and new values, an LVar update is the equivalent of
@@ -1043,44 +1039,47 @@ have the following differences:
   The LVars model is a shared-memory model, and when an LVar is
   updated, all reading threads immediately see the update.
 \end{itemize}
-These differences, however, suggest several possibilities for
-extending both the LVars and CvRDT models, among them the following:
+These differences, however, suggest some possibilities for extending
+both the LVars and CvRDT models, among them the following:
 \begin{itemize}
 \item Add a mechanism for specifying LVar-style threshold reads to
-  CvRDT specifications---say, by adding a $t$ operation to the
-  specification.  Threshold reads will guarantee that the order in
-  which information is added to a CvRDT cannot be observed, ensuring a
-  greater degree of consistency at the price of read availability.  My
-  hypothesis is that, for a CvRDT where \emph{all} reads are threshold
-  reads made via the $t$ operation, we can guarantee something more
-  than strong convergence, and additionally guarantee that all reads
-  will be consistent.  In practice, a combination of threshold reads
-  and regular reads may make the most sense.
-\item Extend the LVars model to allow non-lub update operations, that
-  is, update operations other than @put@ that nevertheless preserve
-  determinism.  In fact, the @bump@ operation discussed in
-  Section~\ref{ss:lvish}---which is already part of the LVish library,
-  but not yet formalized or proved deterministic in the setting of
-  $\lambdaLVish$---is just such a non-lub update operation.
+  CvRDT specifications---say, by adding a new $g$ (for ``get'')
+  operation to the specification.  Threshold reads will guarantee that
+  the order in which information is added to a CvRDT cannot be
+  observed, ensuring a greater degree of consistency at the price of
+  read availability.  My hypothesis is that, for a CvRDT where
+  \emph{all} reads are threshold reads made via the $g$ operation, we
+  can guarantee something more than strong convergence: all reads will
+  be consistent.  In practice, a combination of threshold reads and
+  regular reads may make the most sense.
+\item Extend the LVars model to allow non-lub update operations---that
+  is, allow update operations other than @put@---while nevertheless
+  preserving determinism.  In fact, the @bump@ operation discussed in
+  Section~\ref{ss:lvish}---which is already a useful part of the LVish
+  library, but not yet formalized or proved deterministic in the
+  setting of $\lambdaLVish$---is just such a non-lub update operation.
 \end{itemize}
 But there is also another interesting possibility, which I discuss
-next: it suggests that LVars could be extended to allow not only
-non-lub updates, but \emph{non-monotonic} updates.
+next: the equivalence of CmRDTs and CvRDTs suggests that LVars could
+be extended to allow not only non-lub updates, but
+\emph{non-monotonic} updates.
 
 \subsection{CmRDTs and non-monotonic updates}
 
 As I mentioned above, CmRDTs and CvRDTs can emulate each other.
-Unlike CvRDTs, which are specified using lattices, CmRDTs are
-specified using \emph{commutative operations}.
+However, unlike CvRDTs, which are state-based objects specified using
+lattices, CmRDTs are \emph{op-based objects}, specified using
+\emph{commutative operations}.
 
-An \emph{op-based object} is specified as a tuple $(S, s^0, q, t, u,
-P)$, where $S$, $s^0$, and $q$ are, respectively, the set of states,
-initial states, and query method, as before. $t$ and $u$ are called,
-respectively, the \emph{prepare-update} method and the
-\emph{effect-update} method.  Updating a local replica involves
-executing $t$ immediately followed by $u$, and so we write an update
-as a pair $(t, u)$.  However, the effect-update method $u$ also
-executes at all other replicas, and the source replica delivers the
+Again citing Shapiro \etal~\cite{crdts, crdts-tr}, an \emph{op-based
+  object} is specified as a tuple $(S, s^0, q, t, u, P)$, where $S$,
+$s^0$, and $q$ are respectively the set of states, the initial state,
+and the query method, as before. $t$ and $u$ are called the
+\emph{prepare-update} method and the \emph{effect-update} method,
+respectively.  Updating a local replica involves executing $t$
+locally, immediately followed by $u$ locally, and so we denote an
+update as a pair $(t, u)$.  However, the effect-update method $u$ also
+executes at all other replicas.  The local replica delivers the
 effect-update to the other replicas using a communication protocol,
 specified by the \emph{delivery precondition} $P$, that makes certain
 assumptions about the reliability and consistency of the underlying
@@ -1088,33 +1087,96 @@ network.
 
 For present purposes, the details of $P$ are not important; the
 important thing to note is that an op-based object has no merge
-method, and so the above CvRDT definition does not apply.  Instead, we
-define an \emph{op-based} or \emph{commutative} replicated data type
-(CmRDT) to be an op-based object with the property that \emph{all
-  concurrent updates commute}.  We say that updates $(t, u)$ and $(t',
-u')$ commute iff, for any reachable replica state $s$ where both $u$
-and $u'$ are \emph{enabled} by the delivery precondition $P$ (that is,
-$P(s, u)$ and $P(s, u')$ are both true), then $u$ (respectively, $u'$)
-remains enabled after $u'$ has executed (respectively, after $u$ has
-executed), and the new state resulting from executing $u$ followed by
-$u'$ on $s$ is equivalent to the new state resulting from executing
-$u'$ followed by $u$ on $s$.
+method, and so the above definition of CvRDTs cannot apply to op-based
+objects.  Instead, we define an \emph{op-based} or \emph{commutative}
+replicated data type (CmRDT) to be an op-based object with the
+property that \emph{all concurrent updates commute}.  We say that
+updates $(t, u)$ and $(t', u')$ commute iff, for any reachable replica
+state $s$ where both $u$ and $u'$ are \emph{enabled} by the delivery
+precondition $P$ (that is, $P(s, u)$ and $P(s, u')$ are both true),
+the following conditions hold:
+\begin{itemize}
+  \item $u$ remains enabled by $P$ after $u'$ has executed,
+  \item $u'$ remains enabled by $P$ after $u$ has executed, and
+  \item the state resulting from executing $u$ followed by $u'$
+    starting from $s$ is equivalent to the state resulting from
+    executing $u'$ followed by $u$ starting from $s$.
+\end{itemize}
+Just as with CvRDTs, Shapiro \etal~show that a state-based object that
+meets the criteria for a CmRDT is strongly convergent~\cite{crdts}.
+Moreover, they give a constructive proof that CmRDTs and CvRDTs can
+emulate each other by showing how to construct an equivalent CvRDT
+given a CmRDT, and vice versa.  This equivalence is particularly
+interesting considering that, since CmRDT operations do not have to
+update the state $s$ monotonically with respect to a lattice, it is
+possible to implement CmRDTs (and therefore equivalent CvRDTs!) that
+allow ``non-monotonic'' operations.  For example, Shapiro \etal~give
+an op-based specification for an \emph{OR-Set} (``observed-remove
+set'') data structure.  OR-Sets are sets that support removal as well
+as addition of elements (because concurrent adds and removes commute),
+and it should be possible to use Shapiro \etal's emulation
+construction to emulate this op-based specification with an equivalent
+state-based one.
 
+Shapiro \etal~also point out that it is possible to specify a set that
+allows both additions and removals directly as a CvRDT; the trick is
+to encode the set as \emph{two} grow-only sets, one for elements added
+and one for elements removed.  This data structure is known as a
+\emph{2P-Set} (for ``two-phase set'').  However, with such an
+encoding, once an element is removed, it can never be added again
+thereafter!  \emph{Counters}, however, do not suffer from the same
+problem: we can encode a counter that allows both increments and
+decrements directly as a CvRDT using two grow-only counters, one for
+increments and one for decrements. The resulting data structure is
+called a \emph{PN-Counter} (for ``positive/negative counter'').
 
-\lk{TODO: finish this up.}
+\subsection{Threshold reads of non-monotonic CRDTs}
+
+What would it mean to perform a threshold read on a data structure
+that allows non-monotonic operations?  At first glance, this would
+seem to pose a problem for determinism. If only monotonic operations
+are allowed, as is the case for LVars, then whether or not a given
+@get@ operation unblocks is the same from run to run (although it may
+unblock at different times, depending on scheduling).  If
+non-monotonic operations are allowed, though, this is no longer the
+case. For instance, if a @get@ operation is thresholded on an element
+that is removed from a set, then the @get@ may block forever, or not,
+depending on whether the it runs before or after the element's
+removal.
+
+One option is to give up on threshold reads entirely for CRDTs that
+allow non-monotonic operations.  However, it is also worth considering
+another option, which is to change the semantics of threshold reads to
+something that reveals even less information than the already-limited
+form of observation they currently allow. In the LVars model, when a
+@get@ returns, it is a guarantee that the contents of the LVar it is
+reading are at or above a certain point in the lattice: ``The contents
+of this LVar are at least $x$.''  But for non-monotonic CRDTs, we
+could, instead, have the following guarantee: ``\emph{There exists a
+  schedule} under which the contents of this CRDT could have at one
+time been $x$.''  Although this latter guarantee is much weaker, there
+still may be situations in which it is useful.
+
+Finally, yet another option is to exploit what we know about the
+internal representation of CRDTs that support non-monotonic operations
+to allow unusual kinds of queries on those CRDTs. It may be useful,
+for instance, to know when a PN-Counter has been decremented at least
+$n$ times, regardless of its total.  If so, we could easily threshold
+on the size of the internal grow-only decrement counter using an
+ordinary threshold read.
 
 \section{Related work}\label{s:related}
 
 Work on deterministic parallel programming models is long-standing.
-As discussed in Section~\ref{s:intro}, the LVars model builds on
-various long traditions of work on parallel programming models based
-on monotonically-growing shared data structures, and it provides a
+As discussed in Section~\ref{s:intro}, the LVars model builds on long
+traditions of work on parallel programming models based on
+monotonically-growing shared data structures, and it provides a
 framework for generalizing and unifying these existing approaches.  In
-this section I describe a few more recent contributions to the
+this section I describe some more recent contributions to the
 literature.
 
 As we have seen, what deterministic parallel programming models have
-in common is that they all must do something to to restrict access to
+in common is that they all must do something to restrict access to
 mutable state shared among concurrent computations so that schedule
 nondeterminism cannot be observed.  Depending on the model,
 restricting access to shared mutable state might involve disallowing
@@ -1220,7 +1282,7 @@ allow asynchronous communication within parallel regions.
 The Bloom language for distributed database programming guarantees
 eventual consistency for distributed data collections that are updated
 monotonically.  The initial formulation of Bloom~\cite{bloom-cidr} had
-a notion of monotonicity based on on set inclusion, analogous to the
+a notion of monotonicity based on set inclusion, analogous to the
 store ordering used in the proof of determinism for the (IVar-based)
 CnC system~\cite{CnC}.  More recently, Conway \etal~\cite{blooml}
 generalized Bloom to a more flexible lattice-parameterized system,
@@ -1264,8 +1326,8 @@ To complete the thesis, I plan to do the following:
 \item Formally define the semantics of @bump@ and add it to
   $\lambdaLVish$.  Prove determinism for the subset of $\lambdaLVish$
   that includes @bump@, but does not include freezing and event
-  handlers (this proof should largely be a straightforward refactoring
-  of the existing determinism proof for
+  handlers (this proof should be a straightforward refactoring of the
+  existing determinism proof for
   $\lambda_{\textrm{LVar}}$\footnote{Indeed, the updated version of
     the proof will be simpler because $\lambda_{\textrm{LVar}}$ has
     simultaneous parallel reductions, requiring a large amount of
