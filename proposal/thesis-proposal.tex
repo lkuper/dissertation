@@ -900,12 +900,12 @@ leverage this relationship.
 Distributed systems often involve \emph{replication} of data objects
 across a number of physical locations.  Replication is of fundamental
 importance in distributed systems: it makes the system more robust to
-data loss and allows for good data locality.  Unfortunately, while it
-would be convenient if a system of distributed, replicated objects
-behaved indistinguishably from the familiar programming model in which
-all data is on one machine and and all computation takes place there,
-this is not and cannot be the case.  The famous CAP
-theorem~\cite{gilbert-lynch-cap} of distributed computing imposes a
+data loss and allows for good data locality.  Unfotunately, though,
+while it would be convenient if a system of distributed, replicated
+objects behaved indistinguishably from the more familiar programming
+model in which all data is on one machine and and all computation
+takes place there, this is not the case.  The well-known \emph{CAP
+  theorem}~\cite{gilbert-lynch-cap} of distributed computing imposes a
 three-way tradeoff between:
 \begin{itemize}
 \item Consistency, in which every replica sees the same information;
