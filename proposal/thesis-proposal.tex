@@ -1041,8 +1041,8 @@ have the following differences:
 These differences, however, suggest several possibilities for
 extending both the LVars and CvRDT models, among them the following:
 \begin{itemize}
-\item Add a mechanism for specifying threshold reads to CvRDT
-  specifications---say, by adding a $t$ operation to the
+\item Add a mechanism for specifying LVar-style threshold reads to
+  CvRDT specifications---say, by adding a $t$ operation to the
   specification.  Threshold reads will guarantee that the order in
   which information is added to a CRDT cannot be observed, ensuring a
   greater degree of consistency at the price of read availability.  My
@@ -1052,10 +1052,11 @@ extending both the LVars and CvRDT models, among them the following:
   will be consistent.  In practice, a combination of threshold reads
   and regular reads may make the most sense.
 \item Extend the LVars model to allow non-lub update operations, that
-  is, update operations other than @put@.  In fact, the @bump@
-  operation discussed in Section~\ref{ss:lvish}---which is already
-  part of the LVish library, but not yet formalized in
-  $\lambdaLVish$---is one such non-lub update operation.
+  is, update operations other than @put@ that nevertheless preserve
+  determinism.  In fact, the @bump@ operation discussed in
+  Section~\ref{ss:lvish}---which is already part of the LVish library,
+  but not yet formalized or proved deterministic in the setting of
+  $\lambdaLVish$---is just such a non-lub update operation.
 \end{itemize}
 But there is also another interesting possibility.  As I mentioned
 above,
