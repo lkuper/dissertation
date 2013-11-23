@@ -987,6 +987,28 @@ distributed system.
 
 \section{Related work}\label{s:related}
 
+Work on deterministic parallel programming models is long-standing.
+As discussed in Section~\ref{section:intro}, the LVars model builds on
+various long traditions of work on parallel programming models based
+on monotonically-growing shared data structures, and it provides a
+framework for generalizing and unifying these existing approaches.  In
+this section I describe a few more recent contributions to the
+literature.
+
+As we have seen, what deterministic parallel programming models have
+in common is that they all must do something to to restrict access to
+mutable state shared among concurrent computations so that schedule
+nondeterminism cannot be observed.  Depending on the model,
+restricting access to shared mutable state might involve disallowing
+sharing entirely \cite{dph}, only allowing single assignments to
+shared references \cite{Tesler-1968, IStructures, CnC}, allowing
+sharing only by a limited form of message passing \cite{Kahn-1974},
+ensuring that concurrent accesses to shared state are disjoint
+\cite{dpj-oopsla}, resolving conflicting updates after the fact
+\cite{concurrent-revisions-haskell11}, or some combination of these
+approaches.  These constraints can be imposed at the language or API
+level, within a type system, or at runtime.
+
 \subsection{Deterministic Parallel Java (DPJ)}
 
 DPJ \cite{dpj-oopsla, dpj-hotpar09} is a deterministic language
