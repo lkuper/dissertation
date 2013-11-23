@@ -1080,23 +1080,25 @@ allow asynchronous communication within parallel regions.
 The Bloom language for distributed database programming guarantees
 eventual consistency for distributed data collections that are updated
 monotonically.  The initial formulation of Bloom~\cite{bloom-cidr} had
-a notion of monotonicity based on on set inclusion.  More recently,
-Conway \etal~\cite{blooml} generalized Bloom to a more flexible
-lattice-parameterized system, Bloom$^L$, in a manner analogous to our
-generalization from IVars to LVars.  Bloom$^L$ combines ideas from
-CRDTs with \emph{monotonic logic}, resulting in a
-lattice-parameterized, confluent language that is a close relative of
-LVish.  A monotonicity analysis pass rules out programs that would
-perform non-monotonic operations on distributed data collections,
-whereas in our model, monotonicity is enforced by the API presented by
-LVars.  Another difference between Bloom($^L$) and our model is that
-the former does not have a notion of quasi-determinism.\lk{TODO: make
-  sure this is the case---I think there might be some sort of way to
-  unsafely peek in Bloom, but it's ruled out by the CALM analysis.}
-Finally, since LVish is implemented as a Haskell library (whereas
-Bloom($^L$) is implemented as a domain-specific language embedded in
-Ruby), we can rely on Haskell's static type system for fine-grained
-effect tracking and monadic encapsulation of LVar effects.
+a notion of monotonicity based on on set inclusion, analogous to the
+store ordering used in the proof of determinism for the (IVar-based)
+CnC system~\cite{CnC}.  More recently, Conway \etal~\cite{blooml}
+generalized Bloom to a more flexible lattice-parameterized system,
+Bloom$^L$, in a manner analogous to our generalization from IVars to
+LVars.  Bloom$^L$ combines ideas from CRDTs with \emph{monotonic
+  logic}, resulting in a lattice-parameterized, confluent language
+that is a close relative of LVish.  A monotonicity analysis pass rules
+out programs that would perform non-monotonic operations on
+distributed data collections, whereas in our model, monotonicity is
+enforced by the API presented by LVars.  Another difference between
+Bloom($^L$) and our model is that the former does not have a notion of
+quasi-determinism.\lk{TODO: make sure this is the case---I think there
+  might be some sort of way to unsafely peek in Bloom, but it's ruled
+  out by the CALM analysis.}  Finally, since LVish is implemented as a
+Haskell library (whereas Bloom($^L$) is implemented as a
+domain-specific language embedded in Ruby), we can rely on Haskell's
+static type system for fine-grained effect tracking and monadic
+encapsulation of LVar effects.
 
 \section{Road map}
 
