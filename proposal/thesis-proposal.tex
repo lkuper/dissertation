@@ -987,12 +987,14 @@ same updates have been delivered have equivalent state.\footnote{The
   executes an update immediately and then later rolls back the update
   after discovering that it conflicts with another.}  CRDTs can be
 specified in two ``styles'': \emph{state-based}, also known as
-\emph{convergent} or \emph{operation-based}, also known as
-\emph{commutative}.  CRDTs specified in the convergent style are also
-called ``convergent replicated data types'', abbreviated ``CvRDTs''.
-I begin with the state-based style here because it is closer to the
-LVars model, although, as we will see, state-based specifications can
-emulate operation-based ones, and vice versa.
+\emph{convergent}; or \emph{operation-based}, also known as
+\emph{commutative}.  CRDTs specified in the former style are also
+called \emph{convergent replicated data types}, abbreviated
+\emph{CvRDTs}, while those specified in the latter style are also
+called \emph{commutative replicated data types}, abbreviated
+\emph{CmRDTs}.  I begin with the state-based (CvRDT) style here
+because it is closer to the LVars model, although, as we will see,
+CmRDTs can emulate CvRDTs, and vice versa.
 
 Shapiro \etal~\cite{crdts, crdts-tr} specify a \emph{state-based
   object} as a tuple $(S, s^0, q, u, m)$, where $S$ is a set of
@@ -1044,7 +1046,7 @@ extending both the LVars and CvRDT models, among them the following:
 \item Add a mechanism for specifying LVar-style threshold reads to
   CvRDT specifications---say, by adding a $t$ operation to the
   specification.  Threshold reads will guarantee that the order in
-  which information is added to a CRDT cannot be observed, ensuring a
+  which information is added to a CvRDT cannot be observed, ensuring a
   greater degree of consistency at the price of read availability.  My
   hypothesis is that, for a CvRDT where \emph{all} reads are threshold
   reads made via the $t$ operation, we can guarantee something more
@@ -1058,8 +1060,16 @@ extending both the LVars and CvRDT models, among them the following:
   but not yet formalized or proved deterministic in the setting of
   $\lambdaLVish$---is just such a non-lub update operation.
 \end{itemize}
-But there is also another interesting possibility.  As I mentioned
-above,
+But there is also another interesting possibility, which I discuss
+next: it suggests that LVars could be extended to allow not only
+non-lub updates, but \emph{non-monotonic} updates.
+
+\subsection{CmRDTs and non-monotonic updates}
+
+As I mentioned above, CmRDTs and CvRDTs can emulate each other.
+Unlike CvRDTs, which are specified using lattices, CmRDTs are
+specified using \emph{commutative operations}, as follows:
+
 \lk{TODO: finish this up.}
 
 \section{Related work}\label{s:related}
