@@ -776,9 +776,10 @@ where:
 \item The value $l$ is the LVar being handled/frozen;
 \item The set $Q$ (a subset of the lattice $D$) is the event set;
 \item The value $\lam{x}{e_0}$ is the callback function;
-\item The set of expressions $\setof{e, \dots}$ are the running callbacks; and
-\item The set $H$ (a subset of the lattice $D$) represents those values in $Q$
-  for which callbacks have already been launched.
+\item The set of expressions $\setof{e, \dots}$ are the running
+  callbacks; and
+\item The set $H$ (a subset of the lattice $D$) represents those
+  values in $Q$ for which callbacks have already been launched.
 \end{itemize}
 Due to the use of evaluation contexts, any running callback can
 execute at any time, as if each is running in its own thread.  The
@@ -803,21 +804,23 @@ way of the {\sc E-Put-Err} rule.  \lk{N.B. This is the first place in
   anywhere else aside from this section, so I thought I should explain
   what it means.}
 
-Therefore, freezing is a way of ``betting'' that once a collection of callbacks
-have completed, no further @put@s that change the LVar's value will occur.  For
-a given run of a program, either all @put@s to an LVar arrive before it has
-been frozen, in which case the value returned by $\FAW$ is the lub of those
-values, or some @put@ arrives after the LVar has been frozen, in which case the
-program will fault.  And thus we have arrived at \emph{quasi-determinism}: a
-program will always either evaluate to the same answer or it will fault.
+Therefore, freezing is a way of ``betting'' that once a collection of
+callbacks have completed, no further @put@s that change the LVar's
+value will occur.  For a given run of a program, either all @put@s to
+an LVar arrive before it has been frozen, in which case the value
+returned by $\FAW$ is the lub of those values, or some @put@ arrives
+after the LVar has been frozen, in which case the program will fault.
+And thus we have arrived at \emph{quasi-determinism}: a program will
+always either evaluate to the same answer or it will fault.
 
-To ensure that we will win our bet, we need to guarantee that quiescence is a
-\emph{permanent} state, rather than a transient one---that is, we need to
-perform all @put@s either prior to $\FAW$, or by the callback function within it
-(as will be the case for fixpoint computations).  In practice, freezing is
-usually the very last step of an algorithm, permitting its result to be
-extracted. Our implementation provides a special \termfont{runParThenFreeze}
-function that does so, and thereby guarantees full determinism.
+To ensure that we will win our bet, we need to guarantee that
+quiescence is a \emph{permanent} state, rather than a transient
+one---that is, we need to perform all @put@s either prior to $\FAW$,
+or by the callback function within it (as will be the case for
+fixpoint computations).  In practice, freezing is usually the very
+last step of an algorithm, permitting its result to be extracted. Our
+implementation provides a special \termfont{runParThenFreeze} function
+that does so, and thereby guarantees full determinism.
 
 \subsection{Quasi-determinism proof outline}
 
