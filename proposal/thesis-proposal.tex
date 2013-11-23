@@ -1028,16 +1028,16 @@ requires explicitly passing the expected bag \emph{size} as an
 argument, and the program will raise an exception if the bag goes over
 the expected size.
 
-While this interface has a flavor similar to that described in
-Section~\ref{s:freezing}, it lacks the ability to detect quiescence,
-which is crucial for expressing algorithms like graph traversal, and
-the @seal@ operation is awkward to use when the structure of data is
-not known in advance.  By contrast, the @freeze@ operation on LVars
-does not require such advance knowledge, but moves the model into the
-realm of quasi-determinism.  Another important difference is the fact
-that LVars are \emph{data structure-generic}: both our formalism and
-our library support an unlimited collection of data structures,
-whereas FlowPools are specialized to bags.
+While this interface has a flavor similar to that of LVars, it lacks
+the ability to detect quiescence, which is crucial for expressing
+algorithms like graph traversal, and the @seal@ operation is awkward
+to use when the structure of data is not known in advance.  By
+contrast, the @freeze@ operation on LVars does not require such
+advance knowledge, but moves the model into the realm of
+quasi-determinism.  Another important difference is the fact that
+LVars are \emph{data structure-generic}: both our formalism and our
+library support an unlimited collection of data structures, whereas
+FlowPools are specialized to bags.
 
 \subsection{Concurrent Revisions}
 
