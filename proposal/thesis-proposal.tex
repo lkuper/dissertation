@@ -266,19 +266,23 @@ the current node is \emph{not yet} in the set; a fixpoint is reached
 only if no new neighbors are found; and, of course, at the end of the
 computation it must be possible to learn exactly which nodes were
 reachable (which entails learning that certain nodes were not).  I
-will describe two extensions to the LVars model that make such
+will describe two extensions to the LVars model (again deferring
+details to Section~\ref{s:technical-overview}) that make such
 computations possible:
 \begin{itemize}
-\item First, I will describe how to add a primitive for
+\item First, I will describe how to add a primitive @freeze@ for
   \emph{freezing} an LVar, which allows its contents to be read
   immediately and exactly, rather than the blocking threshold read
-  that @get@ allows.  Freezing imposes the following tradeoff: once an
-  LVar is frozen, any further writes that would change its value
-  instead throw an exception; on the other hand, it becomes possible
-  to discover the exact value of the LVar, learning both positive and
-  negative information about it, without blocking.  LVar programs with
-  freezing are \emph{not} guaranteed to be deterministic, they do
-  satisfy a related property, \emph{quasi-determinism}: all executions
+  that @get@ allows.  The @freeze@ primitive imposes the following
+  tradeoff: once an LVar has been frozen, any further writes that
+  would change its value instead raise an exception; on the other
+  hand, it becomes possible to discover the exact value of the LVar,
+  learning both positive and negative information about it, without
+  blocking.  Therefore, LVar programs that use @freeze@ are \emph{not}
+  guaranteed to be deterministic, because they could
+  nondeterministically raise an exception depending on how @put@ and
+  @freeze@ operations are scheduled.  However, we \emph{can} guarantee
+  that such programs satisfy \emph{quasi-determinism}: all executions
   that produce an final value produce the \emph{same} final value.
 \item Second, I will describe how to add the ability to attach
   \emph{event handlers} to an LVar.  When an event handler has been
@@ -290,10 +294,13 @@ computations possible:
   quiescence means that there are no further changes to respond to, it
   can be used to tell that a fixpoint has been reached.
 \end{itemize}
-In Section~\ref{s:technical-overview}, I will explain freezing and
-handlers in detail and show how, together, they enable an expressive
-and useful style of parallel programming that makes posible fixpoint
-computations like the graph traversal described above.
+I will explain freezing and handlers in detail and show how, together,
+they enable an expressive and useful style of parallel programming
+that makes posible fixpoint computations like the graph traversal
+described above.  Furthermore, I will show how at the implementation
+level, it is possible to recover determinism for a computation that
+uses freezing by ensuring that the freeze happens \emph{after} all
+writes have occurred; see Section~\ref{ss:lvish}.
 
 \subsection{LVars and conflict-free replicated data types}
 
@@ -333,7 +340,7 @@ In Section~\ref{s:crdts} I give additional background on eventual
 consistency and CRDTs and discuss further details of how I plan to
 approach these tasks.
 
-\subsection{The LVish library}
+\subsection{The LVish library}\label{ss:lvish}
 
 To demonstrate the practicality of the LVars programming model, I will
 describe \emph{LVish},\footnote{Available at
@@ -375,8 +382,8 @@ LVars.  I will describe the proof obligations for data structure
 implementors and give examples of applications that use user-defined
 LVars as well as those that the library provides.
 
-I will illustrate the LVars programming model through three case
-studies, all of which will make use of handlers and freezing:
+I will illustrate LVish through three case studies, all of which will
+make use of handlers and freezing:
 \begin{itemize}
 \item First, I will describe using LVish to implement a parallel,
   pipelined, breadth-first graph traversal in which a (possibly
@@ -422,9 +429,8 @@ studies, all of which will make use of handlers and freezing:
 
 \section{Thesis statement}\label{s:thesis}
 
-\lk{This format ripped off from Josh Dunfield.}
-
-With the above background, I can state my thesis:
+With the above background, I can state my thesis:\lk{This format
+  ripped off from Josh Dunfield.}
 \begin{quote}
   Lattice-based data structures are a general and practical foundation
   for guaranteed-deterministic and quasi-deterministic parallel and
@@ -433,37 +439,40 @@ With the above background, I can state my thesis:
 My dissertation will defend this thesis as follows:
 \begin{itemize}
   \item \emph{Lattice-based data structures}: I will formally define
-    lattice-based data structures (LVars) and use them to define
-    $\lambdaLVish$, a parallel calculus based on
-    LVars.\footnote{$\lambdaLVish$ is the \emph{LVish calculus}
-      described in Kuper \etal~\cite{Freeze-paper}.  I call it
-      $\lambdaLVish$ here to avoid confusion with the LVish library
-      discussed in Section~\ref{s:lvish}.}  I will include a runnable
-    version of $\lambdaLVish$, implemented in PLT
-    Redex~\cite{redex-book}, for interactive experimentation.
+    LVars and use them to define $\lambdaLVish$, a call-by-value
+    parallel calculus with shared state, including a runnable version
+    implemented in PLT Redex~\cite{redex-book} for interactive
+    experimentation.\footnote{$\lambdaLVish$ is the \emph{LVish
+        calculus} described in Kuper \etal~\cite{Freeze-paper}.  I
+      call it $\lambdaLVish$ here to avoid confusion with the LVish
+      library discussed in Section~\ref{ss:lvish}.}
 
   \item \emph{general}: I will defend the generality of the LVars
-    model by showing how $\lambdaLVish$ is general enough to subsume
-    previously existing deterministic parallel programming models
-    because it is parameterized by the choice of lattice.  For
-    example, a lattice of channel histories with a prefix ordering
-    allows LVars to represent FIFO channels that implement a Kahn
-    process network, whereas instantiating $\lambdaLVish$ with a
-    lattice with ``empty'' and ``full'' states (where $\mathit{empty}
-    < \mathit{full}$) results in a parallel single-assignment
-    language.  Different instantiations of the lattice result in a
-    family of deterministic parallel languages.
+    model by showing how previously existing deterministic parallel
+    programming models can be expressed with LVish.  This is possible
+    because the definition of $\lambdaLVish$ is parameterized by the
+    choice of lattice.  For example, a lattice of channel histories
+    with a prefix ordering allows LVars to represent FIFO channels
+    that implement a Kahn process network, whereas instantiating
+    $\lambdaLVish$ with a lattice with one ``empty'' state and
+    multiple ``full'' states (where $\forall{i}.\; \mathit{empty} <
+    \mathit{full_i}$) results in a parallel single-assignment
+    language.  Hence $\lambdaLVish$ is actually a \emph{family} of
+    calculi, varying by choice of lattice.
 
   \item \emph{practical}: I will defend the practicality of LVars by
     describing the LVish Haskell library and demonstrating how it is
-    used for practical programming with several case studies,
-    including performance results.
+    used for practical programming with the three case studies
+    described above, including performance results.
 
-  \item \emph{guaranteed-deterministic and quasi-deterministic}: I
-    will defend the claim that LVars guarantee determinism and
-    quasi-determinism by giving a proof of determinism for
-    $\lambdaLVish$ (without the additions of freezing and event
-    handlers) and a proof of quasi-determinism with those additions.
+  \item \emph{guaranteed-deterministic}: I will defend the claim that
+    the basic LVars model guarantees determinism by giving a proof of
+    determinism for $\lambdaLVish$, including the aforementioned
+    @put@, @get@, and non-idempotent @bump@ operations on LVars.
+
+  \item \emph{quasi-deterministic}: I will defend this claim by giving
+    a proof of quasi-determinism for the full $\lambdaLVish$ calculus
+    with the additions of the @freeze@ operation and event handlers.
 
   \item \emph{distributed programming}: I will defend the claim that
     LVars are applicable to distributed programming by showing how
