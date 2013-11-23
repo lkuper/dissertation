@@ -522,6 +522,43 @@ designated greatest element ($\top$).  For brevity, we use the term
 ``lattice'' as shorthand for ``bounded join-semilattice with a
 designated greatest element''.
 
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{figures/example-lvar-lattices.pdf} 
+  \caption{Example LVar lattices: (a) positive integers ordered by
+    $\leq$; (b) IVar containing a positive integer; (c) pair of
+    natural-number-valued IVars, annotated with example threshold sets
+    that would correspond to a blocking read of the first or second
+    element of the pair.  Any state transition crossing the
+    ``tripwire'' for \lstinline{getSnd} causes it to unblock and
+    return a result.}
+
+  \label{f:lattice-examples}
+\end{figure}
+
+Figure~\ref{f:lattice-examples} gives three examples of lattices for
+common data structures.  The simplest example of a useful lattice is
+one that represents the state space of a single-assignment variable
+(an IVar).  A natural-number-valued IVar, for instance, would
+correspond to the lattice in Figure~\ref{f:lattice-examples}(a), that
+is, $(\lbrace \top, \bot \rbrace \cup \mathbb{N}, \userleq, \bot,
+\top)$, where $\userleq$ is defined by setting $\bot \userleq d
+\userleq \top$ and $d \userleq d$ for all $d \in D$.  This is a
+lattice of height three and infinite width, where the naturals are
+arranged horizontally.  After the initial write of some $n \in
+\mathbb{N}$, any further conflicting writes would push the state of
+the IVar to $\top$ (an error).  For instance, if one thread writes $2$
+and another writes $1$ to an IVar (in arbitrary order), the second of
+the two writes would result in an error because $2 \sqcup 1 = \top$.
+
+In the lattice of Figure~\ref{f:lattice-examples}(c), on the other
+hand, the $\top$ element can never be reached, because the least upper
+bound of any two writes is just the maximum of the two.  For instance,
+if one thread writes $2$ and another writes $1$, the resulting state
+will be $2$, since $2 \sqcup 1 = 2$.  Here, the unreachability of
+$\top$ models the fact that no conflicting updates can occur to the
+LVar.
+
 \subsection{Freezing}
  
 To model freezing, the representation of an LVar must include
@@ -627,20 +664,6 @@ set of side-effecting @put@/@get@/@freeze@ operations on it.
 
 \subsection{Semantics of $\NEW$, $\PUT$, and $\GET$}\label{subsection:newputget}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.75\textwidth]{figures/example-lvar-lattices.pdf} 
-  \caption{Example LVar lattices: (a) positive integers ordered by
-    $\leq$; (b) IVar containing a positive integer; (c) pair of
-    natural-number-valued IVars, annotated with example threshold sets
-    that would correspond to a blocking read of the first or second
-    element of the pair.  Any state transition crossing the
-    ``tripwire'' for \lstinline{getSnd} causes it to unblock and
-    return a result.}
-
-  \label{f:lattice-examples}
-\end{figure}
-
 In $\lambdaLVish$, the @new@, @put@, and @get@ operations respectively
 create, write to, and read from LVars in the store:
 \begin{itemize}
@@ -684,7 +707,43 @@ Therefore, @get@ \emph{can} behave nondeterministically---but this
 behavior is not observable in the final answer of the program, which
 is guaranteed to subsequently raise an exception.
 
-Figure~\ref{f:lattice-examples}
+As an example of a threshold read, consider an LVar $\mathit{lv}$
+whose states form a lattice of \emph{pairs} of natural-number-valued
+IVars; that is, $\mathit{lv}$ is a pair $(m, n)$, where $m$ and $n$
+both start as $\bot$ and may each be updated once with a non-$\bot$
+value, which must be some natural number.  This lattice is shown in
+Figure~\ref{f:lattice-examples}(c).  We can then define $\GETFST$ and
+$\GETSND$ operations for reading from the first and second entries of
+$\mathit{lv}$:
+\begin{align*}
+\getfstexp{p} & \defeq \getexp{p}{\stateset{(m, \bot) \setsep m \in
+    \mathbb{N}}} \\
+\getsndexp{p} & \defeq \getexp{p}{\stateset{(\bot, n) \setsep n \in
+    \mathbb{N}}}
+\end{align*}
+This allows us to write programs like the following:
+\begin{equation*}
+\begin{split}
+& \LETPAR ~\_ = \putexp{\mathit{lv}}{(\bot, 4)} \\
+&  \letparspace ~\_ = \putexp{\mathit{lv}}{(3, \bot)} \\
+&  \letparspace ~x = \getsndexp{\mathit{lv}} \\
+&  \letspace \IN~x
+\end{split}
+\label{e:lvar-example-4}
+\end{equation*}
+In the call $\getsndexp{\mathit{lv}}$, the threshold set is
+$\setof{(\bot, 0), (\bot, 1), \dots}$, an infinite set.  There is no
+risk of nondeterminism because the elements of the threshold set are
+\emph{pairwise incompatible} with respect to $\mathit{lv}$'s lattice:
+informally, since the second entry of $\mathit{lv}$ can only be
+written once, no more than one state from the set $\setof{(\bot, 0),
+  (\bot, 1), \dots}$ can ever be reached.  The call,
+$\getsndexp{\mathit{lv}}$ may unblock and return $(\bot, 4)$ any time
+after the second entry of $\mathit{lv}$ has been written, regardless
+of whether the first entry has been written yet.  It is therefore
+possible to use LVars to safely read parts of an incomplete data
+structure---say, an object that is in the process of being initialized
+by a constructor.
 
 \subsection{Semantics of freezing and event handlers}
 
