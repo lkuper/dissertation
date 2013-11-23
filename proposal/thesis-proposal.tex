@@ -781,12 +781,11 @@ where:
   for which callbacks have already been launched.
 \end{itemize}
 Due to the use of evaluation contexts, any running callback can
-execute at any time, as if each is running in its own thread.
-
-The rule {\sc E-Spawn-Handler} launches a new callback thread any time
-the LVar's current value is at or above some element in $Q$ that has
-not already been handled.  This step can be taken nondeterministically
-at any time after the relevant @put@ has been performed.
+execute at any time, as if each is running in its own thread.  The
+rule {\sc E-Spawn-Handler} launches a new callback thread any time the
+LVar's current value is at or above some element in $Q$ that has not
+already been handled.  This step can be taken nondeterministically at
+any time after the relevant @put@ has been performed.
 
 The rule {\sc E-Freeze-Final} detects quiescence by checking that two
 properties hold.  First, every event of interest (lattice element in
