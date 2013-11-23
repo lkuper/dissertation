@@ -223,14 +223,12 @@ general form of communication between tasks than previously existing
 guaranteed-deterministic models allowed.  LVars generalize IVars and
 are so named because the states an LVar can take on are elements of an
 application-specific \emph{lattice}.\footnote{As I will explain in
-  Section~\ref{s:technical-overview}, this ``lattice'' need only be a
-  {\em bounded join-semilattice} augmented with a greatest element
-  $\top$, in which every two elements have a least upper bound but not
-  necessarily a greatest lower bound.  For brevity, I use the term
-  ``lattice'' here and in the rest of this proposal.}  This
-application-specific lattice determines the semantics of the @put@ and
-@get@ operations that comprise the interface to LVars (which I will
-explain in detail in Section~\ref{s:technical-overview}):
+  Section~\ref{s:technical-overview}, what I call a ``lattice'' really
+  need only be a {\em bounded join-semilattice} augmented with a
+  greatest element $\top$.}  This application-specific lattice
+determines the semantics of the @put@ and @get@ operations that
+comprise the interface to LVars (which I will explain in detail in
+Section~\ref{s:technical-overview}):
 \begin{itemize}
 \item The @put@ operation can only change an LVar's state in a way
   that is {\em monotonically increasing} with respect to the
@@ -1076,6 +1074,29 @@ visible at the end of parallel regions. \lk{Check that this is true.}
 This precludes the use of traditional lock-free data structures as a
 representation for versioned variables.  LVars, on the other hand,
 allow asynchronous communication within parallel regions.
+
+\subsection{Bloom and Bloom$^L$}
+
+The Bloom language for distributed database programming guarantees
+eventual consistency for distributed data collections that are updated
+monotonically.  The initial formulation of Bloom~\cite{bloom-cidr} had
+a notion of monotonicity based on on set inclusion.  More recently,
+Conway \etal~\cite{blooml} generalized Bloom to a more flexible
+lattice-parameterized system, Bloom$^L$, in a manner analogous to our
+generalization from IVars to LVars.  Bloom$^L$ combines ideas from
+CRDTs with \emph{monotonic logic}, resulting in a
+lattice-parameterized, confluent language that is a close relative of
+LVish.  A monotonicity analysis pass rules out programs that would
+perform non-monotonic operations on distributed data collections,
+whereas in our model, monotonicity is enforced by the API presented by
+LVars.  Another difference between Bloom($^L$) and our model is that
+the former does not have a notion of quasi-determinism.\lk{TODO: make
+  sure this is the case---I think there might be some sort of way to
+  unsafely peek in Bloom, but it's ruled out by the CALM analysis.}
+Finally, since LVish is implemented as a Haskell library (whereas
+Bloom($^L$) is implemented as a domain-specific language embedded in
+Ruby), we can rely on Haskell's static type system for fine-grained
+effect tracking and monadic encapsulation of LVar effects.
 
 \section{Road map}
 
