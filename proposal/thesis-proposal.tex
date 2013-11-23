@@ -990,9 +990,9 @@ same updates have been delivered have equivalent state.\footnote{The
   executes an update immediately and then later rolls back the update
   after discovering that it conflicts with another.}  CRDTs can be
 specified in two ``styles'': \emph{state-based}, also known as
-\emph{convergent}; or \emph{operation-based}, also known as
-\emph{commutative}.  CRDTs specified in the former style are also
-called \emph{convergent replicated data types}, abbreviated
+\emph{convergent}; or \emph{operation-based} (or ``op-based''), also
+known as \emph{commutative}.  CRDTs specified in the former style are
+also called \emph{convergent replicated data types}, abbreviated
 \emph{CvRDTs}, while those specified in the latter style are also
 called \emph{commutative replicated data types}, abbreviated
 \emph{CmRDTs}.  I begin with the state-based (CvRDT) style here
@@ -1071,7 +1071,35 @@ non-lub updates, but \emph{non-monotonic} updates.
 
 As I mentioned above, CmRDTs and CvRDTs can emulate each other.
 Unlike CvRDTs, which are specified using lattices, CmRDTs are
-specified using \emph{commutative operations}, as follows:
+specified using \emph{commutative operations}.
+
+An \emph{op-based object} is specified as a tuple $(S, s^0, q, t, u,
+P)$, where $S$, $s^0$, and $q$ are, respectively, the set of states,
+initial states, and query method, as before. $t$ and $u$ are called,
+respectively, the \emph{prepare-update} method and the
+\emph{effect-update} method.  Updating a local replica involves
+executing $t$ immediately followed by $u$, and so we write an update
+as a pair $(t, u)$.  However, the effect-update method $u$ also
+executes at all other replicas, and the source replica delivers the
+effect-update to the other replicas using a communication protocol,
+specified by the \emph{delivery precondition} $P$, that makes certain
+assumptions about the reliability and consistency of the underlying
+network.
+
+For present purposes, the details of $P$ are not important; the
+important thing to note is that an op-based object has no merge
+method, and so the above CvRDT definition does not apply.  Instead, we
+define an \emph{op-based} or \emph{commutative} replicated data type
+(CmRDT) to be an op-based object with the property that \emph{all
+  concurrent updates commute}.  We say that updates $(t, u)$ and $(t',
+u')$ commute iff, for any reachable replica state $s$ where both $u$
+and $u'$ are \emph{enabled} by the delivery precondition $P$ (that is,
+$P(s, u)$ and $P(s, u')$ are both true), then $u$ (respectively, $u'$)
+remains enabled after $u'$ has executed (respectively, after $u$ has
+executed), and the new state resulting from executing $u$ followed by
+$u'$ on $s$ is equivalent to the new state resulting from executing
+$u'$ followed by $u$ on $s$.
+
 
 \lk{TODO: finish this up.}
 
