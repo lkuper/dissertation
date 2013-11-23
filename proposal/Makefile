@@ -38,6 +38,17 @@ plain:
 #-----------------------------------------------
 # Others:
 
+# Check style:
+style:
+	echo "weasel words: "
+	sh ../might-scripts/weasel *.tex
+	echo
+	echo "passive voice: "
+	sh ../might-scripts/passive *.tex
+	echo
+	echo "duplicates: "
+	perl ../might-scripts/dups *.tex
+
 open: ${PAPER}.pdf
 ifeq (${UNAME}, Darwin)
 	open ${PAPER}.pdf
