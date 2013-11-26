@@ -896,21 +896,22 @@ allocation.
 
 \section{Joining forces: LVars and conflict-free replicated data types}\label{s:crdts}
 
-In this section, I will discuss the relationship between the LVars
-model I've described and the mathematical framework of
-\emph{conflict-free replicated data types}, and explain how I will
-leverage this relationship.
+In this section, I discuss the relationship between the LVars model
+I've described and the mathematical framework of \emph{conflict-free
+  replicated data types}, and explain how I will leverage this
+relationship.
 
 \subsection{Replication and eventual consistency}
 
 Distributed systems often involve \emph{replication} of data objects
-across a number of physical locations.  Replication is of fundamental
-importance in distributed systems: it makes the system more robust to
-data loss and allows for good data locality.  Unfortunately, though,
-while it would be convenient if a system of distributed, replicated
-objects behaved indistinguishably from the more familiar programming
-model in which all data is on one machine and all computation takes
-place there, this is not the case.  The well-known \emph{CAP
+across a number of physical locations.  Replication is ubiquitous and
+of fundamental importance in distributed systems: it makes the system
+more robust to data loss and allows for good data locality.
+
+It would be convenient if a system of distributed, replicated objects
+behaved indistinguishably from the more familiar programming model in
+which all data is on one machine and all computation takes place
+there.  Unfortunately, this is not the case.  The well-known \emph{CAP
   theorem}~\cite{gilbert-lynch-cap} of distributed computing describes
 a three-way trade-off between:
 \begin{itemize}
@@ -948,10 +949,10 @@ As a more practical proposal, we could try to determine which replica
 was written most recently, and then have the last writer win.  But
 this approach is also less than ideal: even if we had a way of
 perfectly synchronizing clocks between replicas and could always
-determine which replica was written most recently, just having the
-last writer win might not make sense from a \emph{semantic} point of
-view.  The developers of Dynamo, Amazon's distributed key-value store,
-acknowledged this in their discussion of application-specific
+determine which replica was written most recently, having the last
+writer win might not make sense from a \emph{semantic} point of view.
+The developers of Dynamo, Amazon's distributed key-value store,
+acknowledge this in their discussion of application-specific
 mechanisms for resolving conflicts between replicas~\cite{dynamo}:
 \begin{quote}
   The next design choice is who performs the process of conflict
