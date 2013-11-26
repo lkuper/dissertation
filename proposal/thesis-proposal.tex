@@ -139,22 +139,21 @@ what is observable about a program's behavior?  Certainly, we do
 multiple runs---ideally, a deterministic-by-construction parallel
 program will run faster when more parallel resources are available!
 Moreover, we do not count the behavior of the scheduler as observable.
-Indeed, the goal of the deterministic-by-construction model presented
-in this proposal will be to allow tasks to be scheduled dynamically
-and unpredictably, but without allowing such \emph{schedule
-  nondeterminism} to affect the outcome of a program.  Therefore, in
-this proposal we define the observable behavior of a program to be the
-value to which the program evaluates.\footnote{We assume that programs
-  have no side effects other than state.}
+Indeed, we want to specifically \emph{allow} tasks to be scheduled
+dynamically and unpredictably, but without allowing such
+\emph{schedule nondeterminism} to affect the outcome of a program.
+Therefore, in this proposal we define the observable behavior of a
+program to be the value to which the program evaluates.\footnote{We
+  assume that programs have no side effects other than state.}
 
 \subsection{Existing approaches to determinism by construction}
 
-Shared state between computations allows the possibility for
-\emph{race conditions} that allow schedule nondeterminism to be
-observed.  For instance, if one thread writes $3$ to a shared location
-while another writes $4$, then a third thread that reads and returns
-the value will nondeterministically return $3$ or $4$ depending on the
-order in which the threads are scheduled to run.  Therefore,
+Shared state between computations raises the possibility of \emph{race
+  conditions} that allow schedule nondeterminism to be observed.  For
+instance, if one thread writes $3$ to a shared location while another
+writes $4$, then a later thread that reads and returns the location's
+contents will nondeterministically return $3$ or $4$ depending on the
+order in which the first two threads are scheduled to run.  Therefore,
 deterministic parallel programming models necessarily limit sharing of
 mutable state between parallel tasks.
 
@@ -162,7 +161,7 @@ One approach is to allow \emph{no} shared mutable state between tasks,
 forcing concurrent tasks to produce values independently.  An example
 of no-shared-state parallelism is functional programming with
 function-level task parallelism, or \emph{futures}---for instance, in
-Haskell programs that use futures by means of the @par@ and @pseq@
+Haskell programs that use the @par@ and @pseq@
 combinators~\cite{marlow-par}.  Another approach is pure data
 parallelism, as in Data Parallel Haskell~\cite{dph}, and yet another
 is to ensure that the state accessed by concurrent threads is
@@ -170,19 +169,20 @@ disjoint, as in Deterministic Parallel Java~\cite{dpj-oopsla}.
 
 However, some algorithms are more naturally or efficiently written
 using shared state or message passing, and hence the development of
-deterministic parallel programming models that allow \emph{limited}
-sharing of mutable state.  Consider two classic deterministic parallel
-programming models, dating back to the late 1960s and early 1970s:
+parallel programming models that allow \emph{limited} sharing of
+mutable state while still preserving determinism.  Consider two
+classic deterministic parallel programming models, dating back to the
+late 1960s and early 1970s:
 \begin{itemize}
 \item In \emph{Kahn process networks} (KPNs)~\cite{Kahn-1974}, as well
   as in the more restricted \emph{synchronous data flow}
   systems~\cite{lee-sdn}, a network of independent, sequential
   ``computing stations'' communicate with each other through blocking
   FIFO channels.  Each station computes a monotonic function from the
-  \emph{history} of its input channels (\ie, the input received so
-  far) to the history of its output channels (the output produced so
-  far).  KPNs are the basis for deterministic stream-processing
-  languages such as StreamIt~\cite{streamit-asplos}.
+  \emph{history} of its input channels (\ie, the input it has received
+  so far) to the history of its output channels (the output it has
+  produced so far).  KPNs are the basis for deterministic
+  stream-processing languages such as StreamIt~\cite{streamit-asplos}.
 \item In parallel \emph{single-assignment} languages, ``full/empty''
   bits are associated with memory locations so that they may be
   written to at most once. Single-assignment locations with blocking
@@ -197,7 +197,7 @@ programming models, dating back to the late 1960s and early 1970s:
   library~\cite{monad-par} uses IVars in a
   deterministic-by-construction setting, allowing user-created threads
   to communicate through IVars without requiring the @IO@ monad.
-  Operations that read and write IVars can only run inside a @Par@
+  Rather, operations that read and write IVars must run inside a @Par@
   monad, thus encapsulating them inside otherwise pure programs, and
   hence a program in which the only effects are @Par@ effects is
   guaranteed to be deterministic.
@@ -208,18 +208,18 @@ IVar-based programming models such as CnC and monad-par, a shared data
 store of single-assignment memory locations grows monotonically.
 Hence \emph{monotonic data structures}---data structures to which
 information is only added and never removed---are a common theme of
-both data-flow and single-assignment models.  Yet systems like CnC and
-monad-par emerge independently, without recognition of their common
+guaranteed-deterministic programming models.  Yet such programming
+models emerge independently, without recognition of their common
 basis.  Moreover, they lack \emph{generality}, since in each case,
 communication is only permitted through a single type of shared data
 structure---FIFO queues in KPNs, for instance, or tables of write-once
-locations in CnC---limiting the kinds of algorithms that can be easily
-or efficiently expressed.
+locations in CnC---limiting the kinds of algorithms that can be
+expressed---efficiently or at all---in the model.
 
 \subsection{LVars: lattice-based monotonic data structures}
 
 In this thesis, I will show that \emph{lattice-based} data structures,
-or \emph{LVars}, form the foundation for a model of
+or \emph{LVars}, are the foundation for a model of
 deterministic-by-construction parallel programming that allows a more
 general form of communication between tasks than previously existing
 guaranteed-deterministic models allowed.  LVars generalize IVars and
@@ -294,18 +294,24 @@ computations possible:
   registered with an LVar, it invokes a \emph{callback function} to
   run, asynchronously, whenever events arrive (in the form of
   monotonic updates to the LVar).  Crucially, it is possible to check
-  for \emph{quiescence} of a handler, discovering that no callbacks
-  are currently enabled---a transient, negative property.  Since
-  quiescence means that there are no further changes to respond to, it
-  can be used to tell that a fixpoint has been reached.
+  for \emph{quiescence} of a group of handlers, discovering that no
+  callbacks are currently enabled---a transient, negative property.
+  Since quiescence means that there are no further changes to respond
+  to, it can be used to tell that a fixpoint has been reached.
 \end{itemize}
-I will explain freezing and handlers in detail and show how, together,
-they enable an expressive and useful style of parallel programming
-that makes possible fixpoint computations like the graph traversal
-described above.  Furthermore, I will show how at the implementation
-level, it is possible to recover determinism for a computation that
-uses freezing by ensuring that the freeze happens \emph{after} all
-writes have occurred; see Section~\ref{ss:lvish}.
+Of course, since more events could arrive later, there is no way to
+guarantee that quiescence is permanent---but since the contents of the
+LVar being written to can only be read through @get@ or @freeze@
+operations anyway, early quiescence poses no risk to determinism or
+quasi-determinism, respectively.  In fact, freezing and quiescence
+work particularly well together because freezing provides a mechanism
+by which we can safely ``place a bet'' that all writes have completed.
+Hence freezing and handlers make possible fixpoint computations like
+the graph traversal described above.  Moreover, if we can ensure that
+the freeze does indeed happen after all writes have completed, then we
+can ensure that the computation is deterministic, and it is possible
+to enforce this ``freeze-last'' idiom at the implementation level; see
+Section~\ref{ss:lvish}.
 
 \subsection{LVars and conflict-free replicated data types}
 
