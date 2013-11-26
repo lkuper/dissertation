@@ -317,25 +317,27 @@ Section~\ref{ss:lvish}.
 
 The LVars model I've described is closely related to the mathematical
 framework of \emph{conflict-free replicated data types}
-(CRDTs)~\cite{crdts}, for specifying the behavior of \emph{eventually
+(CRDTs)~\cite{crdts} for specifying the behavior of \emph{eventually
   consistent}~\cite{vogels-ec} replicated objects in a distributed
-system.  In particular, \emph{state-based} CRDTs leverage the
+system.  In particular, \emph{state-based} or \emph{convergent}
+replicated data types, abbreviated as \emph{CvRDTs}, leverage the
 mathematical properties of join-semilattices to guarantee that all
-replicas of an object in a distributed database eventually agree.
-Unlike LVars, CRDTs allow intermediate states to be observed: if two
-replicas are updated independently, reads of those replicas may
-disagree until a (least-upper-bound) merge operation takes place.
+replicas of an object (for instance, in a distributed database)
+eventually agree.  Unlike LVars, CvRDTs allow intermediate states to
+be observed: if two replicas are updated independently, reads of those
+replicas may disagree until a (least-upper-bound) merge operation
+takes place.
 
-Since CRDTs leverage lattice properties to ensure eventual consistency
-in the same way that LVars do so to ensure determinism, a sensible
-next research question is: can we use lessons from the growing
-literature on CRDTs~\cite{crdts, crdts-tr, rdts-popl14} to
-improve the LVars model, and vice versa?  I will approach this
-question in both directions:
+Since CvRDTs leverage lattice properties to ensure eventual
+consistency in the same way that LVars do so to ensure determinism, a
+sensible next research question is: can we use lessons from the
+growing literature on replicated data types~\cite{crdts, crdts-tr,
+  rdts-popl14} to improve the LVars model, and vice versa?  I will
+approach this question in both directions:
 \begin{itemize}
 \item First, I will show how LVar-style threshold reads apply to the
-  setting of CRDTs.  Since threshold reads guarantee that the order in
-  which updates occur cannot be observed, they will prevent
+  setting of CvRDTs.  Since threshold reads guarantee that the order
+  in which updates occur cannot be observed, they will prevent
   intermediate states from being observed, ensuring a greater degree
   of consistency at the price of read availability.
 \item Second, I will show how to use techniques from the CRDT
@@ -369,16 +371,17 @@ employed with a custom work-stealing scheduler.\footnote{The
 @Par@ monad, which is indexed by an \emph{effect level}, allowing
 fine-grained specification of the effects that a given computation is
 allowed to perform.  For instance, since @freeze@ introduces
-quasi-determinism, a computation marked as deterministic is not
-allowed to use @freeze@.  Thus, the \emph{static type} of an LVish
-computation reflects its determinism or quasi-determinism guarantee.
-Furthermore, if a @freeze@ is guaranteed to be the \emph{last} effect
-that occurs in a computation, then it is impossible for that @freeze@
-to race with a @put@, ruling out the possibility of a run-time
-@put@-after-@freeze@ exception.  Hence a computation in which any
-occurrence of @freeze@ is guaranteed to occur last is deterministic,
-and LVish exposes a @runParThenFreeze@ operation that captures this
-``freeze-last'' idiom and has a deterministic effect level.
+quasi-determinism, a computation indexed with a deterministic effect
+level is not allowed to use @freeze@.  Thus, the \emph{static type} of
+an LVish computation reflects its determinism or quasi-determinism
+guarantee.  Furthermore, if a @freeze@ is guaranteed to be the
+\emph{last} effect that occurs in a computation, then it is impossible
+for that @freeze@ to race with a @put@, ruling out the possibility of
+a run-time @put@-after-@freeze@ exception.  Hence a computation in
+which any occurrence of @freeze@ is guaranteed to occur last is
+deterministic, and LVish exposes a @runParThenFreeze@ operation that
+captures this ``freeze-last'' idiom and has a deterministic effect
+level.
 
 LVish also provides a variety of lattice-based data structures (\eg,
 sets, maps, graphs) that support concurrent insertion, but not
@@ -425,14 +428,14 @@ will make use of handlers and freezing:
   comparing genealogical histories (phylogenetic trees) that relies
   heavily on a parallel tree-edit distance algorithm~\cite{hashrf}.
   In addition to handlers and freezing, the PhyBin application relies
-  on the ability to perform writes that are commutative and
-  inflationary with respect to the lattice, but \emph{not} idempotent
-  (in contrast to the least-upper-bound writes discussed above, which
-  are idempotent).  I will show that these non-idempotent writes,
-  which we call @bump@ operations, preserve determinism as long as
-  programs do not use @put@ and @bump@ on the same LVar, a property
-  which can be statically enforced by the aforementioned effect
-  specification system in LVish.
+  on the ability to perform writes to LVars that are commutative and
+  inflationary with respect to the lattice in question, but \emph{not}
+  idempotent (in contrast to the least-upper-bound writes discussed
+  above, which are idempotent).  I will show that these non-idempotent
+  writes, which we call @bump@ operations, preserve determinism as
+  long as programs do not use @put@ and @bump@ on the same LVar, a
+  property which can be statically enforced by the aforementioned
+  effect specification system in LVish.
 \end{itemize}
 
 \section{Thesis statement}\label{s:thesis}
@@ -485,9 +488,9 @@ My dissertation will defend this thesis as follows:
   \item \emph{distributed programming}: I will defend the claim that
     LVars are applicable to distributed programming by showing how
     LVar-style threshold reads apply to the setting of CRDTs, and by
-    showing how techniques for implementing CRDTs that support
-    non-monotonic operations can be used to implement LVars that
-    support non-monotonic operations as well.
+    showing how techniques for implementing non-monotonic CRDTs can be
+    used to implement LVars that support non-monotonic operations as
+    well.
 \end{itemize}
 
 \section{Technical overview}\label{s:technical-overview}
