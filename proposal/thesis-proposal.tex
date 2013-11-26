@@ -986,6 +986,17 @@ discuss the relationship to LVars.
 
 \subsection{Conflict-free replicated data types}
 
+\lk{TODO: need to explain definition of EC and SEC and relate it to
+  all this.  Shapiro \etal~\cite{crdts} define an eventually
+  consistent system as one that has the property of
+  \emph{convergence}: correct replicas to which the same updates have
+  been delivered \emph{eventually} have equivalent
+  state.\footnote{Along with convergence, there are two other
+    necessary conditions for eventual consistency: \emph{eventual
+      delivery}, meaning that all replicas receive all update
+    messages, and \emph{termination}, meaning that all method
+    executions terminate.}}
+
 A \emph{conflict-free replicated data type} (CRDT) is a replicated
 data type that satisfies the conditions for \emph{strong convergence},
 meaning that correct replicas to which the same updates have been
