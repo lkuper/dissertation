@@ -101,13 +101,14 @@
   framework for specifying the behavior of \emph{eventually
     consistent} replicated objects in a distributed system.  First, I
   will show how LVar-style threshold reads apply to the setting of
-  CRDTs.  Threshold reads will guarantee that the order in which
-  information is added to a CRDT cannot be observed, ensuring a
+  CRDTs by extending the definition of state-based CRDTs to allow
+  threshold reads. Threshold reads will guarantee that the order in
+  which information is added to a CRDT cannot be observed, ensuring a
   greater degree of consistency at the price of read availability.
-  Second, I will show how to apply techniques from the CRDT literature
-  to develop LVars that support non-monotonic updates: PN-Counters,
-  which can be decremented as well as incremented, and OR-Sets, which
-  support removal as well as addition of elements.
+  Second, I will use techniques from the CRDT literature to implement
+  LVars that \emph{emulate} non-monotonic data structures (\ie,
+  counters that support decrement as well as increment and sets that
+  support removal of elements).
 
   Finally, I will demonstrate the viability of the LVars model with
   \emph{LVish}, a Haskell library based on it.  The LVish library
@@ -343,7 +344,7 @@ approach this question in both directions:
 \item Second, I will show how to use techniques from the CRDT
   literature to develop LVars that support non-monotonic updates:
   PN-Counters, which can be decremented as well as incremented, and
-  OR-Sets, from which elements can be removed as well as added.
+  2P-Sets, from which elements can be removed as well as added.
 \end{itemize}
 In Section~\ref{s:crdts} I give additional background on eventual
 consistency and CRDTs and discuss further details of how I plan to
@@ -1088,9 +1089,9 @@ both the LVars and CvRDT models.  I propose to do the following:
   CvRDT where \emph{all} reads are threshold reads made via the $g$
   operation, we can guarantee something more than strong convergence:
   all reads will be consistent.  I will formally define and prove this
-  consistent read property for extended CvRDTs.  In practice, though,
-  a combination of threshold reads and regular reads may make the most
-  sense.
+  \emph{query consistency} property for extended CvRDTs.  In practice,
+  though, a combination of threshold reads and regular reads may make
+  the most sense.
 \item Extend the LVars model to allow non-lub update operations---that
   is, allow update operations other than @put@---while nevertheless
   preserving determinism.  In fact, the @bump@ operation discussed in
@@ -1099,9 +1100,9 @@ both the LVars and CvRDT models.  I propose to do the following:
   setting of $\lambdaLVish$---is just such a non-lub update operation.
   I will parameterize the definition of $\lambdaLVish$ by an
   inflationary function $f$, add a @bump@ expression to the
-  $\lambdaLVish$ syntax, and add the following new rule {\sc E-Bump}
-  to the operational semantics, and prove determinism for the
-  resulting extended language:
+  $\lambdaLVish$ syntax, add (something like) the following rule {\sc
+    E-Bump} to the operational semantics, and prove determinism for
+  the resulting extended language:
 \begin{mathpar}
     \inferrule*[lab=E-Bump]
         {S(l) = \state{d_1}{\frozenfalse} \\ d_1 \userleq f(d_1) \\ f(d_1) \neq \top}
@@ -1113,21 +1114,23 @@ both the LVars and CvRDT models.  I propose to do the following:
   and CvRDT models closer together.
 \end{itemize}
 Finally, there is another interesting possibility, which I discuss
-next: the equivalence of CmRDTs and CvRDTs suggests that LVars could
-be extended to allow not only non-lub updates, but
-\emph{non-monotonic} updates.
+next: the existence of CRDTs that allow non-monotonic operations
+suggests that LVars could be extended to allow not only non-lub
+updates, but \emph{non-monotonic} updates.
 
 \subsection{CmRDTs and non-monotonic updates}
 
 As I mentioned above, CmRDTs and CvRDTs can emulate each other.
 However, unlike CvRDTs, which are state-based objects specified using
-lattices, CmRDTs are \emph{op-based objects}, specified using
-\emph{commutative operations}.
+partial orders, CmRDTs are \emph{op-based} objects.  Intuitively,
+CvRDT replicas converge by communicating their local \emph{state},
+whereas CmRDT replicas converge by telling each other \emph{what
+  operations have taken place} locally.
 
 Again citing Shapiro \etal~\cite{crdts, crdts-tr}, an \emph{op-based
   object} is specified as a tuple $(S, s^0, q, t, u, P)$, where $S$,
 $s^0$, and $q$ are respectively the set of states, the initial state,
-and the query method, as before. $t$ and $u$ are called the
+and the query method, as before. $t$ and $u$ are the
 \emph{prepare-update} method and the \emph{effect-update} method,
 respectively.  Updating a local replica involves executing $t$
 locally, immediately followed by $u$ locally, and so we denote an
@@ -1140,14 +1143,15 @@ network.
 
 For present purposes, the details of $P$ are not important; the
 important thing to note is that an op-based object has no merge
-method, and so the above definition of CvRDTs cannot apply to op-based
-objects.  Instead, we define an \emph{op-based} or \emph{commutative}
-replicated data type (CmRDT) to be an op-based object with the
-property that \emph{all concurrent updates commute}.  We say that
-updates $(t, u)$ and $(t', u')$ commute iff, for any reachable replica
-state $s$ where both $u$ and $u'$ are \emph{enabled} by the delivery
-precondition $P$ (that is, $P(s, u)$ and $P(s, u')$ are both true),
-the following conditions hold:
+method, and so the above definition of CvRDTs, in which the merge
+method $m$ computes the least upper bound, cannot apply to op-based
+objects.  Instead, Shapiro \etal~define an \emph{op-based} or
+\emph{commutative} replicated data type (CmRDT) to be an op-based
+object with the property that \emph{all concurrent updates commute}.
+We say that updates $(t, u)$ and $(t', u')$ commute iff, for any
+reachable replica state $s$ where both $u$ and $u'$ are \emph{enabled}
+by the delivery precondition $P$ (that is, $P(s, u)$ and $P(s, u')$
+are both true), the following conditions hold:
 \begin{itemize}
   \item $u$ remains enabled by $P$ after $u'$ has executed,
   \item $u'$ remains enabled by $P$ after $u$ has executed, and
@@ -1155,68 +1159,92 @@ the following conditions hold:
     starting from $s$ is equivalent to the state resulting from
     executing $u'$ followed by $u$ starting from $s$.
 \end{itemize}
-Just as with CvRDTs, Shapiro \etal~show that a state-based object that
-meets the criteria for a CmRDT is strongly convergent~\cite{crdts}.
-Moreover, they give a constructive proof that CmRDTs and CvRDTs can
-emulate each other by showing how to construct an equivalent CvRDT
-given a CmRDT, and vice versa.  This equivalence is particularly
-interesting considering that, since CmRDT operations do not have to
-update the state $s$ monotonically with respect to a lattice, it is
-possible to implement CmRDTs (and therefore equivalent CvRDTs!) that
-allow ``non-monotonic'' operations.  For example, Shapiro \etal~give
-an op-based specification for an \emph{OR-Set} (``observed-remove
-set'') data structure.  OR-Sets are sets that support removal as well
-as addition of elements (because concurrent adds and removes commute),
-and it should be possible to use Shapiro \etal's emulation
-construction to emulate this op-based specification with an equivalent
-state-based one.
+As an example of a CmRDT, Shapiro \etal~give an op-based specification
+for an \emph{OR-Set} (``observed-remove set'') data structure.
+OR-Sets are sets that support removal as well as addition of elements
+(because concurrent adds and removes commute).
 
-Shapiro \etal~also point out that it is possible to specify a set that
-allows both additions and removals directly as a CvRDT; the trick is
-to encode the set as \emph{two} grow-only sets, one for elements added
-and one for elements removed.  This data structure is known as a
-\emph{2P-Set} (for ``two-phase set'').  However, with such an
-encoding, once an element is removed, it can never be added again
+Just as with CvRDTs, Shapiro \etal~show that a state-based object that
+meets the criteria for a CmRDT is SEC~\cite{crdts}.  Moreover, they
+give a constructive proof that CmRDTs and CvRDTs can emulate each
+other by showing a general way to construct an equivalent CvRDT given
+a CmRDT, and vice versa.  In the CmRDT-to-CvRDT direction, \emph{known
+  updates} (operations that have taken place locally) and
+\emph{delivered updates} (local operations that have been broadcast by
+an effect-update) are modeled as two grow-only sets.
+
+Since CmRDT operations do not have to update the state $s$
+monotonically with respect to a lattice, it is possible to implement
+CmRDTs (and therefore equivalent CvRDTs!) that allow ``non-monotonic''
+operations.  (The state of the \emph{emulated} CvRDT, however, does
+grow monotonically with respect to \emph{its} partial order;
+otherwise, it would not be a CvRDT.) For example, it should be
+possible to use Shapiro \etal's emulation construction to emulate
+their op-based OR-Set specification with an equivalent state-based
+one.
+
+Shapiro \etal~also give examples showing that, for certain data types,
+it is possible to \emph{directly} specify a CvRDT that allows
+non-monotonic operations.  A set that allows both additions and
+removals, for instance, can be specified directly as a CvRDT; the
+trick is to encode the set as \emph{two} grow-only sets, one for
+elements added and one for elements removed.  This data structure is
+known as a \emph{2P-Set} (for ``two-phase set'').  However, with such
+an encoding, once an element is removed, it can never be added again
 thereafter!  \emph{Counters}, however, do not suffer from the same
 problem: we can encode a counter that allows both increments and
 decrements directly as a CvRDT using two grow-only counters, one for
 increments and one for decrements. The resulting data structure is
 called a \emph{PN-Counter} (for ``positive/negative counter'').
 
-\subsection{Threshold reads of non-monotonic CRDTs}
+\subsection{Threshold reads of non-monotonic data structures}
 
 What would it mean to perform a threshold read on a data structure
 that allows non-monotonic operations?  At first glance, this would
 seem to pose a problem for determinism. If only monotonic operations
 are allowed, as is the case for LVars, then whether or not a given
 @get@ operation unblocks is the same from run to run (although it may
-unblock at different times, depending on scheduling).  If
-non-monotonic operations are allowed, though, this is no longer the
-case. For instance, if a @get@ operation is thresholded on an element
-that is removed from a set, then the @get@ may block forever, or not,
-depending on whether the it runs before or after the element's
-removal.
+unblock at different times, depending on scheduling).  If the state of
+an LVar were allowed to move up and down in the lattice, though, this
+would no longer be the case. For instance, if a @get@ operation is
+thresholded on an element that is removed from a set, then the @get@
+may block forever, or not, depending on whether the it runs before or
+after the element's removal.
 
-One option is to give up on threshold reads entirely for CRDTs that
-allow non-monotonic operations.  However, it is also worth considering
-another option, which is to change the semantics of threshold reads to
-something that reveals even less information than the already-limited
-form of observation they currently allow. In the LVars model, when a
-@get@ returns, it is a guarantee that the contents of the LVar it is
-reading are at or above a certain point in the lattice: ``The contents
-of this LVar are at least $x$.''  But for non-monotonic CRDTs, we
-could, instead, have the following guarantee: ``\emph{There exists a
-  schedule} under which the contents of this CRDT could have at one
-time been $x$.''  Although this latter guarantee is much weaker, there
-still may be situations in which it is useful.
+One option is to give up on threshold reads entirely for data
+structures that allow non-monotonic operations.  However, it is also
+worth considering another option, which is to change the semantics of
+threshold reads to something that reveals even less information than
+the already-limited form of observation they currently allow. In the
+LVars model, when a @get@ returns, it is a guarantee that the contents
+of the LVar it is reading are at or above a certain point in the
+lattice: ``The contents of this LVar are at least $x$.''  But for
+non-monotonic data structures, we could, instead, have the following
+guarantee: ``\emph{There exists a schedule} under which the contents
+of this data structure could have at one time been $x$.''  Although
+this latter guarantee is much weaker, there still may be situations in
+which it is useful.  Changing the semantics of threshold reads in this
+way would allow thresholding on the state of a CmRDT directly.
 
-Finally, yet another option is to exploit what we know about the
-internal representation of CRDTs that support non-monotonic operations
-to allow unusual kinds of queries on those CRDTs. It may be useful,
-for instance, to know when a PN-Counter has been decremented at least
-$n$ times, regardless of its total.  If so, we could easily threshold
-on the size of the internal grow-only decrement counter using an
-ordinary threshold read.
+Finally, yet another possibility is to leave the semantics of
+threshold reads as they are and threshold on the (monotonically
+growing) state of a CvRDT that is a \emph{monotonic emulation} of a
+non-monotonic data structure.  Such a CvRDT might be an emulation of a
+CmRDT, or it might be a non-monotonic data structure encoded diretly
+as a CvRDT, such as a PN-Counter.  Such threshold reads would exploit
+what we know about the internal representation of the CvRDT to allow
+unusual kinds of queries.  It might be useful, for instance, to know
+when a PN-Counter has been decremented at least $n$ times, regardless
+of its total.  If so, we could easily threshold on the size of the
+internal grow-only decrement counter using a standard threshold read.
+
+The last of these possibilities seems to fit well into the LVars model
+because it does not require changing the monotonic semantics of LVars.
+Therefore, I propose to implement LVar-based versions of 2P-Sets and
+PN-Counters, using a monotonic emulation for the non-monotonic
+operations, and exposing @get@ operations that correspond to standard
+threshold reads but that threshold on the emulating (monotonically
+growing) data structure rather than the emulated (non-monotonic) one.
 
 \section{Related work}\label{s:related}
 
@@ -1390,12 +1418,13 @@ To complete the thesis, I plan to do the following:
   Update the existing quasi-determinism proof for $\lambdaLVish$ to
   account for @bump@.  (Time estimate: 1 month.)
 
-\item Show how LVar-style threshold reads apply to the setting of
-  CRDTs.  Extend the LVish library with implementations of PN-Counters
-  and OR-Sets, and release a new version of LVish with these
-  extensions. Implement at least one application that makes use of
-  these CRDT-inspired LVars.  Write a paper on my work on combining
-  LVars and CRDTs.  (Time estimate: 5 months.)
+\item Extend the definition of CvRDTs to include threshold reads.
+  Define and prove a query consistency property for CvRDTs extended
+  thusly.  Implement PN-Counters and 2P-Sets in the LVish library and
+  release a new version of LVish with these extensions.  Implement at
+  least one application that makes use of these CRDT-inspired LVars.
+  Write a paper on my work on combining LVars and CRDTs.  (Time
+  estimate: 5 months.)
 
 \item Write the dissertation. (Time estimate: 3 months.)
 \end{itemize}
