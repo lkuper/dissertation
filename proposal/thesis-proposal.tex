@@ -1325,11 +1325,11 @@ FlowPools are specialized to bags.
 \subsection{Concurrent Revisions}
 
 The Concurrent Revisions (CR)~\cite{concurrent-revisions-haskell11}
-programming model uses \emph{isolation types} \cite{isolation-types}
-to distinguish regions of the heap shared by multiple mutators.
-Rather than enforcing exclusive access in the style of DPJ, CR clones
-a copy of the state for each mutator, using a deterministic ``merge
-function'' for resolving conflicts in local copies at join points.
+programming model uses isolation types to distinguish regions of the
+heap shared by multiple mutators.  Rather than enforcing exclusive
+access in the style of DPJ, CR clones a copy of the state for each
+mutator, using a deterministic ``merge function'' for resolving
+conflicts in local copies at join points.
 
 Variables can be annotated as being shared between a ``joiner'' thread
 and a ``joinee'' thread.  Unlike the least-upper-bound writes of
