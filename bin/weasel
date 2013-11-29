@@ -36,4 +36,4 @@ fi
  
 egrep -i -n --color "\\b($weasels)\\b" $*
  
-exit $?
+exit 0
