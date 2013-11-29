@@ -38,7 +38,8 @@ plain:
 #-----------------------------------------------
 # Others:
 
-# Check style:
+# Check style (due to
+# http://matt.might.net/articles/shell-scripts-for-passive-voice-weasel-words-duplicates/):
 style:
 	echo "weasel words: "
 	sh ../bin/weasel *.tex
