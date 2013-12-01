@@ -4,7 +4,7 @@ Thanks for being here at 8:30; I really appreciate that everyone is here, includ
 
 ...
 
-OK, great!  So my proposal is about lattice-based data structures for deterministic parallel and distributed programming.  I'm not ordinarily a big fan of outline slides, but this one time I decided I'd better make one so that you know what to expect.
+OK, great!  I'm going to get started and feel free to ask questions at any point.  This proposal is about lattice-based data structures for deterministic parallel and distributed programming.  I'm not ordinarily a big fan of outline slides, but this one time I decided I'd better make one so that you know what to expect.
 
 # Outline for this talk
 
@@ -22,25 +22,19 @@ Finally, I'll talk about the related work that I won't have already covered, and
 
 A big chunk of this talk describes work that's already published. In particular, the basic LVars model already exists, has been formally defined and proved deterministic, and the extension to quasideterminism is done, and has been proved quasi-deterministic, and a version of the LVish library already exists.  The part that I haven't done yet is the work that has to do with CRDTs, and I've included the LVish library here under both `already done` and `still to do` because, as you'll see, I'm planning to extend it to relate to this last piece on CRDTs.
 
-## The problem and existing approaches
+# Outline: The problem and existing approaches
 
-Parallel programming means programming in such a way that programs can be scheduled onto multiple cores (or independent execution units, or computing stations, or whatever you want to call them) to make them run faster.
+So, let's start by explaining the problem of how to do guaranteed-deterministic parallel programming.
 
-Guaranteed-deterministic parallel programming means doing that, but in such a way that the observable result of a program is guaranteed to be the same on every run, regardless of how it happens to be scheduled onto those multiple cores.
+# Deterministic parallel programming
 
-  * Parallel programming is hard.  One of the things that makes it
-    hard is that programs can behave unpredictably when run in
-    parallel, due to unpredictable interactions between parallel
-    tasks.
-	
-  * "Irregular" parallel programs have to be dynamically scheduled,
-    and because you can't know the schedule in advance, you can't
-    predict inter-task interactions that come about as a result of
-    scheduling.
-	
-  * Deterministic-by-construction parallel programming models counter
-    this by restricting the ways in which parallel tasks can interact.
+First of all, what do I mean by deterministic parallel programming?  By parallel programming, in this proposal, I mean writing programs in such a way that they can be run on parallel hardware (meaning multiple cores, or independent execution units, or computing stations, or whatever you want to call them) to make them go faster.
 
+One of the reasons why this is hard is that when you have programs running in parallel, they can behave unpredictably, reflecting the unpredictable way in which parallel tasks interact.  This is exacerbated by the fact that a lot of parallel algorithms are so-called "irregular" parallel algorithms, where the work the algorithm needs to do depends on the shape of the data being operated on, so the work has to be dynamically scheduled, and because you can't know the schedule in advance, you can't predict inter-task interactions that come about as a result of scheduling.
+
+To cope with this, we have deterministic parallel programming models.  By deterministic parallel programming, I mean parallel programming, but in such a way that the observable result of a program is guaranteed to be the same on every run, regardless of how it happens to be scheduled onto those multiple cores.  This notion of observable results is important, and I'll come back to this notion of observability later on. I also wat to point out that what I'm going to be concerned with here is not verifying the determinism of individual programs but rather with developing a deterministic-by-construction parallel programming model, such that all programs written in the model are guaranteed to be deterministic.
+
+To give an example of what I mean by unpredictable interactions between parallel tasks, I've written a toy example of a program that exposes schedule nondeterminism.  It happens to be in Haskell, but there's nothing about this example that's particular to Haskell.
 
 # Outline of proposal document
 
