@@ -790,9 +790,9 @@ completed.  When such a quiescent state is detected, {\sc
   E-Freeze-Final} freezes the LVar's state.  Like {\sc
   E-Spawn-Handler}, the rule can fire at any time,
 nondeterministically, that the handler appears quiescent---a transient
-property!  But after being frozen, any further @put@s that would have
-enabled additional callbacks will instead raise $\error$ by way of the
-{\sc E-Put-Err} rule.
+property!  But after the LVar is frozen, any further @put@s that would
+have enabled additional callbacks will instead raise $\error$ by way
+of the {\sc E-Put-Err} rule.
 
 Therefore, freezing is a way of ``betting'' that once a collection of
 callbacks have completed, no further @put@s that change the LVar's
