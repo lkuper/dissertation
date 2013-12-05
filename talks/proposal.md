@@ -10,7 +10,7 @@ OK, great!  I'm going to get started, and please feel free to ask questions at a
 
 ## Outline for this talk
 
-I'm going to start out by talking about the problem that this work is broadly concerned with, which is the problem of how to do guaranteed-deterministic parallel programming, and I'll explain what that means.  I'll also talk about the existing approaches that our approach generalizes.  I'm not going to talk about all the related work, and if you want to know more about the related work that I don't cover, there's a section on it in the proposal document that you all have a copy of.
+I'm going to start out by talking about the problem that this work is broadly concerned with, which is the problem of how to do guaranteed-deterministic parallel programming, and I'll explain what that means.  I'll also talk about the existing approaches that our approach generalizes.
 
 Then, I'll give an overview of our approach, and in this part I'll explain how lattice-based data structures, or LVars, work.
 
@@ -138,11 +138,31 @@ Also, I want to point out that these threshold sets don't aactually appear in en
 
 ## Outline: Quasi-determinism with LVars
 
-Thus far I've talked about how LVars enable guaranteed-deterministic parallel programming.  However, the programming model of monotonic writes and threshold reads is quite limited.  So next I want to briefly discuss an extension to the model that makes it more expressive, and that pushes it into the realm of what we call quasi-determinism, and I'll explain what that means.
+Thus far I've talked about how LVars enable guaranteed-deterministic parallel programming.  However, the programming model of monotonic writes and threshold reads is quite limited.  So next I want to briefly discuss an extension to the model that makes it more expressive, but that pushes it into the realm of what we call quasi-determinism, and I'll explain what that means.
 
-## (TODO: slides about quasi-determinism)
+## Problem: Threshold reads can't say "no"
 
-(TODO)
+We talked about how threshold reads are blocking.  This means that in the LVars model, the answer to the question of "has a given write occurred?" is always "yes"; we might just have to wait a while before we get that "yes" answer, because the reading thread will block until the LVar's contents reach the threshold.
+
+Unfortunately, this makes it hard to express certain algorithms. Consider, for instance, a graph traversal algorithm that finds the connected component of a graph starting from a given node.  As we traverse the graph, the set of nodes that we've seen grows monotonically, and we continue adding the neighbors of seen nodes to that set until the set reaches a fixed point.  Because this algorithm involves a monotonically growing data structure, it would seem at first glance to be a perfect match for the LVars model.  Unfortunately, we can't express it using only the threshold reads that I described.
+
+The problem is that the algorithm relies on being able to find out negative information about that monotonically growing data structure.  That is, we should only explore neighboring nodes should if the current node is not in the set of seen nodes; a fixpoint is reached only if no new neighbors are found; and, of course, at the end of the computation we want to learn exactly which nodes are in the connected component, which entails learning that certain nodes were not in it.  I want to stress that the set of nodes in the connected component will be deterministic for any given input -- the input being a graph and a particular start node.  So, because the result of the computation is deterministic, it should in principle be possible to express it with a program written in a guaranteed-deterministic programming model!
+
+So it turns out that it is possible to extend the LVars model to make it possible to express computations like this, and we extend it in two ways.
+
+## Solution: LVar operations beyond `put` and `get`
+
+First, in addition to `put` and `get`, which are the usual least-upper-bound write and threshold read operations that I described earlier, we add a new primitive operation called `freeze`.  The `freeze` operation is a non-blocking read that lets us find out the exact contents of the LVar, unlike `get` which only gives us an underapproximation of the LVar's contents.
+
+Freezing imposes a trade-off.  Once an LVar has been frozen, any further writes that would change its value instead raise an exception.  On the other hand, it becomes possible to discover the exact value of the LVar, learning both positive and negative information about it, without blocking.  This means that LVar programs that use `freeze` are *not* guaranteed to be deterministic, because they could nondeterministically raise an exception depending on how `put` and `freeze` operations are scheduled.  However, we *can* guarantee that such programs satisfy a weaker property called *quasi-determinism*, which is the property that all executions that produce a final value produce the *same* final value, but some executions might raise an exception.
+
+Second, we add the ability to attach event handlers to an LVar.  When an event handler has been attached to an LVar, it invokes a callback function to run, asynchronously, whenever that LVar is updated monotonically.  We can't check for emptiness of an LVar, but we *can* check for quiescence of a group of handlers, meaning that no callbacks are enabled.  Since quiescence means that there are no further changes to respond to, it can be used to tell that a fixpoint has been reached.  Of course, since more events could arrive later, there is no way to guarantee that quiescence is permanent -- but, since the contents of the LVar being written to can only be read through `get` or `freeze` operations anyway, early quiescence poses no risk to determinism or quasi-determinism, respectively.
+
+In fact, freezing and quiescence work particularly well together because freezing provides a mechanism by which we can safely "place a bet" that all writes have completed.  So we can use freezing and handlers to implement the graph traversal algorithm that I described earlier.
+
+This code is written using our LVish library.  The `Par` type constructor is the monad in which LVar computations live.  The `traverse` function discovers (in parallel) the set of nodes in a graph `g` reachable from a given node `startNode`, and is guaranteed to produce a deterministic result.  It works by creating a new `Set` LVar (corresponding to a lattice whose elements are sets, with set union as least upper bound), and seeding it with the starting node.  The `freezeSetAfter` function combines freezing and event handling..  First, it installs the callback function `f` as a handler for the `seen` set, which will asynchronously put the neighbors of each visited node into the set, possibly triggering further callbacks, recursively.  Second, when no further callbacks are ready to run -- or, in other words, when the `seen` set has reached a fixpoint -- `freezeSetAfter` will freeze the set and return its exact value.
+
+Now, the good news is that this particular program is deterministic.  The bad news is that, in general, freezing introduces quasi-determinism, because we might freeze an LVar and then do a `put` to it later, which would raise an error.  However, if we can ensure that the freeze does indeed happen after all writes have completed, then the computation is guaranteed to be deterministic, and it is actually possible to enforce this "freeze-last" idiom at the implementation level.  I'll talk about that next.
 
 ## Outline: The LVish library
 
@@ -166,8 +186,28 @@ To wrap up, I'm going to say something about what work is already done and what 
 
 ## Research plan: already done
 
-(TODO)
+Together with my collaborators, 
+
+First, I formally defined a parallel calculus, lambdaLVar, that demonstrates the basic LVars model (with `put` and `get` operations); implemented it in PLT Redex; and proved determinism for it.
+
+Then, I formally defined the LVish calculus (called lambdaLVish in this proposal), which extends lambdaLVar with freezing and event handlers; implemented it in PLT Redex; and proved quasi-determinism for it.
+
+Then, we implemented and released the LVish Haskell library based on the formal LVars model.
 
 ## Research plan: still to do
 
-(TODO)
+To complete the thesis, I plan to do the following:
+
+First, I want to define the semantics of `bump` and add it to
+  lambdaLVish.  Prove determinism for the subset of lambdaLVish.
+  that includes `bump`, but does not include freezing and event
+  handlers (this proof should be a straightforward refactoring of the
+  existing determinism proof for lambdaLVar).
+  And, I want to update the existing quasi-determinism proof for lambdaLVish to
+  account for `bump`.  (Time estimate: 1 month.)  I also plan to put all this in an extended journal version of the POPL paper.
+
+Then, I want to exploit the CRDT/LVars relationship in both directions.  First, I want to try extending the definition of CvRDTs to include threshold reads, and I want to define and prove a query consistency property for CvRDTs extended thusly.
+  
+Second, I want to implement PN-Counters and 2P-Sets in the LVish library and release a new version of LVish with these extensions.  I want to implement at least one application that makes use of these CRDT-inspired LVars.
+
+And, as part of this writing step, I'm planning to write a new paper that will cover both directions of this relationship, both making CRDTs more like LVars and making LVars more like CRDTs.  Altogether, this plan puts me on track to defend in September 2014.
