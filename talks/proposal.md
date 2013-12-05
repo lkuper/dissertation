@@ -182,32 +182,28 @@ Finally -- and this is the last technical material in the talk -- I want to disc
 
 ## Outline: Research plan
 
-To wrap up, I'm going to say something about what work is already done and what remains to be done, and my plan for doing it.
+To wrap the talk up, I'm going to say something about what work is already done and what remains to be done, and my plan for doing it.
 
 ## Research plan: already done
 
-Together with my collaborators, 
+Together with my collaborators, I've already done a lot of the work described in this proposal.
 
-First, I formally defined a parallel calculus, lambdaLVar, that demonstrates the basic LVars model (with `put` and `get` operations); implemented it in PLT Redex; and proved determinism for it.
+First, we came up with the basic LVars model (with `put` and `get` operations), and I formally defined a parallel calculus with LVars, lambdaLVar; I implemented it in PLT Redex; and I proved determinism for it.  This appeared in our FHPC '13 paper.
 
-Then, I formally defined the LVish calculus (called lambdaLVish in this proposal), which extends lambdaLVar with freezing and event handlers; implemented it in PLT Redex; and proved quasi-determinism for it.
+Then, I formally defined what we called the LVish calculus (which I'm now calling lambdaLVish in this proposal so as not to confuse it with the LVish Haskell library), which extends the original model with freezing and event handlers; I implemented *that* in PLT Redex; and we proved quasi-determinism for it, and that result is in our POPL paper.
 
-Then, we implemented and released the LVish Haskell library based on the formal LVars model.
+Finally, we implemented and released the LVish Haskell library based on the formal LVars model, and our POPL paper covers the implementation of LVish and gives a case study of programming with it.
 
 ## Research plan: still to do
 
-To complete the thesis, I plan to do the following:
+What I plan to do next:
 
-First, I want to define the semantics of `bump` and add it to
-  lambdaLVish.  Prove determinism for the subset of lambdaLVish.
-  that includes `bump`, but does not include freezing and event
-  handlers (this proof should be a straightforward refactoring of the
-  existing determinism proof for lambdaLVar).
-  And, I want to update the existing quasi-determinism proof for lambdaLVish to
-  account for `bump`.  (Time estimate: 1 month.)  I also plan to put all this in an extended journal version of the POPL paper.
+First, I want to define the semantics of `bump` and add it to lambdaLVish.  I want to actually prove determinism for the subset of lambdaLVish, that includes `bump`, but does not include freezing and event handlers (this proof should be a straightforward refactoring of the existing determinism proof for lambdaLVar).  And, I want to update the existing quasi-determinism proof for lambdaLVish to account for `bump`.  I estimate about a month for all this.
 
-Then, I want to exploit the CRDT/LVars relationship in both directions.  First, I want to try extending the definition of CvRDTs to include threshold reads, and I want to define and prove a query consistency property for CvRDTs extended thusly.
+Then, I want to jump into the last stage of the work, which is to exploit the CRDT/LVars relationship in both directions.  First, I want to extend the definition of CvRDTs to include threshold reads, and I want to define and prove a query consistency property for CvRDTs extended thusly.  I expect to spend about two months on this.
   
-Second, I want to implement PN-Counters and 2P-Sets in the LVish library and release a new version of LVish with these extensions.  I want to implement at least one application that makes use of these CRDT-inspired LVars.
+Second, I want to implement some CRDT-inspired LVars in the LVish library -- PN-Counters and 2P-Sets, to be specific -- and release a new version of LVish with them.  I want to implement at least one application that makes use of them, as well.  I expect to spend about three months on this.
 
-And, as part of this writing step, I'm planning to write a new paper that will cover both directions of this relationship, both making CRDTs more like LVars and making LVars more like CRDTs.  Altogether, this plan puts me on track to defend in September 2014.
+Finally, I expect to spend about three months writing.  We want to do an extended journal version of the POPL paper, which I expect will include this material on `bump`.  I also want to write a new paper on CRDTs and LVars.  And finally I need to integrate the material from all these papers into the dissertation itself.
+
+Altogether, this plan puts me on track to defend in September 2014.
