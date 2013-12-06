@@ -182,7 +182,7 @@ Moreover, if a `freeze` is guaranteed to be the last effect that occurs in a com
 
 So far, I've described the `Par` monad that LVar effects run in.  What about the LVar data structures themselves that are *being* side-effected by all this?  The library also provides a bunch of basic LVar data structures: IVars, IStructures, sets, maps, and so on.  In addition to the provided ones, users can implement their own LVar types, and the library provides some handy stuff to facilitate the definition of user-defined LVars.  There are certain proof obligations that the LVar implementor has to meet -- namely, they have to ensure that their `put` operation actually computes a least upper bound and that their `get` operations can be understood as corresponding to incompatible threshold sets.
 
-To illustrate how LVish is used, I'll draw on my collaborators' and my experiences using the LVish library and describe three case studies, all of which make use of handlers and freezing.  First, I'll show the graph traversal that I showed earlier.  Second, I'll describe using LVish to parallelize a k-CFA control flow analysis algorithm.  Finally, I'll describe using LVish to implement PhyBin, which is a bioinformatics application for comparing genealogical histories.
+To illustrate how LVish is used, I'll draw on my collaborators' and my experiences using the LVish library and describe three case studies, all of which make use of handlers and freezing.  First, I'll show the graph traversal that I showed earlier.  Second, I'll describe using LVish to parallelize a _k_-CFA control flow analysis algorithm.  Finally, I'll describe using LVish to implement PhyBin, which is a bioinformatics application for comparing genealogical histories.
 
 This last one relies on a parallel tree-edit distance algorithm that finds the edit distance between all pairs of trees in a set of trees, filling in all the cells in a distance matrix.  It's particularly interesting because it relies on the ability to perform writes to LVars that are commutative and inflationary with respect to the lattice in question, but *not* idempotent (in contrast to the least-upper-bound writes discussed above, which are idempotent).  For instance, an operation that increments a counter LVar is commutative and inflationary but not idempotent.  These non-idempotent writes, which we call `bump` operations, preserve determinism as long as programs do not use `put` and `bump` on the same LVar, a property which can be statically enforced by the aforementioned effect specification system in LVish.  I don't actually have a proof yet that `bump` is deterministic, but I *will*, and I'll come back to that in a minute.
 
@@ -198,7 +198,7 @@ Finally -- and this is the last technical material in the talk -- I want to disc
 
 To wrap the talk up, I'm going to say something about what work is already done and what remains to be done, and my plan for doing it.
 
-## Research plan: already done
+## What's already done
 
 Together with my collaborators, I've already done a lot of the work described in this proposal.
 
@@ -206,9 +206,11 @@ First, we came up with the basic LVars model (with `put` and `get` operations), 
 
 Then, I formally defined what we called the LVish calculus (which I'm now calling lambdaLVish in this proposal so as not to confuse it with the LVish Haskell library), which extends the original model with freezing and event handlers; I implemented *that* in PLT Redex; and we proved quasi-determinism for it, and that result is in our POPL paper.
 
-Finally, we implemented and released the LVish Haskell library based on the formal LVars model, and our POPL paper covers the implementation of LVish and gives a case study of programming with it.
+Finally, we implemented and released the LVish Haskell library based on the formal LVars model, and our POPL paper covers the implementation of LVish and gives a couple of case studies of programming with it.
 
-## Research plan: still to do
+That paper doesn't cover everything I mentioned with regard to the LVish implementation; the rest is in a new paper on LVish that's currently under submission to PLDI, and this new paper covers the fine-grained effect tracking system and the non-idempotent `bump` operations I mentioned, as well as the PhyBin case study that relies on them.
+
+## Still to do
 
 What I plan to do next:
 
@@ -220,4 +222,10 @@ Second, I want to implement some CRDT-inspired LVars in the LVish library -- PN-
 
 Finally, I expect to spend about three months writing.  We want to do an extended journal version of the POPL paper, which I expect will include this material on `bump`.  I also want to write a new paper on CRDTs and LVars.  And finally I need to integrate the material from all these papers into the dissertation itself.
 
-Altogether, this plan puts me on track to defend in September 2014.
+Altogether, this plan puts me on track to defend, in September 2014, and my thesis is that:
+
+## Thesis statement
+
+Lattice-based data structures are a general and practical foundation for deterministic and quasi-deterministic parallel and distributed programming.
+
+That's all I have!  Thanks again.
