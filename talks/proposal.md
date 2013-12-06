@@ -2,7 +2,7 @@
 
 ## Title slide
 
-Thanks for being here at 8:30!  I really appreciate that everyone is here, including not only my committee but also some people who appear to be here of their own free will.  If anyone wants to take a moment to grab more coffee and bagels before I jump into the talk, now would be a good time to do so.
+Thanks for being here at 8:30!  I really appreciate that everyone is here.  Are we all situated with coffee and so on?
 
 ...
 
@@ -22,7 +22,7 @@ After that, I'll explain the relationship between LVars and a line of work from 
 
 Finally, I'll end with my plan for completing the pieces of this research that aren't done.   The majority of what I'm talking about describes work that's already published. In particular, the basic LVars model already exists, and we've defined a language based on it and proved it deterministic; the extension that introduces quasideterminism is done, and we've proved it quasi-deterministic; and a version of the LVish library already exists.
 
-The part that I haven't done yet is the work that has to do with CRDTs, but I've included the LVish library here under both `already done` and `still to do` because, as you'll see, I'm planning to extend it to relate to this last piece on CRDTs.
+The part that I haven't done yet is the work that has to do with CRDTs, but I've included the LVish library here under both "already done" and "still to do" because, as you'll see, I'm planning to extend it to relate to this last piece on CRDTs.
 
 ## Outline: The problem and existing approaches
 
@@ -68,7 +68,7 @@ We should also note that in addition to being single-assignment, IVars also have
 
 ## Disallow multiple writes?
 
-Now, IVars are an old idea.  The earliest reference that I've been able to find for single-assignment variables is a 1968 paper by Tesler and Enea which introduced a single-assignment language called "Compel", which was short for "compute parallel".  (And incidentally, this is the same Larry Tesler who's perhaps better known for numerous HCI contributions, including for his work at Xerox PARC a few years later as one of the inventors of cut/copy/paste.  So single-assignment seems to have been around as a technique for longer than the cut/copy/paste metaphor has been around.)  And today, IVars are a popular approach to doing deterministic-by-construction parallel programming.  They're in Concurrent ML; they're in the Intel Concurrent Collections system for deterministic parallel programming, they're in the Akka library for doing dataflow programming in Scala, and they're in Haskell, as we saw.  So, IVars are popular, they've stood the test of time, and they work; what's not to like?
+Now, IVars are an old idea.  The earliest reference that I've been able to find for single-assignment variables is a 1968 paper by Tesler and Enea which introduced a single-assignment language called "Compel", which was short for "compute parallel".   And today, IVars are a popular approach to doing deterministic-by-construction parallel programming.  They're in Concurrent ML; they're in the Intel Concurrent Collections system for deterministic parallel programming, they're in the Akka library for doing dataflow programming in Scala, and they're in Haskell, as we saw.  So, IVars are popular, they've stood the test of time, and they work; what's not to like?
 
 Well, the single-write restriction on `IVar`s (when coupled with blocking reads) prevents us from writing nondeterministic programs, which is great. Unfortunately, `IVar`s also prevent us from writing certain _deterministic_ programs that we might like to be able to write.
 
@@ -266,7 +266,7 @@ That paper doesn't cover everything I mentioned with regard to the LVish impleme
 
 ## Still to do
 
-What I plan to do next:
+Here's what I plan to do next.
 
 First, I want to define the semantics of `bump` and add it to lambdaLVish.  I want to actually prove determinism for the subset of lambdaLVish, that includes `bump`, but does not include freezing and event handlers (this proof should be a straightforward refactoring of the existing determinism proof for lambdaLVar).  And, I want to update the existing quasi-determinism proof for lambdaLVish to account for `bump`.  I estimate about a month for all this.
 
@@ -283,4 +283,4 @@ Altogether, this plan puts me on track to defend, in September 2014, and my thes
 
 Lattice-based data structures are a general and practical foundation for deterministic and quasi-deterministic parallel and distributed programming.
 
-That's all I have!  Thanks again.
+That's all I have!  Thanks.
