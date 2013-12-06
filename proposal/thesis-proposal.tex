@@ -297,9 +297,9 @@ Section~\ref{ss:lvish}.
 
 \subsection{LVars and conflict-free replicated data types}
 
-The LVars model I've described is closely related to the mathematical
-framework of \emph{conflict-free replicated data types}
-(CRDTs)~\cite{crdts} for specifying the behavior of \emph{eventually
+The LVars model I've described is closely related to the concept of
+\emph{conflict-free replicated data types} (CRDTs)~\cite{crdts} for
+specifying the behavior of \emph{eventually
   consistent}~\cite{vogels-ec} replicated objects in a distributed
 system.  In particular, \emph{state-based} or \emph{convergent}
 replicated data types, abbreviated as \emph{CvRDTs}, leverage the
@@ -416,7 +416,7 @@ will make use of handlers and freezing:
   above, which are idempotent).  I will show that these non-idempotent
   writes, which we call @bump@ operations, preserve determinism as
   long as programs do not use @put@ and @bump@ on the same LVar, a
-  property which can be statically enforced by the aforementioned
+  property that can be statically enforced by the aforementioned
   effect specification system in LVish.
 \end{itemize}
 
@@ -426,8 +426,8 @@ With the above background, I can state my thesis:\lk{This format
   ripped off from Josh Dunfield.}
 \begin{quote}
   Lattice-based data structures are a general and practical foundation
-  for guaranteed-deterministic and quasi-deterministic parallel and
-  distributed programming.
+  for deterministic and quasi-deterministic parallel and distributed
+  programming.
 \end{quote}
 My dissertation will defend this thesis as follows:
 \begin{itemize}
@@ -458,8 +458,8 @@ My dissertation will defend this thesis as follows:
     used for practical programming with the three case studies
     described above, including performance results.
 
-  \item \emph{guaranteed-deterministic}: I will defend the claim that
-    the basic LVars model guarantees determinism by giving a proof of
+  \item \emph{deterministic}: I will defend the claim that the basic
+    LVars model guarantees determinism by giving a proof of
     determinism for $\lambdaLVish$, including the aforementioned
     @put@, @get@, and non-idempotent @bump@ operations on LVars.
 
@@ -879,9 +879,8 @@ allocation.
 \section{Joining forces: LVars and conflict-free replicated data types}\label{s:crdts}
 
 In this section, I discuss the relationship between the LVars model
-I've described and the mathematical framework of \emph{conflict-free
-  replicated data types}, and explain how I will leverage this
-relationship.
+I've described and the concept of \emph{conflict-free replicated data
+  types}, and explain how I will leverage this relationship.
 
 \subsection{Replication and eventual consistency}
 
