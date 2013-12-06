@@ -41,7 +41,7 @@
 
 \author{Lindsey Kuper \\ Indiana University}
 
-\date{Draft of \today}
+\date{December 6, 2013}
 
 \maketitle
 
@@ -270,7 +270,7 @@ computations possible:
   nondeterministically raise an exception depending on how @put@ and
   @freeze@ operations are scheduled.  However, we \emph{can} guarantee
   that such programs satisfy \emph{quasi-determinism}: all executions
-  that produce an final value produce the \emph{same} final value.
+  that produce a final value produce the \emph{same} final value.
 \item Second, I will describe how to add the ability to attach
   \emph{event handlers} to an LVar.  When an event handler has been
   registered with an LVar, it invokes a \emph{callback function} to
@@ -359,11 +359,9 @@ an LVish computation reflects its determinism or quasi-determinism
 guarantee.  Furthermore, if a @freeze@ is guaranteed to be the
 \emph{last} effect that occurs in a computation, then it is impossible
 for that @freeze@ to race with a @put@, ruling out the possibility of
-a run-time @put@-after-@freeze@ exception.  Hence a computation in
-which any occurrence of @freeze@ is guaranteed to occur last is
-deterministic, and LVish exposes a @runParThenFreeze@ operation that
-captures this ``freeze-last'' idiom and has a deterministic effect
-level.
+a run-time @put@-after-@freeze@ exception.  LVish exposes a
+@runParThenFreeze@ operation that captures this ``freeze-last'' idiom
+and has a deterministic effect level.
 
 LVish also provides a variety of lattice-based data structures (\eg,
 sets, maps, graphs) that support concurrent insertion, but not
@@ -961,9 +959,9 @@ way.\footnote{Indeed, as noted in the Dynamo article~\cite{dynamo},
 in an ad-hoc way: \emph{conflict-free replicated data types}
 (CRDTs)~\cite{crdts, crdts-tr} give us a simple mathematical framework
 for reasoning about and enforcing the eventual consistency of
-replicated objects in a distributed system.  In the next few sections,
-I review the basics of CRDTs from the work of Shapiro
-\etal~\cite{crdts, crdts-tr} and discuss the relationship between
+replicated objects in a distributed system.  In the following
+sections, I review the basics of CRDTs from the work of Shapiro
+\etal~\cite{crdts, crdts-tr}, then discuss the relationship between
 CRDTs and LVars.
 
 \subsection{Eventual consistency and CRDTs}
@@ -1375,6 +1373,8 @@ as a domain-specific language embedded in Ruby), we can rely on
 Haskell's static type system for fine-grained effect tracking and
 monadic encapsulation of LVar effects.
 
+\newpage
+
 \section{Research plan}
 
 Together with my collaborators, I have already completed substantial
@@ -1412,13 +1412,19 @@ To complete the thesis, I plan to do the following:
 
 \item Extend the definition of CvRDTs to include threshold reads.
   Define and prove a query consistency property for CvRDTs extended
-  thusly.  Implement PN-Counters and 2P-Sets in the LVish library and
-  release a new version of LVish with these extensions.  Implement at
-  least one application that makes use of these CRDT-inspired LVars.
-  Write a paper on my work on combining LVars and CRDTs.  (Time
-  estimate: 5 months.)
+  thusly. (Time estimate: 2 months.)
 
-\item Write the dissertation. (Time estimate: 3 months.)
+\item Implement PN-Counters and 2P-Sets in the LVish library and
+  release a new version of LVish with these extensions.  Implement at
+  least one application that makes use of these CRDT-inspired
+  LVars. (Time estimate: 3 months.)
+
+\item Expand Kuper \etal~\cite{Freeze-paper} to an extended version
+  for journal submission, including the above material on @bump@,
+  write a new paper on my work integrating CRDTs and LVars, and
+  integrate the material from these papers into the dissertation
+  itself. (Time estimate: 3 months.)
+
 \end{itemize}
 This plan puts me on track to defend in September 2014.
 
