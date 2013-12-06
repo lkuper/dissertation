@@ -192,13 +192,20 @@ Finally, I want to discuss the relationship between LVars and what are known as 
 
 ## Replication and eventual consistency
 
+[Key points for this section:
+* Replication is important and ubiquituous
+* but subject to a trade off among consistency, availability, and partition tolerance
+* Eventually consistent systems maximize availability and must resolve consistency conflicts
+* ``Last write wins'' doesn't necessarily make sense semantically
+* Strongly eventually consistent (SEC) objects must be strongly convergent: correct replicas to which the same updates have been delivered have equivalent state]
+
 First, I want to explain the notion of replication.  Distributed systems typically involve *replication* of data objects across a number of physical locations.  Replication is great: it makes the system more robust to data loss, and it allows for good data locality.  But replication is also terrible, because it means we have to confront the so-called "CAP theorem" of distributed computing, which imposes a trade-off among three properties: consistency, availability, and partition tolerance.
 
 Consistency is the property that every replica sees the same information; Availability is the property that all information is available for both reading and writing by all replicas; and ppartition tolerance is the property that the system is robust to parts of it being unable to communicate with one another periodically.
 
 An (oversimplified, but useful to a first approximation) interpretation of the CAP theorem is the slogan, "Consistency, availability, and partition tolerance: pick at most two."  In practice, real systems have to be robust to network partitions and hence must compromise on at least one of consistency or availability.
 
-But, moreover, consistency, availability, and partition tolerance are not binary properties.  For instance, rather than having either perfect availability or no availability at all, we can choose how much availability a system must have, then allow less consistency accordingly.  So-called *hHighly available* distributed systems, like the Dynamo distributed key-value store, give up on strict consistency in favor of what's known as *eventual consistency*, in which replicas may not always agree, but if updates stop arriving, all replicas will *eventually* come to agree.
+But, moreover, consistency, availability, and partition tolerance are not binary properties.  For instance, rather than having either perfect availability or no availability at all, we can choose how much availability a system must have, then allow less consistency accordingly.  So-called *Highly available* distributed systems, like the Dynamo distributed key-value store, give up on strict consistency in favor of what's known as *eventual consistency*, in which replicas may not always agree, but if updates stop arriving, all replicas will *eventually* come to agree.
 
 How can eventually consistent systems ensure that all replicas of an object come to agree?  In particular, if replicas differ, how do we determine which is "right"?  As a straw man proposal, we could vacuously satisfy the definition of eventual consistency by setting all replicas to some pre-determined value---but then, of course, we would lose all updates we had made to any of the replicas.
 
@@ -206,7 +213,40 @@ As a more practical proposal, we could try to determine which replica was writte
 
 This notion of application-specific conflict resolution is not without its problems, especially if implemented in an ad-hoc way.  Fortunately, we need not implement it in an ad-hoc way: CRDTs give us a simple mathematical framework for reasoning about and enforcing the eventual consistency of replicated objects in a distributed system.
 
-(TODO)
+## CvRDTs sound familiar
+
+[Key points for this section:
+* Conflict-free replicated data type (CRDT): a data type satisfying sufficient conditions for SEC
+* Two styles: State-based or convergent (CvRDT); op-based or commutative (CmRDT)
+* CvRDTs are equipped with a partial order <= and:
+* their possible states form a join-semilattice ordered by <=
+* merging tow replicas computes the lub of their states
+* state is inflationary across updates: u(s) >= s
+* A state-based object meeting the criteria for a CvRDT is SEC (Shapiro et al. 2011)]
+
+## Integrating CvRDTs with LVars
+
+[Key points for this section:
+* Differences with LVars:
+* No notion of threshold reads
+* Notion of ``update'' distinct from ``merge''
+* Objects are replicated, not shared
+* These differences suggest we could do the following:
+* extend CvRDTs to threshold reads
+* extend LVars to allow inflationary non-lub updates -- in fact, bump is this!]
+
+## CmRDTs and non-monotonic updates
+
+[Key points for this section:
+* CmRDTs are op-based objects; replicas converge by telling each other what updates have taken place locally
+* A CmRDT is an ob-based object with the property that all concurrent updates commute: u(u'(s)) = u'(u(s))
+* An op-based object meeting the criteria for a CvRDT is SEC (Shapiro et al. 2011).
+* CmRDTs and CvRDTs are equivalent: they can emulate each other!  You can always do a monotonic emulation of a non-monotonic data structure
+* 2P-Sets use two grow-only sets, one for additions and one for removals
+* PN-Counters use two grow-only counters for increments and decrements
+* We can implement LVar-based versions of these and hence simulate non-monotonicity
+* Thresholding works as before, so we could implement unusual queries (``counter has been descremented at least n times'')
+* I propose to implement 2P-Sets and PN-Counters in LVish]
 
 ## Outline: Research plan
 
