@@ -643,7 +643,7 @@ between concurrent threads, and in $\lambdaLVish$, the arguments to
 
 Arguments must be fully evaluated, however, before function
 application ($\beta$-reduction, modeled by the {\sc E-Beta} rule) can
-occur.  We can exploit this property to define $\LETPAR$ as syntactic
+occur.  We can leverage this property to define $\LETPAR$ as syntactic
 sugar:
 \[
 \LETPAR ~x = e_1;~~y = e_2~\IN~e_3 \;\;\defeq\;\;
@@ -884,18 +884,17 @@ I've described and the concept of \emph{conflict-free replicated data
 
 \subsection{Replication and eventual consistency}
 
-Distributed systems often involve \emph{replication} of data objects
-across a number of physical locations.  Replication is ubiquitous and
-of fundamental importance in distributed systems: it makes the system
-more robust to data loss and allows for good data locality.
-
-Given the importance and ubiquity of replication, it would be
-convenient if systems of distributed, replicated objects behaved
-indistinguishably from the more familiar programming model in which
-all data is on one machine and all computation takes place there.
-Unfortunately, this is not the case.  The well-known \emph{CAP
+Distributed systems typically involve \emph{replication} of data
+objects across a number of physical locations.  Replication is of
+fundamental importance in such systems: it makes the system more
+robust to data loss and allows for good data locality.  Given the
+importance and ubiquity of replication, it would be convenient if
+systems of distributed, replicated objects behaved indistinguishably
+from the more familiar programming model in which all data is on one
+machine and all computation takes place there.  Unfortunately, this is
+not the case.  The well-known \emph{CAP
   theorem}~\cite{gilbert-lynch-cap} of distributed computing describes
-a three-way trade-off between
+a three-way trade-off among
 \begin{itemize}
 \item consistency, in which every replica sees the same information;
 \item availability, in which all information is available for both
@@ -916,7 +915,7 @@ accordingly.  \emph{Highly available} distributed systems (\eg,
 Dynamo~\cite{dynamo}) give up on strict consistency in favor of
 \emph{eventual consistency}~\cite{vogels-ec}, in which replicas may
 not always agree, but if updates stop arriving, all replicas will
-\emph{eventually} come to agree, given enough time.
+\emph{eventually} come to agree.
 
 \subsection{Resolving conflicts between replicas}
 
@@ -928,8 +927,8 @@ all replicas to some pre-determined value---but then, of course, we
 would lose all updates we had made to any of the replicas.
 
 As a more practical proposal, we could try to determine which replica
-was written most recently, and then have the last written replica
-``win''.  But this approach is also less than ideal: even if we had a
+was written most recently, then declare the last written replica the
+winner.  But this approach is also less than ideal: even if we had a
 way of perfectly synchronizing clocks between replicas and could
 always determine which replica was written most recently, having the
 last write win might not make sense from a \emph{semantic} point of
@@ -959,40 +958,40 @@ its problems, especially if implemented in an ad-hoc
 way.\footnote{Indeed, as noted in the Dynamo article~\cite{dynamo},
   Amazon's shopping cart presents an anomaly whereby an item removed
   from a cart may re-appear!}  Fortunately, we need not implement it
-in an ad-hoc way: \emph{conflict-free replicated data types} (CRDTs)
-give us a simple mathematical framework for reasoning about and
-enforcing the eventual consistency of replicated objects in a
-distributed system.  Next, I review some of the basics of CRDTs from
-the work of Shapiro \etal~\cite{crdts, crdts-tr} and discuss their
-relationship with LVars.
+in an ad-hoc way: \emph{conflict-free replicated data types}
+(CRDTs)~\cite{crdts, crdts-tr} give us a simple mathematical framework
+for reasoning about and enforcing the eventual consistency of
+replicated objects in a distributed system.  In the next few sections,
+I review the basics of CRDTs from the work of Shapiro
+\etal~\cite{crdts, crdts-tr} and discuss the relationship between
+CRDTs and LVars.
 
-\subsection{Preliminaries}
+\subsection{Eventual consistency and CRDTs}
 
-Before discussing CRDTs, it is useful to formally define eventual
-consistency.  Shapiro \etal~\cite{crdts} define an \emph{eventually
-  consistent} object as one that has the property of
-\emph{convergence}: all correct replicas of the object to which the
-same updates have been delivered eventually have equivalent state.
-Along with convergence, they give two other conditions that are
-required for eventual consistency: \emph{eventual delivery}, meaning
-that all replicas receive all update messages, and \emph{termination},
-meaning that all method executions terminate (see below for more on
-methods).
+Before discussing CRDTs, we must formally define eventual consistency.
+Shapiro \etal~define an \emph{eventually consistent} object as one
+that has the property of \emph{convergence}: all correct replicas of
+the object to which the same updates have been delivered eventually
+have equivalent state.  Along with convergence, they give two other
+conditions that are required for eventual consistency: \emph{eventual
+  delivery}, meaning that all replicas receive all update messages,
+and \emph{termination}, meaning that all method executions terminate
+(see below for more on methods).
 
-They further define a \emph{strongly eventually consistent} (SEC)
-object as one that is eventually consistent and, in addition to being
-merely convergent, is \emph{strongly convergent}, meaning that correct
-replicas to which the same updates have been delivered have equivalent
-state.\footnote{Contrast with ordinary convergence, in which replicas
-  only \emph{eventually} have equivalent state.  An object might be
-  convergent but not strongly convergent if, for example, the system
-  executes an update on some replica and then later rolls back the
-  update after discovering that it conflicts with another.}  A
-\emph{conflict-free replicated data type} (CRDT), then, is a data type
-(\ie, a specification for an object) satisfying certain conditions
-that are sufficient to guarantee that the object is SEC.  (The term
-``CRDT'' is used interchangeably to mean a specification for an
-object, or an object meeting that specification.)
+Shapiro \etal~further define a \emph{strongly eventually consistent}
+(SEC) object as one that is eventually consistent and, in addition to
+being merely convergent, is \emph{strongly convergent}, meaning that
+correct replicas to which the same updates have been delivered have
+equivalent state.\footnote{Contrast with ordinary convergence, in
+  which replicas only \emph{eventually} have equivalent state.  An
+  object might be convergent but not strongly convergent if, for
+  example, the system executes an update on some replica and then
+  later rolls back the update after discovering that it conflicts with
+  another.}  A \emph{conflict-free replicated data type} (CRDT), then,
+is a data type (\ie, a specification for an object) satisfying certain
+conditions that are sufficient to guarantee that the object is SEC.
+(The term ``CRDT'' is used interchangeably to mean a specification for
+an object, or an object meeting that specification.)
 
 There are two ``styles'' of specifying a CRDT: \emph{state-based},
 also known as \emph{convergent}\footnote{This terminology is somewhat
@@ -1017,22 +1016,21 @@ versa.
   do this would have been to define a CvRDT as meeting the monotonic
   semilattice property and then proving that a CvRDT is SEC.}
 
-\subsection{State-based objects and CvRDTs}
+\subsection{CvRDTs and LVars}
 
-Shapiro \etal~\cite{crdts, crdts-tr} specify a \emph{state-based
-  object} as a tuple $(S, s^0, q, u, m)$, where $S$ is a set of
-states, $s^0$ is the initial state, $q$ is the \emph{query method},
-$u$ is the \emph{update method}, and $m$ is the \emph{merge method}.
-Objects are replicated across some finite number of processes, with
-one replica at each process.  We assume that each replica begins in
-the initial state $s^0$.  The state of a local replica may be queried
-via the method $q$ and updated via the method $u$.  Methods execute
-locally, at a single replica, but the merge method $m$ can merge the
-state from a remote replica with the local replica; we assume that
-every replica regularly\footnote{``Infinitely often'', according to
-  Shapiro \etal} sends its local state to some other replica, and that
-eventually every update reaches every replica, whether directly or
-indirectly.
+Shapiro \etal~specify a \emph{state-based object} as a tuple $(S, s^0,
+q, u, m)$, where $S$ is a set of states, $s^0$ is the initial state,
+$q$ is the \emph{query method}, $u$ is the \emph{update method}, and
+$m$ is the \emph{merge method}.  Objects are replicated across some
+finite number of processes, with one replica at each process.  We
+assume that each replica begins in the initial state $s^0$.  The state
+of a local replica may be queried via the method $q$ and updated via
+the method $u$.  Methods execute locally, at a single replica, but the
+merge method $m$ can merge the state from a remote replica with the
+local replica; we assume that every replica
+regularly\footnote{``Infinitely often'', according to Shapiro \etal}
+sends its local state to some other replica, and that eventually every
+update reaches every replica, whether directly or indirectly.
 
 A \emph{state-based} or \emph{convergent} replicated data type (CvRDT)
 is a state-based object equipped with a partial order $\leq$, written
@@ -1110,18 +1108,18 @@ information about their local \emph{state}, CmRDTs are \emph{op-based}
 objects, and their replicas converge by telling each other \emph{what
   operations have taken place} locally.
 
-Again citing Shapiro \etal~\cite{crdts, crdts-tr}, an \emph{op-based
-  object} is specified as a tuple $(S, s^0, q, t, u, P)$, where, as
-before, $S$, $s^0$, and $q$ are respectively the set of states, the
-initial state, and the query method. $t$ and $u$ are the
-\emph{prepare-update} method and the \emph{effect-update} method,
-respectively: updating a local replica involves executing $t$ locally,
-immediately followed by $u$ locally, and so we denote an update as a
-pair $(t, u)$.  However, the effect-update method $u$ also executes at
-all other replicas.  The local replica delivers the effect-update to
-the other replicas using a communication protocol, specified by the
-\emph{delivery precondition} $P$, that makes certain assumptions about
-the reliability and consistency of the underlying network.
+Shapiro \etal~specify an \emph{op-based object} as a tuple $(S, s^0,
+q, t, u, P)$, where, as before, $S$, $s^0$, and $q$ are respectively
+the set of states, the initial state, and the query method. $t$ and
+$u$ are the \emph{prepare-update} method and the \emph{effect-update}
+method, respectively: updating a local replica involves executing $t$
+locally, immediately followed by $u$ locally, and so we denote an
+update as a pair $(t, u)$.  However, the effect-update method $u$ also
+executes at all other replicas.  The local replica delivers the
+effect-update to the other replicas using a communication protocol,
+specified by the \emph{delivery precondition} $P$, that makes certain
+assumptions about the reliability and consistency of the underlying
+network.
 
 For present purposes, the details of $P$ are not important; the
 important thing to note is that an op-based object has no merge
@@ -1227,7 +1225,7 @@ threshold reads as they are and threshold directly on the
 an emulation of a CmRDT, or it might be a non-monotonic data structure
 encoded directly as a CvRDT, such as a PN-Counter.  Threshold reads of
 the emulating (monotonically growing) data structure, rather than the
-emulated (non-monotonic) one, could exploit what we know about the
+emulated (non-monotonic) one, could leverage what we know about the
 implmementation details of the emulation to allow unusual kinds of
 queries.  It might be useful, for instance, to know when a PN-Counter
 has been decremented at least $n$ times, regardless of its total.  If
