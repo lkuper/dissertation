@@ -188,9 +188,23 @@ This last one relies on a parallel tree-edit distance algorithm that finds the e
 
 ## Outline: Joining forces: LVars and CRDTs
 
-Finally -- and this is the last technical material in the talk -- I want to discuss the relationship between LVars and what are known as "conflict-free replicated data types", or CRDTs, which are a way of specifying the behavior of replicated objects in a distributed system, and I'll talk about how I plan to leverage that relationship.
+Finally, I want to discuss the relationship between LVars and what are known as "conflict-free replicated data types", or CRDTs, which are a way of specifying the behavior of replicated objects in a distributed system, and I'll talk about how I plan to leverage that relationship.
 
-## (TODO: slides about CRDTs)
+## Replication and eventual consistency
+
+First, I want to explain the notion of replication.  Distributed systems typically involve *replication* of data objects across a number of physical locations.  Replication is great: it makes the system more robust to data loss, and it allows for good data locality.  But replication is also terrible, because it means we have to confront the so-called "CAP theorem" of distributed computing, which imposes a trade-off among three properties: consistency, availability, and partition tolerance.
+
+Consistency is the property that every replica sees the same information; Availability is the property that all information is available for both reading and writing by all replicas; and ppartition tolerance is the property that the system is robust to parts of it being unable to communicate with one another periodically.
+
+An (oversimplified, but useful to a first approximation) interpretation of the CAP theorem is the slogan, "Consistency, availability, and partition tolerance: pick at most two."  In practice, real systems have to be robust to network partitions and hence must compromise on at least one of consistency or availability.
+
+But, moreover, consistency, availability, and partition tolerance are not binary properties.  For instance, rather than having either perfect availability or no availability at all, we can choose how much availability a system must have, then allow less consistency accordingly.  So-called *hHighly available* distributed systems, like the Dynamo distributed key-value store, give up on strict consistency in favor of what's known as *eventual consistency*, in which replicas may not always agree, but if updates stop arriving, all replicas will *eventually* come to agree.
+
+How can eventually consistent systems ensure that all replicas of an object come to agree?  In particular, if replicas differ, how do we determine which is "right"?  As a straw man proposal, we could vacuously satisfy the definition of eventual consistency by setting all replicas to some pre-determined value---but then, of course, we would lose all updates we had made to any of the replicas.
+
+As a more practical proposal, we could try to determine which replica was written most recently, then declare the last written replica the winner.  But this approach is also less than ideal: even if we had a way of perfectly synchronizing clocks between replicas and could always determine which replica was written most recently, having the last write win might not make sense from a *semantic* point of view.  Instead, we can take advantage of the fact that, for a particular application, we know something about the meaning of the data we are storing, and then parameterize the data store by a pluggable, application-specific conflict resolution operation.
+
+This notion of application-specific conflict resolution is not without its problems, especially if implemented in an ad-hoc way.  Fortunately, we need not implement it in an ad-hoc way: CRDTs give us a simple mathematical framework for reasoning about and enforcing the eventual consistency of replicated objects in a distributed system.
 
 (TODO)
 
@@ -220,7 +234,8 @@ Then, I want to jump into the last stage of the work, which is to exploit the CR
   
 Second, I want to implement some CRDT-inspired LVars in the LVish library -- PN-Counters and 2P-Sets, to be specific -- and release a new version of LVish with them.  I want to implement at least one application that makes use of them, as well.  I expect to spend about three months on this.
 
-Finally, I expect to spend about three months writing.  We want to do an extended journal version of the POPL paper, which I expect will include this material on `bump`.  I also want to write a new paper on CRDTs and LVars.  And finally I need to integrate the material from all these papers into the dissertation itself.
+Finally, I expect to spend about three months writing.  We want to do an extended journal version of the POPL paper,
+which I expect will include this material on `bump`.  I also want to write a new paper on CRDTs and LVars.  And finally I need to integrate the material from all these papers into the dissertation itself.
 
 Altogether, this plan puts me on track to defend, in September 2014, and my thesis is that:
 
