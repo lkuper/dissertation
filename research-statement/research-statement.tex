@@ -1,0 +1,60 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{stmaryrd}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage{times}
+
+\input{../latex_common/lang}
+
+% Editing marks
+\input{../latex_common/editingmarks}
+
+% Other presentational stuff
+\input{../latex_common/style}
+
+\begin{document}
+
+\title{Research Statement}
+
+\author{Lindsey Kuper}
+
+\date{\today}
+
+\maketitle
+
+\lk{Some of this wording is borrowed from Aaron Turon's research statement.}
+
+The goal of my research is to create tools, techniques, and
+abstractions that support \emph{compositional reasoning} about
+programs, proofs, and processes, especially those that do not
+immediately appear to compose well.  To this end, I study programming
+languages, and for the last few years my focus has been on parallel
+and distributed programming models.  Below I discuss my work in more
+detail, beginning in \S\ref{lvars} with my work on LVars,
+lattice-based data structures for deterministic parallelism and
+continuing in \S\ref{quasi} with a discussion of quasi-deterministic
+parallelism.  Then in \S\ref{crdts}, I discuss the relationship
+between LVars and CRDTs.  For brevity, I do not discuss my previous
+work on \emph{relational programming}~\cite{lambdae},
+\emph{multi-language parametricity}~\cite{multilang-talk}, or
+\emph{verifying CPU semantics}~\cite{tsl-tr}.
+
+\section{LVars: lattice-based data structures for deterministic parallelism}\label{lvars}
+
+
+\section{Quasi-deterministic programming with LVars and LVish}\label{quasi}
+
+
+\section{Joining forces: LVars and conflict-free replicated data types}\label{crdts}
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{../latex_common/refs}
+
+\end{document}
