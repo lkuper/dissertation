@@ -1,5 +1,5 @@
 PAPER=research-statement
-LATEX=pdflatex
+LATEX=xelatex
 UNAME := $(shell uname)
 
 default: quick

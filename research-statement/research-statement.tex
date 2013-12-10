@@ -1,13 +1,45 @@
-\documentclass{article}
-\usepackage{amsmath,amssymb,amsthm}
-\usepackage{color}
+\documentclass[10pt, letterpaper]{article}
+
 \usepackage{hyperref}
-\usepackage{stmaryrd}
-\usepackage{float}
+\usepackage{geometry}
+\usepackage{amssymb}
+\usepackage{xcolor}
 \usepackage{listings}
-\usepackage{graphicx}
-\usepackage{fullpage}
-\usepackage{times}
+
+\usepackage{xltxtra,fontspec,xunicode}
+\defaultfontfeatures{Scale=MatchLowercase}
+\setromanfont[Mapping=tex-text]{PT Serif}
+\setsansfont[Mapping=tex-text]{PT Serif}
+
+% Set your name here
+\def\name{Lindsey Kuper}
+
+% The following metadata will show up in the PDF properties
+\hypersetup{
+  colorlinks = true,
+  urlcolor = cyan,
+  pdfauthor = {\name},
+  pdftitle = {\name: Research Statement},
+  pdfsubject = {Research Statement},
+  pdfpagemode = UseNone
+}
+\urlstyle{same}
+
+\geometry{
+  body={6.6in, 9.0in},
+  left=0.95in,
+  top=1.0in
+}
+
+% Customize page headers
+\pagestyle{myheadings}
+\markright{\name: Research Statement} 
+\thispagestyle{empty}
+
+% Custom section fonts
+\usepackage{sectsty}
+\sectionfont{\mdseries\Large}
+\subsectionfont{\mdseries\itshape\large}
 
 \input{../latex_common/lang}
 
@@ -21,7 +53,7 @@
 
 \title{Research Statement}
 
-\author{Lindsey Kuper}
+\author{\name}
 
 \date{\today}
 
@@ -29,18 +61,19 @@
 
 \lk{Some of this wording is borrowed from Aaron Turon's research statement.}
 
-My research lies broadly in the area of programming languages, with
-the goal of creating tools, techniques, and abstractions that support
-\emph{compositional reasoning} about programs, proofs, and processes,
-especially those that do not immediately appear to compose well.  For
-the last few years, my focus has been on parallel and distributed
-programming models.  Below I discuss my work in more detail, beginning
-in Sections~\ref{lvars} and \ref{quasi} with my work on \emph{LVars},
-lattice-based data structures for deterministic and
-\emph{quasi-deterministic} parallelism.  Then in Section~\ref{crdts}, I discuss
-the relationship between LVars and \emph{conflict-free replicated data
-  types}.  For brevity, I do not discuss my previous work on
-\emph{relational programming}~\cite{lambdae}, \emph{multi-language
+\noindent My research lies broadly in the area of programming
+languages, with the goal of creating tools, techniques, and
+abstractions that support \emph{compositional reasoning} about
+programs, proofs, and processes, especially those that do not
+immediately appear to compose well.  For the last few years, my focus
+has been on parallel and distributed programming models.  Below I
+discuss my work in more detail, beginning in Sections~\ref{lvars} and
+\ref{quasi} with my work on \emph{LVars}, lattice-based data
+structures for deterministic and \emph{quasi-deterministic}
+parallelism.  Then in Section~\ref{crdts}, I discuss the relationship
+between LVars and \emph{conflict-free replicated data types}.  For
+brevity, I do not discuss my previous work on \emph{relational
+  programming}~\cite{lambdae}, \emph{multi-language
   parametricity}~\cite{multilang-talk}, or \emph{verifying CPU
   semantics}~\cite{tsl-tr}.
 
