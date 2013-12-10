@@ -29,32 +29,105 @@
 
 \lk{Some of this wording is borrowed from Aaron Turon's research statement.}
 
-The goal of my research is to create tools, techniques, and
-abstractions that support \emph{compositional reasoning} about
-programs, proofs, and processes, especially those that do not
-immediately appear to compose well.  To this end, I study programming
-languages, and for the last few years my focus has been on parallel
-and distributed programming models.  Below I discuss my work in more
-detail, beginning in \S\ref{lvars} with my work on LVars,
-lattice-based data structures for deterministic parallelism and
-continuing in \S\ref{quasi} with a discussion of quasi-deterministic
-parallelism.  Then in \S\ref{crdts}, I discuss the relationship
-between LVars and CRDTs.  For brevity, I do not discuss my previous
-work on \emph{relational programming}~\cite{lambdae},
-\emph{multi-language parametricity}~\cite{multilang-talk}, or
-\emph{verifying CPU semantics}~\cite{tsl-tr}.
+My research lies broadly in the area of programming languages, with
+the goal of creating tools, techniques, and abstractions that support
+\emph{compositional reasoning} about programs, proofs, and processes,
+especially those that do not immediately appear to compose well.  For
+the last few years, my focus has been on parallel and distributed
+programming models.  Below I discuss my work in more detail, beginning
+in Sections~\ref{lvars} and \ref{quasi} with my work on \emph{LVars},
+lattice-based data structures for deterministic and
+\emph{quasi-deterministic} parallelism.  Then in Section~\ref{crdts}, I discuss
+the relationship between LVars and \emph{conflict-free replicated data
+  types}.  For brevity, I do not discuss my previous work on
+\emph{relational programming}~\cite{lambdae}, \emph{multi-language
+  parametricity}~\cite{multilang-talk}, or \emph{verifying CPU
+  semantics}~\cite{tsl-tr}.
 
 \section{LVars: lattice-based data structures for deterministic parallelism}\label{lvars}
 
+\lk{Something like this?
+A fundamental challenge of parallel programming is that programs can
+behave in unexpected ways as a result of unpredictable interactions
+between parallel tasks.  So-called \emph{irregular} parallel
+applications---in which the work an algorithm must do and the
+potential for parallelizing it depend on the particular input being
+processed---exacerbate this challenge: since work has to be
+dynamically scheduled, unpredictable inter-task interactions are
+inevitable.}
+
+\emph{Deterministic-by-construction} parallel programming models
+guarantee that programs written using them will have the same
+observable behavior on every run, offering the promise of freedom from
+subtle, hard-to-reproduce bugs caused by schedule nondeterminism.  In
+order to guarantee determinism, though, deterministic-by-construction
+models must sharply restrict the sharing of state between parallel
+tasks.  Shared state, if not disallowed entirely~\cite{dph,
+  dpj-oopsla}, is restricted to a single type of shared data
+structure, such as single-assignment locations, sometimes known as
+\emph{IVars}~\cite{IStructures, CnC}, or blocking FIFO queues, as in
+Kahn process networks~\cite{Kahn-1974}.  These approaches limit the
+kinds of deterministic algorithms that can be expressed---efficiently
+or at all---within the model.
+
+\lk{TODO: say something about irregular parallel applications, where
+  the amount of available parallelism depends on the data being
+  processed.}
+
+My work introduced \emph{lattice-based data structures}, or
+\emph{LVars}~\cite{LVars-paper, LVars-TR}, which generalize the above
+approaches to allow multiple assignments that are monotonically
+increasing with respect to an application-specific \emph{lattice}.
+LVars ensure determinism by allowing only monotonically increasing
+writes and ``threshold'' reads that block until a lower bound in the
+lattice is reached.  Together, monotonic writes and threshold reads
+yield a guaranteed-deterministic programming model: programs will have
+the same observable result in spite of parallel execution and schedule
+nondeterminism.  Moreover, our determinism result is
+\emph{lattice-generic}: threads can communicate through any shared
+data structure, so long as the states the data structure can take on
+can be viewed as elements of a lattice and updates are monotonically
+increasing with respect to that lattice.  This genericity allows a
+programming model based on LVars to subsume existing deterministic
+parallel programming models: for example, a lattice of channel
+histories with a prefix ordering allows LVars to represent FIFO
+channels that implement a Kahn process network, whereas instantiating
+the model with a lattice with ``empty'' and ``full'' states (where
+$\mathit{empty} < \mathit{full}$) results in a parallel
+single-assignment language.  Different instantiations of the LVars
+model result in a wide-ranging family of deterministic parallel
+languages.
+
+We put LVars into practice in \emph{LVish}~\cite{LVish}, a Haskell
+library for guaranteed-deterministic parallel programming with LVars.
+The LVish library provides a monad for encapsulating parallel
+computation and enables a notion of lightweight, library-level threads
+to be employed with a custom work-stealing scheduler.  LVish also
+provides a variety of lattice-based data structures (\eg, sets, maps,
+graphs) that support concurrent insertion, but not deletion, during
+monadic computations.  Users may implement their own lattice-based
+data structures as well, and LVish provides tools to facilitate the
+definition of such user-defined LVars.
 
 \section{Quasi-deterministic programming with LVars and LVish}\label{quasi}
 
+Although it guarantees determinism, the LVars interface is quite
+limited.  My work in POPL '14~\cite{Freeze-paper, Freeze-TR} extends
+LVars in two ways.  First, we add the ability to ``freeze'' and then
+read the contents of an LVar directly.  Second, we add the ability to
+attach event handlers to an LVar, triggering a callback when the
+LVar's value changes.  Together, handlers and freezing enable an
+expressive and useful style of parallel programming.  We prove that in
+a language where communication takes place through these extended
+LVars, programs are at worst \emph{quasi-deterministic}: on every run,
+they either produce the same answer or raise an error.  We demonstrate
+the viability of our approach by extending the LVish library with
+support for handlers and freezing.
 
 \section{Joining forces: LVars and conflict-free replicated data types}\label{crdts}
 
-\newpage
-
 \bibliographystyle{plain}
+\newcommand{\myname}[0]{\textbf{Kuper, Lindsey}}
 \bibliography{../latex_common/refs}
 
 \end{document}
