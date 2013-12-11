@@ -1,4 +1,4 @@
-\documentclass[10pt, letterpaper]{article}
+\documentclass{article}
 
 \usepackage{hyperref}
 \usepackage{geometry}
@@ -73,13 +73,13 @@ has been on parallel and distributed programming models.  Below I
 discuss my work in more detail, beginning in Sections~\ref{lvars} and
 \ref{quasi} with my work on lattice-based data structures, or
 \emph{LVars}, for deterministic and \emph{quasi-deterministic}
-parallelism.  Then, in Section~\ref{crdts}, I discuss my ongoing work
-on the relationship between LVars and \emph{conflict-free replicated
+parallelism.  Then, in Section~\ref{crdts}, I discuss my ongoing study
+of the relationship between LVars and \emph{conflict-free replicated
   data types} for eventually consistent distributed systems, and what
-I plan to work on next.  For brevity, I do not discuss my previous
-work on \emph{relational programming}~\cite{lambdae},
-\emph{multi-language parametricity}~\cite{multilang-talk}, or
-\emph{verifying CPU semantics}~\cite{tsl-tr}.
+I plan to work on next.  For brevity, I omit my previous work on
+\emph{relational programming}~\cite{lambdae}, \emph{multi-language
+  parametricity}~\cite{multilang-talk}, or \emph{testing CPU semantic
+  specifications}~\cite{tsl-tr}.
 
 \section{LVars: lattice-based data structures for deterministic parallelism}\label{lvars}
 
@@ -99,7 +99,7 @@ observable behavior on every run, offering the promise of freedom from
 subtle, hard-to-reproduce bugs caused by schedule nondeterminism.  In
 order to guarantee determinism, though, deterministic-by-construction
 models must sharply restrict the sharing of state between parallel
-tasks.  Shared state, if not disallowed entirely, is restricted to a
+tasks.  Shared state, when not disallowed entirely, is restricted to a
 single type of shared data structure, such as single-assignment
 locations, known as \emph{IVars}~\cite{IStructures, CnC}, or blocking
 FIFO queues, as in Kahn process networks~\cite{Kahn-1974}.  These
@@ -113,22 +113,26 @@ expressed---efficiently or at all---within the model.
 My work introduced \emph{LVars}~\cite{LVars-paper, LVars-TR}, which
 generalize the above approaches to allow multiple assignments that are
 monotonically increasing with respect to an application-specific
-\emph{lattice}.  LVars ensure determinism by allowing only
-monotonically increasing writes and ``threshold'' reads that block
-until a lower bound in the lattice is reached.  Together, monotonic
-writes and threshold reads yield a provably deterministic parallel
-programming model: programs will have the same observable result in
-spite of parallel execution and schedule nondeterminism.  Our
-determinism result is \emph{lattice-generic}: threads can communicate
-through \emph{any} shared data structure, so long as the states the
-data structure can take on can be viewed as elements of a lattice and
-updates are monotonically increasing.  This generality allows a
-programming model based on LVars to subsume existing deterministic
-parallel programming models.  For example, a lattice of channel
-histories with a prefix ordering allows LVars to represent FIFO
-channels that implement a Kahn process network, whereas instantiating
-the model with a lattice with one ``empty'' state and multiple
-``full'' states (where $\forall{i}.\; \mathit{empty} <
+\emph{lattice}.  Writes to an LVar take the \emph{least upper bound}
+of the old and new values with respect to the lattice.  Along with
+monotonically increasing writes, LVars ensure determinism by allowing
+only ``threshold'' reads that block until a lower bound (\ie, an
+element belonging to a restricted subset of the lattice) is reached.
+Together, monotonic writes and threshold reads yield a provably
+deterministic parallel programming model: programs will always have
+the same observable outcome in spite of parallel execution and
+schedule nondeterminism.
+
+Our determinism result is \emph{lattice-generic}: threads can
+communicate through \emph{any} shared data structure, so long as the
+states the data structure can take on can be viewed as elements of a
+lattice and updates are monotonically increasing.  This generality
+allows a programming model based on LVars to subsume existing
+deterministic parallel programming models.  For example, a lattice of
+channel histories with a prefix ordering allows LVars to represent
+FIFO channels that implement a Kahn process network, whereas
+instantiating the model with a lattice with one ``empty'' state and
+multiple ``full'' states (where $\forall{i}.\; \mathit{empty} <
 \mathit{full_i}$) results in a parallel single-assignment language.
 Different instantiations of the LVars model result in a wide-ranging
 family of deterministic parallel languages.
@@ -200,6 +204,44 @@ static analysis~\cite{Freeze-paper} to bioinformatics~(under
 submission \cite{effectzoo-draft}).
 
 \section{Joining forces: LVars and conflict-free replicated data types}\label{crdts}
+
+Replication of data across physical locations is of fundamental
+importance in distributed systems: it makes systems more robust to
+data loss and allows for good data locality.  However, it presents the
+dilemma of how to resolve conflicts between replicas that differ,
+particularly in the case of \emph{highly available} distributed
+systems~\cite{dynamo} that give up on strict consistency in favor of
+\emph{eventual consistency}~\cite{vogels-ec}.  Fortunately,
+\emph{conflict-free replicated data types} (CRDTs)~\cite{crdts,
+  crdts-tr} give us a simple mathematical framework for reasoning
+about and enforcing the eventual consistency of replicated objects in
+a distributed system.  In particular, \emph{state-based} or
+\emph{convergent} replicated data types, abbreviated as \emph{CvRDTs},
+leverage the mathematical properties of join-semilattices to guarantee
+that all replicas of an object (for instance, in a distributed
+database) eventually agree.
+
+CvRDTs use lattice properties to ensure eventual consistency across
+replicas in a way that is closely analogous to how LVars use lattice
+properties to ensure determinism across parallel executions.
+Therefore a sensible next research question is: can we use lessons
+from the literature on replicated data types to improve the LVars
+model, and vice versa?  I am approaching this question in both
+directions.  In one direction, I am using techniques from the CRDT
+literature to develop LVars that \emph{emulate} non-monotonic updates,
+such as sets that support removal of elements and counters that can be
+decremented as well as implemented.  In the other direction, I will
+show how LVar-style threshold reads apply to the setting of CvRDTs.
+Since threshold reads guarantee that the order in which updates occur
+cannot be observed, they will prevent intermediate states from being
+observed, ensuring a greater degree of consistency in CvRDTs.  When
+\emph{all} reads are threshold reads, we should be able to guarantee
+strong consistency---and only at the (potential) price of read
+availability, never write availability. Moreover, in practice, a
+combination of threshold reads and regular reads should enable a
+notion of \emph{pay-as-you-go consistency} between the extremes of
+eventual consistency and strong consistency that today's systems
+offer.
 
 \bibliographystyle{plain}
 \newcommand{\myname}[0]{\textbf{Lindsey Kuper}}
