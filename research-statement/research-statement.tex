@@ -110,11 +110,12 @@ expressed---efficiently or at all---within the model.
   the amount of available parallelism depends on the data being
   processed.}
 
-My work introduced \emph{LVars}~\cite{LVars-paper, LVars-TR}, which
-generalize the above approaches to allow multiple assignments that are
-monotonically increasing with respect to an application-specific
-\emph{lattice}.  Writes to an LVar take the \emph{least upper bound}
-of the old and new values with respect to the lattice.  Along with
+My work introduces \emph{lattice-based data structures}, or
+\emph{LVars}~\cite{LVars-paper, LVars-TR}, which generalize the above
+approaches to allow multiple assignments to shared locations.  Writes
+to an LVar update its value to the least upper bound of the old and
+new values, ensuring that its state is monotonically increasing with
+respect to an application-specific \emph{lattice}.  Along with
 monotonically increasing writes, LVars ensure determinism by allowing
 only ``threshold'' reads that block until a lower bound (\ie, an
 element belonging to a restricted subset of the lattice) is reached.
@@ -139,14 +140,15 @@ family of deterministic parallel languages.
 
 We put LVars into practice in \emph{LVish}~\cite{LVish}, a Haskell
 library for guaranteed-deterministic parallel programming.  The LVish
-library provides a monad, @Par@, for encapsulating parallel
-computation and enables a notion of lightweight, library-level threads
-to be employed with a custom work-stealing scheduler.  LVish also
-provides a variety of lattice-based data structures (\eg, sets, maps,
-graphs) that support concurrent insertion, but not deletion, during
-@Par@ computations.  Users may implement their own lattice-based data
-structures as well, and LVish provides tools to facilitate the
-definition of such user-defined LVars.
+library provides the \emph{\lstinline|Par| monad}, a mechanism for
+encapsulating parallel computation, and enables a notion of
+lightweight, library-level threads to be employed with a custom
+work-stealing scheduler.  LVish also provides a variety of
+lattice-based data structures (\eg, sets, maps, graphs) that support
+concurrent insertion, but not deletion, during @Par@ computations.
+Users may implement their own lattice-based data structures as well,
+and LVish provides tools to facilitate the definition of such
+user-defined LVars.
 
 \section{Quasi-deterministic parallel programming with LVars and LVish}\label{quasi}
 
@@ -170,8 +172,8 @@ immediately and exactly without blocking. Freezing imposes the
 trade-off that, once an LVar has been frozen, any further writes that
 would change its value instead raise an exception.  Second, we add the
 ability to attach \emph{event handlers} to an LVar, triggering a
-callback to run, asynchronously, whenever events arrive (in the form
-of monotonic updates to the LVar).  Crucially, it is possible to check
+callback to run asynchronously whenever events arrive (in the form of
+monotonic updates to the LVar).  Crucially, it is possible to check
 for \emph{quiescence} of a group of handlers, which can be used to
 tell that a fixpoint has been reached.
 
@@ -179,23 +181,23 @@ Together, handlers and freezing enable an expressive and useful style
 of parallel programming.  We prove that in a language where
 communication takes place through these extended LVars, programs are
 at worst \emph{quasi-deterministic}: on every run, they either produce
-the same answer or raise an error.  The error case always designates a
-write-after-freeze exception, and it can pinpoint the exact pair of
-write and freeze operations that are racing so that the programmer can
-easily correct the bug.
+the same answer or raise an error.  The error case can only be caused
+by a write-after-freeze exception, and error messages can pinpoint the
+exact racing pair of write and freeze operations so that the
+programmer can easily correct the bug.
 
 We demonstrate the viability of our approach by extending the LVish
 library with support for handlers and freezing.  As part of these
-extensions, we add the ability to index a @Par@ computation by an
+extensions, we add the ability to annotate a @Par@ computation with an
 \emph{effect level}, allowing fine-grained specification of the
 effects that a given computation is allowed to perform.  For instance,
-since freezing introduces quasi-determinism, a computation indexed
+since freezing introduces quasi-determinism, a computation annotated
 with a deterministic effect level is not allowed to perform a freeze.
 Thus, the \emph{static type} of an LVish computation reflects its
 determinism or quasi-determinism guarantee.  Furthermore, if a freeze
 is guaranteed to be the \emph{last} effect that occurs in an LVar
 computation, then it is impossible for that freeze to race with a
-write, ruling out the possibility of a run-time freeze-after-write
+write, ruling out the possibility of a run-time write-after-freeze
 exception.  LVish exposes a @runParThenFreeze@ operation that captures
 this ``freeze-last'' idiom and has a deterministic effect level.  We
 have used the LVish library, extended with handlers and freezing, to
@@ -213,13 +215,13 @@ particularly in the case of \emph{highly available} distributed
 systems~\cite{dynamo} that give up on strict consistency in favor of
 \emph{eventual consistency}~\cite{vogels-ec}.  Fortunately,
 \emph{conflict-free replicated data types} (CRDTs)~\cite{crdts,
-  crdts-tr} give us a simple mathematical framework for reasoning
+  crdts-tr} provide a simple mathematical framework for reasoning
 about and enforcing the eventual consistency of replicated objects in
 a distributed system.  In particular, \emph{state-based} or
 \emph{convergent} replicated data types, abbreviated as \emph{CvRDTs},
-leverage the mathematical properties of join-semilattices to guarantee
-that all replicas of an object (for instance, in a distributed
-database) eventually agree.
+leverage the mathematical properties of lattices to guarantee that all
+replicas of an object (for instance, in a distributed database)
+eventually agree.
 
 CvRDTs use lattice properties to ensure eventual consistency across
 replicas in a way that is closely analogous to how LVars use lattice
@@ -230,18 +232,18 @@ model, and vice versa?  I am approaching this question in both
 directions.  In one direction, I am using techniques from the CRDT
 literature to develop LVars that \emph{emulate} non-monotonic updates,
 such as sets that support removal of elements and counters that can be
-decremented as well as implemented.  In the other direction, I will
+decremented as well as incremented.  In the other direction, I will
 show how LVar-style threshold reads apply to the setting of CvRDTs.
 Since threshold reads guarantee that the order in which updates occur
-cannot be observed, they will prevent intermediate states from being
-observed, ensuring a greater degree of consistency in CvRDTs.  When
-\emph{all} reads are threshold reads, we should be able to guarantee
-strong consistency---and only at the (potential) price of read
-availability, never write availability. Moreover, in practice, a
-combination of threshold reads and regular reads should enable a
-notion of \emph{pay-as-you-go consistency} between the extremes of
-eventual consistency and strong consistency that today's systems
-offer.
+cannot be observed, they can prevent queries from returning
+inconsistent intermediate states, ensuring a greater degree of
+consistency in CvRDTs.  When \emph{all} reads are threshold reads, we
+should be able to guarantee strong consistency---and only at the
+(potential) price of read availability, never write
+availability. Moreover, in practice, a combination of threshold reads
+and regular reads should enable a notion of dynamically configurable,
+\emph{pay-as-you-go consistency} between the extremes of eventual
+consistency and strong consistency that today's systems offer.
 
 \bibliographystyle{plain}
 \newcommand{\myname}[0]{\textbf{Lindsey Kuper}}
