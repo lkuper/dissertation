@@ -531,7 +531,7 @@ Figure~\ref{f:lattice-examples} gives three examples of lattices for
 common data structures.  The simplest example of a useful lattice is
 one that represents the state space of a single-assignment variable
 (an IVar).  A natural-number-valued IVar, for instance, would
-correspond to the lattice in Figure~\ref{f:lattice-examples}(a), that
+correspond to the lattice in Figure~\ref{f:lattice-examples}(b), that
 is, $(\lbrace \top, \bot \rbrace \cup \mathbb{N}, \userleq, \bot,
 \top)$, where $\userleq$ is defined by setting $\bot \userleq d
 \userleq \top$ and $d \userleq d$ for all $d \in D$.  This is a
@@ -542,7 +542,7 @@ the IVar to $\top$ (an error).  For instance, if one thread writes $2$
 and another writes $1$ to an IVar (in arbitrary order), the second of
 the two writes would result in an error because $2 \sqcup 1 = \top$.
 
-In the lattice of Figure~\ref{f:lattice-examples}(c), on the other
+In the lattice of Figure~\ref{f:lattice-examples}(a), on the other
 hand, the $\top$ element can never be reached, because the least upper
 bound of any two writes is just the maximum of the two.  For instance,
 if one thread writes $2$ and another writes $1$, the resulting state
