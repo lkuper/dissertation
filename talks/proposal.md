@@ -20,7 +20,7 @@ Then, I'll talk about how the idea of LVars has been put into practice in our Ha
 
 After that, I'll explain the relationship between LVars and a line of work from the distributed systems community on conflict-free replicated data types, or CRDTs, and I'll talk about how I plan to leverage that relationship.
 
-Finally, I'll end with my plan for completing the pieces of this research that aren't done.   The majority of what I'm talking about describes work that's already published. In particular, the basic LVars model already exists, and we've defined a language based on it and proved it deterministic; the extension that introduces quasideterminism is done, and we've proved it quasi-deterministic; and a version of the LVish library already exists.
+Finally, I'll end with my plan for completing the pieces of this research that aren't done.   The majority of what I'm talking about describes work that's already published. In particular, the basic LVars model already exists, and we've defined a language based on it and proved it deterministic; the extension that introduces quasi-determinism is done, and we've proved it quasi-deterministic; and a version of the LVish library already exists.
 
 The part that I haven't done yet is the work that has to do with CRDTs, but I've included the LVish library here under both "already done" and "still to do" because, as you'll see, I'm planning to extend it to relate to this last piece on CRDTs.
 
@@ -34,7 +34,7 @@ First of all, what do I mean by deterministic parallel programming?  By parallel
 
 One of the fundamental reasons why this is hard is that when you have programs running in parallel, they can behave unpredictably, reflecting the unpredictable way in which parallel tasks interact.  This is exacerbated by the fact that a lot of parallel algorithms are so-called "irregular" parallel algorithms, where the work the algorithm needs to do depends on the shape of the data being operated on, so the work has to be dynamically scheduled, and because you can't know the schedule in advance, you can't predict inter-task interactions that come about as a result of scheduling.
 
-To cope with this, we have deterministic parallel programming models.  By deterministic parallel programming, I mean parallel programming, but in such a way that the observable result of a program is guaranteed to be the same on every run, regardless of how it happens to be scheduled onto those multiple cores.  This notion of observable results is important, and I'll come back to this notion of observability later on. I also wat to point out that what I'm going to be concerned with here is not verifying the determinism of individual programs but rather with developing a deterministic-by-construction parallel programming model, such that all programs written in the model are guaranteed to be deterministic.
+To cope with this, we have deterministic parallel programming models.  By deterministic parallel programming, I mean parallel programming, but in such a way that the observable result of a program is guaranteed to be the same on every run, regardless of how it happens to be scheduled onto those multiple cores.  This notion of observable results is important, and I'll come back to this notion of observability later on. I also want to point out that what I'm going to be concerned with here is not verifying the determinism of individual programs but rather with developing a deterministic-by-construction parallel programming model, such that all programs written in the model are guaranteed to be deterministic.
 
 To give an example of what I mean by unpredictable interactions between parallel tasks, I've written a toy example of a program that exposes schedule nondeterminism.  It happens to be in Haskell, but there's nothing about this example that's particular to Haskell.
 
@@ -193,7 +193,7 @@ Finally, I want to discuss the relationship between LVars and what are known as 
 ## Replication and eventual consistency
 
 [Key points for this section:
-* Replication is important and ubiquituous
+* Replication is important and ubiquitous
 * but subject to a trade off among consistency, availability, and partition tolerance
 * Eventually consistent systems maximize availability and must resolve consistency conflicts
 * ``Last write wins'' doesn't necessarily make sense semantically
@@ -201,7 +201,7 @@ Finally, I want to discuss the relationship between LVars and what are known as 
 
 First, I want to explain the notion of replication.  Distributed systems typically involve *replication* of data objects across a number of physical locations.  Replication is great: it makes the system more robust to data loss, and it allows for good data locality.  But replication is also terrible, because it means we have to confront the so-called "CAP theorem" of distributed computing, which imposes a trade-off among three properties: consistency, availability, and partition tolerance.
 
-Consistency is the property that every replica sees the same information; Availability is the property that all information is available for both reading and writing by all replicas; and ppartition tolerance is the property that the system is robust to parts of it being unable to communicate with one another periodically.
+Consistency is the property that every replica sees the same information; Availability is the property that all information is available for both reading and writing by all replicas; and partition tolerance is the property that the system is robust to parts of it being unable to communicate with one another periodically.
 
 An (oversimplified, but useful to a first approximation) interpretation of the CAP theorem is the slogan, "Consistency, availability, and partition tolerance: pick at most two."  In practice, real systems have to be robust to network partitions and hence must compromise on at least one of consistency or availability.
 
@@ -245,7 +245,7 @@ This notion of application-specific conflict resolution is not without its probl
 * 2P-Sets use two grow-only sets, one for additions and one for removals
 * PN-Counters use two grow-only counters for increments and decrements
 * We can implement LVar-based versions of these and hence simulate non-monotonicity
-* Thresholding works as before, so we could implement unusual queries (``counter has been descremented at least n times'')
+* Thresholding works as before, so we could implement unusual queries (``counter has been decremented at least n times'')
 * I propose to implement 2P-Sets and PN-Counters in LVish]
 
 ## Outline: Research plan
