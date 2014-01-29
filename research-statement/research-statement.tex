@@ -228,17 +228,18 @@ replicas in a way that is closely analogous to how LVars use lattice
 properties to ensure determinism across parallel executions.
 Therefore a sensible next research question is: can we use lessons
 from the literature on replicated data types to improve the LVars
-model, and vice versa?  I am approaching this question in both
-directions.  In one direction, I am using techniques from the CRDT
-literature to develop LVars that \emph{emulate} non-monotonic updates,
-such as sets that support removal of elements and counters that can be
-decremented as well as incremented.  In the other direction, I will
-show how LVar-style threshold reads apply to the setting of CvRDTs.
-Since threshold reads guarantee that the order in which updates occur
-cannot be observed, they can prevent queries from returning
-inconsistent intermediate states, ensuring a greater degree of
-consistency in CvRDTs.  When \emph{all} reads are threshold reads, we
-should be able to guarantee strong consistency---and only at the
+model, and vice versa?  In my current work (under
+submission~\cite{joining-draft}), I am approaching this question in
+both directions.  In one direction, I am using techniques from the
+CRDT literature to develop LVars that \emph{emulate} non-monotonic
+updates, such as sets that support removal of elements and counters
+that can be decremented as well as incremented.  In the other
+direction, I show how LVar-style threshold reads apply to the setting
+of CvRDTs.  Since threshold reads guarantee that the order in which
+updates occur cannot be observed, they can prevent queries from
+returning inconsistent intermediate states, ensuring a greater degree
+of consistency in CvRDTs.  When \emph{all} reads are threshold reads,
+we should be able to guarantee strong consistency---and only at the
 (potential) price of read availability, never write
 availability. Moreover, in practice, a combination of threshold reads
 and regular reads should enable a notion of dynamically configurable,
