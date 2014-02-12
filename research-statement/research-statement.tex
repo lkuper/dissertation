@@ -62,42 +62,46 @@
 
 \maketitle
 
-\lk{Some of this wording is borrowed from Aaron Turon's research statement.}
-
-\noindent My research lies broadly in the area of programming
-languages, with the goal of creating tools, techniques, and
-abstractions that support \emph{compositional reasoning} about
+\noindent 
+The goal of my research is to identify and create tools, techniques,
+and abstractions that support \emph{compositional reasoning} about
 programs, proofs, and processes, especially those that do not
-immediately appear to compose well.  For the last few years, my focus
-has been on parallel and distributed programming models.  Below I
-discuss my work in more detail, beginning in Sections~\ref{lvars} and
-\ref{quasi} with my work on lattice-based data structures, or
-\emph{LVars}, for deterministic and \emph{quasi-deterministic}
-parallelism.  Then, in Section~\ref{crdts}, I discuss my ongoing study
-of the relationship between LVars and \emph{conflict-free replicated
-  data types} for eventually consistent distributed systems, and what
-I plan to work on next.  For brevity, I omit my previous work on
+immediately appear to compose well.  To that end, I study programming
+languages.
+
+For the last several years, my focus has been on concurrent and
+parallel programming models.  Parallel tasks updating shared state
+present a challenge for compositional reasoning, since programs can
+behave in unexpected ways as a result of unpredictable interactions
+between tasks.  The increasing ubiquity of \emph{irregular} parallel
+applications---in which the work an algorithm must do, and the
+potential for parallelizing it, depend on the particular input being
+processed---exacerbate this challenge: since the work to be done must
+dynamically scheduled, unpredictable inter-task interactions at
+runtime are inevitable.
+
+My work on lattice-based data structures, or \emph{LVars}, addresses
+this problem by allowing a general way of sharing state between tasks
+while guaranteeing determinism.  Below I discuss my work in more
+detail, beginning in Section~\ref{lvars} with LVars.  In
+Section~\ref{effectzoo}, I discuss how LVars fit into a broader
+context of parallel effects.  Then, in Section~\ref{crdts}, I discuss
+my ongoing work on the relationship between LVars and
+\emph{conflict-free replicated data types} for eventually consistent
+distributed systems.  For brevity, I omit my previous work on
 \emph{relational programming}~\cite{lambdae}, \emph{multi-language
-  parametricity}~\cite{multilang-talk}, or \emph{testing CPU semantic
+  parametricity}~\cite{multilang-talk}, and \emph{testing CPU semantic
   specifications}~\cite{tsl-tr}.
 
-\section{LVars: lattice-based data structures for deterministic parallelism}\label{lvars}
+\section{LVars: lattice-based data structures for deterministic parallelism}
 
-\lk{Something like this?
-A fundamental challenge of parallel programming is that programs can
-behave in unexpected ways as a result of unpredictable interactions
-between parallel tasks.  So-called \emph{irregular} parallel
-applications---in which the work an algorithm must do and the
-potential for parallelizing it depend on the particular input being
-processed---exacerbate this challenge: since work has to be
-dynamically scheduled, unpredictable inter-task interactions are
-inevitable.}
+\emph{Deterministic-by-construction} parallel programming
+models address the challenge by guaranteeing that programs written
+using them will have the same observable behavior on every run,
+offering the promise of freedom from subtle, hard-to-reproduce bugs
+caused by schedule nondeterminism.
 
-\emph{Deterministic-by-construction} parallel programming models
-guarantee that programs written using them will have the same
-observable behavior on every run, offering the promise of freedom from
-subtle, hard-to-reproduce bugs caused by schedule nondeterminism.  In
-order to guarantee determinism, though, deterministic-by-construction
+In order to guarantee determinism, though, deterministic-by-construction
 models must sharply restrict the sharing of state between parallel
 tasks.  Shared state, when not disallowed entirely, is restricted to a
 single type of shared data structure, such as single-assignment
@@ -106,9 +110,12 @@ FIFO queues, as in Kahn process networks~\cite{Kahn-1974}.  These
 approaches limit the kinds of deterministic algorithms that can be
 expressed---efficiently or at all---within the model.
 
-\lk{TODO: say something about irregular parallel applications, where
-  the amount of available parallelism depends on the data being
-  processed.}
+
+
+\lk{I have three things to write about:
+ * LVars [FHPC '13, POPL '14]
+ * Coordinating a happy zoo of parallel effects [PLDI '14]
+ * Joining forces with CRDTs [WoDet '14]}
 
 My work introduces \emph{lattice-based data structures}, or
 \emph{LVars}~\cite{LVars-paper, LVars-TR}, which generalize the above
@@ -149,8 +156,6 @@ concurrent insertion, but not deletion, during @Par@ computations.
 Users may implement their own lattice-based data structures as well,
 and LVish provides tools to facilitate the definition of such
 user-defined LVars.
-
-\section{Quasi-deterministic parallel programming with LVars and LVish}\label{quasi}
 
 The LVars model described above guarantees determinism, but is not as
 general-purpose as one might hope.  Consider a parallel graph
@@ -202,22 +207,45 @@ exception.  LVish exposes a @runParThenFreeze@ operation that captures
 this ``freeze-last'' idiom and has a deterministic effect level.  We
 have used the LVish library, extended with handlers and freezing, to
 achieve good parallel speedup in application domains ranging from
-static analysis~\cite{Freeze-paper} to
-bioinformatics~(\cite{effectzoo}, to appear in PLDI '14).
 
-\section{Joining forces: LVars and conflict-free replicated data types}\label{crdts}
+\section{LVish: a coordinated zoo of parallel effects}\label{effectzoo}
+
+Language-level enforcement of determinism \emph{is} possible, but
+existing deterministic-by-construction parallel programming models
+tend to lack features that would make them applicable to a broad range
+of real-world problems. Moreover, they lack \emph{extensibility}: it
+is difficult to add or change language features without breaking the
+determinism guarantee.
+
+My work in PLDI '14 (\cite{effectzoo}, to appear) shows that the LVish
+and the Par monad also address the extensibility problem. While
+applying LVar-based programming to real problems, we have identified
+and implemented three capabilities that extend its reach:
+monotonically increasing updates other than least-upper-bound writes;
+transitive task cancellation; and parallel mutation of non-overlapping
+memory locations. The unifying abstraction we use to add these
+capabilities---without suffering added complexity or cost in the core
+LVish implementation, or compromising determinism---is a form of monad
+transformer, extended to handle the @Par@ monad. With our extensions,
+LVish provides the most broadly applicable guaranteed-deterministic
+parallel programming interface available to date. We demonstrate the
+viability of our approach both with traditional parallel benchmarks
+and with results from a real-world case study: a bioinformatics
+application that we parallelized using our extended version of LVish.
+
+\section{Joining forces: LVars and convergent replicated data types}\label{crdts}
 
 Replication of data across physical locations is of fundamental
 importance in distributed systems: it makes systems more robust to
 data loss and allows for good data locality.  However, it presents the
 dilemma of how to resolve conflicts between replicas that differ,
 particularly in the case of \emph{highly available} distributed
-systems~\cite{dynamo} that give up on strict consistency in favor of
-\emph{eventual consistency}~\cite{vogels-ec}.  Fortunately,
-\emph{conflict-free replicated data types} (CRDTs)~\cite{crdts,
-  crdts-tr} provide a simple mathematical framework for reasoning
-about and enforcing the eventual consistency of replicated objects in
-a distributed system.  In particular, \emph{state-based} or
+systems~\cite{dynamo} that must give up on strict consistency in favor
+of \emph{eventual consistency}~\cite{vogels-ec}.  Fortunately,
+\emph{conflict-free replicated data types} (CRDTs)~\cite{crdts}
+provide a simple mathematical framework for reasoning about and
+enforcing the eventual consistency of replicated objects in a
+distributed system.  In particular, \emph{state-based} or
 \emph{convergent} replicated data types, abbreviated as \emph{CvRDTs},
 leverage the mathematical properties of lattices to guarantee that all
 replicas of an object (for instance, in a distributed database)
@@ -226,25 +254,25 @@ eventually agree.
 CvRDTs use lattice properties to ensure eventual consistency across
 replicas in a way that is closely analogous to how LVars use lattice
 properties to ensure determinism across parallel executions.
-Therefore a sensible next research question is: can we use lessons
-from the literature on replicated data types to improve the LVars
-model, and vice versa?  In my current work (\cite{joining-wodet}, to
-appear in WoDet '14), I am approaching this question in both
-directions.  In one direction, I am using techniques from the CRDT
-literature to develop LVars that \emph{emulate} non-monotonic updates,
-such as sets that support removal of elements and counters that can be
-decremented as well as incremented.  In the other direction, I show
-how LVar-style threshold reads apply to the setting of CvRDTs.  Since
-threshold reads guarantee that the order in which updates occur cannot
-be observed, they can prevent queries from returning inconsistent
-intermediate states, ensuring a greater degree of consistency in
-CvRDTs.  When \emph{all} reads are threshold reads, we should be able
-to guarantee strong consistency---and only at the (potential) price of
-read availability, never write availability. Moreover, in practice, a
-combination of threshold reads and regular reads should enable a
-notion of dynamically configurable, \emph{pay-as-you-go consistency}
-between the extremes of eventual consistency and strong consistency
-that today's systems offer.
+Therefore a reasonable next research question is: how can we take
+inspiration from CvRDTs to improve the LVars model, and vice versa?
+In my current work (\cite{joining-wodet}, to appear in WoDet '14), I
+am approaching this question in both directions.  In one direction, I
+consider how LVar-style threshold reads apply to the setting of
+CvRDTs.  Since threshold reads guarantee that the order in which
+updates occur cannot be observed, they can prevent queries from
+returning inconsistent intermediate states, ensuring a greater degree
+of consistency in CvRDTs.  When \emph{all} reads are threshold reads,
+we should be able to guarantee strong consistency---and only at the
+(potential) price of read availability, never write
+availability. Moreover, in practice, a combination of threshold reads
+and regular reads should enable a notion of dynamically configurable,
+per-query consistency.  In the other direction, I consider how to
+extend LVars with CvRDT-style inflationary updates.  Finally, in
+ongoing work, I am using techniques from the CRDT literature
+\cite{crdts-tr} to develop LVars that \emph{emulate} non-monotonic
+updates, such as sets that support removal of elements and counters
+that can be decremented as well as incremented.
 
 \bibliographystyle{plain}
 \newcommand{\myname}[0]{\textbf{Lindsey Kuper}}
