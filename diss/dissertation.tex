@@ -1,0 +1,67 @@
+\documentclass{iuthesis}
+
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{bigstrut}
+\usepackage{setspace}
+\usepackage{textcomp}
+\usepackage{rotating}
+
+\title{Title}
+
+\author{Author}
+
+\advisor{Advisor}
+\secondreader{Member 1}
+\thirdreader{Member 2}
+\fourthreader{Member 3}
+\departmentname{School}
+\department{Informatics and Computing}
+\copyrightyear{2012}
+\submitdate{December 2012}
+\acceptdate{12/17/2012}
+
+% for use with the iuthesis-alt.cls
+% \parskip=6pt
+% \parindent=0pt
+% \normalparindent=0pt
+
+% Helpful for TODO and TBD in the output of the file (in red)
+\newcommand{\TBD}[0]{{\color{red}TBD}}
+\newcommand{\TODO}[1]{\noindent{\color{red} TODO: #1}\\}
+
+\makeindex
+
+\begin{document}
+\frontmatter
+
+% somewhere in here is also the dedication, which is not the same as the
+% acknowledgements, but sort of similar.
+\begin{acknowledgements}
+TBD
+\end{acknowledgements}
+
+\begin{abstract}
+Abstract Here
+\end{abstract}
+
+\maketitle
+\signaturepage
+\copyrightpage
+\makededication
+\makeabstract
+\tableofcontents
+
+\mainmatter
+
+\chapter{Introduction\label{ch:intro}} % 1
+
+See \cite{small} and \cite{big} for more detail.
+
+\bibliographystyle{is-abbrv}
+\bibliography{dissertation}
+
+\printindex
+
+\end{document}
