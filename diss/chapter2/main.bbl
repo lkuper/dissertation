@@ -1,0 +1,177 @@
+\begin{thebibliography}{30}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[bfs()]{bfs-pbgl}
+{Breadth-First Search, Parallel Boost Graph Library}.
+\newblock URL
+  \url{http://www.boost.org/doc/libs/1_51_0/libs/graph_parallel/doc/html/bread%
+th_first_search.html}.
+
+\bibitem[gra()]{graph500}
+{The Graph 500 List}.
+\newblock URL \url{http://www.graph500.org}.
+
+\bibitem[Alvaro et~al.(2011)Alvaro, Conway, Hellerstein, and
+  Marczak]{bloom-cidr}
+P.~Alvaro, N.~Conway, J.~Hellerstein, and W.~R. Marczak.
+\newblock Consistency analysis in {B}loom: a {CALM} and collected approach.
+\newblock In \emph{CIDR}, 2011.
+
+\bibitem[Arvind et~al.(1989)Arvind, Nikhil, and Pingali]{IStructures}
+Arvind, R.~S. Nikhil, and K.~K. Pingali.
+\newblock I-structures: data structures for parallel computing.
+\newblock \emph{ACM Trans. Program. Lang. Syst.}, 11, October 1989.
+
+\bibitem[Bader and Madduri(2006)]{cray-mta}
+D.~A. Bader and K.~Madduri.
+\newblock Designing multithreaded algorithms for breadth-first search and
+  st-connectivity on the {Cray} {MTA}-2.
+\newblock In \emph{ICPP}, 2006.
+
+\bibitem[Bocchino et~al.(2009)Bocchino, Adve, Adve, and Snir]{dpj-hotpar09}
+R.~L. Bocchino, Jr., V.~S. Adve, S.~V. Adve, and M.~Snir.
+\newblock Parallel programming must be deterministic by default.
+\newblock In \emph{HotPar}, 2009.
+
+\bibitem[Budimli\'{c} et~al.(2010)Budimli\'{c}, Burke, Cav\'{e}, Knobe, Lowney,
+  Newton, Palsberg, Peixotto, Sarkar, Schlimbach, and Ta{\c s}irlar]{CnC}
+Z.~Budimli\'{c}, M.~Burke, V.~Cav\'{e}, K.~Knobe, G.~Lowney, R.~Newton,
+  J.~Palsberg, D.~Peixotto, V.~Sarkar, F.~Schlimbach, and S.~Ta{\c s}irlar.
+\newblock Concurrent {C}ollections.
+\newblock \emph{Sci. Program.}, 18, August 2010.
+
+\bibitem[Burckhardt et~al.(2010)Burckhardt, Baldassin, and
+  Leijen]{concurrent-revisions-oopsla}
+S.~Burckhardt, A.~Baldassin, and D.~Leijen.
+\newblock Concurrent programming with revisions and isolation types.
+\newblock In \emph{OOPSLA}, 2010.
+
+\bibitem[Chamberlain et~al.(2007)Chamberlain, Callahan, and Zima]{chapel}
+B.~L. Chamberlain, D.~Callahan, and H.~P. Zima.
+\newblock Parallel programmability and the {C}hapel language.
+\newblock \emph{International Journal of High Performance Computing
+  Applications}, 21\penalty0 (3), 2007.
+
+\bibitem[Claessen and Hughes(2002)]{quickcheck}
+K.~Claessen and J.~Hughes.
+\newblock {QuickCheck: a lightweight tool for random testing of Haskell
+  programs}.
+\newblock In \emph{ICFP}, 2002.
+
+\bibitem[Conway et~al.(2012)Conway, Marczak, Alvaro, Hellerstein, and
+  Maier]{blooml}
+N.~Conway, W.~Marczak, P.~Alvaro, J.~M. Hellerstein, and D.~Maier.
+\newblock Logic and lattices for distributed programming.
+\newblock In \emph{SOCC}, 2012.
+
+\bibitem[Danvy and Filinski(1992)]{cps-citation}
+O.~Danvy and A.~Filinski.
+\newblock Representing control: a study of the {CPS} transformation, 1992.
+
+\bibitem[Felleisen et~al.(2009)Felleisen, Findler, and Flatt]{redex-book}
+M.~Felleisen, R.~B. Findler, and M.~Flatt.
+\newblock \emph{Semantics Engineering with PLT Redex}.
+\newblock The MIT Press, 1st edition, 2009.
+
+\bibitem[Fluet et~al.(2008)Fluet, Rainey, Reppy, and
+  Shaw]{manticore_parallel_tuples}
+M.~Fluet, M.~Rainey, J.~Reppy, and A.~Shaw.
+\newblock Implicitly-threaded parallelism in {M}anticore.
+\newblock In \emph{ICFP}, 2008.
+
+\bibitem[Frigo et~al.(1998)Frigo, Leiserson, and Randall]{cilk}
+M.~Frigo, C.~E. Leiserson, and K.~H. Randall.
+\newblock The implementation of the {C}ilk-5 multithreaded language.
+\newblock In \emph{PLDI}, 1998.
+
+\bibitem[Gordon et~al.(2002)Gordon, Thies, Karczmarek, Lin, Meli, Leger, Lamb,
+  Wong, Hoffman, Maze, and Amarasinghe]{streamit-asplos}
+M.~I. Gordon, W.~Thies, M.~Karczmarek, J.~Lin, A.~S. Meli, C.~Leger, A.~A.
+  Lamb, J.~Wong, H.~Hoffman, D.~Z. Maze, and S.~Amarasinghe.
+\newblock A stream compiler for communication-exposed architectures.
+\newblock In \emph{ASPLOS}, 2002.
+
+\bibitem[Kahn(1974)]{kahn-1974}
+G.~Kahn.
+\newblock The semantics of a simple language for parallel programming.
+\newblock In J.~L. Rosenfeld, editor, \emph{Information processing}. North
+  Holland, Amsterdam, Aug 1974.
+
+\bibitem[Kuper and Newton(2012)]{lampar-TR}
+L.~Kuper and R.~R. Newton.
+\newblock A lattice-theoretical approach to deterministic parallelism with
+  shared state.
+\newblock Technical Report TR702, Indiana University, October 2012.
+
+\bibitem[Lee and Messerschmitt(1987)]{lee-sdn}
+E.~Lee and D.~Messerschmitt.
+\newblock Synchronous data flow.
+\newblock \emph{Proceedings of the IEEE}, 75\penalty0 (9):\penalty0 1235--1245,
+  1987.
+
+\bibitem[Leijen et~al.(2011)Leijen, Fahndrich, and
+  Burckhardt]{concurrent-revisions-haskell11}
+D.~Leijen, M.~Fahndrich, and S.~Burckhardt.
+\newblock Prettier concurrency: purely functional concurrent revisions.
+\newblock In \emph{Haskell}, 2011.
+
+\bibitem[Leiserson et~al.(2012)Leiserson, Schardl, and Sukha]{cilk-dprng}
+C.~E. Leiserson, T.~B. Schardl, and J.~Sukha.
+\newblock Deterministic parallel random-number generation for
+  dynamic-multithreading platforms.
+\newblock In \emph{PPoPP}, 2012.
+
+\bibitem[Marlow et~al.(2010)Marlow, Maier, Loidl, Aswad, and
+  Trinder]{marlow-par}
+S.~Marlow, P.~Maier, H.-W. Loidl, M.~K. Aswad, and P.~Trinder.
+\newblock {Seq no more: better strategies for parallel Haskell}.
+\newblock In \emph{Haskell}, 2010.
+
+\bibitem[Marlow et~al.(2011)Marlow, Newton, and Peyton~Jones]{monad-par}
+S.~Marlow, R.~Newton, and S.~Peyton~Jones.
+\newblock A monad for deterministic parallelism.
+\newblock In \emph{Haskell}, 2011.
+
+\bibitem[O'Hearn et~al.(2001)O'Hearn, Reynolds, and Yang]{OHearnLocalReasoning}
+P.~W. O'Hearn, J.~C. Reynolds, and H.~Yang.
+\newblock Local reasoning about programs that alter data structures.
+\newblock In \emph{CSL}, 2001.
+
+\bibitem[Reppy(1999)]{reppy-cml-book}
+J.~H. Reppy.
+\newblock \emph{Concurrent Programming in {ML}}.
+\newblock Cambridge University Press, Cambridge, England, 1999.
+
+\bibitem[Sbirlea et~al.(2012)Sbirlea, Knobe, and Sarkar]{cnc-space-folding}
+D.~Sbirlea, K.~Knobe, and V.~Sarkar.
+\newblock Folding of tagged single assignment values for memory-efficient
+  parallelism.
+\newblock In \emph{Euro-Par}, 2012.
+
+\bibitem[Spoonhower et~al.(2009)Spoonhower, Blelloch, Gibbons, and
+  Harper]{beyond-nested-workstealing}
+D.~Spoonhower, G.~E. Blelloch, P.~B. Gibbons, and R.~Harper.
+\newblock Beyond nested parallelism: tight bounds on work-stealing overheads
+  for parallel futures.
+\newblock In \emph{SPAA}, 2009.
+
+\bibitem[Tesler and Enea(1968 (Spring))]{Tesler-1968}
+L.~G. Tesler and H.~J. Enea.
+\newblock A language design for concurrent processes.
+\newblock In \emph{AFIPS}, 1968 (Spring).
+
+\bibitem[Vogels(2009)]{eventual-consistency}
+W.~Vogels.
+\newblock Eventually consistent.
+\newblock \emph{Commun. ACM}, 52\penalty0 (1), Jan. 2009.
+
+\bibitem[Wheeler et~al.(2008)Wheeler, Murphy, and Thain]{qthreads}
+K.~B. Wheeler, R.~C. Murphy, and D.~Thain.
+\newblock Qthreads: An {API} for programming with millions of lightweight
+  threads, 2008.
+
+\end{thebibliography}

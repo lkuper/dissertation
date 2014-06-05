@@ -1,0 +1,684 @@
+\section{Introduction}
+
+%% Programs written using a deterministic-by-construction model of
+%% parallel computation always produce the same observable results, {\em
+%%   guaranteed}, offering programmers freedom from subtle,
+%% hard-to-reproduce nondeterministic bugs that are common in 
+%% parallel software.
+
+Programs written using a {\em deterministic-by-construction} model of
+parallel computation are guaranteed to always produce the same
+observable results, offering programmers freedom from subtle,
+hard-to-reproduce nondeterministic bugs that are the scourge of
+parallel software.  While a number of popular languages and language
+extensions (\eg, Cilk \cite{cilk}\lk{Any others?}) encourage
+deterministic parallel programming, few of them guarantee determinism
+for {\em all} programs written using the model.
+
+%% The {most} developed deterministic-by-construction parallel
+%% model\footnote{
+%% ``Developed'' in this case
+%%   referring to mature implementations, broadly available, with many libraries and
+%%   reasonable performance.  This is a field without many contestants, however,
+%%   because while many popular languages and language extensions (\eg{} Cilk
+%%   \cite{cilk}) provide features to support deterministic parallel programming,
+%%   few can provide a language-level {\em guarantee}.} is
+%% pure functional programming with function-level task parallelism (futures).
+%% For example, Haskell programs\footnote{With {\tt SafeHaskell} enabled
+%%   and, of course, no {\tt IO}.} using futures via the {\tt par}/{\tt pseq} combinators
+%% \cite{marlow-par} can provide real speedups on practical progams,  
+%% %with % {\em retaining}
+%% determinism guarantee included.
+
+The {most} developed parallel model that offers a
+deterministic-by-construction guarantee for all
+programs---``developed'' here meaning mature implementations, broadly
+available, with many libraries and reasonable performance---is pure
+functional programming with function-level task parallelism, or {\em
+  futures}.  For example, Haskell programs using futures by means of
+the @par@ and @pseq@ combinators can provide
+real speedups on practical programs while guaranteeing determinism
+\cite{marlow-par}.\footnote{With 
+    \lstinline|SafeHaskell| enabled and, of course, no \lstinline|IO|.}
+%% \new{Yet pure programming with futures is not ideal for all problems.
+%% {\bf Producer/consumer computations} are hard to write in this style and 
+%% can have performance problems\footnote{For example, in stream processing it can be beneficial to
+%%   exploit {\em pipeline parallelism}, with producers and consumers scheduled
+%%   on different processors, able to keep their working sets in cache.  
+%% {\em Futures} tend to not support clear boundaries between producers and
+%% consumers, because whenever a consumer forces a future, if it is not available,
+%% the consumer thread immediately switches roles to begin computing the value.
+%% This problem was explored in previous work \cite{monad-par-2011}.}.
+Yet pure programming with futures is not ideal for all problems.
+Consider a {\em producer/consumer} computation in which producers and 
+consumers can be scheduled onto separate processors, each able to keep
+their working sets in cache.  Such a scenario enables
+{\em pipeline parallelism} and is common, for instance, in
+stream processing.  But a clear separation of producers and consumers is
+difficult with futures, because
+whenever a consumer forces a future, if it is not yet available,
+the consumer immediately switches roles to begin computing the value
+(as explored in previous work \cite{monad-par}).
+
+%
+%require additional synchronization, limiting parallelism, to ensure that
+%nondeterminism doesn't leak in when producing and consuming unordered collections
+
+
+%% Fortunately,}
+%% there is a broader universe of deterministic parallel
+%% programming models.
+%% %\new{including stream-processing languages \cite{streamit,stream-survey}, which
+%% %  are especially suited to a particular class of producer/consumer computations.}
+%% %
+%% But, unfortunately, these remain fragmented and
+%% under-exploited \cite{streamit,dpj-hotpar09,concurrent-revisions-oopsla,kahn-1974,CnC,monad-par,IStructures}.
+%% %
+%% They are dots on a map, but we have no robust theory to tie them
+%% together (\eg{} no ``lambda cube'').
+
+\lk{I got rid of the ``lambda cube of deterministic parallelism''
+  analogy that used to be here because I'm not as convinced by it as I
+  used to be.  First we lament that there's no ``lambda cube'' of
+  deterministic parallelism that accounts for all of: StreamIt, DPJ,
+  Concurrent Revisions, KPNs, CnC, monad-par, and IVars.  But then we
+  say we aren't going to talk about DPJ and Concurrent Revisions.  So
+  that just leaves the others.  And our whole point is that all the
+  others are subsumed by LVars.  So it's not clear what we are
+  proposing that the corners of this ``cube'' would be.  Maybe I'm
+  taking the analogy too literally, but I think we can do without it.}
+
+%% \new{The common theme is that deterministic languages must restrict access to
+%%   shared, mutable state by concurrent computations.  Some languages accomplish
+%%   this by ensuring the state accessed by concurrent threads is {\em
+%%     disjoint}\footnote
+%% Yet at first glance, 
+%% many of these deterministic models 
+%% are similar \cite{kahn-1974,CnC,monad-par,IStructures}: they
+%% allow processes to {\em share data} in specific and limited
+%% ways\footnote{There is also a second important family of deterministic models which
+%%   we see as derived from the observation that sequential imperative
+%%   programs are deterministic ({\tt ST} monad), and thus, parallel
+%%   programs that operate on disjoint parts of the state are
+%%   deterministic.
+%% \lk{I think this footnote sets up a sort of false dichotomy.  All
+%%   deterministic parallel models have to do something to tame sharing.
+%%   One way to go about it is the DPJ approach of ensuring that, at any
+%%   given time, the parts of the state that are being written are
+%%   disjoint.  Message-passing/IVars are another approach.  And then
+%%   there's our way, in which there's freely shared state and arbitary
+%%   interleaving in time, but we limit the *observations* you can make
+%%   of the state.  It's these limited observations that set us apart
+%%   from these other models and we need to make that clear.}
+%%   {Systems such as DPJ (Deterministic Parallel Java)
+%%   \cite{dpj-hotpar09} and Concurrent Revisions \cite{concurrent-revisions-oopsla,concurrent-revisions-haskell11} fall
+%%   into this category.  We don't discuss the category further, 
+%%   instead focusing on communicating processes with shared
+%%   data.}.
+%%   Alternatively, shared state is permitted but access is curtailed
+%%   to allow only operations that commute with one another (and thus can tolerate
+%%   nondeterministic thread interleavings).
+%% This paper is concerned with the latter approach; in particular,
+%% with the family of languages where shared
+%% structures grow {\em monotonically}---by publishing information but never
+%% invalidating it---which can enable producer/consumer applications.
+%% }
+
+Since pure programming with futures is a poor fit for
+producer/consumer computations\lk{are we brave enough to say ``a poor
+  fit''?  there's also ``less than ideal''}, one might then turn to
+{\em stateful} deterministic parallel models.  Shared state between
+computations allows the possibility for data races that introduce
+nondeterminism, so any parallel model that hopes to preserve
+determinism must do something to tame sharing---that is, to restrict
+access to mutable state shared among concurrent computations.  Systems
+such as DPJ (Deterministic Parallel Java) \cite{dpj-hotpar09} and
+Concurrent Revisions
+\cite{concurrent-revisions-oopsla,concurrent-revisions-haskell11}, for
+instance, accomplish this by ensuring that the state accessed by
+ concurrent threads is {\em
+    disjoint}.
+\lk{Another possible way to say this: both these approaches are about
+  ensuring that operations commute, but DPJ does it by ensuring a
+  property on the {\em operands} (the pieces of state being
+  manipulated) while IVars and LVars do it by ensuring a property on
+  the {\em operations} (the semantics of put and get themselves).  Or,
+  theirs is about ruling out bad inputs while ours is about designing
+  operations in such a way that no input can be bad. But I'm still not
+  so sure that we have to set up this big dichotomy...}
+
+In this paper, we are concerned with an alternative approach: allowing
+{\em data} to be shared, but limiting the {\em operations} that can be
+performed on it to only those operations that commute with one another
+and thus can tolerate nondeterministic thread interleavings.  
+%% {\em
+%%   Internal nondeterminism} \cite{netzer-miller} is allowed---that is,
+%%
+%% wait -- lambdaLVar might actually count as internally
+%% deterministic! -- LK
+Although 
+the order in which side-effecting operations occur can differ on
+multiple runs,
+a program will always produce the same externally
+observable result.\footnote{There are many ways to define what is observable
+ about a program. In this paper, we define the observable result of a program to
+be the value to which it evaluates.}
+Specifically, we are concerned with models where
+% The determinism of this class of models hinges on the fact that
+shared data structures grow {\em monotonically}---by publishing
+information, but never invalidating it.  These models support pipelining for
+producer/consumer applications.
+%% \rn{There's still a sleight of hand here.  We aren't claiming that the
+%%   monotonic-shared-data-structures languages are the ONLY ones in which
+%%   operations commute with one another.  There seem to be three layers to this
+%%   venn diagram: (1) all deterministic langs (including DPJ), (2) those with
+%%   shared data structures + ops that commute, (3) those, specifically, with
+%%   monotonic data structures.}
+%% \rn{Ok, applied a fix.}
+
+%% \new{In fact, these languages have not previously been treated as one
+%%   family\footnote{In spite of monotonicity being a core idea in deterministic
+%%     parallel systems, and a common tool in the proofs of their determinism
+%%    \cite{featherweight-cnc, kahn-1974}.}.
+%, and is also at the heart of our proposal.
+% \lk{This, too, is an important idea that I think should come up earlier.}
+%%   Thus, in this paper, we propose an overarching framework to unify and extend them.
+%%   We begin by considering two historical models that use monotonically-changing
+%%   shared structures.
+%% }
+%Consider two example models, each of which 
+%% Each has formed the
+%% basis of many libraries and languages in the literature
+%% (\ie{} they are not so much dots on the map but clusters of dots).
+
+%--------------------------------------------------------------------------------
+
+\paragraph{Existing monotonic models}
+
+Consider two classic deterministic parallel models,
+dating back to the late 60s and early 70s \cite{Tesler-1968,kahn-1974}:
+
+
+%% First, {\em Kahn Process networks} \cite{kahn-1974}, as well as the more restricted
+%% {\em synchronous dataflow} \cite{lee-sdn}, allow a network of processes to communicate
+%%  through blocking FIFO channels, and have become the basis
+%% for deterministic stream-processing languages such as StreamIt \cite{streamit-asplos}.
+%% %
+%% Stream-processing languages are narrowly focused, but have shown clear benefits
+%% in auto-parallelization and hardware-portability \cite{streamit-asplos,streamit-gpu,streamit-cell}.
+
+\begin{itemize}
+\item In {\em Kahn process networks} (KPNs) \cite{kahn-1974}, as well
+  as in the more restricted {\em synchronous data flow} systems
+  \cite{lee-sdn}, a network of processes communicate with each other
+  through blocking FIFO channels.  KPNs are the basis for
+  deterministic stream-processing languages such as StreamIt
+  \cite{streamit-asplos}, which are narrowly focused but have 
+   shown clear benefits in auto-parallelization
+   and hardware portability.
+\lk{we should have at least one more example of an application of
+  KPNS...surely we can come up with another!}
+\lk{Maybe we should also say something here about how, although
+  usually people think of KPNs as a distributed, no-shared-state
+  model, the way we like to think of it is that state {\em is} in fact
+  being shared between processes, but the operations by which it can
+  be accessed (specifically, blocking reads) are restricted to ensure
+  determinism.}
+\rn{We could cite the work on the duality of message passing and shared memory
+  if we like, but I don't think its necessary.  Also, there are plenty of OTHER
+  stream processing languages and frameworks, Brook, River, Stream-C, etc.}
+\lk{OK, I'm just afraid it will come across as weird and wrong if we
+  say that KPNs allow ANY kind of sharing.  I don't know anything at
+  all about stream processing languages so I don't know what's
+  appropriate to mention.}
+
+%% Second, parallel {\em single-assignment languages}, have been around 
+%%  over forty years \cite{Tesler-1968}, and associate
+%% ``full/empty bits'' with each mutable variable so that, once
+%% assigned, they may not be reassigned.
+%% %
+%% Following previous authors \cite{IStructures}, we call these variables {\em
+%%   IVars}.
+%% %
+%% As data-structures, they have been quite successful.  They appear in Concurrent
+%% ML ({\tt SyncVar}s); in languages for high-performance computing (Chapel
+%% \cite{chapel}); and have even been implemented in hardware in Cray MTA machines
+%% \cite{cray-mta}.  However, most of these uses incorporate IVars into
+%% {\em already-nondeterministic} programming environments.
+%% Our previous work on the {\tt monad-par} library, on the other hand,
+%% integrates IVars in a purely deterministic setting, allowing user-created
+%% threads to communicate through IVars without requiring {\tt IO}, which allows
+%% the code to be used anywhere inside pure programs.  
+%% {(That is, we provide a monad, exposing effectful IVar $\PUT$s and $\GET$s, but
+%% with a {\tt runPar} method similar to {\tt runST}.)}
+
+\item In parallel {\em single-assignment languages}
+  \cite{Tesler-1968}, ``full/empty'' bits are associated with 
+  heap locations so that they may be written to at most once.
+  Single-assignment locations with blocking read semantics are known
+  as \emph{IVars} \cite{IStructures} and are a well-established mechanism
+  for enforcing determinism in parallel settings: they have appeared in
+  Concurrent ML as @SyncVar@s \cite{reppy-cml-book}; 
+  in the Intel Concurrent Collections (CnC) system \cite{CnC};
+  in languages and libraries for
+  high-performance computing, such as Chapel \cite{chapel} and the
+  Qthreads library \cite{qthreads}; and have even been implemented in
+  hardware in Cray MTA machines \cite{cray-mta}.  Although most of
+  these uses incorporate IVars into already-nondeterministic
+  programming environments, the {\em monad-par} Haskell library
+  \cite{monad-par} uses IVars in a deterministic-by-construction
+  setting, allowing user-created threads to communicate through IVars
+  without requiring @IO@, 
+  %allowing the code to be used
+  so that such communication can occur
+  anywhere inside pure programs.\footnote{That is, monad-par provides
+    a \lstinline|Par| monad, exposing effectful $\PUT$ and $\GET$
+    operations on IVars, but with a \lstinline|runPar| method similar to
+    \lstinline|runST|.}  
+\end{itemize}
+
+%% \new{Given implementations like {\tt monad-par} and StreamIt, which enable
+%%   different\footnote{Actually, IVars can implement streams, but not very well.}
+%%    kinds of producer/consumer applications, what problems remain?}
+%% %The remaining challenge, for a library like {\tt monad-par}, comes down to generality.
+%% In a word: generality.
+%% IVars and FIFO streams cannot support all
+%% applications that parallel programmers are interested in (Section~\ref{section:motivation}).
+
+\noindent In data-flow languages like StreamIt, communication takes place over FIFOs with
+ever-increasing channel histories,
+% LK: I think this footnote is kind of a distraction this early in the paper.
+%% \footnote{Garbage collection of old
+%%   stream elements is an orthogonal issue and requires a separate contract on
+%%   the consumers.}
+while in IVar-based systems such as
+CnC and monad-par, a shared data store of single-assignment memory
+cells grows monotonically.  Hence {\em monotonic data structures}---those
+to which information is only added and never removed---emerge
+as a common theme of both data-flow and single-assignment models.
+
+Because state modifications that only add information and never
+destroy it can be structured to commute with one another and thereby
+avoid race conditions, it stands to reason that 
+diverse deterministic
+parallel programming models would leverage the principle of monotonicity.
+Yet there is little in the way of a
+theory of monotonic data structures as a basis for deterministic
+parallelism.  As a result, systems like CnC, monad-par and StreamIt
+emerge independently, without recognition of their common basis.
+Moreover, they lack {\em generality}: IVars and FIFO streams alone 
+cannot support  all producer/consumer applications, as we discuss in
+Section~\ref{section:motivation}.
+
+%--------------------------------------------------------------------------------
+
+\paragraph{A general model}
+
+%% Our answer is to introduce a new concurrent data structure, {\em LVars} (lattice
+%% variables), and a new parallel calculus to study it, $\lambdapar$.
+%% $\lambdapar$ is a parallel calculus with shared state
+%% based on the call-by-value $\lambda$-calculus
+%% (Section~\ref{section:programming}).  
+%% %
+%% It extends the $\lambda$-calculus with effectful $\GET$ and $\PUT$ operations
+%% for reading from and writing to LVars.  It is more general than (\ie{} subsumes) single assignment and
+%% FIFO-based monotonic languages, and admits any data structure with states that
+%% evolve monotonically in a {\em bounded join-semi{l}attice}.  Our main result
+%% (determinism proof) guarantees that, if a library-writer for a new
+%% data-structure can prove that (1) its states form a lattice\footnote{For brevity, we
+%%   will take the term ``lattice'' to mean ``bounded join-semilattice'' here and
+%%   in the rest of this paper.}, (2) $\PUT$ operations only move the state
+%% upwards, {and (3) $\GET$ operations are triggered by valid thresholds}, then
+%% it is safe to use this data structure in a programming environment with any
+%% number of other monotonic data structures, while preserving determinism.
+%% In fact, as long as the data-structures satisfy these laws, it is fine to use an
+%% existing, optimized concurrent data structure; we needn't rewrite the world's
+%% data structures to leverage results from  $\lambdapar$.
+
+By taking monotonicity as a starting point, then, we can provide a
+%unifying framework for deterministic parallel programming models that
+new model for deterministic parallelism that
+generalizes existing models and can guide the design of new ones.  Our
+model generalizes IVars to \emph{LVars}, thus named because the states
+an LVar can take on are elements of a user-specified
+{\em lattice}.\footnote{
+As we will see in Section~\ref{subsection:domains}, this ``lattice'' need only be a 
+{\em bounded join-semilattice} augmented with a greatest element $\top$, in which every two elements have a least upper
+bound but not necessarily a greatest lower bound.  For brevity, we use the term
+  ``lattice'' here and in the
+  rest of this paper.}
+This user-specified lattice
+determines the semantics of the $\PUT$ and
+$\GET$ operations that comprise the interface to LVars (which we 
+will explain in detail in Section~\ref{subsection:putget}):
+\begin{itemize}
+\item The $\PUT$ operation can only change an LVar's state in a way
+  that is {\em monotonically increasing} with respect to the user-specified
+  lattice, because it takes the least upper bound of the current
+  state and the new state.
+
+\item The $\GET$ operation allows only limited observations of the
+  state of an LVar.  It requires the user to specify a {\em threshold
+    set} of minimum values that can be read from the LVar, where every
+  two elements in the threshold set must have the lattice's
+  greatest element $\top$ as their least upper bound.  A call to
+  $\GET$ blocks until the LVar in question reaches a (unique) value in the threshold set,
+  then unblocks and returns that value.
+\end{itemize}
+Together, monotonically increasing writes via $\PUT$ and threshold reads 
+via $\GET$
+yield a deterministic-by-construction programming model.
+We use LVars to define $\lambdapar$, a deterministic parallel calculus
+with shared state, based on the call-by-value $\lambda$-calculus.  The
+$\lambdapar$ language is general enough to subsume existing
+deterministic parallel languages because it is parameterized by the
+choice of lattice.  For example, a lattice of channel histories with a
+prefix ordering allows LVars to represent FIFO channels that implement
+a Kahn process network, whereas instantiating $\lambdapar$ with a
+lattice with ``empty'' and ``full'' states (where $\mathit{empty} <
+\mathit{full}$) results in a parallel single-assignment language.
+Different instantiations of the lattice result in a family of
+deterministic parallel languages.
+
+Because lattices are composable, any number of diverse monotonic data
+  structures can be used together safely.
+Moreover, as long as we can demonstrate that a data structure presents the LVar interface, it is fine to use an
+existing, optimized concurrent data structure implementation; we need not rewrite the world's
+data structures to leverage the $\lambdapar$ determinism result.
+
+%% Furthermore, a library writer implementing a new concurrent data
+%% structure can leverage our determinism result for $\lambdapar$. To
+%% show that a new concurrent data structure is thread-safe, implementers
+%% can simply show that the states of their new data structure form a
+%% lattice and that the interface their data structure presents matches
+%% the LVar interface.
+
+%--------------------------------------------------------------------------------
+\paragraph{Contributions} 
+%% This paper focuses on the theory of $\lambdapar$, but along the way we will
+%% provide pointers to the implementation work that parallels this effort.
+\begin{itemize}
+\item We introduce LVars 
+  (Section~\ref{section:domains}) and use them to define
+  $\lambdapar$, a parallel calculus 
+  that uses LVars for shared state 
+  (Section~\ref{section:programming}).
+  We have implemented $\lambdapar$ as a runnable PLT
+  Redex model.
+
+%% \item Our main result is a proof of determinism of \lambdapar{}
+%%   (Section~\ref{section:proof}, fully
+%%   developed in the technical report \cite{lampar-TR}), which forms the
+%%   basis for confidence in programming tools derived from
+%%   \lambdapar{}.
+
+\item As our main technical result, we give a proof of determinism
+  for $\lambdapar$ (Section~\ref{section:proof}).  A critical aspect
+  of the proof is a ``frame'' property, expressed by the
+  Independence lemma (Section~\ref{subsection:independence}),
+  that would {\em not} hold in a typical language with shared mutable
+  state, but holds in our setting because of the semantics of LVars
+  and their $\PUT$/$\GET$ interface.
+
+%% \item We describe an extension to the basic $\lambdapar$ model:
+%%   destructive observations (Section~\ref{section:extensions}), enabling a limited form of nondeterminism that
+%%   admits failures but not wrong answers.  This paves the way for future work.
+
+\item We describe an extension to the basic $\lambdapar$ model
+  that allows
+  destructive observations of LVars by means of a $\CONSUME$
+  operation, enabling a limited form of nondeterminism that admits
+  run-time failures but not wrong answers (Section~\ref{section:extensions}),
+  and we give an implementation of a data-race detector that detects 
+  such failures in a version of $\lambdapar$ that has been extended with $\CONSUME$.
+
+\item
+  We discuss how to
+  formulate common data structures (pairs, trees, arrays, FIFOs) as
+  lattices (Sections~\ref{subsection:domains} and
+  \ref{subsection:programming-with-put-and-get})
+  and how to implement operations on them within the $\lambdapar$ model---for instance,
+  we show how to implement a $\BUMP$ operation that increments a
+  monotonic counter represented as a lattice
+  (Section~\ref{subsection:bump}).
+%% \rn{TODO - AUDIT this to see if we actually mention trees, arrays, fifos}
+%% \rn{Ok -- I went ahead and added a couple sentences.  One two the Fig 3 caption
+%%   and one to section 3.1.}
+\lk{I see that we cover pairs, arrays, and fifos.  trees, though?}
+
+%% \item We provide a practical implementation of the \lambdapar{} model as a
+%%   generalization of the {\tt monad-par} library for Haskell (Section~\ref{section:motivation}).  Also we provide a
+%%   Redex model, interpreters, and a data-race detector for [extended] \lambdapar{}
+%%   (with limited nondeterminism) to support the study of \lambdapar{} programs.
+
+\item We provide a practical prototype implementation of LVars as an
+  extension to the monad-par Haskell library,
+  and give some preliminary benchmarking results
+%% and give benchmarking
+%%   results demonstrating parallel speedup for graph computations
+%%   implemented using our Haskell LVars library
+  (Section~\ref{section:evaluation}).
+
+\end{itemize}
+All the code accompanying this paper is available at
+\[ \mbox{\url{https://github.com/iu-parfunc/lvars}} \]
+which we refer to as ``the
+LVars repository'' throughout the paper.
+
+%====================================================================================================
+%\section{Motivation: Example Application}\label{section:motivation}
+\section{Motivating Example: A Parallel, Pipelined Graph Computation}\label{section:motivation}
+
+%% Programming models enabling sharing of a single data structure 
+%% necessarily have limited applicability, which is perhaps why even the stream
+%% processing languages have not been widely adopted.
+%% %% \lk{I think ``programming models built on a single data structure'' is
+%% %%   a straw man and the mention of stream languages is a distraction.
+%% %%   Saying that, for instance, KPNs are ``built on a single data
+%% %%   structure'' because they use FIFOs for communication seems like too
+%% %%   much.  I think we can make the case that graph algorithms are a
+%% %%   challenge for deterministic parallel languages, without having to go
+%% %%   to that length.}
+%% % \rn{Now it more specifically refers to SHARING through a single data structure.}
+%% %
+
+What applications motivate going beyond IVars and FIFO streams?
+% We argue that any application domain is a candidate if it includes
+Consider applications in which 
+independent subcomputations contribute information to shared data
+structures that are {\em unordered, irregular, or application-specific}.
+\lk{What does ``application-specific'' mean?}
+%{An example application that uses rich, shared data structures and that
+%  processes irregular data is}
+ Hindley-Milner type inference is one example: in a
+  parallel type-inference algorithm, each type variable monotonically
+  acquires information through unification (which can be represented as a
+  lattice).
+%% LK: Not wild about this footnote.  After all, LVars have that
+%% problem, too.  Also, it's not *that* tempting ot try to represent
+%% type variables as IVars because they don't capture anything about
+%% gradually acquiring type informations.
+%% \footnote{It is tempting to try to represent type variables as IVars, but
+%%   an empty IVar is not a good representation for an
+%%   uninstantiated type variable, since checking for emptiness is not allowed.}
+ Likewise, in control-flow analysis, the {\em set} of locations to which a variable
+ refers monotonically {\em shrinks}.  In logic programming, a parallel
+ implementation of conjunction might asynchronously add information to a logic
+ variable from different threads.
+
+To illustrate the issues that arise in computations of this nature, we consider a specific problem, drawn from the domain of {\em graph algorithms}, where
+ issues of ordering create a tension between parallelism and
+determinism:
+\begin{itemize}
+\item 
+  In a directed graph, 
+  % Implement a breadth-first-search in a graph to 
+  find the connected
+  component containing a vertex $v$, and compute a (possibly expensive) function $f$ over 
+all vertices in that component, making the set of results available
+    asynchronously to other computations.
+\end{itemize}
+For example, in a directed graph representing user profiles on a social network
+and the connections between them, where $v$ represents a particular
+profile, we might wish to find all (or the first $k$
+degrees of) profiles connected to $v$, then analyze each profile in that set.\lk{this example is kinda creepy, but I can't
+  think of one I like better...}
+% A level-synchronized breadth-first-search can provide a 
+
+This is a challenge problem for deterministic parallel programming:
+existing parallel solutions~\cite{bfs-pbgl} often use a nondeterministic traversal of the
+  connected component
+  (even though the final connected component is deterministic),
+% , and demands rich primitives.
+%% We will use a {\em level-synchronized breadth-first-search} to avoid those
+%% problems.
+and IVars and streams provide no obvious aid.  For example, IVars cannot accumulate
+sets of visited nodes, nor can they be used as ``mark bits'' on visited nodes, since 
+they can only be written once and not tested for emptiness.
+Streams, on the other hand, impose an excessively strict ordering
+for computing the unordered {\em set} of vertex labels in a
+connected component.
+Yet before considering {\em new} mechanisms, we must also ask if a purely functional
+program can do the job.
+
+
+%% {There is a tension between discovering the connected component in
+%%   parallel (which can involve data races) and the need for determinism.}
+%% Indeed, graph algorithms in general have motivated recent work on 
+%% non-deterministic parallel abstractions \cite{kulkarni2007optimistic}.  BFS
+%% algorithms in particular often use non-deterministically selected spanning trees
+%% in the process of component discovery.
+%% \lk{But the problem statement above didn't say anything about BFS.
+%%   You could use DFS to find a connected component, too.}
+%% %For example, a parallel breadth-first-search (BFS) typically traverses the
+%% %connected component via a {\em nondeterministic} spanning tree (even though the
+%% %final set of nodes in the connected component is deterministic).  
+%% A typical parallel, imperative BFS implementation associates ``mark bits'' with
+%% vertices to mark them as visited (asynchronously).  Using IVars as mark-bits does
+%% not work because one may not peek at an IVar to check for emptiness: only
+%% blocking reads are allowed.
+%% %% \lk{I think the argument here is flawed:
+%% %%   * First, we say that IVars don't help with our challenge problem
+%% %%   because you can't use IVars as mark bits.  But (a) you don't need to
+%% %%   use mark bits to do BFS, and (b) you don't need to do BFS to find a
+%% %%   connected component.
+%% %%   * Second, after complaining that you can't use IVars as mark bits.
+%% %%   we don't present an alternative to IVars that DOES let you use mark
+%% %%   bits.  Rather, we present a different, purely functional solution --
+%% %%   which is fine, but if that's what we're going for then we shouldn't
+%% %%   set up ``You can't use mark bits!'' as the problem in the first
+%% %%   place.
+%% %% }
+
+
+%------------------------------------------------------------
+\paragraph{A purely functional attempt}
+%% {A pure functional program (with futures) can sacrifice some potential
+%%   parallelism to make component-discovery deterministic, by using a {\em
+%%     level-synchronized} BFS.
+%% \lk{The previous sentence is a bit confusing.  It makes it sound like
+%%   the level-synchronization has something to do with being purely
+%%   functional.  Actually, as far as I can tell, level-synchronization
+%%   is the done thing for any parallel BFS, purely functional or
+%%   otherwise.  For instance:
+%%   \url{}.
+%%   I'm going to do some digging to find out where the first reference
+%%   for level-synchronized parallel BFS is...}
+Figure~\ref{f:bfs-pure} gives a Haskell implementation of 
+a {\em level-synchronized} breadth-first traversal,
+in which nodes at distance one from the starting vertex are
+  discovered---and set-unioned into the connected component---before nodes of
+  distance two are considered.  Level-synchronization is a popular strategy for
+parallel breadth-first graph traversal (see, for instance, the Parallel Boost Graph Library \cite{bfs-pbgl}), although it necessarily sacrifices
+some parallelism for determinism: parallel tasks cannot continue discovering
+nodes in the component (racing to visit neighbor vertices) before synchronizing
+with all other tasks at a given distance from the start.
+
+%
+%% \rn{TODO -- FINISH THIS -- I think it actually works to accumulate a list of
+%%   futures in a pure, eager programming language.  Ok, the thing that is at least
+%% TRICKY and maybe not possible is publishing those asynchronously.}
+%
+% To see the limitations of these preexisting models:
+
+Unfortunately, the code given in Figure~\ref{f:bfs-pure} does not
+quite implement the problem specification given above.
+Even though connected-component discovery is
+  parallel, members of the output set do not become available to other computations until component discovery is {\em
+    finished}, limiting parallelism.  We could manually push the @analyze@
+  invocation inside the @bf_traverse@
+  function,
+  % LK: what is `check` from?
+  %(in @check@)
+  allowing the @analyze@ computation to start sooner, but then we push
+  the same problem to the downstream consumer, unless we are able to perform a
+  heroic whole-program fusion.
+  %% \lk{Aha!  Now I see where you're going with this and I think this is
+  %%   a key point: we're prevented from PIPELINING the work here because
+  %%   we have no monotonicity guarantee.  Kahn 1974 makes a point of
+  %%   talking about how in KPNs, monotonicity enables both pipelining
+  %%   and determinism.  I think this point is getting lost and we need
+  %%   to emphasize it!}
+%
+%% \rn{Note you can create a library that allows you to map over a set of futures
+%%   and return a new set of futures.  And you can carry on in that way.  But
+%%   consuming even one element from the final set will wait on the whole
+%%   collection.}
+%
+If @bf_traverse@ returned a list, lazy evaluation could
+  make it possible to {\em stream} results to consumers
+  incrementally.  But with a {\em set} result, such pipelining is not generally possible:
+  consuming the results early would create a proof obligation that the
+  determinism of the consumer does not depend on the order in which results
+  emerge from the producer.\footnote{As intuition for this idea, consider that purely functional set data
+    structures, such as Haskell's \lstinline|Data.Set|, are typically represented with
+    balanced trees.  Unlike with
+    lists, the structure of the tree is not known until all elements are present.  
+    %% A special fusion framework for sets might help, but we believe it
+    %% would be hard to predict performance and it is not the solution we pursue in
+    %% this paper.
+    \lk{Commented out the part about fusion because we already mention
+      it in the main text.  And even if we had a fusion framework for
+      sets, it would only handle sets, not all of the other data
+      structures we care about.  I think we sell ourselves short by
+      making too much of the fusion idea.}}
+
+A compromise would be for @bf_traverse@ to return a list of level-sets:
+  distance one nodes, distance two nodes, and so on.  Thus level-one results could
+  be consumed before level-two results are ready.  Still, the problem would remain: within
+  each level-set, we cannot launch all instances of @analyze@ and
+  asynchronously use those results that finish {\em first}.
+%
+Furthermore, we still have to contend with the previously-mentioned
+difficulty of separating producers and consumers when expressing
+producer-consumer computations using pure programming with futures
+\cite{monad-par}.
+% and it's not clear from previous work if it is efficient either.
+
+
+
+\begin{figure}
+  \lstinputlisting{chapter2/code/bfs_pure.hs}
+  \caption{\footnotesize A purely functional Haskell program that maps the \lstinline|analyze| function over the connected
+    component of the \lstinline|profiles| graph that is reachable from the node \lstinline|profile0|.  Although component discovery proceeds in parallel, results of
+    \lstinline|analyze| are not asynchronously available to other computations, inhibiting pipelining.}
+  \label{f:bfs-pure}
+\end{figure}
+
+
+%--------------------------------------------------------------------------------
+\paragraph{Our solution}
+%
+Suppose that we could write a breadth-first traversal in a programming model with
+limited effects
+that allows {\em any} shared data structure between threads, including sets and
+graphs, so long as that data structure grows {\em monotonically}.
+Consumers of the data structure may execute as soon as data is available, but 
+may only observe irrevocable, monotonic properties of it.
+%observations of the structure only see non-revocable properties.  
+This is possible with a programming model based on LVars.  After 
+introducing the $\lambdapar$ calculus and giving its determinism proof in the next few
+sections, in Section~\ref{section:evaluation} we give an LVar-based
+solution to our challenge problem, implemented using our Haskell LVars library, along with a
+performance evaluation.
+

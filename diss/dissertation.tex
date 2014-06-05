@@ -8,6 +8,38 @@
 \usepackage{textcomp}
 \usepackage{rotating}
 
+% Used in chapter 2:
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{stmaryrd}
+
+% Stuff needed for typesetting lambdapar and its metatheory
+\input{latex_common/lang}
+\input{latex_common/metatheory}
+\input{latex_common/theoremstyle}
+\input{latex_common/editingmarks}
+
+% Statements of theorems
+\input{latex_common/lambdapar-determinism-theorems}
+% Figures
+\input{latex_common/lambdapar-syntax-semantics}
+
+% Other presentational stuff
+\input{latex_common/style}
+
+% For typesetting inference rules
+\usepackage{latex_common/mathpartir}
+
+% Specific to amsthm
+\newenvironment{proofsketch}[1][\proofname]{\proof[#1]\mbox{}}{\endproof}
+
+% Use the @ symbol for simple inline code within prose (this has to
+% come after the authorinfo so it doesn't interfere with `@` in
+% emails!):
+\lstMakeShortInline[]@
+
 \title{Lattice-based Data Structures for Deterministic Parallel and
   Distributed Programming}
 
@@ -56,12 +88,11 @@ Abstract Here
 
 \mainmatter
 
-\chapter{Introduction\label{ch:intro}} % 1
-
-See \cite{small} and \cite{big} for more detail.
+\input{chapter1/main}
+\input{chapter2/main}
 
 \bibliographystyle{is-abbrv}
-\bibliography{dissertation}
+\bibliography{../latex_common/refs}
 
 \printindex
 

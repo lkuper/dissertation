@@ -1,0 +1,78 @@
+%%% Macros for typesetting lambdaLVar metatheory.
+
+%%% BNF grammar stuff
+\newcommand{\bnfdef}{\ensuremath{::=}}
+\newcommand{\bnfsep}{\ensuremath{\ \ | \ \ }}
+\newcommand{\setsep}{\ensuremath{\ | \ }}
+\newcommand{\sep}{\bnfsep}
+
+%%% Metafunctions
+\newcommand{\subst}[3]{\ensuremath{#1[#2 := #3]}}
+\newcommand{\dom}[1]{\ensuremath{\mathit{dom}(#1)}}
+\newcommand{\disjoint}[1]{\ensuremath{\mathit{disjoint}(#1)}}
+\newcommand{\incomp}[1]{\ensuremath{\mathit{incomp}(#1)}}
+\newcommand{\renamelocs}[3]{\ensuremath{\mathit{rename}(#1, #2, #3)}}
+\newcommand{\pred}[1]{\ensuremath{\mathit{pred}(#1)}}
+\newcommand{\lub}[2]{\ensuremath{#1 \sqcup #2}}
+\newcommand{\glb}[2]{\ensuremath{#1 \sqcap #2}} % might not need this
+\newcommand{\qexist}[2]{\ensuremath{\exists\,#1.~#2}}
+\newcommand{\qforall}[2]{\ensuremath{\forall\,#1.~#2}}
+\newcommand{\myleq}{\ensuremath{\sqsubseteq}}
+\newcommand{\mylt}{\ensuremath{\sqsubset}}
+\newcommand{\notmyleq}{\ensuremath{\not\sqsubseteq}}
+\newcommand{\localphaequiv}[2]{\ensuremath{#1 =^l_{\alpha} #2}}
+\newcommand{\Soldlocs}{\ensuremath{{S_{\textit{oldlocs}}}}}
+
+%%% Evaluation / operational semantics
+\newcommand*{\longhookrightarrow}{\ensuremath{\lhook\joinrel\relbar\joinrel\rightarrow}}
+\newcommand{\parstepsto}{\ensuremath{\longhookrightarrow}}
+
+%%% Stores and store operations
+\newcommand{\fmap}{\ensuremath{\stackrel{\textrm{fin}}{\rightarrow}}}
+\newcommand{\eqstore}[2]{\ensuremath{#1 =_S #2}}
+\newcommand{\leqstore}[2]{\ensuremath{#1 \myleq_S #2}}
+\newcommand{\neqstore}[2]{\ensuremath{#1 \not =_S #2}}
+\newcommand{\nleqstore}[2]{\ensuremath{#1 \not \myleq_S #2}}
+\newcommand{\myltstore}[2]{\ensuremath{#1 \mylt_S #2}}
+\newcommand{\lubstore}[2]{\ensuremath{#1 \sqcup_{S} #2}}
+\newcommand{\glbstore}[2]{\ensuremath{#1 \sqcap_{S} #2}}
+\newcommand{\storebinding}[2]{\ensuremath{#1 \mapsto #2}}
+\newcommand{\store}[1]{\left[ #1 \right]}
+\newcommand{\extS}[3]{#1[\storebinding{#2}{#3}]}
+\newcommand{\storeset}{\mathcal{S}}
+\newcommand{\Loc}{\mathit{Loc}}
+
+%% It would be really nice to be able to typeset stores like
+
+%%        \store{l_1, l_2, l_3}{3, 4, 5}
+
+%% producing
+
+%%        {l_1 -> 3, l_2 -> 4, l_3 -> 5}
+
+%% but to do that, I think we need something like what's done in
+%% http://stackoverflow.com/questions/2402354/split-comma-separated-parameters-in-latex,
+%% and I haven't figured out how to do it just yet :(
+
+%%% States and configurations
+\newcommand{\conf}{\ensuremath{\sigma}}
+\newcommand{\config}[2]{\ensuremath{\langle #1;\, #2 \rangle}}
+\newcommand{\error}{\ensuremath{\textbf{\textsf{error}}}}
+
+%%% Assorted math stuff
+\newcommand{\defeq}{\stackrel{\triangle}{=}} % "defined-as"
+
+%%% Formatting of definitions, theorems, etc.
+
+%% The ``part'' argument to each of these says that numbering starts
+%% over when we reach a new ``part'' of the document.  This is a hack
+%% to keep theorem numbering in the appendix consistent with the
+%% numbering used in the main text, since we have the same theorems,
+%% lemmas, etc. showing up in both and we want their numbers to match.
+\newtheorem{lem}{Lemma}[part]
+\newtheorem{cor}{Corollary}[part]
+\newtheorem{thm}{Theorem}[part]
+
+\renewcommand{\thelem}{\arabic{lem}}
+\renewcommand{\thecor}{\arabic{cor}}
+\renewcommand{\thethm}{\arabic{thm}}

@@ -1,0 +1,90 @@
+\section{Safe Renaming}\label{appendix:renaming-lemmas}
+
+When $\lambdapar$ programs split into
+two subcomputations via the {\sc E-ParApp} rule, 
+the subcomputations' stores are merged (via the lub operation)
+as they are running.
+Therefore we need to ensure that the following two properties hold:
+\begin{enumerate}
+\item Location names created before a split still match up with each
+  other after a merge.
+\item Location names created by each subcomputation while they are running
+  independently do \emph{not} match up with each other accidentally---\ie, they
+  do not collide.
+\end{enumerate}
+Property (2) is why it is necessary to \emph{rename} locations in the
+{\sc E-ParApp} (and {\sc E-ParAppErr}) rule.  
+This renaming is accomplished by
+a call to the $\mathit{rename}$ metafunction,
+which, for each location name $l$ generated during the reduction $\config{S}{e_1} \parstepsto \config{S_1}{e'_1}$,
+generates a name that is not yet used on either side of the split
+and substitutes that name into $\config{S_1}{e'_1}$ in place of $l$.\footnote{Since
+$\lambdapar$ locations are drawn from a distinguished set $\Loc$,
+they cannot occur in the user-specified $D$---that
+is, locations in $\lambdapar$ may not contain pointers to other
+locations.  Likewise, $\lambda$-bound variables in $e$ are never location names.  Therefore, substitutions
+like the one in Definition~\ref{def:rename} will not capture bound occurrences
+of location names.} 
+We arbitrarily choose to rename locations
+  created during the reduction of $\config{S}{e_1}$, but it would work just as well to rename
+  those created during the reduction of $\config{S}{e_2}$.
+
+\DefRename
+
+\noindent However, property (1) means that we cannot allow 
+$\alpha$-renaming of bound locations in a configuration to be done at will.
+Rather, renaming can only be done safely if it is done in the context of a \emph{transition}
+from configuration to configuration.
+Therefore, we define a notion of \emph{safe renaming} with respect to
+a transition.
+
+\DefRenaming
+
+\DefSafeRenaming
+
+% This forces columns to be the same length.
+\vfill\eject
+
+\noindent If $\config{S''}{e''}$ is a safe renaming of $\config{S'}{e'}$ with
+respect to $\config{S}{e} \parstepsto \config{S'}{e'}$, then $S''$ is
+by definition non-conflicting with $\config{S}{e} \parstepsto
+\config{S'}{e'}$.
+
+\subsection{Renaming Lemmas}
+
+With the aforementioned definitions in place, we can establish the
+following two properties about renaming.
+Lemma~\ref{lem:loc-renaming} expresses the idea that the names of
+locations created during a reduction step are arbitrary \emph{within
+  the context of that step}.  It says that if a configuration
+$\config{S}{e}$ steps to $\config{S'}{e'}$, then $\config{S}{e}$ can
+also step to configurations that are safe renamings of
+$\config{S'}{e'}$ with respect to $\config{S}{e} \parstepsto
+\config{S'}{e'}$.
+
+\LemLocRenaming
+\ifx\fulltr\undefined
+\begin{proofsketch}[Proof sketch]
+  By induction on the derivation of $\config{S}{e} \parstepsto
+  \config{S'}{e'}$, by cases on the last rule in the derivation.
+\end{proofsketch}
+\else
+\begin{proof}
+See Appendix, Section~\ref{app:loc-renaming}.
+\end{proof}
+\fi
+
+\noindent Finally, Lemma~\ref{lem:safety-of-rename} says that in the
+circumstances where we use the $\mathit{rename}$ metafunction, the renaming it performs
+meets the specification set by Lemma~\ref{lem:loc-renaming}.
+
+\LemSafetyOfRename
+\ifx\fulltr\undefined
+\begin{proofsketch}[Proof sketch]
+  Straightforward application of Lemma~\ref{lem:loc-renaming}.
+\end{proofsketch}
+\else
+\begin{proof}
+See Appendix, Section~\ref{app:safety-of-rename}.
+\end{proof}
+\fi
