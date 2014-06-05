@@ -11,4 +11,4 @@ is-abbrv.bst:
 	wget http://ftp.math.utah.edu/pub/tex/bibtex/is-abbrv.bst
 
 clean:
-	rm -f *.blg *.bbl *.aux *.log $(NAME).pdf
+	rm -f *.blg *.bbl *.aux *.log $(NAME).pdf *.idx *.out *.toc
