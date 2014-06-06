@@ -1,0 +1,456 @@
+\section{Implementation}\label{section:implementation}
+
+%Benefits of Haskell: monads + phantom types 
+
+We have constructed a prototype implementation of LVish as a monadic library in
+Haskell, which is available at 
+\begin{center}
+\url{http://hackage.haskell.org/package/lvish}
+\end{center}
+\ajt{Or would we rather link to github?}%
+Our library adopts the basic approach
+of the @Par@ monad~\cite{monad-par}, enabling us to employ our own notion of
+lightweight, library-level threads with a custom scheduler.  It supports the
+programming model laid out in Section~\ref{section:lvish-informal} in full,
+including explicit handler pools.  It differs from our formal model in following
+Haskell's by-need evaluation strategy, which also means that concurrency in the
+library is \emph{explicitly marked}, either through uses of a @fork@ function or
+through asynchronous callbacks, which run in their own lightweight thread.
+
+Implementing LVish as a Haskell library makes it possible to provide
+compile-time guarantees about determinism and quasi-determinism,
+because programs written using our library run in our @Par@ monad and
+can therefore only perform LVish-sanctioned side effects.
+We take advantage of
+this fact by indexing @Par@ computations with a phantom type
+that indicates their \emph{determinism level}:
+\begin{lstlisting}
+  data Determinism = Det | QuasiDet
+\end{lstlisting}
+%% while the second is the standard phantom type used by the @ST@ monad, which is
+%% used to ensure that LVars themselves cannot escape from uses of our @Par@ monad.
+The @Par@ type constructor has the following kind:\footnote{We are here using
+  the {\tt DataKinds} extension to Haskell to treat {\tt Determinism} as a
+  kind.  In the full implementation, we include a second phantom type parameter to ensure that LVars
+  cannot be used in multiple runs of the {\tt Par} monad, in a manner analogous to how the {\tt ST} monad prevents an {\tt STRef} from being returned from {\tt runST}.}
+\begin{lstlisting}
+  Par :: Determinism -> * -> *
+\end{lstlisting}
+together with the following suite of @run@ functions:
+\begin{lstlisting}
+  runPar   :: Par Det a -> a
+  runParIO :: Par lvl a -> IO a
+  runParThenFreeze :: DeepFrz a => Par Det a -> FrzType a
+\end{lstlisting}
+The public library API ensures that if code uses @freeze@, it is marked as
+@QuasiDet@; thus, code that types as @Det@ is guaranteed to be fully
+deterministic.  While LVish code with an arbitrary determinism level @lvl@ can be
+executed in the @IO@ monad using @runParIO@, only @Det@ code can be executed as if it were pure,
+since it is guaranteed to be free of visible side effects of nondeterminism.  In
+the common case that @freeze@ is only needed at the end of an
+otherwise-deterministic computation, @runParThenFreeze@ runs the computation to
+completion, and then freezes the returned LVar, returning its exact value---and
+is guaranteed to be deterministic.\footnote{The {\tt DeepFrz} typeclass is used
+  to perform freezing of nested LVars, producing values of frozen type (as given
+  by the {\tt FrzType} type function).}
+
+%% The type @s@ (short for ``session'') that
+%% appears in the @run@ functions also appears as a phantom type of LVars
+%% themselves; the universal quantification forces each LVar to be tied to a single
+%% session, \ie, a single use of a @run@ function~\cite{?}.  Readers unfamiliar with this
+%% trick from the @ST@ monad can safely ignore the type parameter altogether.
+
+\ajt{We don't actually prove that freeze-free code is deterministic, but it
+  should follow pretty easily from the proof of quasi-determinism.  Perhaps we
+  should claim it in the proof section?}
+\lk{Well, to do this ``right'' we would have to not just prove that
+  freeze-free code is deterministic, but we'd have to prove that
+  freeze-happens-last code is deterministic...}
+
+\subsection{The Big Picture}
+
+We envision two parties interacting with our library.  First, there are data
+structure authors, who use the library directly to implement a specific
+monotonic data structure (\eg, a monotonically growing finite map).  Second,
+there are application writers, who are clients of these data structures.  Only
+the application writers receive a \mbox{(quasi-)determinism} guarantee; an author of a
+data structure is responsible for ensuring that the states their data structure can take on
+correspond to the elements of a lattice, and that the exposed interface to it corresponds to
+some use of @put@, @get@, @freeze@, and event handlers.
+
+Thus, our library is focused primarily on \emph{lattice-generic} infrastructure:
+the @Par@ monad itself, a thread scheduler, support for blocking and signaling
+threads, handler pools, and event handlers.  Since this infrastructure is unsafe
+(does not guarantee quasi-determinism), only data structure authors should
+import it, subsequently exporting a \emph{limited} interface specific to their
+data structure.  For finite maps, for instance, this interface might include key/value
+insertion, lookup, event handlers and pools, and freezing---along with
+higher-level abstractions built on top of these.
+
+For this approach to scale well with available parallel resources, it is
+essential that the data structures themselves support efficient parallel access;
+a finite map that was simply protected by a global lock would force all parallel
+threads to sequentialize their access.  Thus, we expect data structure authors
+to draw from the extensive literature on scalable parallel data structures,
+employing techniques like fine-grained locking and lock-free data
+structures~\cite{art}.  Data structures that fit into the $\LVish$ model have a
+special advantage: because all updates must commute, it may be possible to avoid
+the expensive synchronization which \emph{must} be used for non-commutative
+operations~\cite{lawsOfOrder}.  And in any case, monotonic data structures are usually
+much simpler to represent and implement than general ones.
+
+\subsection{Two Key Ideas}\label{subsection:atomic}
+
+%Our implementation strategy relies on two semantic observations:
+
+\paragraph{Leveraging atoms}
+
+Monotonic data structures acquire ``pieces of
+information'' over time.  In a lattice, the smallest such pieces are called the
+\emph{atoms} of the lattice: they are elements not equal to $\bot$, but for
+which the only smaller element is $\bot$.  Lattices for which every element is
+the lub of some set of atoms are called \emph{atomistic}, and in practice most
+application-specific lattices used by $\LVish$ programs 
+have this property---especially those whose elements represent
+collections.
+
+In general, the $\LVish$ primitives allow arbitrarily large queries and updates
+to an LVar.  But for an atomistic lattice, the corresponding data structure
+usually exposes operations that work at the atom level, semantically limiting
+@put@s to atoms, @get@s to threshold sets of atoms, and event sets to sets of
+atoms.  For example, the lattice of finite maps is atomistic, with atoms
+consisting of all singleton maps (\ie, all key/value pairs).  The interface to a
+finite map usually works at the atom level, allowing addition of a new
+key/value pair, querying of a single key, or traversals (which we model as
+handlers) that walk over one key/value pair at a time.
+
+Our implementation is designed to facilitate good performance for atomistic
+lattices by associating LVars with a set of \emph{deltas} (changes), as well as
+a lattice.  For atomistic lattices, the deltas are essentially just the
+atoms---for a set lattice, a delta is an element; for a map, a key/value pair.
+Deltas provide a compact way to represent a change to the lattice, allowing us
+to easily and efficiently communicate such changes between @put@s and
+@gets@/handlers.
+
+\paragraph{Leveraging idempotence}
+
+While we have emphasized the commutativity of least upper bounds, they also
+provide another important property: \emph{idempotence}, meaning that
+$\userlub{d}{d} = d$ for any element $d$.  In $\LVish$ terms, repeated @put@s or @freeze@s
+have no effect, and since these are the only way to modify the store, the
+result is that $e; e$ behaves the same as $e$ for any $\LVish$ expression $e$.  
+Idempotence has already been recognized as a useful property for work-stealing
+scheduling~\cite{idempotent}: if the scheduler is allowed to occasionally duplicate work, it is
+possible to substantially save on synchronization costs.  Since $\LVish$
+computations are guaranteed to be idempotent, we could use such a scheduler
+(for now we use the standard Chase-Lev deque~\cite{ChaseLev}).  But idempotence
+also helps us deal with races between @put@ and @get@/@addHandler@, as we explain below.
+%%   Since
+%% @addHandler@ must launch callbacks for any events that have already occurred, it
+%% will must perform a traversal of the data structure; if that traversal is
+%% concurrent with a @put@, the added data may or may not be seen
+
+\subsection{Representation Choices}
+Our library uses the following generic representation for LVars:
+\begin{lstlisting}
+  data LVar a d = 
+       LVar { state :: a,  status :: IORef (Status d) }
+\end{lstlisting}
+where the type parameter @a@ is the (mutable) data structure representing the
+lattice, and @d@ is the type of deltas for the lattice.\footnote{For
+  non-atomistic lattices, we take \termfont{a} and \termfont{d} to be the same type.}
+The @status@ field is a mutable reference that represents the status bit:
+\begin{lstlisting}
+  data Status d = Frozen | Active (B.Bag (Listener d))
+\end{lstlisting}
+The status bit of an LVar is tied together with a bag of waiting
+\emph{listeners}, which include blocked @get@s and handlers; once the LVar is
+frozen, there can be no further events to listen for.\footnote{In particular,
+  with one atomic update of the flag we both mark the LVar as frozen and allow
+  the bag to be garbage-collected.}  The bag module (imported as @B@) supports
+atomic insertion and removal, and \emph{concurrent} traversal:
+\begin{lstlisting}
+  put     :: Bag a -> a -> IO (Token a)
+  remove  :: Token a -> IO ()
+  foreach :: Bag a -> (a -> Token a -> IO ()) -> IO ()
+\end{lstlisting}
+Removal of elements is done via abstract \emph{tokens}, which are acquired by
+insertion or traversal.  Updates may occur concurrently with a traversal, but
+are not guaranteed to be visible to it.
+%which allows the entire bag to become garbage immediately after freezing.
+
+A listener for an LVar is a pair of callbacks,
+one called when the LVar's lattice value changes,
+ and the other when the LVar is frozen:  
+\begin{lstlisting}
+ data Listener d = Listener {
+   onUpd :: d -> Token (Listener d) -> SchedQ -> IO (),
+   onFrz ::      Token (Listener d) -> SchedQ -> IO () }
+\end{lstlisting}
+The listener is given access to its own token in the listener bag, which it can
+use to deregister from future events (useful for a @get@ whose threshold has
+been passed).  It is also given access to the CPU-local scheduler queue, which
+it can use to spawn threads.
+
+\subsection{The Core Implementation}
+
+Internally, the @Par@ monad represents computations in continuation-passing
+style, in terms of their interpretation in the @IO@ monad:
+\begin{lstlisting}
+  type ClosedPar = SchedQ -> IO ()
+  type ParCont a = a -> ClosedPar
+  mkPar :: (ParCont a -> ClosedPar) -> Par lvl a
+\end{lstlisting}
+The @ClosedPar@ type represents ready-to-run @Par@ computations, which are given
+direct access to the CPU-local scheduler queue.  Rather than returning a final
+result, a completed @ClosedPar@ computation must call the scheduler, @sched@, on
+the queue.  A @Par@ computation, on the other hand, completes by passing its
+intended result to its continuation---yielding a @ClosedPar@ computation.
+
+Figure~\ref{fig:implementation} gives the implementation for three core
+lattice-generic functions: @getLV@, @putLV@, and @freezeLV@, which we explain next.
+
+\begin{figure}
+\lstset{basicstyle=\footnotesize\ttfamily}
+\begin{lstlisting}
+getLV :: (LVar a d) -> (a -> Bool -> IO (Maybe b)) 
+                    -> (d -> IO (Maybe b)) -> Par lvl b
+getLV (LVar{state, status}) gThresh dThresh = 
+  mkPar $\k q -> 
+    let onUpd d = unblockWhen (dThresh d)
+        onFrz   = unblockWhen (gThresh state True)
+        unblockWhen thresh tok q = do
+          tripped <- thresh
+          whenJust tripped $ \b -> do
+            B.remove tok
+            Sched.pushWork q (k b)                     
+    in do
+      curStat <- readIORef status
+      case curStat of
+        Frozen -> do   -- no further deltas can arrive!
+          tripped <- gThresh state True
+          case tripped of
+            Just b  -> exec (k b) q
+            Nothing -> sched q     
+        Active ls -> do
+          tok <- B.put ls (Listener onUpd onFrz)
+          frz <- isFrozen status -- must recheck after
+                                 -- enrolling listener
+          tripped <- gThresh state frz
+          case tripped of
+            Just b  -> do
+              B.remove tok  -- remove the listener 
+              k b q         -- execute our continuation
+            Nothing -> sched q
+
+putLV :: LVar a d -> (a -> IO (Maybe d)) -> Par lvl ()
+putLV (LVar{state, status}) doPut = mkPar $ \k q -> do  
+  Sched.mark q  -- publish our intent to modify the LVar
+  delta   <- doPut state      -- possibly modify LVar
+  curStat <- readIORef status -- read while q is marked
+  Sched.clearMark q           -- retract our intent
+  whenJust delta $ \d -> do
+    case curStat of
+      Frozen -> error "Attempt to change a frozen LVar"
+      Active listeners -> B.foreach listeners $ 
+        \(Listener onUpd _) tok -> onUpd d tok q
+  k () q 
+
+freezeLV :: LVar a d -> Par QuasiDet ()
+freezeLV (LVar {status}) = mkPar $ \k q -> do
+  Sched.awaitClear q
+  oldStat <- atomicModifyIORef status $ \s->(Frozen, s)    
+  case oldStat of
+    Frozen -> return ()
+    Active listeners -> B.foreach listeners $ 
+      \(Listener _ onFrz) tok -> onFrz tok q
+  k () q
+\end{lstlisting}
+\caption{Implementation of key lattice-generic functions.}\label{fig:implementation}
+%\vspace{-7mm}
+\end{figure}
+
+\paragraph{Threshold reading}
+
+The @getLV@ function assists data structure authors in writing operations with
+@get@ semantics.  In addition to an LVar, it takes two \emph{threshold
+  functions}, one for global state and one for deltas.  The \emph{global threshold} @gThresh@ is
+used to initially check whether the LVar is above some lattice value(s) by
+global inspection; the extra boolean argument gives the frozen status of the
+LVar.  The \emph{delta threshold} @dThresh@ checks whether a particular update 
+takes the state of the LVar above some lattice state(s).
+Both functions return @Just r@ if the threshold
+has been passed, where @r@ is the result of the read.
+To continue our running example of finite maps with
+key/value pair deltas, we can use @getLV@ internally to build the following
+@getKey@ function that is exposed to application writers:
+\begin{lstlisting}
+  -- Wait for the map to contain a key; return its value
+  getKey key mapLV = getLV mapLV gThresh dThresh where
+    gThresh m frozen = lookup key m
+    dThresh (k,v) | k == key  = return (Just v)
+                  | otherwise = return Nothing 
+\end{lstlisting}
+where @lookup@ imperatively looks up a key in the underlying map.
+
+The challenge in implementing @getLV@ is the possibility that a
+\emph{concurrent} @put@ will push the LVar over the threshold.  To cope with
+such races, @getLV@ employs a somewhat pessimistic strategy: before doing
+anything else, it enrolls a listener on the LVar that will be triggered on any
+subsequent updates.  If an update passes the delta threshold, the listener is
+removed, and the continuation of the @get@ is invoked, with the result, in a new
+lightweight thread.  \emph{After} enrolling the listener, @getLV@ checks the
+\emph{global} threshold, in case the LVar is already above the threshold.  If it
+is, the listener is removed, and the continuation is launched immediately;
+otherwise, @getLV@ invokes the scheduler, effectively treating its continuation
+as a blocked thread.  
+
+By doing the global check only after enrolling a listener, @getLV@ is sure not
+to miss any threshold-passing updates.  It does \emph{not} need to synchronize
+between the delta and global thresholds: if the threshold is passed just as
+@getLV@ runs, it might launch the continuation twice (once via the global check,
+once via delta), but by idempotence this does no harm.  This is a performance
+tradeoff: we avoid imposing extra synchronization on \emph{all} uses of @getLV@
+at the cost of some duplicated work in a rare case.  We can easily provide a
+second version of @getLV@ that makes the alternative tradeoff, but as we will
+see below, idempotence plays an \emph{essential} role in the analogous situation
+for handlers.
+
+\paragraph{Putting and freezing}
+
+On the other hand, we have the @putLV@ function, used to build operations with
+@put@ semantics.  It takes an LVar and an \emph{update function} @doPut@ that
+performs the @put@ on the underlying data structure, returning a delta if the
+@put@ actually changed the data structure.  If there is such a delta, @putLV@
+subsequently invokes all currently-enrolled listeners on it.
+
+The implementation of @putLV@ is complicated by another race, this time with
+freezing.  If the @put@ is nontrivial (\ie, it changes the value of the LVar), the
+race can be resolved in two ways.  Either the freeze takes effect first, in
+which case the @put@ must fault, or else the @put@ takes effect first, in which case
+both succeed.  Unfortunately, we have no means to both check the frozen status
+\emph{and} attempt an update in a single atomic step.\footnote{While we could
+  require the underlying data structure to support such transactions, doing so
+  would preclude the use of existing lock-free data structures, which tend to
+  use a single-word compare-and-set operation to perform atomic updates.
+  Lock-free data structures routinely outperform transaction-based data
+  structures~\cite{practical-lock-freedom}.}
+
+Our basic approach is to ask forgiveness, rather than permission: we eagerly
+perform the @put@, and only afterwards check whether the LVar is frozen.
+Intuitively, this is allowed because \emph{if} the LVar is frozen, the @Par@
+computation is going to terminate with an exception---so the effect of the @put@
+cannot be observed!  
+
+Unfortunately, it is not enough to \emph{just} check the status bit for frozenness afterward,
+for a rather subtle reason: suppose the @put@ is executing concurrently with a
+@get@ which it causes to unblock, and that the @get@ting thread subsequently
+freezes the LVar.  In this case, we \emph{must} treat the @freeze@ as if it
+happened after the @put@, because the @freeze@ could not have occurred had it
+not been for the @put@. But, by the time @putLV@ reads the status bit, it may
+already be set, which naively would cause @putLV@ to fault.
+
+To guarantee that such confusion cannot occur, we add a \emph{marked} bit to
+each CPU scheduler state.  The bit is set (using @Sched.mark@) prior to a @put@
+being performed, and cleared (using @Sched.clear@) only \emph{after} @putLV@ has
+subsequently checked the frozen status.  On the other hand, @freezeLV@ waits
+until it has observed a (transient!) clear mark bit on every CPU (using
+@Sched.awaitClear@) before actually freezing the LVar.  This guarantees that any
+@put@s that \emph{caused} the freeze to take place check the frozen status
+\emph{before} the freeze takes place; additional @put@s that arrive concurrently
+may, of course, set a mark bit again after @freezeLV@ has observed a clear status.
+
+The proposed approach requires no barriers or synchronization instructions
+(assuming that the @put@ on the underlying data structure acts as a memory barrier).
+Since the mark bits are per-CPU flags, they can generally be held in a
+core-local cache line in exclusive mode---meaning that marking and clearing them
+is extremely cheap.  The only time that the busy flags can create cross-core
+communication is during @freezeLV@, which should only occur once per LVar
+computation.
+
+One final point: unlike @getLV@ and @putLV@, which are polymorphic in their
+determinism level, @freezeLV@ is statically @QuasiDet@.
+
+\paragraph{Handlers, pools and quiescence}
+
+Given the above infrastructure, the implementation of handlers is relatively straightforward.
+We represent handler pools as follows:
+\begin{lstlisting}
+  data HandlerPool = HandlerPool {
+    numCallbacks :: Counter,  blocked :: B.Bag ClosedPar }
+\end{lstlisting}
+where @Counter@ is a simple counter supporting atomic increment, decrement, and
+checks for equality with zero.\footnote{One can use a high-performance
+  \emph{scalable non-zero indicator}~\cite{snzi} to implement \texttt{Counter}, but we
+  have not yet done so.}  We use the counter to track the number of
+currently-executing callbacks, which we can use to implement @quiesce@.  A
+handler pool also keeps a bag of threads that are blocked waiting for the pool
+to reach a quiescent state.
+
+We create a pool using @newPool@ (of type @Par lvl HandlerPool@), 
+and implement quiescence testing as follows:
+\begin{lstlisting}
+  quiesce :: HandlerPool -> Par lvl ()
+  quiesce hp@(HandlerPool cnt bag) = mkPar $ \k q -> do
+    tok <- B.put bag (k ())
+    quiescent <- poll cnt
+    if quiescent then do B.remove tok; k () q
+                 else sched q
+\end{lstlisting} %$
+where the @poll@ function indicates whether @cnt@ is (transiently) zero.  Note
+that we are following the same listener-enrollment strategy as in @getLV@, but
+with @blocked@ acting as the bag of listeners.
+
+Finally, @addHandler@ has the following interface:
+\begin{lstlisting}
+addHandler :: 
+     Maybe HandlerPool              -- Pool to enroll in
+  -> LVar a d                       -- LVar to listen to
+  -> (a -> IO (Maybe (Par lvl ()))) -- Global callback
+  -> (d -> IO (Maybe (Par lvl ()))) -- Delta callback
+  -> Par lvl ()
+\end{lstlisting}
+As with @getLV@, handlers are specified using both global and delta
+threshold functions.  Rather than returning results, however, these threshold
+functions return computations to run in a fresh lightweight thread if the
+threshold has been passed.  Each time a callback is launched, the callback count
+is incremented; when it is finished, the count is decremented, and if zero, all
+threads blocked on its quiescence are resumed.
+
+The implementation of @addHandler@ is very similar to @getLV@, but there is one
+important difference: handler callbacks must be invoked for \emph{all} events of
+interest, not just a single threshold.  Thus, the @Par@ computation returned by
+the global threshold function should execute its callback on, \eg, all available
+atoms.  Likewise, we do not remove a handler from the bag of listeners when a
+single delta threshold is passed; handlers listen continuously to an LVar until
+it is frozen.  We might, for example, expose the following @foreach@ function
+for a finite map:
+\begin{lstlisting}
+ foreach mh mapLV cb = addHandler mh lv gThresh dThresh
+   where
+     dThresh (k,v) = return (Just (cb k v))
+     gThresh mp    = traverse mp (\(k,v) -> cb k v) mp
+\end{lstlisting}
+Here, idempotence really pays off: without it, we would have to synchronize to
+ensure that no callbacks are duplicated between the global threshold (which may
+or may not see concurrent additions to the map) and the delta threshold (which
+will catch all concurrent additions).  We expect such duplications to be rare,
+since they can only arise when a handler is added concurrently with updates to
+an LVar.\footnote{That said, it is possible to avoid all duplication by adding
+  further synchronization, and in ongoing research, we are exploring various
+  locking and timestamp schemes to do just that.}
+
+%%  would require maintaining an explicit shared set of handled keys---as
+%% expensive as maintaining the map in the first place!  That said, data structure
+%% authors can implement such synchronization between their threshold functions
+%% if desired.
+
+%% \subsection{High-level Programming Patterns}
+
+%% High-level patterns on top (forEach, continuous maps between LVars)
+
+%% \subsection{Atomic Operations in Haskell}\label{subsection:atomics}
+%% \rn{TODO}
+%% \ajt{I don't think we'll have room for this in the submission.}
+
+

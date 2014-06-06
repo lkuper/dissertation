@@ -1,0 +1,17 @@
+\section{Conclusion}
+
+\lk{blah blah blah.  This could be made more interesting?...}
+
+We have presented LVish, an extension to the LVars programming model
+that provides, first, the ability to \emph{freeze} an LVar and observe
+its exact contents, and second, the ability to attach event
+handlers to an LVar that respond to state changes.  We have shown that
+the resulting extended programming model is \emph{quasi-deterministic}, in
+which programs always either evaluate to the same answer or raise an
+exception.  Finally, we have provided an implementation of LVish as
+a Haskell library, and our $k$-CFA case study demonstrates how our library enables
+an expressive and useful style of programming that yields promising parallel speedup.
+
+\lk{TODO: mention future work?  something about footnote 14?  a richer
+  menu of choices in Data.LVar.*?  pursue the relationship between
+  LVars and CRDTs?}

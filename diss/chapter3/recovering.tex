@@ -1,0 +1,70 @@
+
+
+\section{Recovering from Quasi-determinism}\label{section:recovering}
+
+This section outlines ways that a language implementation may provide fallbacks
+for users to deal with quasi-determinism.  Note that the goal here is to
+describe the design space, and most of these strategies are not currently
+implemented in our prototype.
+
+When running a quasi-deterministic program, the following options are available
+for dealing with nondeterminism exceptions:
+
+\begin{itemize}
+\item {\bf Do nothing.}  This is the approach taken by virtually all parallel
+  programs today.  It is the responsibility of the programmer to remove any bugs
+  that may lead to non-determinism or quasi-determinism.  Of course, like other
+  exceptions, nondeterminism exceptions can be caught, so rather than letting
+  the entire application crash, it is also possible to build in an
+  application-specific response.
+
+\item {\bf Replay [from snapshot].}  
+%
+Testing will usually eliminate obvious bugs, and only infrequently occurring
+ones will make into production.  
+Thus, hopefully a failing program will succeed on another run. 
+When nondeterminism exceptions occur, one simple solution is to ``let it crash''.
+That is, if a program fails with an exception, and then is rerun from an
+snapshot (as in high-performance-computing \cite{hpc-snapshots}), or from the
+beginning.
+
+%, then it has another chance to miss the exception and return the
+%correct value.
+
+Further, if one is willing to implement {\em tracing} of computations downstream from a
+freeze operation, then this replay capability could even be brought
+within-language, as with software-transactional memory \cite{haskell-STM} or
+adaptive-computation \cite{umut-adaptive-comp}.
+
+\item {\bf Replay and patch.}  An improvement to simple replaying
+%  and hoping  that things go better the next time around, 
+  is to ensure that the particular
+  failure that caused an exception the first time cannot happen again.  
+  A basic method is to 
+  identify the freeze that caused an exception (which was raised by a
+  subsequent put), and simply inserting a global barrier before that particular
+  invocation of @freeze@.  This will ensure
+  that @freeze@ runs as late as possible, after the @put@ with which it is racing.
+\end{itemize}
+
+Note that the patch method does not require inserting a global barrier {\em
+  statically} in the code, which would apply to all calls to the freeze in
+question.  Rather it is only the single dynamic invocation of freeze that needs
+to be hobbled in this way.  This dynamic invocation can be identified by {\em
+  pedigree} \cite{cilk-pedigree}, which is consistent across all possible
+schedulings Section~\ref{section:pedigree}.
+
+Moreover, all these approaches for runtime recover are complimentary with {\em
+  testing} techniques that can help eliminate quasi-determinism bugs at
+development time. \rn{Data race detectors... redex model.}
+
+
+\paragraph{Recovering from quasi-determinism in the LVish Haskell Library}
+\rnote{We currently implement the most simple replay technique}
+
+\begin{lstlisting}
+retryQPar :: QPar a -> Par a
+\end{lstlisting}
+
+\paragraph{Ways to avoid Quasi-Determinism at the outset}
+\rnote{Only run freeze at the end}

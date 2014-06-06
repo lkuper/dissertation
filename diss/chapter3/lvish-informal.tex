@@ -1,0 +1,165 @@
+\section{$\LVish$, Informally}\label{section:lvish-informal}
+
+As we explained in Section~\ref{section:intro}, while LVars offer a deterministic
+programming model that allows communication through a wide variety of data structures,
+they are not powerful enough to express common algorithmic patterns, like fixpoint
+computations, that require both positive and negative queries.  In this section,
+we explain our extensions to the LVar model at a high level;
+Section~\ref{section:language} then formalizes them, while
+Section~\ref{section:implementation} shows how to implement them.
+
+\subsection{Asynchrony through Event Handlers}
+
+Our first extension to LVars is the ability to do asynchronous, event-driven
+programming through event handlers.  An \emph{event} for an LVar can be
+represented by a lattice element; the event \emph{occurs} when the LVar's
+current value reaches a point at or above that lattice element.  An \emph{event handler} ties
+together an LVar with a callback function that is asynchronously invoked
+whenever some events of interest occur.  For example, if $\mathit{lv}$ is an LVar
+whose lattice is that of Figure~\ref{f:lattice-examples}(a), the expression
+\begin{equation}
+  \ADDHANDLER~\mathit{lv}~\{ 1, 3, 5, \dots \}~(\lam{x}{\putexp{\mathit{lv}}{x+1}})
+\label{e:lvish-example-1}
+\end{equation}
+registers a handler for $\mathit{lv}$ that executes the callback
+function $\lam{x}{\putexp{\mathit{lv}}{x+1}}$ for each odd number that
+$\mathit{lv}$ is at or above.  When \ref{e:lvish-example-1} is
+finished evaluating, $\mathit{lv}$ will contain the smallest even
+number that is at or above what its original value was.  For instance,
+if $\mathit{lv}$ originally contains $4$, the callback function will
+be invoked twice, once with $1$ as its argument and once with $3$.
+These calls will respectively write $1+1 = 2$ and $3+1 = 4$ into
+$\mathit{lv}$; since both writes are $\leq 4$, $\mathit{lv}$ will
+remain $4$.  On the other hand, if $\mathit{lv}$ originally contains
+$5$, then the callback will run three times, with $1$, $3$, and $5$ as
+its respective arguments, and with the latter of these calls writing
+$5+1 = 6$ into $\mathit{lv}$, leaving $\mathit{lv}$ as $6$.
+
+In general, the second argument to $\ADDHANDLER$ is an arbitrary subset $Q$ of the
+LVar's lattice, specifying which events should be handled.  Like threshold
+sets, these \emph{event sets} are a mathematical modeling tool only; they have no
+explicit existence in the implementation.
+
+Event handlers in $\LVish$ are somewhat unusual in that they invoke their
+callback for \emph{all} events in their event set $Q$ that have taken place
+(\ie, all values in $Q$ less than or equal to the current LVar value), even if
+those events occurred prior to the handler being registered.  To see why
+this semantics is necessary, consider the following, more subtle example:
+\begin{equation}
+\begin{split}
+& \LETPAR ~\_ = \putexp{\mathit{lv}}{0} \\
+&  \letparspace ~\_ = \putexp{\mathit{lv}}{1} \\
+&  \letparspace ~\_ = \ADDHANDLER~\mathit{lv}~\{ 0, 1 \}~
+     (\lam{x}{\termfont{if}~x=0~\termfont{then}~\putexp{\mathit{lv}}{2}}) \\
+&  \letspace \IN~ \getexp{\mathit{lv}}{\setof{2}}
+\end{split}
+\label{e:lvish-example-2}
+\end{equation}
+Can~\ref{e:lvish-example-2} ever block?  If a callback only executed for events
+that arrived after its handler was registered, or only for the largest event in
+its handler set that had occurred, then the example would be nondeterministic:
+it would block, or not, depending on how the handler registration was
+interleaved with the \termfont{put}s.  By instead executing a handler's callback once
+for \emph{each and every} element in its event set below or at the LVar's value, we
+guarantee quasi-determinism---and, for \ref{e:lvish-example-2}, guarantee the
+result of $2$.
+
+The power of event handlers is most evident for lattices that model collections,
+such as sets.  For example, if we are working with lattices of sets of natural
+numbers, ordered by subset inclusion, then 
+we can write the following function:
+\[
+\termfont{forEach} = \lam{\mathit{lv}}{
+  \lam{f}{
+    \ADDHANDLER~\mathit{lv}~\{ \{0\}, \{1\}, \{2\}, \dots \}~f
+  }}
+\]
+Unlike the usual \termfont{forEach} function found in functional programming
+languages, this function sets up a \emph{permanent}, asynchronous flow of data
+from $\mathit{lv}$ into the callback $f$.  Functions like \termfont{forEach} can
+be used to set up complex, cyclic data-flow networks, as we will see in
+Section~\ref{section:eval}.
+
+In writing \termfont{forEach}, we consider only the singleton sets to be events
+of interest, which means that if the value of $\mathit{lv}$ is some set like
+$\setof{2, 3, 5}$ then $f$ will be executed once for each singleton subset
+($\setof{2}$, $\setof{3}$, $\setof{5}$)---that is, once for each element.  In
+Section~\ref{subsection:atomic}, we will see that this kind of handler set can be specified in a
+lattice-generic way, and in Section~\ref{section:implementation} we will see
+that it corresponds closely to our implementation strategy.  
+
+%% In many lattices, element is the least upper bound of some collection of
+%% \emph{atoms}, where an atom is a
+
+\subsection{Quiescence through Handler Pools}
+\label{sec:quiescence-informal}
+
+Because event handlers are asynchronous, we need a separate mechanism to
+determine when they have reached a \emph{quiescent} state, \ie, when all
+callbacks for the events that have occurred have finished running.  As we
+discussed in Section~\ref{section:intro}, detecting quiescence is crucial for implementing
+fixpoint computations.  To build flexible data-flow networks, it is also helpful
+to be able to detect quiescence of multiple handlers simultaneously.  Thus, our
+design includes \emph{handler pools}, which are groups of event handlers whose
+collective quiescence can be tested.
+
+The simplest way to use a handler pool is the following:
+\[
+\begin{array}[t]{l}
+\termfont{let}~\mathit{h}~=~\NEWPOOL \\
+\letspace \termfont{in}
+  \begin{array}[t]{l}
+    \ADDHANDLERINPOOL~h~\mathit{lv}~Q~f; \\
+    \QUIESCE~h
+  \end{array}
+\end{array}
+\]
+where $\mathit{lv}$ is an LVar, $Q$ is an event set, and $f$ is a callback.
+Handler pools are created with the $\NEWPOOL$ function, and handlers are
+registered with $\ADDHANDLERINPOOL$, a variant of $\ADDHANDLER$ that takes a
+handler pool as an additional argument.  Finally, $\QUIESCE$ blocks until a pool
+of handlers has reached a quiescent state.  
+
+Of course, whether or not a handler is quiescent is a non-monotonic property: we
+can move in and out of quiescence as more $\PUT$s to an LVar occur, and even if
+all states at or below the current state have been handled, there is no way to
+know that more $\PUT$s will not arrive to increase the state and trigger more
+callbacks.  There is no risk to quasi-determinism, however, because $\QUIESCE$
+does not yield any information about \emph{which} events have been handled---any
+such questions must be asked through LVar functions like $\GET$.  In
+practice, $\QUIESCE$ is almost always used together with freezing, which we
+explain next.
+
+\subsection{Freezing and the Freeze-After Pattern}\label{subsection:freeze-after}
+
+Our final addition to the LVar model is the ability to \emph{freeze} an LVar,
+which forbids further changes to it, but in return allows its exact value to be
+read.  We expose freezing through the function $\FREEZE$, which takes an LVar as
+its sole argument, and returns the exact value of the LVar as its result.  As we
+explained in Section~\ref{section:intro}, $\PUT$s that would change the value of a frozen
+LVar instead raise an exception, and it is the potential for races between
+such $\PUT$s and $\FREEZE$ that makes $\LVish$ quasi-deterministic, rather than
+fully deterministic.
+
+Putting all the above pieces together, we arrive at a particularly common
+pattern of programming in $\LVish$:
+\[
+\begin{array}[t]{l}
+  \termfont{freezeAfter} = \lam{\mathit{lv}}{\lam{Q}{\lam{f}{}}}
+  \begin{array}[t]{l}
+    \termfont{let}~\mathit{h}~=~\NEWPOOL \\
+    \termfont{in}
+      \begin{array}[t]{l}  
+        \ADDHANDLERINPOOL~h~\mathit{lv}~Q~f; 
+\\
+        \QUIESCE~h;~~
+%\\
+        \FREEZE~\mathit{lv}
+      \end{array}
+  \end{array}
+\end{array}
+\]
+In this pattern, an event handler is registered for an LVar, subsequently
+quiesced, and then the LVar is frozen and its exact value is returned.  A
+set-specific variant of this pattern, @freezeSetAfter@, was used in the
+graph traversal example in Section~\ref{section:intro}.
