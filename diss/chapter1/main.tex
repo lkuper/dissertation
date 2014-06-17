@@ -18,19 +18,20 @@ Moreover, we do not count the behavior of the scheduler as observable.
 Indeed, we want to specifically \emph{allow} tasks to be scheduled
 dynamically and unpredictably, but without allowing such
 \emph{schedule nondeterminism} to affect the outcome of a program.
-Therefore, in this proposal we define the observable behavior of a
-program to be the value to which the program evaluates.\footnote{We
-  assume that programs have no side effects other than state.}
+Therefore, we will define the observable behavior of a
+program to be \emph{the value to which the program evaluates}.\footnote{We
+  assume that programs have no side effects other than state effects.}
 
 \section{Existing approaches to determinism by construction}
 
 Shared state between computations raises the possibility of \emph{race
   conditions} that allow schedule nondeterminism to be observed.  For
 instance, if one thread writes $3$ to a shared location while another
-writes $4$, then a later thread that reads and returns the location's
-contents will nondeterministically return $3$ or $4$ depending on the
-order in which the first two threads are scheduled to run.  Therefore,
-deterministic parallel programming models necessarily limit sharing of
+writes $4$, then a third thread that runs after the first two and reads and returns the location's
+contents will nondeterministically return $3$ or $4$, depending on the
+order in which the first two threads ran.  Therefore,
+if a parallel programming model is to guarantee determinism, it
+must necessarily limit sharing of
 mutable state between parallel tasks.
 
 One approach is to allow \emph{no} shared mutable state between tasks,
@@ -38,23 +39,33 @@ forcing concurrent tasks to produce values independently.  An example
 of no-shared-state parallelism is functional programming with
 function-level task parallelism, or \emph{futures}---for instance, in
 Haskell programs that use the @par@ and @pseq@
-combinators~\cite{marlow-par}.  Another approach is pure data
-parallelism, as in Data Parallel Haskell~\cite{dph}, and yet another
+combinators~\cite{marlow-par}.  Another approach is \emph{pure data
+parallelism}, as in Data Parallel Haskell~\cite{dph}, and yet another
 is to ensure that the state accessed by concurrent threads is
-disjoint, as in Deterministic Parallel Java~\cite{dpj-oopsla}.
+\emph{disjoint}, as in Deterministic Parallel Java~\cite{dpj-oopsla}.
+
+\lk{I could add more detail and references about each of the above --
+  perhaps from my job talk notes.}
 
 However, some algorithms are more naturally or efficiently written
 using shared state or message passing, and hence the development of
 parallel programming models that allow \emph{limited} sharing of
-mutable state while still preserving determinism.  Consider two
+mutable state while still preserving determinism.
+
+\lk{Moreover, we might want to \emph{combine} the above models.  Say
+  something about that!}
+
+\lk{More detail below?  We want to explain what blocking is.}
+
+Consider two
 classic deterministic parallel programming models, dating back to the
 late 1960s and early 1970s:
 \begin{itemize}
 \item In \emph{Kahn process networks} (KPNs)~\cite{Kahn-1974}, as well
   as in the more restricted \emph{synchronous data flow}
-  systems~\cite{lee-sdn}, a network of independent, sequential
+  systems~\cite{lee-sdn}, a network of independent
   ``computing stations'' communicate with each other through blocking
-  FIFO channels.  Each station computes a monotonic function from the
+  first-in first-out (FIFO) queues, or \emph{channels}.  Each station computes a sequential, monotonic function from the
   \emph{history} of its input channels (\ie, the input it has received
   so far) to the history of its output channels (the output it has
   produced so far).  KPNs are the basis for deterministic
@@ -66,7 +77,7 @@ late 1960s and early 1970s:
   a well-established mechanism for enforcing determinism in parallel
   settings: they have appeared in Concurrent ML as
   @SyncVar@s~\cite{reppy-cml-book}; in the Intel Concurrent
-  Collections (CnC) system~\cite{CnC}; and have even been implemented
+  Collections (abbreviated ``CnC'') system~\cite{CnC}; and have even been implemented
   in hardware in Cray MTA machines~\cite{cray-mta}.  Although most of
   these uses incorporate IVars into already-nondeterministic
   programming environments, the \emph{monad-par} Haskell
@@ -79,7 +90,7 @@ late 1960s and early 1970s:
   guaranteed to be deterministic.
 \end{itemize}
 In KPNs and other data-flow models, communication takes place over
-FIFOs with ever-increasing \emph{channel histories}, while in
+FIFO queues with ever-increasing \emph{channel histories}, while in
 IVar-based programming models such as CnC and monad-par, a shared data
 store of single-assignment memory locations grows monotonically.
 Hence \emph{monotonic data structures}---data structures to which
@@ -94,7 +105,7 @@ expressed---efficiently or at all---in the model.
 
 \section{LVars: lattice-based monotonic data structures}
 
-In this thesis, I will show that \emph{lattice-based} data structures,
+In this thesis, I show that \emph{lattice-based} data structures,
 or \emph{LVars}, are the foundation for a model of
 deterministic-by-construction parallel programming that allows a more
 general form of communication between tasks than previously existing
@@ -103,10 +114,11 @@ are so named because the states an LVar can take on are elements of an
 application-specific \emph{lattice}.\footnote{As I will explain in
   Section~\ref{s:technical-overview}, what I call a ``lattice'' really
   need only be a {\em bounded join-semilattice} augmented with a
-  greatest element $\top$.}  This application-specific lattice
+  greatest element $\top$.}  \lk{TODO: this should point to chapter 2.} 
+This application-specific lattice
 determines the semantics of the @put@ and @get@ operations that
 comprise the interface to LVars (which I will explain in detail in
-Section~\ref{s:technical-overview}):
+Section~\ref{s:technical-overview} \lk{TODO: this should point to chapter 2.}):
 \begin{itemize}
 \item The @put@ operation can only change an LVar's state in a way
   that is {\em monotonically increasing} with respect to the
@@ -116,13 +128,13 @@ Section~\ref{s:technical-overview}):
   state of an LVar.  It requires the user to specify a \emph{threshold
     set} of minimum values that can be read from the LVar, where every
   two elements in the threshold set must have the lattice's greatest
-  element $\top$ as their least upper bound.  A call to @get@ blocks
+  element $\top$ as their least upper bound.  \lk{TODO: this is no longer quite accurate---figure out what to say here.}A call to @get@ blocks
   until the LVar in question reaches a (unique) value in the threshold
   set, then unblocks and returns that value.
 \end{itemize}
 Together, monotonically increasing writes via @put@ and threshold
 reads via @get@ yield a deterministic-by-construction programming
-model.  That is, a program in which @put@ and @get@ on LVars are the
+model.  That is, a program in which @put@ and @get@ operations on LVars are the
 only side effects will have the same observable result in spite of
 parallel execution and schedule nondeterminism.
 
@@ -147,8 +159,7 @@ the current node is \emph{not yet} in the set; a fixpoint is reached
 only if no new neighbors are found; and, of course, at the end of the
 computation it must be possible to learn exactly which nodes were
 reachable (which entails learning that certain nodes were not).  I
-will describe two extensions to the LVars model (again deferring
-details to Section~\ref{s:technical-overview}) that make such
+describe two extensions to the basic LVars model that make such
 computations possible:
 \begin{itemize}
 \item First, I will describe how to add a primitive @freeze@ for
