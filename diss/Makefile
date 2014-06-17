@@ -8,6 +8,35 @@ $(NAME).pdf: *.tex *.bib
 	pdflatex $(NAME).tex
 	${MAKE} open
 
+#-----------------------------------------------
+# These targets actually change the build state:
+
+ed: editingmarks
+
+editingmarks:
+	touch editingmarks.tex
+	${MAKE} $(NAME).pdf
+
+plain: 
+	rm -f editingmarks.tex
+	${MAKE} $(NAME).pdf
+	cp $(NAME).pdf plain.pdf
+
+#-----------------------------------------------
+# Others:
+
+# Check style (due to
+# http://matt.might.net/articles/shell-scripts-for-passive-voice-weasel-words-duplicates/):
+style:
+	echo "weasel words: "
+	sh ../bin/weasel *.tex
+	echo
+	echo "passive voice: "
+	sh ../bin/passive *.tex
+	echo
+	echo "duplicates: "
+	perl ../bin/dups *.tex
+
 open: ${NAME}.pdf
 ifeq (${UNAME}, Darwin)
 	open ${NAME}.pdf
