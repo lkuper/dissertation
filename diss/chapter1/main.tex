@@ -332,18 +332,21 @@ With the above background, I can state my thesis:\lk{This format
   for deterministic and quasi-deterministic parallel and distributed
   programming.
 \end{quote}
-My dissertation will defend this thesis as follows:
+
+\section{Organization of the rest of this dissertation}\label{s:organization}
+
+The rest of this dissertation supports my thesis as follows:
 \begin{itemize}
-  \item \emph{Lattice-based data structures}: I will formally define
+  \item \emph{Lattice-based data structures}: In Chapter~\ref{ch:lvars}, I formally define
     LVars and use them to define $\lambdaLVish$, a call-by-value
     parallel calculus with shared state, including a runnable version
     implemented in PLT Redex~\cite{redex-book} for interactive
     experimentation.\footnote{$\lambdaLVish$ is the \emph{LVish
         calculus} described in Kuper \etal~\cite{Freeze-paper}.  I
       call it $\lambdaLVish$ here to avoid confusion with the LVish
-      library discussed in Section~\ref{ss:lvish}.}
+      library discussed in Section~\ref{ss:lvish}.\lk{TODO: That's not quite right -- it's the deterministic fragment of what's in \cite{Freeze-paper}.  Figure out how to organize this.}}
 
-  \item \emph{general}: I will defend the generality of the LVars
+  \item \emph{general}: In Chapter~\ref{ch:lvars}, I defend the generality of the LVars
     model by showing how previously existing deterministic parallel
     programming models can be expressed with LVish.  This is possible
     because the definition of $\lambdaLVish$ is parameterized by the
@@ -356,25 +359,21 @@ My dissertation will defend this thesis as follows:
     language.  Hence $\lambdaLVish$ is actually a \emph{family} of
     calculi, varying by choice of lattice.
 
-  \item \emph{practical}: I will defend the practicality of LVars by
+  \item \emph{practical}: In Chapter~\ref{ch:lvish}, I defend the practicality of LVars by
     describing the LVish Haskell library and demonstrating how it is
     used for practical programming with the three case studies
     described above, including performance results.
 
-  \item \emph{deterministic}: I will defend the claim that the basic
+  \item \emph{deterministic}: In Chapter~\ref{ch:lvars}, I defend the claim that the basic
     LVars model guarantees determinism by giving a proof of
     determinism for $\lambdaLVish$, including the aforementioned
     @put@, @get@, and non-idempotent @bump@ operations on LVars.
 
-  \item \emph{quasi-deterministic}: I will defend this claim by giving
+  \item \emph{quasi-deterministic}: In Chapter~\ref{ch:quasi}, I defend this claim by giving
     a proof of quasi-determinism for the full $\lambdaLVish$ calculus
     with the additions of the @freeze@ operation and event handlers.
 
-  \item \emph{distributed programming}: I will defend the claim that
-    LVars are applicable to distributed programming by showing how
-    LVar-style threshold reads apply to the setting of CRDTs, and by
-    showing how techniques for implementing non-monotonic CRDTs can be
-    used to implement LVars that support non-monotonic operations as
-    well.
+  \item \emph{distributed programming}: In Chapter~\ref{ch:crdts}, I defend the claim that
+    LVars are applicable to distributed programming by showing how to incorporate
+    LVar-style threshold reads to conflict-free replicated data types. \lk{TODO: Add more detail here.}
 \end{itemize}
-
