@@ -11,14 +11,16 @@
   * explain lattices
   * explain basic threshold reads
   * explain generalized threshold reads (use example from DISC paper)
+  * determinism proof outline
 
 3. Quasi-Deterministic and Event-Driven Programming with LVars
   * will be like sections 3.6-3.7 of my thesis proposal (but slower-paced and more example-driven)
   * introduce handlers/quiescence/freezing, by example, as in the POPL paper
   * add handlers/quiescence/freezing to the semantics
-  * the LVish implementation overview from the POPL paper
+  * quasi-determinism proof outline
 
-4. Evaluating the LVish Library: Benchmarks and Case Studies
+4. The LVish Library: Implementation, Benchmarks, and Case Studies
+  * the LVish implementation overview from the POPL paper
   * idea: combine evaluation sections from all our papers that have them
   * Benchmarks from the FHPC paper?  (Maybe not -- these are basically superseded by the POPL paper.)
   * MIS and BFS benchmarks from the POPL TR
