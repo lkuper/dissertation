@@ -8,36 +8,39 @@
 \usepackage{textcomp}
 \usepackage{rotating}
 
-% Used in chapter 2:
+% Used in chapters 1/2:
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{color}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{stmaryrd}
+\usepackage{listings}
 
-% Stuff needed for typesetting lambdapar and its metatheory
-\input{latex_common/lang}
-\input{latex_common/metatheory}
-\input{latex_common/theoremstyle}
-\input{latex_common/editingmarks}
-
-% Statements of theorems
-\input{latex_common/lambdapar-determinism-theorems}
-% Figures
-\input{latex_common/lambdapar-syntax-semantics}
-
-% Other presentational stuff
-\input{latex_common/style}
+% Stuff needed for typesetting lambdaLVish and its metatheory
+\input{../latex_common/lang}
+\input{../latex_common/metatheory}
+\input{../latex_common/theoremstyle}
 
 % For typesetting inference rules
-\usepackage{latex_common/mathpartir}
+\usepackage{../latex_common/mathpartir}
+
+% Syntax and semantics of lambdaLVish
+\input{../latex_common/lambdaLVish-definition}
+
+% Definitions, lemmas, theorems
+\input{../latex_common/lambdaLVish-defs}
+\input{../latex_common/lambdaLVish-thms}
+
+% Editing marks
+\input{../latex_common/editingmarks}
+
+% Other presentational stuff
+\input{../latex_common/style}
 
 % Specific to amsthm
 \newenvironment{proofsketch}[1][\proofname]{\proof[#1]\mbox{}}{\endproof}
 
-% Use the @ symbol for simple inline code within prose (this has to
-% come after the authorinfo so it doesn't interfere with `@` in
-% emails!):
+% Use the @ symbol for simple inline code within prose:
 \lstMakeShortInline[]@
 
 \title{Lattice-based Data Structures for Deterministic Parallel and
@@ -89,11 +92,12 @@ Abstract Here
 \mainmatter
 
 \input{chapter1/main}
-\input{chapter2/main}
 % Comment out for now, until I figure out what to do about notation.
+%\input{chapter2/main}
 %\input{chapter3/main}
 
 \bibliographystyle{is-abbrv}
+\newcommand{\myname}[0]{Lindsey Kuper}
 \bibliography{../latex_common/refs}
 
 \printindex
