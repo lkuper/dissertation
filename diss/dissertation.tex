@@ -24,10 +24,13 @@
 % For typesetting inference rules
 \usepackage{../latex_common/mathpartir}
 
-% Syntax and semantics of lambdaLVish
+% Syntax and semantics of lambdaLVar and lambdaLVish
 \input{../latex_common/lambdaLVish-definition}
 
 % Definitions, lemmas, theorems
+\input{../latex_common/lambdaLVar-defs}
+\input{../latex_common/lambdaLVar-thms}
+
 \input{../latex_common/lambdaLVish-defs}
 \input{../latex_common/lambdaLVish-thms}
 
@@ -92,8 +95,8 @@ Abstract Here
 \mainmatter
 
 \input{chapter1/main}
+\input{chapter2/main}
 % Comment out for now, until I figure out what to do about notation.
-%\input{chapter2/main}
 %\input{chapter3/main}
 
 \bibliographystyle{is-abbrv}

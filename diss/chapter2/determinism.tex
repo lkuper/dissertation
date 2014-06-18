@@ -1,4 +1,4 @@
-\section{Proof of Determinism for $\lambdapar$}\label{section:proof}
+\section{Proof of Determinism for $\lambdaLVar$}\label{section:proof}
 
 \begin{figure*}
 %% \rn{I see ``By IH'' is used a lot in the full proof.  But this is the
@@ -22,7 +22,7 @@
 \end{figure*}
 
 Our main technical result is a proof of determinism for the
-$\lambdapar$ language.
+$\lambdaLVar$ language.
 \ifx\fulltr\undefined
 %%% Text for paper
 Most proofs are only sketched here; the complete
@@ -41,7 +41,7 @@ a program $c$ with a precondition $p$ that holds before it runs and
 a postcondition $q$ that holds afterward, a disjoint condition $r$
 that holds before $c$ runs will continue to hold afterward.
 Moreover, the original postcondition $q$ will continue to hold.
-For $\lambdapar$, we can state and prove an analogous \emph{local reasoning} property.
+For $\lambdaLVar$, we can state and prove an analogous \emph{local reasoning} property.
 %% If we think of $c$ as a
 %% $\PUT$ operation, and of $p$ and $q$ as, respectively, the state of an
 %% LVar before and after the $\PUT$ occurs, then the \emph{local
@@ -56,7 +56,7 @@ For $\lambdapar$, we can state and prove an analogous \emph{local reasoning} pro
                  {\lbrace p * r \rbrace ~ c ~ \lbrace q * r \rbrace}
     \end{mathpar}
     \\
-    Lemma~\ref{lem:pres-eval} (Independence), simplified:
+    Lemma~\ref{lem:independence-basic} (Independence), simplified:
     \begin{mathpar}
       \inferrule*[right=\parbox{12em}{\textnormal{($S''$
             non-conflicting with \\
@@ -70,7 +70,7 @@ For $\lambdapar$, we can state and prove an analogous \emph{local reasoning} pro
     arguments be disjoint.  The Independence lemma generalizes $*$ to least upper bound.}
   \label{f:frame-rule}
 \end{figure}
-Lemma~\ref{lem:pres-eval}, the Independence lemma, says that if the configuration
+Lemma~\ref{lem:independence-basic}, the Independence lemma, says that if the configuration
  $\config{S}{e}$ can step to $\config{S'}{e'}$, then the configuration 
 $\config{\lubstore{S}{S''}}{e}$,
 where $S''$ is some other store (\eg, one from another subcomputation),
@@ -79,7 +79,7 @@ Roughly speaking, the Independence lemma allows us to ``frame on'' a
 larger store around $S$ and still finish the transition with the original result $e'$,
 which is key to being able to carry out the determinism proof.
 
-\LemIndependence
+\LemIndependenceBasic
 
 \ifx\fulltr\undefined
 \begin{proofsketch}[Proof sketch]
@@ -93,12 +93,12 @@ See Appendix, Section~\ref{app:independence}.
 \end{proof}
 \fi
 
-\noindent The Clash lemma, Lemma~\ref{lem:error-lub}, is similar to the
+\noindent The Clash lemma, Lemma~\ref{lem:clash-basic}, is similar to the
 Independence lemma, but handles the case where $\lubstore{S'}{S''} =
 \topS$.  It ensures that in that case, $\config{\lubstore{S}{S''}}{e}$
 steps to $\error$.
 
-\LemClash
+\LemClashBasic
 \ifx\fulltr\undefined
 \begin{proofsketch}[Proof sketch]
   By induction on the derivation of $\config{S}{e}
@@ -180,8 +180,8 @@ Appendix~\ref{appendix:renaming-lemmas}.
   \parstepsto \conf_b$.
   Here, as Figure~\ref{f:diamond-parapp-parapp}
   illustrates, appealing to the induction hypothesis alone is not enough to
-  complete the case, and Lemmas~\ref{lem:pres-eval}, 
-  \ref{lem:error-lub}, and \ref{lem:error-preservation} all play a role.  
+  complete the case, and Lemmas~\ref{lem:independence-basic}, 
+  \ref{lem:clash-basic}, and \ref{lem:error-preservation} all play a role.  
   For instance, suppose we have from the induction hypothesis that
   $\config{S_{a_1}}{e_{a_1}}$ steps to $\config{S_{c_1}}{e_{c_1}}$.
   To complete the case, we need to show that
@@ -190,7 +190,7 @@ Appendix~\ref{appendix:renaming-lemmas}.
   But for {\sc E-ParApp} to apply,
   we need to show that $e_{a_1}$ can take a step beginning in the
   \emph{larger} store of $\lubstore{S_{a_1}}{S_{a_2}}$.  To do so, we
-  can appeal to Lemma~\ref{lem:pres-eval}, which allows us to ``frame
+  can appeal to Lemma~\ref{lem:independence-basic}, which allows us to ``frame
   on'' the additional store $S_{a_2}$ that has resulted from a
   parallel subcomputation.
 \end{proofsketch}
@@ -223,7 +223,7 @@ steps, as Lemmas~\ref{lem:strong-one-sided-confluence},
   are nearly identical to the corresponding lemmas in
   the proof of determinism for Featherweight CnC given by
   Budimli\'c \etal~\cite{CnC}. We also reuse Budimli\'c \etal's naming
-  conventions for Lemmas~\ref{lem:pres-eval} through
+  conventions for Lemmas~\ref{lem:independence-basic} through
   \ref{lem:diamond}, but they
   differ considerably in our setting due to the generality of LVars.}
 
@@ -259,30 +259,30 @@ See Appendix, Section~\ref{app:strong-confluence}.
 
 Above we have followed Budimli\'c \etal~\cite{CnC} in treating {\em
   determinism} separately from the issue of {\em termination}.  Yet
-one might legitimately be concerned that in $\lambdapar$, a
+one might legitimately be concerned that in $\lambdaLVar$, a
 configuration could have both an infinite reduction path and one that
 terminates with a value.  Theorem~\ref{thm:determinism} says that if two runs of a
-given $\lambdapar$ program reach configurations where no more reductions
+given $\lambdaLVar$ program reach configurations where no more reductions
 are possible (except by reflexive rules), 
 then they have reached the same
 configuration.  Hence Theorem~\ref{thm:determinism} handles the case of {\em
-  deadlocks} already: a $\lambdapar$ program can deadlock (\eg, with a blocked $\GET$), but it will do so deterministically.
+  deadlocks} already: a $\lambdaLVar$ program can deadlock (\eg, with a blocked $\GET$), but it will do so deterministically.
 
 However, Theorem~\ref{thm:determinism} has nothing to say about {\em
   livelocks}, in which a program reduces infinitely.  It would be
 desirable to have a {\em consistent termination} property which
-would guarantee that if one run of a given $\lambdapar$ program terminates
+would guarantee that if one run of a given $\lambdaLVar$ program terminates
 with a non-$\error$ result,
 then every run will.
 We
 conjecture (but do not prove) that such a consistent termination property
-holds for $\lambdapar$.
+holds for $\lambdaLVar$.
 Such a property could be paired with
 Theorem~\ref{thm:determinism} to guarantee that if one run of a given
-$\lambdapar$ program terminates in a non-$\error$ configuration $\sigma$, then every
+$\lambdaLVar$ program terminates in a non-$\error$ configuration $\sigma$, then every
 run of that program terminates in $\sigma$.
 (The ``non-$\error$ configuration'' condition is necessary because it
-is possible to construct a $\lambdapar$ program that can terminate in
+is possible to construct a $\lambdaLVar$ program that can terminate in
 $\error$ on some runs and diverge on others.
 By contrast, our existing determinism theorem 
 %does not require any
@@ -297,7 +297,7 @@ specially.)
 %% scheduling (as is usual when dealing with liveness properties like
 %% termination).
 %% , and only for programs that do not end in $\error$.  This
-%% last condition is necessary because it is possible to construct a $\lambdapar$ program that
+%% last condition is necessary because it is possible to construct a $\lambdaLVar$ program that
 %% can terminate in $\error$ on some runs and diverge on others.
 
 %% \paragraph{Discussion: Termination}
@@ -307,7 +307,7 @@ specially.)
 %%   have both an infinite reduction path and one that terminates.  Fortunately, it
 %%   turns out that Theorem~\ref{thm:determinism} is in fact strong enough to
 %%   prevent this.  We omit the details in this paper, but informally, one can use
-%%   determinism to show that a $\lambdapar$ creates an isomorphic set of 
+%%   determinism to show that a $\lambdaLVar$ creates an isomorphic set of 
 %%    $\beta$-reductions in every execution---not just the whole program, but every
 %%   expression evaluates to the same value on every execution, only ordering
 %%   changes. }

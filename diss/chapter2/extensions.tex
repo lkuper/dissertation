@@ -48,16 +48,16 @@ of an LVar is indeed at rest, then we do no harm to it by
 corrupting its state in such a way that further modification will lead to an
 error.  We can accomplish this by adding an extra state, called
 $\textit{probation}$, to $D$.  The lattice defined by the relation
-$\myleq$ is extended thus:
+$\userleq$ is extended thus:
 %
 \begin{align*}
-\textit{probation} &\myleq \top \\
-\forall d \in D.~d &\notmyleq \textit{probation}
+\textit{probation} &\userleq \top \\
+\forall d \in D.~d &\nuserleq \textit{probation}
 \end{align*}
 \noindent
-We then propose a new operation, $\CONSUME$, that takes a pointer to an LVar $l$, updates the store, setting $l$'s state to $\textit{probation}$, and returns a singleton
+We then propose a new operation, $\BUMP$, that takes a pointer to an LVar $l$, updates the store, setting $l$'s state to $\textit{probation}$, and returns a singleton
   set containing the {\em exact} previous state of $l$, rather than a lower bound on that state.
-The idea is to ensure that, after a $\CONSUME$, any further operations 
+The idea is to ensure that, after a $\BUMP$, any further operations 
 on $l$ will go awry:
 % $\GET$ operations will block indefinitely, and 
 $\PUT$ operations will
@@ -66,15 +66,15 @@ resulting in $\error$.
 
 % of Figure~\ref{f:lattice-examples}(c), 
 
-%% {The basic $\lambdapar$ model, as we've presented it, is useful for
+%% {The basic $\lambdaLVar$ model, as we've presented it, is useful for
 %%   unifying a body of work on existing programming models as well as suggesting some
 %%   generalizations to real libraries like {\tt monad-par}.  However, we
-%%   believe that $\lambdapar$ is also useful as a starting point for
+%%   believe that $\lambdaLVar$ is also useful as a starting point for
 %%   further extension and exploration, including limited forms of
 %%   nondeterminism.  }
 
 %% In this section we give an example of a natural extension of
-%% $\lambdapar$ that provides additional capabilities.  We use as our
+%% $\lambdaLVar$ that provides additional capabilities.  We use as our
 %% motivating example {\em asynchronous parallel reductions}
 %% \cite{newton-asynchronous-reduction}, which are reductions (also known as \emph{fold}s) that are
 %% disassociated from the parallel control flow of a program.
@@ -104,7 +104,7 @@ resulting in $\error$.
 
 
 
-In the following example program, we use $\CONSUME$ to perform an
+In the following example program, we use $\BUMP$ to perform an
 asynchronous sum reduction over a known
 number of inputs.  {In such a reduction, data dependencies
 alone determine when the reduction is complete, rather than control constructs
@@ -118,7 +118,7 @@ such as parallel loops and barriers.}
 & \letspace \letspace \LETPAR      ~p_1 = (\BUMP_3~{\mathit{sum}};\; \PUT ~ \{a\} ~ \mathit{cnt})\\
 & \letspace \letspace \letparspace ~p_2 = (\BUMP_4~{\mathit{sum}};\; \PUT ~ \{b\} ~ \mathit{cnt})\\
 & \letspace \letspace \letparspace ~p_3 = (\BUMP_5~{\mathit{sum}};\; \PUT ~ \{c\} ~ \mathit{cnt})\\
-& \letspace \letspace \letparspace ~r  \hspace{0.47em} = (\getexp{\mathit{cnt}}\{a,b,c\};\; \consumeexp{\mathit{sum}})\\
+& \letspace \letspace \letparspace ~r  \hspace{0.47em} = (\getexp{\mathit{cnt}}\{a,b,c\};\; \bumpexp{\mathit{sum}})\\
 & \letspace \letspace \letspace \IN~ \dots~r~\dots
 }}
 \end{split}
@@ -143,7 +143,7 @@ of the $p_1$, $p_2$ and $p_3$ ``threads''.\lk{If we had room, we could point out
 %% The program is written using two different variables (a count and a
 %% sum), but it could just as well be written with a single variable
 %% storing a pair of counters.
-Before the call to $\CONSUME$, $\getexp{cnt}\{a,b,c\}$ serves
+Before the call to $\BUMP$, $\getexp{cnt}\{a,b,c\}$ serves
 as a synchronization mechanism, ensuring that all increments are
 complete before the value is read.
 Three writers and one reader execute in parallel, and only
@@ -152,7 +152,7 @@ which in this case will be $3 + 4 + 5 = 12$.
 % $\lbrace 12 \rbrace$ .
 %
 %% One may comment that the program could be simpler if we moved
-%% the $\CONSUME$ after the final $\IN$, using the implicit
+%% the $\BUMP$ after the final $\IN$, using the implicit
 %% barrier to synchronize the reduction.  This is true; nevertheless, the desired
 %% example is one of asynchronous reduction where data dependencies alone
 %% suffice \cite{newton-asynchronous-reduction}.  
@@ -161,7 +161,7 @@ which in this case will be $3 + 4 + 5 = 12$.
 
 The good news is that \eqref{e:consume} is deterministic; it
 will always return the same value in any execution.  However,
-the  $\CONSUME$ primitive in general admits safe nondeterminism,
+the  $\BUMP$ primitive in general admits safe nondeterminism,
 meaning that, while all runs of the program will terminate with the
 same value {\em if} they terminate without error, some runs of the
 program may terminate in $\error$, in spite of other runs completing
@@ -177,7 +177,7 @@ in which $\getexp{cnt}{\{a,b,c\}}$ is replaced
 by $\getexp{cnt}{\{a,b\}}$.  This version would have
 insufficient synchronization.  The program could run correctly many
 times---if the $\BUMP$s happen to complete before the
-$\CONSUME$ operation executes---and yet step to $\error$ on the
+$\BUMP$ operation executes---and yet step to $\error$ on the
 thousandth run.
 %
 {Yet, with safe nondeterminism, it is possible to catch and respond to
@@ -192,7 +192,7 @@ reproduce all races in the execution in question.
 %%   simply retrying programs that fail, perhaps ....
 %%   in the case of long running programs.
 We have implemented a proof-of-concept interpreter and data-race detector for
-$\lambdapar$ extended with $\CONSUME$, available in the LVars repository}.
+$\lambdaLVar$ extended with $\BUMP$, available in the LVars repository}.
 
 %
 %% The algorithm uses the notion of pedigree in
@@ -201,12 +201,12 @@ $\lambdapar$ extended with $\CONSUME$, available in the LVars repository}.
 %%   $\lambda p .~ \getexp{(\app{\trans{a}}{\consL{p}})}
 %%                        {(\app{\trans{b}}{\consR{p}})} ~p$.
 %% Next, the program is run with a modified implementation of
-%% $\GET$/$\PUT$/$\CONSUME$ that logs all effects to each location, along
+%% $\GET$/$\PUT$/$\BUMP$ that logs all effects to each location, along
 %% with their pedigree.\footnote
 %% {Unfortunately, while there are significant results reducing the space
 %%   cost of data-race detection for strictly nested, fork-join parallel models
 %%   \cite{race-detector-data-structures}, for the more general class of dependence
-%%   graphs induced by $\lambdapar$, there are not yet known methods for reducing the space
+%%   graphs induced by $\lambdaLVar$, there are not yet known methods for reducing the space
 %%   requirements for data-race detection to less than the space required
 %%   to store the entire dynamic dependence graph itself.}
 %% %
@@ -225,8 +225,8 @@ $\lambdapar$ extended with $\CONSUME$, available in the LVars repository}.
 %% like \emph{vector clocks}).  The log of effects is aggregated
 %% into a table of additional ordering constraints: \ie, a $\PUT$ that
 %% unblocks a parallel $\GET$ adds an edge.  In this enhanced
-%% relation, if any $\CONSUME$ operation is not strictly later in time than
-%% a $\PUT$ or $\GET$ on the same location, then that $\CONSUME$ is
+%% relation, if any $\BUMP$ operation is not strictly later in time than
+%% a $\PUT$ or $\GET$ on the same location, then that $\BUMP$ is
 %% insufficiently synchronized.
 
 
@@ -259,17 +259,17 @@ $\lambdapar$ extended with $\CONSUME$, available in the LVars repository}.
 {%% \eqref{e:consume} uses atomic counters, which require a $\BUMP$
  %%  operation.
 In this section we explain how the $\BUMP$ operation for LVar counters---as well as an underlying
-  capability for generating unique IDs---can be implemented in $\lambdapar$.}
+  capability for generating unique IDs---can be implemented in $\lambdaLVar$.}
 
 Strictly speaking, if we directly used the atomic counter lattice of Figure~\ref{f:lattice-examples}(c) for the $\mathit{sum}$ LVar in \eqref{e:consume}, we would not
   be able to implement $\BUMP$.
 %% We will use a sum reduction, in which we fold the $+$ operator over natural numbers, as our
 %% example.  To do so, we will need to represent
-%% shared, increment-only counters as a $\lambdapar$ domain
+%% shared, increment-only counters as a $\lambdaLVar$ domain
 %% like that shown in Figure~\ref{f:lattice-examples}(c).
 %% \rn{Note this domain does NOT look like fig 1(c); it's a powerset lattice that ultimately simulates 1(C)}
 %% %
-%% Doing so does not require an extension to $\lambdapar$, but it merits
+%% Doing so does not require an extension to $\lambdaLVar$, but it merits
 %% additional syntactic sugar in our meta-notation.
 %% \lk{I honestly find this part of the paper pretty opaque.  I'm not
 %%   sure how to explain it more clearly without taking up a lot more
@@ -297,7 +297,7 @@ Rather than requiring the programmer to be responsible for creating a
 unique $\alpha$ for each parallel contribution to the counter, though,
 we would like to be able to provide a language construct @unique@
 that, when evaluated, returns a singleton set containing a single
-unique element of the alphabet: $\stateset{\alpha}$. The expression $\BUMP~l$ could then simply desugar to $\putexp{l}{\impfnt{unique}}$.
+unique element of the alphabet: $\stateset{\alpha}$. The expression $\BUMP~l$ could then simply desugar to $\putexp{l}{\termfont{unique}}$.
 
 Fortunately, @unique@ is implementable: well-known techniques exist for generating a unique (but
 schedule-invariant and deterministic) identifier for a given point in
@@ -312,19 +312,19 @@ The Cilk Plus parallel programming language
 refers to this notion as the {\em pedigree} of an operation and uses it to seed a
 deterministic parallel random number generator \cite{cilk-dprng}.
 
-Figure~\ref{f:desugar} gives one possible set of rewrite rules for a transformation that uses the pedigree technique to desugar $\lambdapar$ programs containing @unique@.  Bearing some resemblance to a continuation-passing-style transformation \cite{cps-citation}, it 
+Figure~\ref{f:desugar} gives one possible set of rewrite rules for a transformation that uses the pedigree technique to desugar $\lambdaLVar$ programs containing @unique@.  Bearing some resemblance to a continuation-passing-style transformation \cite{cps-citation}, it 
 creates a tree that tracks the dynamic evaluation of
 applications.
 We have implemented this transformation as a part of our 
-interpreter for $\lambdapar$ extended with $\CONSUME$.
-With \impfnt{unique} in place, we can write programs like the following, in which two
+interpreter for $\lambdaLVar$ extended with $\BUMP$.
+With \termfont{unique} in place, we can write programs like the following, in which two
 parallel
 computations increment the same counter:
 \begin{equation*}
 \begin{split}
 & \letexp{\mathit{sum}}{\NEW}{ \\
-& \letspace \LETPAR      ~p_1 = (\putexp{\mathit{sum}}{\impfnt{unique}};\; \putexp{\mathit{sum}}{\impfnt{unique}})\\
-& \letspace \letparspace ~p_2 = (\putexp{\mathit{sum}}{\impfnt{unique}})\\
+& \letspace \LETPAR      ~p_1 = (\putexp{\mathit{sum}}{\termfont{unique}};\; \putexp{\mathit{sum}}{\termfont{unique}})\\
+& \letspace \letparspace ~p_2 = (\putexp{\mathit{sum}}{\termfont{unique}})\\
 & \letspace \letspace \letspace \IN~ ...
 }
 \end{split}
@@ -334,38 +334,40 @@ increment the sum by three.  Notice that consecutive increments
 performed by $p_1$ are not atomic.  
 % We can add by increments greater than one either by series of puts like above, or by changi
 
-\begin{figure}
-\footnotesize
-    \begin{align*}
-      \trans{\UNIQUE}         &= \lambda p .~ \reflectexp{p} \\
-      \trans{v}               &= \lambda p .~ v \\
-      \trans{Q}              &= \lambda p .~ Q \\     
-      \trans{\lam{v}{e}}     &= \lambda p .~ \lambda v .~ \trans{e} \\
-      \trans{\NEW}           &= \lambda p .~ \NEW \\
-      \trans{\app{e_1}{e_2}}   &= \lambda p .~ (\app{\app{(\trans{e_1} ~ \consL{p})}{(\trans{e_2} ~ \consR{p})}} \consJ{p}) \\
-      \trans{\putexp{e_1}{e_2}}  &= \lambda p .~ \putexp{(\app{\trans{e_1}}{\consL{p}})} 
-                                                    {(\app{\trans{e_2}}{\consR{p}})} \\
-      \trans{\getexp{e_1}{e_2}}  &= \lambda p .~ \getexp{(\app{\trans{e_1}}{\consL{p}})}
-                                                    {(\app{\trans{e_2}}{\consR{p}})} \\
-      \trans{\reifyexp{e}}    &= \lambda p .~ \reifyexp{(\app{\trans{e}}{p})} 
-     %% \trans{\reifyexp{e}}     & = \lambda p .~ \REIFY(\app{\trans{e}}{p}) \\
-     %% \trans{\reflectexp{e}}   & = \lambda p .~ \REFLECT(\app{\trans{e}}{p}) \\
-    \end{align*}
-  \caption{\footnotesize Rewrite rules for desugaring $\lambdapar$ expressions with the \lstinline|unique| construct to plain $\lambdapar$ expressions without \lstinline|unique|.  Here we use ``$L$:'', ``$R$:'', and ``$J$:'' to
-    {\em cons} onto the front of a list that represents a path within
-    a fork/join DAG.  These prefixes mean, respectively, ``left branch'',
-    ``right branch'', or ``after the join'' of the two branches.
-%
-    This transformation requires a $\lambda$-calculus encoding of lists, as well as a definition
-    of $\REFLECT$ that is an injective function from these list values
-    onto the alphabet of unique symbols.
-%
-    %% An implementation and unit tests for the above transformation can
-    %% be found in the \myhref{\interpRepo}{github repository}.
- %   {\url{http://github.com/rrnewton/lambdapar_interps}}.
-}
-  \label{f:desugar}
-\end{figure}
+\lk{FIXME: don't include all this ``unique'' stuff.}
+
+%% \begin{figure}
+%% \footnotesize
+%%     \begin{align*}
+%%       \trans{\UNIQUE}         &= \lambda p .~ \reflectexp{p} \\
+%%       \trans{v}               &= \lambda p .~ v \\
+%%       \trans{Q}              &= \lambda p .~ Q \\     
+%%       \trans{\lam{v}{e}}     &= \lambda p .~ \lambda v .~ \trans{e} \\
+%%       \trans{\NEW}           &= \lambda p .~ \NEW \\
+%%       \trans{\app{e_1}{e_2}}   &= \lambda p .~ (\app{\app{(\trans{e_1} ~ \consL{p})}{(\trans{e_2} ~ \consR{p})}} \consJ{p}) \\
+%%       \trans{\putexp{e_1}{e_2}}  &= \lambda p .~ \putexp{(\app{\trans{e_1}}{\consL{p}})} 
+%%                                                     {(\app{\trans{e_2}}{\consR{p}})} \\
+%%       \trans{\getexp{e_1}{e_2}}  &= \lambda p .~ \getexp{(\app{\trans{e_1}}{\consL{p}})}
+%%                                                     {(\app{\trans{e_2}}{\consR{p}})} \\
+%%       \trans{\reifyexp{e}}    &= \lambda p .~ \reifyexp{(\app{\trans{e}}{p})} 
+%%      %% \trans{\reifyexp{e}}     & = \lambda p .~ \REIFY(\app{\trans{e}}{p}) \\
+%%      %% \trans{\reflectexp{e}}   & = \lambda p .~ \REFLECT(\app{\trans{e}}{p}) \\
+%%     \end{align*}
+%%   \caption{\footnotesize Rewrite rules for desugaring $\lambdaLVar$ expressions with the \lstinline|unique| construct to plain $\lambdaLVar$ expressions without \lstinline|unique|.  Here we use ``$L$:'', ``$R$:'', and ``$J$:'' to
+%%     {\em cons} onto the front of a list that represents a path within
+%%     a fork/join DAG.  These prefixes mean, respectively, ``left branch'',
+%%     ``right branch'', or ``after the join'' of the two branches.
+%% %
+%%     This transformation requires a $\lambda$-calculus encoding of lists, as well as a definition
+%%     of $\REFLECT$ that is an injective function from these list values
+%%     onto the alphabet of unique symbols.
+%% %
+%%     %% An implementation and unit tests for the above transformation can
+%%     %% be found in the \myhref{\interpRepo}{github repository}.
+%%  %   {\url{http://github.com/rrnewton/lambdaLVar_interps}}.
+%% }
+%%   \label{f:desugar}
+%% \end{figure}
 %% The desugaring algorithm is shown in Figure~\ref{f:desugar}.  
 
 %% The $\UNIQUE$ desugaring of Figure~\ref{f:desugar} also requires an
@@ -376,7 +378,7 @@ performed by $p_1$ are not atomic.
 
 
 %% In the context of
-%% $\lambdapar$, there is an interplay between $\lambda$-calculus
+%% $\lambdaLVar$, there is an interplay between $\lambda$-calculus
 %% expressions and elements $d$ of the domain $D$, 
 %%   with conversions performed by $\REIFY$ in one direction and by 
 %% its inverse, the $\REFLECT$ function mentioned in

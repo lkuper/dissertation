@@ -4,8 +4,8 @@ We have implemented a prototype LVars library based on
 the {\em monad-par} Haskell library, which provides the @Par@ monad \cite{monad-par}.
 Our library, together with example programs and preliminary
 benchmarking results, is available in in the LVars repository.
-{The relationship to $\lambdapar$ is somewhat loose: for instance,
-  while evaluation in $\lambdapar$ is always strict, our library allows
+{The relationship to $\lambdaLVar$ is somewhat loose: for instance,
+  while evaluation in $\lambdaLVar$ is always strict, our library allows
   lazy, pure Haskell computations along with strict, parallel monadic computations.}
 
 %\footnote{Not literally, but as System F underpins Haskell.}.
@@ -155,9 +155,10 @@ multiple times by \lstinline|putInSet| and thus cannot be an IVar.\footnote{Inde
   IVars.  For example, if it is represented as a tree, who writes the root?}  The callback function
  \lstinline|analyze| is ``baked into'' \lstinline|analyzedSet| and may run
   as soon as new elements are inserted.  
-  (In the $\lambdapar$ calculus,
-  \lstinline|analyze| could be built into the $\REIFY$ function
-  and applied to the result of $\GET$.)}
+  %% (In the $\lambdaLVar$ calculus,
+  %% \lstinline|analyze| could be built into the $\REIFY$ function
+  %% and applied to the result of $\GET$.)
+}
 Our implementation uses the ``Pure LVars'' runtime layer described above: 
 @analyzedSet@ is nothing more than a tree-based data structure
 (@Data.Set@) stored in a mutable location.  

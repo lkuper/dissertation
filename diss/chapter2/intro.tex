@@ -72,7 +72,7 @@ the consumer immediately switches roles to begin computing the value
 %% %  are especially suited to a particular class of producer/consumer computations.}
 %% %
 %% But, unfortunately, these remain fragmented and
-%% under-exploited \cite{streamit,dpj-hotpar09,concurrent-revisions-oopsla,kahn-1974,CnC,monad-par,IStructures}.
+%% under-exploited \cite{streamit,dpj-hotpar09,concurrent-revisions-oopsla,Kahn-1974,CnC,monad-par,IStructures}.
 %% %
 %% They are dots on a map, but we have no robust theory to tie them
 %% together (\eg{} no ``lambda cube'').
@@ -94,7 +94,7 @@ the consumer immediately switches roles to begin computing the value
 %%     disjoint}\footnote
 %% Yet at first glance, 
 %% many of these deterministic models 
-%% are similar \cite{kahn-1974,CnC,monad-par,IStructures}: they
+%% are similar \cite{Kahn-1974,CnC,monad-par,IStructures}: they
 %% allow processes to {\em share data} in specific and limited
 %% ways\footnote{There is also a second important family of deterministic models which
 %%   we see as derived from the observation that sequential imperative
@@ -179,7 +179,7 @@ producer/consumer applications.
 %% \new{In fact, these languages have not previously been treated as one
 %%   family\footnote{In spite of monotonicity being a core idea in deterministic
 %%     parallel systems, and a common tool in the proofs of their determinism
-%%    \cite{featherweight-cnc, kahn-1974}.}.
+%%    \cite{featherweight-cnc, Kahn-1974}.}.
 %, and is also at the heart of our proposal.
 % \lk{This, too, is an important idea that I think should come up earlier.}
 %%   Thus, in this paper, we propose an overarching framework to unify and extend them.
@@ -196,10 +196,10 @@ producer/consumer applications.
 \paragraph{Existing monotonic models}
 
 Consider two classic deterministic parallel models,
-dating back to the late 60s and early 70s \cite{Tesler-1968,kahn-1974}:
+dating back to the late 60s and early 70s \cite{Tesler-1968,Kahn-1974}:
 
 
-%% First, {\em Kahn Process networks} \cite{kahn-1974}, as well as the more restricted
+%% First, {\em Kahn Process networks} \cite{Kahn-1974}, as well as the more restricted
 %% {\em synchronous dataflow} \cite{lee-sdn}, allow a network of processes to communicate
 %%  through blocking FIFO channels, and have become the basis
 %% for deterministic stream-processing languages such as StreamIt \cite{streamit-asplos}.
@@ -208,7 +208,7 @@ dating back to the late 60s and early 70s \cite{Tesler-1968,kahn-1974}:
 %% in auto-parallelization and hardware-portability \cite{streamit-asplos,streamit-gpu,streamit-cell}.
 
 \begin{itemize}
-\item In {\em Kahn process networks} (KPNs) \cite{kahn-1974}, as well
+\item In {\em Kahn process networks} (KPNs) \cite{Kahn-1974}, as well
   as in the more restricted {\em synchronous data flow} systems
   \cite{lee-sdn}, a network of processes communicate with each other
   through blocking FIFO channels.  KPNs are the basis for
@@ -315,8 +315,8 @@ Section~\ref{section:motivation}.
 \paragraph{A general model}
 
 %% Our answer is to introduce a new concurrent data structure, {\em LVars} (lattice
-%% variables), and a new parallel calculus to study it, $\lambdapar$.
-%% $\lambdapar$ is a parallel calculus with shared state
+%% variables), and a new parallel calculus to study it, $\lambdaLVar$.
+%% $\lambdaLVar$ is a parallel calculus with shared state
 %% based on the call-by-value $\lambda$-calculus
 %% (Section~\ref{section:programming}).  
 %% %
@@ -333,7 +333,7 @@ Section~\ref{section:motivation}.
 %% number of other monotonic data structures, while preserving determinism.
 %% In fact, as long as the data-structures satisfy these laws, it is fine to use an
 %% existing, optimized concurrent data structure; we needn't rewrite the world's
-%% data structures to leverage results from  $\lambdapar$.
+%% data structures to leverage results from  $\lambdaLVar$.
 
 By taking monotonicity as a starting point, then, we can provide a
 %unifying framework for deterministic parallel programming models that
@@ -368,13 +368,13 @@ will explain in detail in Section~\ref{subsection:putget}):
 Together, monotonically increasing writes via $\PUT$ and threshold reads 
 via $\GET$
 yield a deterministic-by-construction programming model.
-We use LVars to define $\lambdapar$, a deterministic parallel calculus
+We use LVars to define $\lambdaLVar$, a deterministic parallel calculus
 with shared state, based on the call-by-value $\lambda$-calculus.  The
-$\lambdapar$ language is general enough to subsume existing
+$\lambdaLVar$ language is general enough to subsume existing
 deterministic parallel languages because it is parameterized by the
 choice of lattice.  For example, a lattice of channel histories with a
 prefix ordering allows LVars to represent FIFO channels that implement
-a Kahn process network, whereas instantiating $\lambdapar$ with a
+a Kahn process network, whereas instantiating $\lambdaLVar$ with a
 lattice with ``empty'' and ``full'' states (where $\mathit{empty} <
 \mathit{full}$) results in a parallel single-assignment language.
 Different instantiations of the lattice result in a family of
@@ -384,10 +384,10 @@ Because lattices are composable, any number of diverse monotonic data
   structures can be used together safely.
 Moreover, as long as we can demonstrate that a data structure presents the LVar interface, it is fine to use an
 existing, optimized concurrent data structure implementation; we need not rewrite the world's
-data structures to leverage the $\lambdapar$ determinism result.
+data structures to leverage the $\lambdaLVar$ determinism result.
 
 %% Furthermore, a library writer implementing a new concurrent data
-%% structure can leverage our determinism result for $\lambdapar$. To
+%% structure can leverage our determinism result for $\lambdaLVar$. To
 %% show that a new concurrent data structure is thread-safe, implementers
 %% can simply show that the states of their new data structure form a
 %% lattice and that the interface their data structure presents matches
@@ -395,49 +395,49 @@ data structures to leverage the $\lambdapar$ determinism result.
 
 %--------------------------------------------------------------------------------
 \paragraph{Contributions} 
-%% This paper focuses on the theory of $\lambdapar$, but along the way we will
+%% This paper focuses on the theory of $\lambdaLVar$, but along the way we will
 %% provide pointers to the implementation work that parallels this effort.
 \begin{itemize}
 \item We introduce LVars 
   (Section~\ref{section:domains}) and use them to define
-  $\lambdapar$, a parallel calculus 
+  $\lambdaLVar$, a parallel calculus 
   that uses LVars for shared state 
   (Section~\ref{section:programming}).
-  We have implemented $\lambdapar$ as a runnable PLT
+  We have implemented $\lambdaLVar$ as a runnable PLT
   Redex model.
 
-%% \item Our main result is a proof of determinism of \lambdapar{}
+%% \item Our main result is a proof of determinism of \lambdaLVar{}
 %%   (Section~\ref{section:proof}, fully
 %%   developed in the technical report \cite{lampar-TR}), which forms the
 %%   basis for confidence in programming tools derived from
-%%   \lambdapar{}.
+%%   \lambdaLVar{}.
 
 \item As our main technical result, we give a proof of determinism
-  for $\lambdapar$ (Section~\ref{section:proof}).  A critical aspect
+  for $\lambdaLVar$ (Section~\ref{section:proof}).  A critical aspect
   of the proof is a ``frame'' property, expressed by the
   Independence lemma (Section~\ref{subsection:independence}),
   that would {\em not} hold in a typical language with shared mutable
   state, but holds in our setting because of the semantics of LVars
   and their $\PUT$/$\GET$ interface.
 
-%% \item We describe an extension to the basic $\lambdapar$ model:
+%% \item We describe an extension to the basic $\lambdaLVar$ model:
 %%   destructive observations (Section~\ref{section:extensions}), enabling a limited form of nondeterminism that
 %%   admits failures but not wrong answers.  This paves the way for future work.
 
-\item We describe an extension to the basic $\lambdapar$ model
+\item We describe an extension to the basic $\lambdaLVar$ model
   that allows
-  destructive observations of LVars by means of a $\CONSUME$
+  destructive observations of LVars by means of a $\BUMP$
   operation, enabling a limited form of nondeterminism that admits
   run-time failures but not wrong answers (Section~\ref{section:extensions}),
   and we give an implementation of a data-race detector that detects 
-  such failures in a version of $\lambdapar$ that has been extended with $\CONSUME$.
+  such failures in a version of $\lambdaLVar$ that has been extended with $\BUMP$.
 
 \item
   We discuss how to
   formulate common data structures (pairs, trees, arrays, FIFOs) as
   lattices (Sections~\ref{subsection:domains} and
   \ref{subsection:programming-with-put-and-get})
-  and how to implement operations on them within the $\lambdapar$ model---for instance,
+  and how to implement operations on them within the $\lambdaLVar$ model---for instance,
   we show how to implement a $\BUMP$ operation that increments a
   monotonic counter represented as a lattice
   (Section~\ref{subsection:bump}).
@@ -446,10 +446,10 @@ data structures to leverage the $\lambdapar$ determinism result.
 %%   and one to section 3.1.}
 \lk{I see that we cover pairs, arrays, and fifos.  trees, though?}
 
-%% \item We provide a practical implementation of the \lambdapar{} model as a
+%% \item We provide a practical implementation of the \lambdaLVar{} model as a
 %%   generalization of the {\tt monad-par} library for Haskell (Section~\ref{section:motivation}).  Also we provide a
-%%   Redex model, interpreters, and a data-race detector for [extended] \lambdapar{}
-%%   (with limited nondeterminism) to support the study of \lambdapar{} programs.
+%%   Redex model, interpreters, and a data-race detector for [extended] \lambdaLVar{}
+%%   (with limited nondeterminism) to support the study of \lambdaLVar{} programs.
 
 \item We provide a practical prototype implementation of LVars as an
   extension to the monad-par Haskell library,
@@ -677,7 +677,7 @@ Consumers of the data structure may execute as soon as data is available, but
 may only observe irrevocable, monotonic properties of it.
 %observations of the structure only see non-revocable properties.  
 This is possible with a programming model based on LVars.  After 
-introducing the $\lambdapar$ calculus and giving its determinism proof in the next few
+introducing the $\lambdaLVar$ calculus and giving its determinism proof in the next few
 sections, in Section~\ref{section:evaluation} we give an LVar-based
 solution to our challenge problem, implemented using our Haskell LVars library, along with a
 performance evaluation.

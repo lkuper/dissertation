@@ -1,0 +1,101 @@
+%% \newcommand{\DefEqStore}{
+%% \begin{definition}\label{def:eqstore}
+%%   Two stores $S$ and $S'$ are \emph{equal} iff:
+%%   \begin{enumerate}
+%%     \item $S = \topS$ and $S' = \topS$, or
+%%     \item $\dom{S} = \dom{S'}$ and for all $l \in \dom{S}$, $S(l) =
+%%       S'(l)$.
+%%   \end{enumerate}
+%% \end{definition}
+%% }
+
+%% \newcommand{\DefLeqStore}{
+%% \begin{definition}\label{def:leqstore}
+%%   A store $S$ is \emph{less than or equal to} a store $S'$ (written
+%%   $\leqstore{S}{S'}$) iff:
+%%   \begin{itemize}
+%%   \item $S' = \topS$, or
+%%   \item $\dom{S} \subseteq \dom{S'}$ and for all $l
+%%     \in \dom{S}$, $S(l) \myleq S'(l)$.
+%%   \end{itemize}
+%% \end{definition}
+%% }
+
+%% \newcommand{\DefLubStore}{
+%% \begin{definition}\label{def:store-lub}
+
+%%   The \emph{least upper bound (lub)} of two stores $S_1$ and $S_2$ (written
+%%   $\lubstore{S_1}{S_2}$) is defined as follows:
+  
+%%   \begin{itemize}
+%%   \item $\lubstore{S_1}{S_2} = \topS$ iff there exists some $l \in
+%%     \dom{S_1} \cap \dom{S_2}$ such that $\lub{S_1(l)}{S_2(l)} = \top$.
+%%   \item Otherwise, $\lubstore{S_1}{S_2}$ is the store $S$ such that:
+
+%%   \begin{itemize}
+%%   \item $\dom{S} = \dom{S_1} \cup \dom{S_2}$, and
+%%   \item For all $l \in \dom{S}$:
+%%   \end{itemize}
+%%     \begin{displaymath}
+%%       S(l) = \left\{ \begin{array}{ll}
+%%         \lub{S_1(l)}{S_2(l)} & \textrm{if $l \in \dom{S_1} \cap \dom{S_2}$} \\
+%%         S_1(l) & \textrm{if $l \notin \dom{S_2}$} \\
+%%         S_2(l) & \textrm{if $l \notin \dom{S_1}$}
+%%         \end{array} \right.
+%%     \end{displaymath}
+%%   \end{itemize}
+%% \end{definition}
+%% }
+
+\newcommand{\DefLeqStoreCnC}{
+\begin{definition}[store ordering, Featherweight CnC]\label{def:leqstore-cnc}
+  A store $S$ is \emph{less than or equal to} a store $S'$ (written
+  $\leqstore{S}{S'}$) iff $\dom{S} \subseteq \dom{S'}$ and for all $l
+  \in \dom{S}$, $S(l) = S'(l)$.
+\end{definition}
+}
+
+%% \newcommand{\DefNonConflicting}{
+%% \begin{definition}\label{def:non-conflicting}
+%%   A store $S''$ is \emph{non-conflicting} with the transition
+%%   $\config{S}{e} \parstepsto \config{S'}{e'}$ iff $(\dom{S'} -
+%%   \dom{S}) \cap \dom{S''} = \emptyset$.
+%% \end{definition}
+%% }
+
+%% \newcommand{\DefRenaming}{
+%% \begin{definition}\label{def:renaming}
+%%   A \emph{renaming} of a configuration $\config{S}{e}$ is the
+%%   substitution into $\config{S}{e}$ of location names $l'_1, \dots,
+%%   l'_n$ for some subset $l_1, \dots, l_n$ of $\dom{S}$.
+%% \end{definition}
+%% }
+
+%% \newcommand{\DefSafeRenaming}{
+%% \begin{definition}\label{def:safe-renaming}
+%%   A \emph{safe renaming of $\config{S'}{e'}$ with respect to
+%%     $\config{S}{e} \parstepsto \config{S'}{e'}$} is a renaming of
+%%   $\config{S'}{e'}$ in which the locations $l_1, \dots, l_n$ being
+%%   renamed are the members of the set $\dom{S'} - \dom{S}$, and the
+%%   names $l'_1, \dots, l'_n$ that are replacing $l_1, \dots, l_n$ do
+%%   not appear in $\dom{S'}$.
+%% \end{definition}
+%% }
+
+%% \newcommand{\DefRename}{
+%% \begin{definition}\label{def:rename}
+%%   The $\mathit{rename}$ metafunction is defined as follows:
+%%   \[
+%%   \begin{array}{lcl}
+%%     \renamelocs{\cdot}{\cdot}{\cdot} & : &\conf \times S \times S \rightarrow \conf \\
+%%     \renamelocs{\config{S'}{e}}{S''}{S} & \defeq & \subst{\config{S'}{e}}{l_1}{l'_1} \dots [l_n := l'_n]
+%%   \end{array}
+%%   \]
+%%   where:
+%%   \begin{itemize}
+%%   \item $\lbrace l_1, \dots, l_n \rbrace = \dom{S'} - \dom{S}$, and
+%%   \item $\lbrace l'_1, \dots, l'_n \rbrace $ is a set such that $l'_i
+%%     \notin (\dom{S'} \cup \dom{S''})$ for $i \in [1..n]$.
+%%   \end{itemize}
+%% \end{definition}
+%% }

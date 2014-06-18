@@ -1,10 +1,10 @@
 
 
-\section{$\lambdapar$: Syntax and Semantics}\label{section:programming}
+\section{$\lambdaLVar$: Syntax and Semantics}\label{section:programming}
 
-The syntax and operational semantics of $\lambdapar$ appear in Figures
-\ref{f:lambdapar-grammar} and \ref{f:lambdapar-refl}, respectively.\footnote{
-We have implemented $\lambdapar$
+The syntax and operational semantics of $\lambdaLVar$ appear in Figures
+\ref{f:lambdaLVar-grammar} and \ref{f:lambdaLVar-refl}, respectively.\footnote{
+We have implemented $\lambdaLVar$
 as a runnable PLT Redex \cite{redex-book} model, available
 in the LVars repository.}
 As we have noted, both the syntax and semantics are
@@ -22,7 +22,7 @@ is a unique element added to the set of
 we consider $\config{\topS}{e}$ to be equal to $\error$, for all expressions $e$.
 The metavariable $\conf$ ranges over configurations.
 
-Figure~\ref{f:lambdapar-refl} shows two disjoint sets of reduction
+Figure~\ref{f:lambdaLVar-refl} shows two disjoint sets of reduction
 rules: those that step to configurations other than $\error$, and
 those that step to $\error$. Most of the latter set of rules merely propagate errors along.
 A new $\error$ can only
@@ -67,18 +67,15 @@ add {\sc E-ParPut} and {\sc E-ParGet} rules to the semantics that are analogous
 to {\sc E-ParApp}, should simultaneous evaluation of $\PUT$ and $\GET$
 arguments be desired.
 
-\FigLambdaparGrammar
+\FigLambdaLVishGrammar
 
-\FigLambdaparRefl
-
-
-
+\lk{TODO: we need a new figure that's $\lambdaLVish$ but with the freezing, etc., removed.}
 
 \subsection{Fork-Join Parallelism}\label{subsection:fork-join}
 
 
-$\lambdapar$ has an explicitly parallel reduction semantics: the {\sc
-  E-ParApp} rule in Figure~\ref{f:lambdapar-refl} allows simultaneous
+$\lambdaLVar$ has an explicitly parallel reduction semantics: the {\sc
+  E-ParApp} rule in Figure~\ref{f:lambdaLVar-refl} allows simultaneous
 reduction of the operator and operand in an application expression, so
 that (eliding stores) the application $\app{e_1}{e_2}$ may step to
 $\app{e_1'}{e_2'}$ if $e_1$ steps to $e_1'$ and $e_2$ steps to $e_2'$.
@@ -101,7 +98,7 @@ location renaming: locations
   and other issues related to renaming in Appendix~\ref{appendix:renaming-lemmas}.)
 
 Although the semantics admits such parallel
-reductions, $\lambdapar$ is still call-by-value in the sense that
+reductions, $\lambdaLVar$ is still call-by-value in the sense that
 arguments must be fully evaluated before function
 application ($\beta$-reduction, modeled by the {\sc E-Beta} rule) can occur.  We can exploit this
 property to define a syntactic sugar $\LETPAR$ for {\em parallel composition}, which 
@@ -146,7 +143,7 @@ Figure~\ref{f:series-parallel}(a).
 % LK: removing this because we just said ``in the terminology of''.
 %% In the terminology of parallel
 %% algorithms,
-The $\lambdapar$ language (minus $\PUT$ and $\GET$) can
+The $\lambdaLVar$ language (minus $\PUT$ and $\GET$) can
 support any {\em series-parallel} dependence graph.  Adding
 communication through $\PUT$ and $\GET$ introduces ``lateral'' edges
 between branches of a parallel computation,
@@ -183,12 +180,12 @@ and $\GET$ operations on it.
 \subsection{Programming with $\PUT$ and $\GET$}\label{subsection:programming-with-put-and-get}
 
 \rn{Perhaps it's not important, but we don't seem to specify whether
-  $\myleq$ on the numeric components of the pair is an IVar style
+  $\userleq$ on the numeric components of the pair is an IVar style
   ordering (horizontal), or the normal $\leq$ on numbers.  It's
   potentially confusing that we use $\leq$ in the intro, but then
   never use that order again.}
 
-For our first example of a $\lambdapar$ program, we choose the elements of our lattice to be
+For our first example of a $\lambdaLVar$ program, we choose the elements of our lattice to be
 pairs of natural-number-valued IVars, as shown in 
 Figure~\ref{f:lattice-examples}(b).
 We can then write the following
@@ -207,12 +204,12 @@ it.  $(3,4)$ then becomes the {\em state} of $p$.  The premises of the
 {\sc E-GetVal} reduction rule hold: $S(p) = (3,4)$; the threshold set $Q =
 \stateset{(\bot, n) \setsep n \in \mathbb{N}}$ is a 
 pairwise incompatible subset of $D$; and there exists an element $d_1 \in Q$
-such that $d_1 \myleq (3,4)$.  In
+such that $d_1 \userleq (3,4)$.  In
 particular, the pair $(\bot, 4)$ is a member of $Q$, and $(\bot,4)
-\myleq (3,4)$.  Therefore,
+\userleq (3,4)$.  Therefore,
 $\getexp{p}{\stateset{(\bot, n) \setsep n \in \mathbb{N}}}$ returns
 the singleton set $\stateset{(\bot,4)}$,
-{which is a first-class value in $\lambdapar$ that can, for example, subsequently be passed to $\PUT$.}
+{which is a first-class value in $\lambdaLVar$ that can, for example, subsequently be passed to $\PUT$.}
 %\rn{I like this walkthrough -- it makes it really concrete.}
 
 Since threshold sets can be cumbersome to read, we can define some
@@ -284,8 +281,8 @@ is updated that the premise is satisfied and the rule applies.
 %   condition is not satisfied.}
 
 % \lk{We actually do have such a rule.  It is the {\sc E-GetValBlock}
-%   rule in Figure~\ref{f:lambdapar-getvalblock}.  The reason why we
-%   don't have that in Figure~\ref{f:lambdapar-refl} is because the {\sc
+%   rule in Figure~\ref{f:lambdaLVar-getvalblock}.  The reason why we
+%   don't have that in Figure~\ref{f:lambdaLVar-refl} is because the {\sc
 %     E-Refl} rule subsumes it, so the configuration does in fact step
 %   to itself.  I am honestly not sure why this isn't OK (it runs in
 %   Redex, albeit slowly).}
@@ -293,52 +290,52 @@ is updated that the premise is satisfied and the rule applies.
 
 
 
-\subsection{Converting from Threshold Sets to $\lambda$-terms and Back}
+%% \subsection{Converting from Threshold Sets to $\lambda$-terms and Back}
 
-{There are two worlds that $\lambdapar$ values
-may inhabit: the world of threshold sets, and the world of
-$\lambda$-terms.  
-%
-% While it is possible to leave 
-But if these worlds are disjoint---if threshold set values are opaque
-atoms---certain programs are impossible to write.  For example,
-implementing single-assignment arrays in $\lambdapar$ requires
-that arbitrary array indices can be computed \new{(\eg, as Church numerals)} and converted to threshold sets.
-%% For example, a $\lambdapar$
-%% implementation of arbitrary-length single-assignment arrays
-%% (I-structures) requires that integer array indices, perhaps encoded as
-%% Church Numerals, be converted into threshold sets.}
-}
-{Thus we parameterize our semantics by a {\em conversion
-    function}, $\delta : v \rightarrow v$, 
-   exposed through the $\REIFY$ language form.
-\new{
-    The $\REIFY$ function is {\em arbitrary}, without any particular structure, similar
-    to including an abstract set of primitive functions in the language.
-}
-  %% The conversion function can arbitrarily convert between representations of values as
-  %% threshold sets and representations as $\lambda$-terms.
-  It is {\em optional} in the sense that providing
-  an identity or empty function is acceptable, and leaves $\lambdapar$
-  sensible but less expressive.
-  %% (\ie, threshold sets are still first-class values,
-  %% but usable only for passing to $\GET$ and $\PUT$).
-  \new{
-    This is mainly a notational concern 
-%   This is a concern only for the formalism
-    that does not have significant
-    implications for a real implementation.}
-\if{0}
-\footnote{A
-    reasonable alternative definition of $\lambdapar$ would 
-    remove threshold set values entirely and require that threshold
-    set inputs and outputs to $\GET$/$\PUT$ be implicitly
-    $\REIFY$ed.  Yet the language is deterministic even in its more
-    general form---with first-class threshold sets---and we do not want 
-    to unduly restrict the language.}
-\fi{}
-% ; no other computation can be done on them.
-}
+%% {There are two worlds that $\lambdaLVar$ values
+%% may inhabit: the world of threshold sets, and the world of
+%% $\lambda$-terms.  
+%% %
+%% % While it is possible to leave 
+%% But if these worlds are disjoint---if threshold set values are opaque
+%% atoms---certain programs are impossible to write.  For example,
+%% implementing single-assignment arrays in $\lambdaLVar$ requires
+%% that arbitrary array indices can be computed \new{(\eg, as Church numerals)} and converted to threshold sets.
+%% %% For example, a $\lambdaLVar$
+%% %% implementation of arbitrary-length single-assignment arrays
+%% %% (I-structures) requires that integer array indices, perhaps encoded as
+%% %% Church Numerals, be converted into threshold sets.}
+%% }
+%% {Thus we parameterize our semantics by a {\em conversion
+%%     function}, $\delta : v \rightarrow v$, 
+%%    exposed through the $\REIFY$ language form.
+%% \new{
+%%     The $\REIFY$ function is {\em arbitrary}, without any particular structure, similar
+%%     to including an abstract set of primitive functions in the language.
+%% }
+%%   %% The conversion function can arbitrarily convert between representations of values as
+%%   %% threshold sets and representations as $\lambda$-terms.
+%%   It is {\em optional} in the sense that providing
+%%   an identity or empty function is acceptable, and leaves $\lambdaLVar$
+%%   sensible but less expressive.
+%%   %% (\ie, threshold sets are still first-class values,
+%%   %% but usable only for passing to $\GET$ and $\PUT$).
+%%   \new{
+%%     This is mainly a notational concern 
+%% %   This is a concern only for the formalism
+%%     that does not have significant
+%%     implications for a real implementation.}
+%% \if{0}
+%% \footnote{A
+%%     reasonable alternative definition of $\lambdaLVar$ would 
+%%     remove threshold set values entirely and require that threshold
+%%     set inputs and outputs to $\GET$/$\PUT$ be implicitly
+%%     $\REIFY$ed.  Yet the language is deterministic even in its more
+%%     general form---with first-class threshold sets---and we do not want 
+%%     to unduly restrict the language.}
+%% \fi{}
+%% % ; no other computation can be done on them.
+%% }
 
 %% {The two most common applications of value conversion are {\em
 %%     reification} and {\em reflection}.  Reification is the process of converting
@@ -352,7 +349,7 @@ that arbitrary array indices can be computed \new{(\eg, as Church numerals)} and
 %% %
 %% %   we could achieve the same simplification through a simple set 
 %% %could always achieve this simplification by a set of conventions
-%% %restricting $\lambdapar$.
+%% %restricting $\lambdaLVar$.
 %% }
 %% Conversely, reflection constructs threshold sets 
 %%   from a $\lambda$-term representation.

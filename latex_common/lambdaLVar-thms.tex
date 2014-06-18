@@ -1,0 +1,170 @@
+%% \newcommand{\LemLocRenaming}{
+%% \begin{lem}[Renaming of Locations During a Step]\label{lem:loc-renaming}
+
+%%   If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
+%%   $\config{S'}{e'} \neq \textup{\error}$) and $\lbrace l_1, \dots, l_n
+%%   \rbrace = \dom{S'} - \dom{S}$, then:
+
+%%   For all sets \lk{(including the empty set)} $\lbrace l'_1, \dots,
+%%   l'_n \rbrace$ such that $l'_i \notin \dom{S'}$ for $i \in [1..n]$:
+%%   \begin{displaymath}
+%%     \begin{split}
+%%       &\config{S}{e} \parstepsto 
+%%       \\
+%%       &\config{\extS{\Soldlocs}{l'_1}{S'(l_1)} \dots [\storebinding{l'_n}{S'(l_n)}]}
+%%       {\subst{e'}{l_1}{l'_1} \dots [l_n := l'_n]} \\
+%%       &\mbox{($\neq \textup{\error}$)},
+%%     \end{split}
+%%   \end{displaymath}
+%%   where $\Soldlocs$ is defined as follows: $\dom{\Soldlocs} =
+%%   \dom{S}$, and for all $l \in \dom{\Soldlocs}$, $\Soldlocs(l) =
+%%   S'(l)$.
+%% \end{lem}
+%% }
+
+%% \newcommand{\LemRenamingAfterAStep}{
+%% \begin{lem}[Renaming of Locations After a Step]\label{lem:renaming-after-a-step}
+
+%%   If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
+%%   $\config{S'}{e'} \neq \textup{\error}$) and $\lbrace l_1, \dots, l_n
+%%   \rbrace = \dom{S'} - \dom{S}$, then:
+
+%%   For all sets \lk{(including the empty set)} $\lbrace l'_1, \dots,
+%%   l'_n \rbrace$ such that $l'_i \notin \dom{S'}$ for $i \in [1..n]$:
+%%   \begin{displaymath}
+%%     \begin{split}
+%%       &\config{S'}{e'} \parstepsto 
+%%       \\
+%%       &\config{\extS{\Soldlocs}{l'_1}{S'(l_1)} \dots [\storebinding{l'_n}{S'(l_n)}]}
+%%       {\subst{e'}{l_1}{l'_1} \dots [l_n := l'_n]} \\
+%%       &\mbox{($\neq \textup{\error}$)},
+%%     \end{split}
+%%   \end{displaymath}
+%%   where $\Soldlocs$ is defined as follows: $\dom{\Soldlocs} =
+%%   \dom{S}$, and for all $l \in \dom{\Soldlocs}$, $\Soldlocs(l) =
+%%   S'(l)$.
+%% \end{lem}
+%% }
+
+%% \newcommand{\LemSafetyOfRename}{
+%% \begin{lem}[Safety of $\mathit{rename}$]\label{lem:safety-of-rename}
+%%   If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
+%%   $\config{S'}{e'} \neq \textup{\error}$) and $S'' \neq \topS$, then:
+
+%%   $\config{S}{e} \parstepsto \renamelocs{\config{S'}{e'}}{S''}{S}$.
+%% \end{lem}
+%% }
+
+\newcommand{\LemIndependenceBasic}{
+\begin{lem}[Independence]\label{lem:independence-basic}
+  If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
+  $\config{S'}{e'} \neq \textup{\error}$), then for all $S''$ such
+  that $S''$ is non-conflicting with $\config{S}{e} \parstepsto
+  \config{S'}{e'}$ and $\lubstore{S'}{S''} \neq \topS$:
+
+  $\config{\lubstore{S}{S''}}{e} \parstepsto \config{\lubstore{S'}{S''}}{e'}$.
+\end{lem}
+}
+
+\newcommand{\LemClashBasic}{
+\begin{lem}[Clash]\label{lem:clash-basic}
+  If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
+  $\config{S'}{e'} \neq \textup{\error}$), then for all $S''$ such
+  that $S''$ is non-conflicting with $\config{S}{e} \parstepsto
+  \config{S'}{e'}$ and $\lubstore{S'}{S''} = \topS$:
+
+  $\config{\lubstore{S}{S''}}{e} \parstepsto \textup{\error}$.
+\end{lem}
+}
+
+\newcommand{\LemStorePartition}{
+\begin{lem}[Store Partition]\label{lem:store-partition}
+  Let $S$ and $S'$ be stores.  Then, for all $l_i$ such that $S(l_i)
+  \mylt S'(l_i)$, there exists $S''$ such that
+  $\eqstore{S'}{\extS{S''}{l_i}{S'(l_i)}}$ and $\myltstore{S''}{S'}$.
+\end{lem}
+}
+
+%% Note: Error preservation is exactly the same from lambdaLVar to
+%% lambdaLVish, so I just commented this one out.  This may or may not
+%% be the right course of action.
+
+%% \newcommand{\LemErrorPreservation}{
+%% \begin{lem}[Error Preservation]\label{lem:error-preservation}
+%%   If $\config{S}{e} \parstepsto \textup{\error}$ and $\leqstore{S}{S'}$, then
+%%   $\config{S'}{e} \parstepsto \textup{\error}$.
+
+%% \end{lem}
+%% }
+
+\newcommand{\LemDiamond}{
+\begin{lem}[Diamond]\label{lem:diamond}
+  If $\conf \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$,
+  then there exists $\conf_c$ such that either:
+  \begin{itemize}
+    \item $\conf_a \parstepsto \conf_c$ and $\conf_b \parstepsto \conf_c$, or
+    \item there exists a safe renaming $\conf_b'$ of $\conf_b$ with
+      respect to $\conf \parstepsto \conf_b$, such that $\conf_a
+      \parstepsto \conf_c$ and $\conf_b' \parstepsto \conf_c$.
+  \end{itemize}
+\end{lem}
+}
+
+\newcommand{\LemStrongLocalConfluence}{
+\begin{cor}[Strong Local Confluence]\label{cor:strong-local-confluence}
+  If $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$,
+  then there exist $\conf_c, i, j$ such that $\conf' \parstepsto^i
+  \conf_c$ and $\conf'' \parstepsto^j \conf_c$ and $i \leq 1$ and
+  $j \leq 1$.
+\end{cor}
+\begin{proof}
+  Choose $i = j = 1$.  The proof follows immediately from
+  Lemma~\ref{lem:diamond}.
+\end{proof}
+}
+
+\newcommand{\LemStrongOneSidedConfluence}{
+\begin{lem}[Strong One-Sided Confluence]\label{lem:strong-one-sided-confluence}
+  If $\conf \parstepsto \conf'$ and $\conf \parstepsto^m \conf''$,
+  where $1 \leq m$, then there exist $\conf_c, i, j$ such that
+  $\conf' \parstepsto^i \conf_c$ and $\conf'' \parstepsto^j
+  \conf_c$ and $i \leq m$ and $j \leq 1$.
+\end{lem}
+}
+
+\newcommand{\LemStrongConfluence}{
+\begin{lem}[Strong Confluence]\label{lem:strong-confluence}
+  If $\conf \parstepsto^n \conf'$ and $\conf \parstepsto^m
+  \conf''$, where $1 \leq n$ and $1 \leq m$, then there exist
+  $\conf_c, i, j$ such that $\conf' \parstepsto^i \conf_c$ and
+  $\conf'' \parstepsto^j \conf_c$ and $i \leq m$ and $j \leq n$.
+\end{lem}
+}
+
+\newcommand{\LemConfluence}{
+\begin{lem}[Confluence]\label{lem:confluence}
+  If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^*
+  \conf''$, then there exists $\conf_c$ such that $\conf'
+  \parstepsto^* \conf_c$ and $\conf'' \parstepsto^* \conf_c$.
+\end{lem}
+\begin{proof}
+  Strong Confluence (Lemma~\ref{lem:strong-confluence}) implies
+  Confluence.
+\end{proof}
+}
+
+\newcommand{\ThmDeterminism}{
+\begin{thm}[Determinism]\label{thm:determinism}
+  If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^*
+  \conf''$, and neither $\conf'$ nor $\conf''$ can take a step
+  except by {\sc E-Refl} or {\sc E-ReflErr}, then $\conf' =
+  \conf''$.
+\end{thm}
+\begin{proof}
+  We have from Lemma~\ref{lem:confluence} that there exists $\conf_c$
+  such that $\conf' \parstepsto^* \conf_c$ and $\conf''
+  \parstepsto^* \conf_c$.  Since $\conf'$ and $\conf''$ can only
+  step to themselves, we must have $\conf' = \conf_c$ and $\conf''
+  = \conf_c$, hence $\conf' = \conf''$.
+\end{proof}
+}

@@ -1,6 +1,6 @@
 \section{Safe Renaming}\label{appendix:renaming-lemmas}
 
-When $\lambdapar$ programs split into
+When $\lambdaLVar$ programs split into
 two subcomputations via the {\sc E-ParApp} rule, 
 the subcomputations' stores are merged (via the lub operation)
 as they are running.
@@ -19,9 +19,9 @@ a call to the $\mathit{rename}$ metafunction,
 which, for each location name $l$ generated during the reduction $\config{S}{e_1} \parstepsto \config{S_1}{e'_1}$,
 generates a name that is not yet used on either side of the split
 and substitutes that name into $\config{S_1}{e'_1}$ in place of $l$.\footnote{Since
-$\lambdapar$ locations are drawn from a distinguished set $\Loc$,
+$\lambdaLVar$ locations are drawn from a distinguished set $\Loc$,
 they cannot occur in the user-specified $D$---that
-is, locations in $\lambdapar$ may not contain pointers to other
+is, locations in $\lambdaLVar$ may not contain pointers to other
 locations.  Likewise, $\lambda$-bound variables in $e$ are never location names.  Therefore, substitutions
 like the one in Definition~\ref{def:rename} will not capture bound occurrences
 of location names.} 

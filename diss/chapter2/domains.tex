@@ -10,7 +10,7 @@
     sets that would correspond to a blocking read of the first or
     second element of the pair (see Sections~\ref{subsection:putget} and \ref{subsection:programming-with-put-and-get}).
     Any state transition crossing the
-    ``tripwire'' for \impfnt{getSnd} causes it to unblock
+    ``tripwire'' for \termfont{getSnd} causes it to unblock
     and return a result.}
 
   \label{f:lattice-examples}
@@ -18,19 +18,19 @@
 
 \section{Lattices, Stores, and Determinism}\label{section:domains}
 
-As a minimal substrate for LVars, we introduce $\lambdapar$, 
+As a minimal substrate for LVars, we introduce $\lambdaLVar$, 
  a parallel call-by-value
 $\lambda$-calculus extended with a {\em store} and with communication
 primitives $\PUT$ and $\GET$ that operate on data in the store.
 The class of programs that we are interested in modeling with
-$\lambdapar$ are those with explicit effectful operations on shared
+$\lambdaLVar$ are those with explicit effectful operations on shared
 data
 structures, in which subcomputations may communicate with each other
 via the $\PUT$ and
 $\GET$ operations.
 
 In this setting of shared mutable state, the trick
-that $\lambdapar$ employs to maintain determinism is that stores
+that $\lambdaLVar$ employs to maintain determinism is that stores
 contain {\em LVars}, which are a generalization of
 IVars.\footnote{IVars are so named because they are a
     special case of {\em I-structures} \cite{IStructures}---namely,
@@ -38,23 +38,23 @@ IVars.\footnote{IVars are so named because they are a
 Whereas IVars are single-assignment
 variables---either empty or filled with an immutable value---an LVar
 may have an arbitrary number of states forming a set $D$, which is partially ordered by a relation 
-$\myleq$.  An LVar can take on any sequence of states from 
+$\userleq$.  An LVar can take on any sequence of states from 
 $D$, so long as that sequence respects the partial order---that is,
 updates to the LVar (made via the $\PUT$ operation) are
 \emph{inflationary} % \emph{monotonic}
- with respect to $\myleq$.  Moreover, the 
+ with respect to $\userleq$.  Moreover, the 
  $\GET$ operation allows only limited observations of the LVar's state.  In
-this section, we discuss how lattices and stores work in $\lambdapar$
+this section, we discuss how lattices and stores work in $\lambdaLVar$
 and explain how the semantics of $\PUT$ and $\GET$ together enforce determinism
-in $\lambdapar$ programs.
+in $\lambdaLVar$ programs.
 
 \subsection{Lattices}\label{subsection:domains}
 
-The definition of $\lambdapar$ is parameterized by the choice of $D$: to write concrete $\lambdapar$ programs, one must specify
+The definition of $\lambdaLVar$ is parameterized by the choice of $D$: to write concrete $\lambdaLVar$ programs, one must specify
 the set of LVar states that one is interested in working with,
 and an ordering on those states.
   Therefore
-$\lambdapar$ is actually a \emph{family} of languages, rather than a
+$\lambdaLVar$ is actually a \emph{family} of languages, rather than a
 single language.
 
 Formally, $D$ is a \emph{bounded} \emph{join-semilattice} augmented
@@ -67,8 +67,8 @@ structure:
 \item $D$ has a greatest element $\top$, representing the ``error''
   state that results from conflicting updates to an LVar.
 
-\item $D$ comes equipped with a partial order $\myleq$, where $\bot
-  \myleq d \myleq \top$ for all $d \in D$.
+\item $D$ comes equipped with a partial order $\userleq$, where $\bot
+  \userleq d \userleq \top$ for all $d \in D$.
 
 \item Every pair of elements in $D$ has a least upper bound (lub)
   $\sqcup$.  Intuitively, the existence of a lub for every two
@@ -97,10 +97,10 @@ represents the state space of a single-assignment variable (an IVar).
 A natural-number-valued IVar, for instance, would correspond to the
 lattice in Figure~\ref{f:lattice-examples}(a), that is,
 \begin{displaymath}
-  D = (\lbrace \top, \bot \rbrace \cup \mathbb{N}, \myleq), 
+  D = (\lbrace \top, \bot \rbrace \cup \mathbb{N}, \userleq), 
 \end{displaymath}
-where the partial order $\myleq$ is defined by setting $\bot \myleq d
-\myleq \top$ and $d \myleq d$ for all $d \in D$.  This is a lattice of
+where the partial order $\userleq$ is defined by setting $\bot \userleq d
+\userleq \top$ and $d \userleq d$ for all $d \in D$.  This is a lattice of
 height three and infinite width, where the naturals are arranged
 horizontally.  After the initial write of some $n \in \mathbb{N}$, any
 further conflicting writes would push the state of the IVar to $\top$
@@ -160,7 +160,7 @@ can occur to the LVar.
 %   take a step, but only to $\error$).  If we just explain this in the
 %   text, do we really need to do any more marking of preconditions?}
 
-During the evaluation of a $\lambdapar$ program, a \emph{store} $S$
+During the evaluation of a $\lambdaLVar$ program, a \emph{store} $S$
 keeps track of the states of LVars.  Each LVar is represented by a
 binding from a location $l$, drawn from a set $\Loc$, to its state,
 which is some element $d \in D$.  Although each LVar in a program has
@@ -169,7 +169,7 @@ lattice $D$.  We can do this with no loss of generality because
 lattices corresponding to different types of LVars could always be
 unioned into a single lattice (with shared $\top$ and $\bot$
 elements).
-\new{Alternatively, in a typed formulation of $\lambdapar$, 
+\new{Alternatively, in a typed formulation of $\lambdaLVar$, 
   the type of an LVar might determine the lattice of its states.}
 
 \begin{definition}\label{def:store}
@@ -187,19 +187,19 @@ The state space of stores forms a bounded join-semilattice
 augmented with a greatest element, just as
 $D$ does, with the empty store $\bot_S$ as its least element and $\topS$ 
 as its greatest element.
-It is straightforward to lift the $\myleq$ and $\sqcup$ operations defined
+It is straightforward to lift the $\userleq$ and $\sqcup$ operations defined
 on elements of $D$ to the level of stores:
 
 \DefLeqStore
 
 \DefLubStore
 
-\noindent By Definition~\ref{def:store-lub}, if $\lub{d_1}{d_2} =
+\noindent By Definition~\ref{def:store-lub}, if $\userlub{d_1}{d_2} =
 \top$, then
 $\lubstore{\store{\storebinding{l}{d_1}}}{\store{\storebinding{l}{d_2}}}
 = \topS$.  
 Notice that a store containing a binding $\storebinding{l}{\top}$ can never arise
-during the execution of a $\lambdapar$ program, because (as we will
+during the execution of a $\lambdaLVar$ program, because (as we will
 see in Section~\ref{section:programming}) an attempted write that would take
 the state of $l$ to $\top$ would raise an error before the write can occur.
 
@@ -239,8 +239,8 @@ by mutable references:
   in the lattice is {\em at or above} some $d' \in Q$, the $\GET$
   operation unblocks and returns the singleton set $\lbrace d'
   \rbrace$.  Note that $d'$ is a unique element of $Q$, for if there
-  is another $d'' \neq d'$ in the threshold set such that $d'' \myleq
-  d$, it would follow that $d' \sqcup d'' \myleq d \neq \top$, which
+  is another $d'' \neq d'$ in the threshold set such that $d'' \userleq
+  d$, it would follow that $d' \sqcup d'' \userleq d \neq \top$, which
   contradicts the requirement that $Q$ be pairwise incompatible.
 \end{itemize}
 
@@ -290,17 +290,17 @@ Our Definition~\ref{def:leqstore} is reminiscent of
 Definition~\ref{def:leqstore-cnc}, but Definition~\ref{def:leqstore-cnc}
 requires that $S(l)$ and $S'(l)$
 be \emph{equal}, instead of our weaker
-requirement that $S(l) \myleq S'(l)$ according to the user-provided
-partial order $\myleq$.  In $\lambdapar$, stores may grow by updating
+requirement that $S(l) \userleq S'(l)$ according to the user-provided
+partial order $\userleq$.  In $\lambdaLVar$, stores may grow by updating
 existing bindings via repeated $\PUT$s, so
 Definition~\ref{def:leqstore-cnc} would be too strong; for instance,
-if $\bot \mylt d_1 \myleq d_2$ for distinct $d_1, d_2 \in D$, the relationship
+if $\bot \userlt d_1 \userleq d_2$ for distinct $d_1, d_2 \in D$, the relationship
 $\leqstore{\store{\storebinding{l}{d_1}}}{\store{\storebinding{l}{d_2}}}$
 holds under Definition~\ref{def:leqstore}, but would not hold under
-Definition~\ref{def:leqstore-cnc}.  That is, in $\lambdapar$ an LVar
+Definition~\ref{def:leqstore-cnc}.  That is, in $\lambdaLVar$ an LVar
 could take on the state $d_1$ followed by $d_2$, which would not be
 possible in Featherweight CnC.  We establish in
-Section~\ref{section:proof} that $\lambdapar$ remains
+Section~\ref{section:proof} that $\lambdaLVar$ remains
 deterministic despite the relatively weak $\leqstore{}{}$
 relation given in Definition~\ref{def:leqstore}.  The keys to
 maintaining determinism are the blocking semantics of the $\GET$

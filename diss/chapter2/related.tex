@@ -7,7 +7,7 @@ models is long-standing; some milestones include:
 
 \begin{itemize}
 \item 1968: {\em single-assignment} parallel languages \cite{Tesler-1968};
-\item 1974: Kahn process networks \cite{kahn-1974};
+\item 1974: Kahn process networks \cite{Kahn-1974};
 \item 1980s: data-flow computing \cite{IStructures}, data-parallel
               languages \cite{Sabot_Paralation};
 \item 1990s: continued progress on parallel functional programming 
@@ -25,7 +25,7 @@ discussed, here we consider a few recent contributions to the literature.
 
 \paragraph{Deterministic Parallel Java (DPJ)}
 
-% As we have presented it, $\lambdapar$ enforces single assignment
+% As we have presented it, $\lambdaLVar$ enforces single assignment
 % dynamically, but it is also compatible with static techniques, such as
 % affine type systems, to enforce that LVar locations are handled
 % linearly.
@@ -51,7 +51,7 @@ consisting of a system of annotations for Java code.  A sophisticated
 region-based type system ensures that a mutable region of the heap is,
 essentially, passed linearly to an exclusive writer.
 While a linear type system or region system like that of DPJ
-could be used to enforce single assignment statically, accommodating $\lambdapar$'s
+could be used to enforce single assignment statically, accommodating $\lambdaLVar$'s
 semantics would involve parameterizing the
 type system by the user-specified lattice.
 %% ---a direction of
@@ -63,17 +63,17 @@ concurrent mutation.  However, DPJ does not provide direct support for
 modeling message-passing (\eg, KPNs) or asynchronous communication
 within parallel regions.  
 \rn{DOUBLE CHECK THIS.}
-Finally, a key difference between the $\lambdapar$ model and DPJ 
-is that $\lambdapar$ retains determinism by restricting {\em
+Finally, a key difference between the $\lambdaLVar$ model and DPJ 
+is that $\lambdaLVar$ retains determinism by restricting {\em
   what} can be read or written, rather than by restricting 
 %% {\em who} can read or write.
 the semantics of reads and writes themselves.
 
 
 %% We believe that DPJ's techniques are largely orthogonal to, and
-%% compatible with, the work we have presented on $\lambdapar$.
+%% compatible with, the work we have presented on $\lambdaLVar$.
 %
-%% \new{For example, while $\lambdapar$, like most systems based on
+%% \new{For example, while $\lambdaLVar$, like most systems based on
 %%   $IVars$, relies on dynamic enforcement of $\PUT$ errors, it would
 %%   also be possible to use DPJ-style region annotations to remove the
 %%   need for dynamic checks.}
@@ -92,7 +92,7 @@ the semantics of reads and writes themselves.
 %   other hand, are talking about something DOES NOT come for free with
 %   using Haskell.. communicating, asynchronous agents.}
 
-% \note{Essentially the OPPOSITE of $\lambdapar$, focused primarily on
+% \note{Essentially the OPPOSITE of $\lambdaLVar$, focused primarily on
 %   inplace operations on disjoint memory, no communication and
 %   synchronization within parallel regions.  We focus on which building
 %   up a class of safe operations on shared state.}
@@ -118,17 +118,17 @@ is similar to reduction variables in other languages (\eg, Cilk
 CR charts an important new area in the deterministic-parallelism
 design space, but one that differs significantly from
 % explores a very different part of the design space that
-$\lambdapar$.  CR could be used to model similar types of data
+$\lambdaLVar$.  CR could be used to model similar types of data
 structures---if versioned variables used least upper bound as their merge function
 for conflicts---but effects would only become visible at the end of
-parallel regions, rather than $\lambdapar$'s asynchronous communication within
+parallel regions, rather than $\lambdaLVar$'s asynchronous communication within
 parallel regions.
 
 % , targeting imperative multiple-assignment and {\em not}
 % asynchronous, data-driven communication.
 
 % \note{Nevertheless, CR could be used to build a practical
-%   implementation of a $\lambdapar$-like programming model by defining
+%   implementation of a $\lambdaLVar$-like programming model by defining
 %   LVars as shared CR versioned variables the merge operation as lub.}
 
 \paragraph{Bloom and Bloom$^L$}
@@ -160,7 +160,7 @@ to our generalization from IVars to LVars.
 Bloom$^L$ comes with a library of built-in lattice types and also
 allows for users to implement their own lattice types as Ruby classes.
 Although Conway \etal~do not give a proof of eventual consistency for
-Bloom$^L$, our determinism result for $\lambdapar$ suggests that
+Bloom$^L$, our determinism result for $\lambdaLVar$ suggests that
 %% generalizing from a set-containment-based 
 %% notion of monotonicity to
 %% one parameterized by a user-defined lattice 
@@ -183,7 +183,7 @@ shared-state LVar setting.
 
 %% LK: Axed for space. :(
 %% \paragraph{Quantum programming}
-%% The $\lambdapar$ semantics is reminiscent of the semantics of quantum
+%% The $\lambdaLVar$ semantics is reminiscent of the semantics of quantum
 %% programming languages
 %% that extend a conventional $\lambda$-calculus with a store
 %% that maintains the quantum state. Because of quantum parallelism, the
@@ -197,9 +197,9 @@ shared-state LVar setting.
 %% uniformly on the data; and
 %% (3) selecting a set of orthogonal subspaces and performing a measurement
 %% that projects the quantum state onto one of the subspaces.
-%% These operations correspond roughly to $\lambdapar$'s $\NEW$, $\PUT$, and $\GET$.  
+%% These operations correspond roughly to $\lambdaLVar$'s $\NEW$, $\PUT$, and $\GET$.  
 %% Quantum mechanics may serve as a source of inspiration
-%% when designing operations like $\CONSUME$ that introduce limited
+%% when designing operations like $\BUMP$ that introduce limited
 %% nondeterminism.
 
 
