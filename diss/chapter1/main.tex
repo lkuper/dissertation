@@ -1,11 +1,20 @@
 \chapter{Introduction\label{ch:intro}} % 1
 
-Parallel programming is notoriously difficult.  \lk{Difficult to who?}
-A fundamental reason for this difficulty is that programs can yield
-inconsistent results, or even crash, due to unpredictable interactions
-between parallel tasks.  \emph{Deterministic-by-construction} parallel
-programming models, though, offer the promise of freedom from subtle,
-hard-to-reproduce nondeterministic bugs in parallel code.
+Parallel programming---that is, writing programs that can take
+advantage of parallel hardware to go faster---is notoriously
+difficult.  A fundamental reason for this difficulty is that programs
+can yield inconsistent results, or even crash, due to unpredictable
+interactions between parallel tasks.
+
+\emph{Deterministic-by-construction} parallel programming models,
+though, offer the promise of freedom from subtle, hard-to-reproduce
+nondeterministic bugs in parallel code.  While there are many ways to
+construct deterministic parallel programs and to verify the
+determinism of individual programs, only a
+deterministic-by-construction programming model can provide a
+\emph{language-level} guarantee of determinism, ensuring that
+deterministic programs are the only programs that can be expressed
+within the model.
 
 A deterministic-by-construction programming model is one that ensures
 that all programs written using the model have the same
@@ -13,82 +22,135 @@ that all programs written using the model have the same
 what is observable about a program's behavior?  Certainly, we do
 \emph{not} wish to preserve behaviors such as running time across
 multiple runs---ideally, a deterministic-by-construction parallel
-program will run faster when more parallel resources are available!
-Moreover, we do not count the behavior of the scheduler as observable.
-Indeed, we want to specifically \emph{allow} tasks to be scheduled
-dynamically and unpredictably, but without allowing such
-\emph{schedule nondeterminism} to affect the outcome of a program.
-Therefore, we will define the observable behavior of a
-program to be \emph{the value to which the program evaluates}.\footnote{We
-  assume that programs have no side effects other than state effects.}
+program will run faster when more parallel resources are available.
+Moreover, we do not want to count scheduling behavior as observable.
+In fact, we want to specifically allow tasks to be scheduled
+dynamically and unpredictably, without allowing such \emph{schedule
+  nondeterminism} to affect the observable behavior of a program.
+Therefore, we define the observable behavior of a program to be
+\emph{the value to which the program evaluates}.
 
-\section{Existing approaches to determinism by construction}
+\lk{In my proposal, I had a footnote here: ``We assume that programs
+  have no side effects other than state effects.'' I think I instead
+  just want to say that we \emph{ignore} other side effects.  They can
+  \emph{happen}; it's just that they don't count.}
 
-Shared state between computations raises the possibility of \emph{race
-  conditions} that allow schedule nondeterminism to be observed.  For
-instance, if one thread writes $3$ to a shared location while another
-writes $4$, then a third thread that runs after the first two and reads and returns the location's
-contents will nondeterministically return $3$ or $4$, depending on the
-order in which the first two threads ran.  Therefore,
-if a parallel programming model is to guarantee determinism, it
-must necessarily limit sharing of
+Our definition of observable behavior ignores side effects other than
+\emph{state}.  Even under this limited definition of what is
+observable, though, sharing of state between parallel computations
+raises the possibility of \emph{race conditions} that allow schedule
+nondeterminism to be observed in the outcome of a program.  For
+instance, if one computation writes $3$ to a shared location while
+another writes $4$, then a subsequent third computation that reads and
+returns the location's contents will nondeterministically return $3$
+or $4$, depending on the order in which the first two computations
+ran.  Therefore, if a parallel programming model is to guarantee
+determinism by construction, it must necessarily limit sharing of
 mutable state between parallel tasks.
 
-One approach is to allow \emph{no} shared mutable state between tasks,
-forcing concurrent tasks to produce values independently.  An example
-of no-shared-state parallelism is functional programming with
-function-level task parallelism, or \emph{futures}---for instance, in
-Haskell programs that use the @par@ and @pseq@
-combinators~\cite{marlow-par}.  Another approach is \emph{pure data
-parallelism}, as in Data Parallel Haskell~\cite{dph}, and yet another
-is to ensure that the state accessed by concurrent threads is
-\emph{disjoint}, as in Deterministic Parallel Java~\cite{dpj-oopsla}.
+\section{The deterministic-by-construction parallel programming landscape}
 
-\lk{I could add more detail and references about each of the above --
-  perhaps from my job talk notes.}
+Much work has been done on deterministic-by-construction parallel
+programming models over the years and decades.  Taking a moment to
+survey the landscape, we find:
 
-However, some algorithms are more naturally or efficiently written
-using shared state or message passing, and hence the development of
-parallel programming models that allow \emph{limited} sharing of
-mutable state while still preserving determinism.
-
-\lk{Moreover, we might want to \emph{combine} the above models.  Say
-  something about that!}
-
-\lk{More detail below?  We want to explain what blocking is.}
-
-Consider two
-classic deterministic parallel programming models, dating back to the
-late 1960s and early 1970s:
 \begin{itemize}
-\item In \emph{Kahn process networks} (KPNs)~\cite{Kahn-1974}, as well
-  as in the more restricted \emph{synchronous data flow}
-  systems~\cite{lee-sdn}, a network of independent
-  ``computing stations'' communicate with each other through blocking
-  first-in first-out (FIFO) queues, or \emph{channels}.  Each station computes a sequential, monotonic function from the
-  \emph{history} of its input channels (\ie, the input it has received
-  so far) to the history of its output channels (the output it has
-  produced so far).  KPNs are the basis for deterministic
-  stream-processing languages such as StreamIt~\cite{streamit-asplos}.
-\item In parallel \emph{single-assignment} languages, ``full/empty''
-  bits are associated with memory locations so that they may be
-  written to at most once. Single-assignment locations with blocking
-  read semantics are known as \emph{IVars}~\cite{IStructures} and are
-  a well-established mechanism for enforcing determinism in parallel
+\item \emph{No-shared-state parallel programming.}  One classic
+  approach to guaranteeing determinism in a parallel programming model
+  is to allow \emph{no} shared mutable state between tasks, forcing
+  tasks to produce values independently.  An example of
+  no-shared-state parallelism is pure functional programming with
+  function-level task parallelism, or \emph{futures}---for instance,
+  in Haskell programs that use the @par@ and @pseq@
+  combinators~\cite{marlow-par}.  The key characteristic of this style
+  of programming is lack of side effects: because programs don't have
+  side effects, expressions can evaluate simultaneously without
+  affecting the eventual value of the program.  Also belonging in this
+  category are parallel programming models based on \emph{pure data
+    parallelism}, such as Data Parallel Haskell~\cite{dph, dph-status}
+  or the River Trail API for JavaScript~\cite{river-trail}, each of
+  which extend existing languages with \emph{parallel array} data
+  types and operations on them.
+
+\item \emph{Kahn process networks and data-flow programming.}  In
+  \emph{Kahn process networks} (KPNs)~\cite{Kahn-1974}, as well as in
+  the more restricted \emph{synchronous data flow}
+  systems~\cite{lee-sdn}, a network of independent ``computing
+  stations'' communicate with each other through first-in first-out
+  (FIFO) queues, or \emph{channels}.  Reading data out of such a FIFO
+  queue is a \emph{blocking} operation: once an attempt to read has
+  started, a computing station cannot do anything else until the data
+  to be read is available.  Each station computes a sequential,
+  monotonic function from the \emph{history} of its input channels
+  (\ie, the input it has received so far) to the history of its output
+  channels (the output it has produced so far).  KPNs are the basis
+  for deterministic stream-processing languages such as
+  StreamIt~\cite{streamit-asplos}.
+
+\item \emph{Single-assignment parallel programming with IVars.}  In
+  parallel \emph{single-assignment} languages, ``full/empty'' bits are
+  associated with memory locations so that they may be written to at
+  most once. Single-assignment locations with blocking read semantics
+  are known as \emph{IVars}~\cite{IStructures} and are a
+  well-established mechanism for enforcing determinism in parallel
   settings: they have appeared in Concurrent ML as
   @SyncVar@s~\cite{reppy-cml-book}; in the Intel Concurrent
-  Collections (abbreviated ``CnC'') system~\cite{CnC}; and have even been implemented
-  in hardware in Cray MTA machines~\cite{cray-mta}.  Although most of
-  these uses incorporate IVars into already-nondeterministic
-  programming environments, the \emph{monad-par} Haskell
-  library~\cite{monad-par} uses IVars in a
-  deterministic-by-construction setting, allowing user-created threads
-  to communicate through IVars without requiring the @IO@ monad.
-  Rather, operations that read and write IVars must run inside a @Par@
-  monad, thus encapsulating them inside otherwise pure programs, and
-  hence a program in which the only effects are @Par@ effects is
-  guaranteed to be deterministic.
+  Collections (abbreviated ``CnC'') system~\cite{CnC}; and have even
+  been implemented in hardware in Cray MTA machines~\cite{cray-mta}.
+  \lk{I'm not sure if this next part about monad-par belongs
+    here. Maybe it should be moved to, say, the LVish chapter when we
+    talk about how LVish extends monad-par.} Although most of these
+  uses incorporate IVars into already-nondeterministic programming
+  environments, the \emph{monad-par} Haskell library~\cite{monad-par}
+  uses IVars in a deterministic-by-construction setting, allowing
+  user-created threads to communicate through IVars without requiring
+  the @IO@ monad.  Rather, operations that read and write IVars must
+  run inside a @Par@ monad, thus encapsulating them inside otherwise
+  pure programs, and hence a program in which the only effects are
+  @Par@ effects is guaranteed to be deterministic.
+
+\item \emph{Programming with imperative disjoint parallelism.}
+  Finally, yet another approach to guaranteeing determinism is to
+  ensure that the state accessed by concurrent threads is
+  \emph{disjoint}.  Sophisticated permissions systems and type systems
+  make it possible for imperative programs to mutate state in
+  parallel, while guaranteeing that the same state is not accessed
+  simultaneously by multiple threads.  We refer to this style of
+  programming as \emph{imperative disjoint parallelism}, with
+  Deterministic Parallel Java (DPJ)~\cite{dpj-oopsla} as a prominent
+  example.
 \end{itemize}
+
+At first glance, the four programming models listed
+above---no-shared-state parallelism, dataflow parallelism,
+single-assignment parallelism, and imperative disjoint parallelism
+---all seem to have rather different mechanisms for exposing
+parallelism and for ensuring determinism.
+
+\lk{TODO: make this next chunk of text way less colloquial.  The idea
+  here is to say that there are two problems.  One is that a big
+  toolkit of unrelated choices is bad because what if we need to use
+  more than one?  It is not clear how well they compose.  The second
+  is that a big toolkit of unrelated choices is bad because it's more
+  to learn and reason about.  We show that this is unnecessary because
+  in fact they all fit into the same programming model.}
+
+Moreover, it might be fine if we just had a big toolkit of unrelated
+choices, and we just picked the right one for the job as needed, but
+what do we do when we want to implement an application that has
+multiple parallelizable kernels that span different points in this
+space?  For instance, what if we have an application that uses
+data-flow pipeline parallelism but also does disjoint parallel
+mutation of a store?
+
+So the question is, can we generalize and unify these points?  And the
+answer is, yes!  KPNs and single-assignment both fit nicely into the
+LVars programming model that I'm going to talk about, and, all four of
+these turn out to be compatible.  *And*, we can even generalize
+further, beyond what I've shown here.
+
+\lk{TODO: say something about monotonicity as a unifying principle.}
+
 In KPNs and other data-flow models, communication takes place over
 FIFO queues with ever-increasing \emph{channel histories}, while in
 IVar-based programming models such as CnC and monad-par, a shared data
