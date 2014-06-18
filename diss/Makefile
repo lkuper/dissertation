@@ -1,7 +1,8 @@
 NAME=dissertation
 UNAME := $(shell uname)
+SOURCES = $(wildcard *.tex *.bib) $(wildcard */*.tex) $(wildcard */figures/*.pdf)
 
-$(NAME).pdf: *.tex *.bib
+$(NAME).pdf: $(SOURCES)
 	pdflatex $(NAME).tex
 	bibtex $(NAME)
 	pdflatex $(NAME).tex
