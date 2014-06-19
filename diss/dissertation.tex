@@ -46,6 +46,11 @@
 % Use the @ symbol for simple inline code within prose:
 \lstMakeShortInline[]@
 
+% The annoying section-only section numbering is inherited from
+% amsbook, on which iuthesis-alt is based.  This is to bring back
+% chapter numbers in the section headings.
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+
 \title{Lattice-based Data Structures for Deterministic Parallel and
   Distributed Programming}
 
