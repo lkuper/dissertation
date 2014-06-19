@@ -1,0 +1,517 @@
+\chapter{Related Work\label{ch:related-work}} % 6
+
+\lk{Following stuff is from my proposal.}
+
+Work on deterministic parallel programming models is long-standing.
+As discussed in Section~\ref{s:intro}, the LVars model builds on long
+traditions of work on parallel programming models based on
+monotonically-growing shared data structures, and it provides a
+framework for generalizing and unifying these existing approaches.  In
+this section I describe some more recent contributions to the
+literature.
+
+As we have seen, what deterministic parallel programming models have
+in common is that they all must do something to restrict access to
+mutable state shared among concurrent computations so that schedule
+nondeterminism cannot be observed.  Depending on the model,
+restricting access to shared mutable state might involve disallowing
+sharing entirely \cite{dph}, only allowing single assignments to
+shared references \cite{Tesler-1968, IStructures, CnC}, allowing
+sharing only by a limited form of message passing \cite{Kahn-1974},
+ensuring that concurrent accesses to shared state are disjoint
+\cite{dpj-oopsla}, resolving conflicting updates after the fact
+\cite{concurrent-revisions-haskell11}, or some combination of these
+approaches.  These constraints can be imposed at the language or API
+level, within a type system, or at runtime.
+
+\subsection{Deterministic Parallel Java (DPJ)}
+
+DPJ \cite{dpj-oopsla, dpj-hotpar09} is a deterministic language
+consisting of a system of annotations for Java code.  A sophisticated
+region-based type system ensures that a mutable region of the heap is,
+essentially, passed linearly to an exclusive writer, thereby ensuring
+that the state accessed by concurrent threads is disjoint.  DPJ does,
+however, provide a way to unsafely assert that operations commute with
+one another (using the @commuteswith@ form) to enable concurrent
+mutation.
+
+The LVars model differs from DPJ in that it allows overlapping shared
+state between threads as the default.  Moreover, since LVar effects
+are already commutative, we avoid the need for @commuteswith@
+annotations.  Finally, it is worth noting that while in DPJ,
+commutativity annotations have to appear in application-level code, in
+LVish only the data-structure author needs to write trusted code. The
+application programmer can run untrusted code that still enjoys a
+(quasi-)determinism guarantee, because only (quasi-)deterministic
+programs can be expressed as LVish @Par@ computations.
+
+More recently, Bocchino \etal~\cite{dpj-popl} proposed a type and
+effect system that allows for the incorporation of nondeterministic
+sections of code in DPJ.  The goal here is different from ours: while
+they aim to support \emph{intentionally} nondeterministic computations
+such as those arising from optimization problems like branch-and-bound
+search, the quasi-determinism in LVish arises as a result of schedule
+nondeterminism.
+
+\subsection{FlowPools}
+
+Prokopec \etal~\cite{flowpools} recently proposed a data structure
+with an API closely related to LVars extended with freezing and
+handlers: a FlowPool is a bag (that is, a multiset) that allows
+concurrent insertions but forbids removals, a @seal@ operation that
+forbids further updates, and combinators like @foreach@ that invoke
+callbacks as data arrives in the pool.  To retain determinism, the
+@seal@ operation requires explicitly passing the expected bag
+\emph{size} as an argument, and the program will raise an exception if
+the bag goes over the expected size.
+
+While this interface has a flavor similar to that of LVars, it lacks
+the ability to detect quiescence, which is crucial for expressing
+algorithms like graph traversal, and the @seal@ operation is awkward
+to use when the structure of data is not known in advance.  By
+contrast, the @freeze@ operation on LVars does not require such
+advance knowledge, but moves the model into the realm of
+quasi-determinism.  Another important difference is the fact that
+LVars are \emph{data structure-generic}: both our formalism and our
+library support an unlimited collection of data structures, whereas
+FlowPools are specialized to bags.
+
+\subsection{Concurrent Revisions}
+
+The Concurrent Revisions (CR)~\cite{concurrent-revisions-haskell11}
+programming model uses isolation types to distinguish regions of the
+heap shared by multiple mutators.  Rather than enforcing exclusive
+access in the style of DPJ, CR clones a copy of the state for each
+mutator, using a deterministic ``merge function'' for resolving
+conflicts in local copies at join points.
+
+In CR, variables can be annotated as being shared between a ``joiner''
+thread and a ``joinee'' thread.  Unlike the least-upper-bound writes
+of LVars, CR merge functions are \emph{not} necessarily commutative;
+indeed, the default CR merge function is ``joiner wins''.  Determinism
+is enforced by the programming model allowing the programmer to
+specify which of two writing threads should prevail, regardless of the
+order in which those writes arrive, and the states that a shared
+variable can take on need not form a lattice.  Still, semilattices
+turn up in the metatheory of CR: in particular, Burckhardt and
+Leijen~\cite{semantics-concurrent-revisions} show that, for any two
+vertices in a CR revision diagram, there exists a \emph{greatest
+  common ancestor} state that can be used to determine what changes
+each side has made---an interesting duality with our model (in which
+any two LVar states have a lub).\lk{TODO: Write to them and ask them
+  if it's a join-semilattice or a meet-semilattice!}
+
+Although versioned variables in CR could model lattice-based data
+structures---if they used least upper bound as their merge function
+for conflicts---the programming model nevertheless differs from the
+LVars model in that effects only become visible at the end of parallel
+regions, as opposed to the asynchronous communication within parallel
+regions that the LVars model allows.  This semantics precludes the use
+of traditional lock-free data structures for representing versioned
+variables.
+
+\subsection{Bloom and Bloom$^L$}
+
+The Bloom language for distributed database programming guarantees
+eventual consistency for distributed data collections that are updated
+monotonically.  The initial formulation of Bloom~\cite{bloom-cidr} had
+a notion of monotonicity based on set inclusion, analogous to the
+store ordering used in the proof of determinism for the (IVar-based)
+CnC system~\cite{CnC}.  More recently, Conway \etal~\cite{blooml}
+generalized Bloom to a more flexible lattice-parameterized system,
+Bloom$^L$, in a manner analogous to our generalization from IVars to
+LVars.  Bloom$^L$ combines ideas from CRDTs with \emph{monotonic
+  logic}, resulting in a lattice-parameterized, confluent language
+that is a close relative of LVish.  A monotonicity analysis pass rules
+out programs that would perform non-monotonic operations on
+distributed data collections, whereas in the LVars model, monotonicity
+is enforced by the API presented by LVars.  Another difference between
+Bloom($^L$) and the LVars model is that the former does not have a
+notion of quasi-determinism.\lk{TODO: make sure this is the case---I
+  think there might be some sort of way to unsafely peek in Bloom, but
+  it's ruled out by the CALM analysis.}  Finally, since LVish is
+implemented as a Haskell library (whereas Bloom($^L$) is implemented
+as a domain-specific language embedded in Ruby), we can rely on
+Haskell's static type system for fine-grained effect tracking and
+monadic encapsulation of LVar effects.
+
+\lk{Following stuff is from the FHPC paper, and might get axed.}
+
+\if{0}
+Work on deterministic parallel programming
+models is long-standing; some milestones include:
+
+\begin{itemize}
+\item 1968: {\em single-assignment} parallel languages \cite{Tesler-1968};
+\item 1974: Kahn process networks \cite{Kahn-1974};
+\item 1980s: data-flow computing \cite{IStructures}, data-parallel
+              languages \cite{Sabot_Paralation};
+\item 1990s: continued progress on parallel functional programming 
+      \cite{ph,blelloch_something,hammond_par_90s};
+\item 2000s: introduction of type systems powerful enough to track
+  and restrict effects in imperative programs \cite{par_by_default};
+  new data-parallel models such as MapReduce \cite{MapReduce}.
+\end{itemize}
+\fi{}
+
+Work on deterministic parallel programming
+models is long-standing.
+In addition to the single-assignment and KPN models already
+discussed, here we consider a few recent contributions to the literature.
+
+\paragraph{Deterministic Parallel Java (DPJ)}
+
+% As we have presented it, $\lambdaLVar$ enforces single assignment
+% dynamically, but it is also compatible with static techniques, such as
+% affine type systems, to enforce that LVar locations are handled
+% linearly.
+% \lk{I don't think we should say this!  Affine types, linear types,
+%   etc., would be fine for enforcing single assignment \emph{if} that's
+%   all we had to do, but I'm pretty sure they can't enforce monotonic
+%   multiple assignment; you would need something fancier for that.}
+%   Moreover, in the presence of linearity guarantees it is
+% possible to remove the restrictions on $\GET$ and $\PUT$.  The proof
+% of determinism would rest on the fact that no other reduction would be
+% concurrently possible on a linear location.\rn{Lindsey -- what do you
+%   think of that?  Fair statement?  Tweak?}
+% \lk{Wait.  An affine type system is enough to enforce single
+%   assignment, but how would it be enough to enforce monotonic multiple
+%   assignment?  Moreover, even if the affine type system can enforce
+%   single assignment in a particular thread, how would it prevent
+%   different threads from writing to the same location?  I don't know
+%   how you would enforce that prior to runtime except by serializing
+%   the whole program.}
+
+DPJ \cite{dpj-hotpar09} is a deterministic language
+consisting of a system of annotations for Java code.  A sophisticated
+region-based type system ensures that a mutable region of the heap is,
+essentially, passed linearly to an exclusive writer.
+While a linear type system or region system like that of DPJ
+could be used to enforce single assignment statically, accommodating $\lambdaLVar$'s
+semantics would involve parameterizing the
+type system by the user-specified lattice.
+%% ---a direction of
+%% inquiry that we leave for future work.
+
+DPJ also
+provides a way to unsafely assert that operations commute with one another (using the @commuteswith@ form) to enable
+concurrent mutation.  However, DPJ does not provide direct support for
+modeling message-passing (\eg, KPNs) or asynchronous communication
+within parallel regions.  
+\rn{DOUBLE CHECK THIS.}
+Finally, a key difference between the $\lambdaLVar$ model and DPJ 
+is that $\lambdaLVar$ retains determinism by restricting {\em
+  what} can be read or written, rather than by restricting 
+%% {\em who} can read or write.
+the semantics of reads and writes themselves.
+
+
+%% We believe that DPJ's techniques are largely orthogonal to, and
+%% compatible with, the work we have presented on $\lambdaLVar$.
+%
+%% \new{For example, while $\lambdaLVar$, like most systems based on
+%%   $IVars$, relies on dynamic enforcement of $\PUT$ errors, it would
+%%   also be possible to use DPJ-style region annotations to remove the
+%%   need for dynamic checks.}
+
+% \rn{One distinction vs. DPJ and other strictly nested or BSP models
+%   is that lambda-par models programs in the asynchronous/dataflow
+%   tradition, which is getting a LOT of traction recently... Akka
+%   dataflow concurrency, Chapel, etc etc, making it important to have
+%   semantic foundations for this class of programming models.}
+
+% \rn{I think something we need to argue is that we are more EXPRESSIVE
+%   than DPJ.  DPJ is in some sense not as well motivated.  They want to
+%   make certain restricted imperative programs deterministic (mostly
+%   divide-and-conquer it seems), but what's the strong motivation when
+%   you can just write those in a purely functional way?  We, on the
+%   other hand, are talking about something DOES NOT come for free with
+%   using Haskell.. communicating, asynchronous agents.}
+
+% \note{Essentially the OPPOSITE of $\lambdaLVar$, focused primarily on
+%   inplace operations on disjoint memory, no communication and
+%   synchronization within parallel regions.  We focus on which building
+%   up a class of safe operations on shared state.}
+
+
+\paragraph{Concurrent Revisions}
+The Concurrent Revisions (CR) 
+% \cite{concurrent-revisions-oopsla} 
+\cite{concurrent-revisions-haskell11}
+%http://research.microsoft.com/pubs/151805/PrettierConcurrency-Haskell2011.pdf
+programming model uses isolation types to distinguish regions of the heap shared
+by multiple mutators.  Rather than enforcing exclusive access, CR
+clones a copy of the state for each mutator, using a
+deterministic policy for resolving conflicts in local copies.
+% (hence the name of the system, which draws inspiration from version control systems).  
+%
+The management of shared variables in CR is tightly coupled to a
+fork-join control structure, and the implementation of these variables
+is similar to reduction variables in other languages (\eg, Cilk
+{\em hyperobjects}).
+% \cite{cilk-hyperobjects}).
+%
+CR charts an important new area in the deterministic-parallelism
+design space, but one that differs significantly from
+% explores a very different part of the design space that
+$\lambdaLVar$.  CR could be used to model similar types of data
+structures---if versioned variables used least upper bound as their merge function
+for conflicts---but effects would only become visible at the end of
+parallel regions, rather than $\lambdaLVar$'s asynchronous communication within
+parallel regions.
+
+% , targeting imperative multiple-assignment and {\em not}
+% asynchronous, data-driven communication.
+
+% \note{Nevertheless, CR could be used to build a practical
+%   implementation of a $\lambdaLVar$-like programming model by defining
+%   LVars as shared CR versioned variables the merge operation as lub.}
+
+\paragraph{Bloom and Bloom$^L$}
+\lk{Augh, I really want to mention CRDTs, but no room!}
+% Turning our attention to research from the distributed systems community,
+% Bloom \cite{bloom-website} is a declarative, domain-specific language 
+% embedded in Ruby, designed for expressing order-independent, distributed
+% computations that reach \emph{eventual consistency} \cite{eventual-consistency}.
+
+%% In the database literature, there is a body of work on {\em monotonic
+%%   logic} that has recently been leveraged by the {Bloom language} 
+%% to achieve \emph{eventual consistency} in distributed programs.  
+% Bloom \cite{bloom-website} is a language, embedded in Ruby, for programming such systems.
+%
+In the distributed systems literature, \emph{eventually
+  consistent} systems \cite{eventual-consistency} 
+leverage the idea of monotonicity to guarantee that,
+for instance, nodes in a distributed database eventually agree.
+The Bloom language for distributed database programming \cite{bloom-cidr} guarantees eventual consistency for
+distributed data collections that are updated monotonically.
+The initial formulation of Bloom 
+had a notion of monotonicity based on \emph{set containment},
+analogous to the store ordering for single-assignment languages given in 
+Definition~\ref{def:leqstore-cnc}.
+However, recent work
+by Conway \etal~\cite{blooml} generalizes Bloom to a more flexible
+lattice-parameterized system, Bloom$^L$, in a manner analogous
+to our generalization from IVars to LVars.
+Bloom$^L$ comes with a library of built-in lattice types and also
+allows for users to implement their own lattice types as Ruby classes.
+Although Conway \etal~do not give a proof of eventual consistency for
+Bloom$^L$, our determinism result for $\lambdaLVar$ suggests that
+%% generalizing from a set-containment-based 
+%% notion of monotonicity to
+%% one parameterized by a user-defined lattice 
+their generalization is indeed safe.
+Moreover, although the goals of Bloom$^L$
+% (being a pure language with no shared state)
+differ from those of LVars, we believe that Bloom$^L$ bodes well for
+programmers' willingness to use lattice-based data structures,
+and lattice-parameterized languages based on them, to address
+real-world programming challenges.
+
+\if{0}
+Since the goal of Bloom$^L$ is to enforce eventual consistency among
+distributed replicas (rather than determinism), a read of a variable
+in Bloom$^L$ is essentially a write into a local replica of the least
+upper bound of all other replicas' copies of its value.  Therefore
+Bloom$^L$ does not use threshold reads, which are necessary in the
+shared-state LVar setting.
+\fi{}
+
+%% LK: Axed for space. :(
+%% \paragraph{Quantum programming}
+%% The $\lambdaLVar$ semantics is reminiscent of the semantics of quantum
+%% programming languages
+%% that extend a conventional $\lambda$-calculus with a store
+%% that maintains the quantum state. Because of quantum parallelism, the
+%% quantum state can be accessed by many threads in parallel, but
+%% only through a restricted interface.
+%% As a concrete example, the language
+%% designed by Selinger and Valiron~\cite{valiron} allows only the following
+%%  operations on quantum data:
+%% (1) ``appending'' to the current data using the tensor product;
+%% (2) performing a unitary operation that must, by definition, act linearly and
+%% uniformly on the data; and
+%% (3) selecting a set of orthogonal subspaces and performing a measurement
+%% that projects the quantum state onto one of the subspaces.
+%% These operations correspond roughly to $\lambdaLVar$'s $\NEW$, $\PUT$, and $\GET$.  
+%% Quantum mechanics may serve as a source of inspiration
+%% when designing operations like $\BUMP$ that introduce limited
+%% nondeterminism.
+
+\lk{Following stuff is from the POPL paper, and might get axed.}
+
+\section{Related Work}
+\label{section:related}
+
+%% Cut for space -- LK
+
+%% As we discussed in Section~\ref{section:intro}, what deterministic
+%% parallel programming models have in common is that they all must do
+%% something to restrict access to mutable state shared among
+%% concurrent computations so that schedule nondeterminism cannot be
+%% observed.  Depending on the model, restricting access to shared
+%% mutable state might involve disallowing sharing entirely \cite{dph},
+%% only allowing single assignments to shared references
+%% \cite{Tesler-1968, IStructures, CnC}, allowing sharing only by a
+%% limited form of message passing \cite{Kahn-1974}, ensuring that
+%% concurrent accesses to shared state are disjoint \cite{dpj-oopsla},
+%% resolving conflicting updates after the fact
+%% \cite{concurrent-revisions-haskell11}, or some combination of these
+%% approaches.  These constraints can be imposed at the language or API
+%% level, within a type system, or at runtime.  In this section, we
+%% compare LVish with various examples of previous work in the area.
+
+\paragraph{Monotonic data structures: traditional approaches}
+
+LVish builds on two long traditions of work on parallel programming
+models based on monotonically-growing shared data structures:
+\begin{itemize}
+\item In {\em Kahn process networks} (KPNs) \cite{Kahn-1974}, as well
+  as in the more restricted {\em synchronous data flow} systems
+  \cite{Lee-sdn}, a network of processes communicate with each other
+  through blocking FIFO channels with ever-growing {\em channel
+    histories}.  Each process computes a sequential, monotonic
+  function from the history of its inputs to the history of its
+  outputs, enabling pipeline parallelism.  KPNs are the basis for
+  deterministic stream-processing languages such as StreamIt
+  \cite{streamit-asplos}.
+\item In parallel {\em single-assignment languages}
+  \cite{Tesler-1968}, ``full/empty'' bits are associated with heap
+  locations so that they may be written to at most once.
+  Single-assignment locations with blocking read semantics---that is,
+  \emph{IVars} \cite{IStructures}---have appeared in Concurrent ML as
+  @SyncVar@s \cite{reppy-cml-book}; in the Intel Concurrent
+  Collections system \cite{CnC}; in languages and libraries for
+  high-performance computing, such as Chapel \cite{chapel} and the
+  Qthreads library \cite{qthreads}; and have even been implemented in
+  hardware in Cray MTA machines \cite{cray-mta}.  Although most of
+  these uses incorporate IVars into already-nondeterministic
+  programming environments, Haskell's @Par@
+  monad~\cite{monad-par}---on which our LVish implementation is
+  based---uses IVars in a deterministic-by-construction setting,
+  allowing user-created threads to communicate through IVars without
+  requiring @IO@, so that such communication can occur anywhere inside
+  pure programs.
+\end{itemize}
+LVars are general enough to subsume both IVars and KPNs: a lattice of
+channel histories with a prefix ordering allows LVars to represent
+FIFO channels that implement a Kahn process network, whereas an LVar
+with ``empty'' and ``full'' states (where $\mathit{empty} <
+\mathit{full}$) behaves like an IVar, as we described in
+Section~\ref{section:lvars-refresher}.  Hence LVars provide a
+framework for generalizing and unifying these two existing approaches
+to deterministic parallelism.
+
+\paragraph{Deterministic Parallel Java (DPJ)}
+
+DPJ \cite{dpj-oopsla, dpj-hotpar09} is a deterministic language
+consisting of a system of annotations for Java code.  A sophisticated
+region-based type system ensures that a mutable region of the heap is,
+essentially, passed linearly to an exclusive writer, thereby ensuring
+that the state accessed by concurrent threads is disjoint.  DPJ does,
+however, provide a way to unsafely assert that operations commute with
+one another (using the @commuteswith@ form) to enable concurrent
+mutation.
+
+LVish differs from DPJ in that it allows overlapping shared state
+between threads as the default.  Moreover, since LVar effects are
+already commutative, we avoid the need for @commuteswith@ annotations.
+Finally, it is worth noting that while in DPJ, commutativity
+annotations have to appear in application-level code, in LVish only
+the data-structure author needs to write trusted code. The application
+programmer can run untrusted code that still enjoys a (quasi-)determinism guarantee, because only (quasi-)deterministic programs can be expressed as LVish @Par@
+computations.
+
+More recently, Bocchino \etal~\cite{dpj-popl} proposed a type and effect system that
+allows for the incorporation of nondeterministic
+sections of code in DPJ.  The goal here is different from ours: while they
+aim to support \emph{intentionally} nondeterministic computations such
+as those arising from optimization problems like branch-and-bound
+search, LVish's quasi-determinism arises as a result of schedule
+nondeterminism.
+
+\paragraph{FlowPools}
+
+Prokopec \etal~\cite{flowpools} recently proposed a data structure with
+an API closely related to ideas in LVish: a FlowPool is a bag that allows
+concurrent insertions but forbids removals, a {\tt seal} operation that forbids
+further updates, and combinators like {\tt foreach} that invoke callbacks as
+data arrives in the pool.  To retain determinism, the {\tt seal} operation
+requires explicitly passing the expected bag \emph{size} as an argument, and the
+program will raise an exception if the bag goes over the expected size.
+
+While
+this interface has a flavor similar to LVish, it lacks the ability to
+detect quiescence, which is crucial for supporting examples like graph
+traversal, and the {\tt seal} operation is awkward to use when the structure of
+data is not known in advance.  By contrast, our @freeze@ operation
+is more expressive and convenient, but moves the
+model into the realm of quasi-determinism.  Another important difference is the
+fact that LVish is \emph{data structure-generic}: both our formalism and our library
+support an unlimited collection of data structures, whereas FlowPools 
+are specialized to bags.
+Nevertheless, FlowPools represent a ``sweet spot'' in the deterministic parallel design space: by
+allowing handlers but not general freezing, they retain determinism
+while improving on the expressivity of the original LVars model.  We
+claim that, with our addition of handlers, LVish generalizes FlowPools
+to add support for arbitrary lattice-based data structures.
+
+\paragraph{Concurrent Revisions}
+
+The Concurrent Revisions (CR)~\cite{concurrent-revisions-haskell11} programming model
+ uses isolation types to distinguish regions of the heap shared
+by multiple mutators.  Rather than enforcing exclusive access, CR
+clones a copy of the state for each mutator, using a
+deterministic ``merge function'' for resolving conflicts in local copies at join points.
+Unlike LVish's least-upper-bound writes, CR merge functions are \emph{not} necessarily
+commutative; the default CR merge function is ``joiner wins''.
+Still, semilattices turn up in the metatheory of CR: in particular,
+Burckhardt and Leijen~\cite{semantics-concurrent-revisions} show that,
+for any two vertices in a CR revision diagram, there exists a
+\emph{greatest common ancestor} state which can be used to determine
+what changes each side has made---an interesting duality with our
+model (in which any two LVar states have a lub).
+
+While CR could be used to model similar types of data structures to LVish---if
+versioned variables used least upper bound as their merge function for
+conflicts---effects would only become visible at the end of parallel regions,
+rather than LVish's asynchronous communication within parallel regions.  This
+precludes the use of traditional lock-free data structures as a representation.
+
+%% The management of shared variables in CR is tightly coupled to a
+%% fork-join control structure, and the implementation of these variables
+%% is similar to reduction variables in other languages (\eg, Cilk
+%% {\em hyperobjects}).
+%% CR charts an important new area in the deterministic-parallelism
+%% design space, but one that differs significantly from
+%% LVish.
+
+\paragraph{Conflict-free replicated data types}
+
+In the distributed systems literature, \emph{eventually consistent}
+systems based on \emph{conflict-free replicated data types}
+(CRDTs)~\cite{crdts} leverage lattice properties to guarantee that
+replicas in a distributed database eventually agree.  Unlike LVars,
+CRDTs allow intermediate states to be observed: if two replicas are
+updated independently, reads of those replicas may disagree until a
+(least-upper-bound) merge operation takes place.  Various
+data-structure-specific techniques can ensure that non-monotonic
+updates (such as removal of elements from a set) are not lost.
+
+The Bloom$^L$ language for distributed database programming
+\cite{blooml} combines CRDTs with \emph{monotonic logic}, resulting in a
+lattice-parameterized, confluent language that is a close relative of
+LVish.  A monotonicity analysis pass rules out programs
+that would perform non-monotonic operations on distributed data
+collections, whereas in LVish, monotonicity is enforced by the LVar
+API.
+
+Future work will further explore the relationship between LVars and
+CRDTs: in one direction, we will investigate LVar-based data
+structures inspired by CRDTs that support non-monotonic operations; in
+the other direction, we will investigate the feasibility and
+usefulness of LVar threshold reads in a distributed setting.
+
+\TODO{Add stuff from PLDI paper, maybe?}
+
+\TODO{Add stuff from DISC submission.}
