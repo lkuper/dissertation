@@ -1,4 +1,4 @@
-\documentclass{iuthesis}
+\documentclass{iuthesis-alt}
 
 \usepackage{graphicx}
 \usepackage{url}
@@ -61,33 +61,32 @@
 \submitdate{August 2014}
 \acceptdate{08/29/2012}
 
-% for use with the iuthesis-alt.cls
-% \parskip=6pt
-% \parindent=0pt
-% \normalparindent=0pt
-
-% Helpful for TODO and TBD in the output of the file (in red)
-\newcommand{\TBD}[0]{{\color{red}TBD}}
-\newcommand{\TODO}[1]{\noindent{\color{red} TODO: #1}\\}
+% For use with iuthesis-alt.cls.
+\parskip=6pt
+\parindent=0pt
+\normalparindent=0pt
 
 \makeindex
 
 \begin{document}
 \frontmatter
 
-% somewhere in here is also the dedication, which is not the same as the
-% acknowledgements, but sort of similar.
 \begin{acknowledgements}
-TBD
+\TODO{Acknowledgments.}
 \end{acknowledgements}
 
+\begin{dedication}
+\TODO{Dedication.}
+\end{dedication}
+
 \begin{abstract}
-Abstract Here
+\TODO{Abstract.}
 \end{abstract}
 
 \maketitle
 \signaturepage
 \copyrightpage
+\makeack
 \makededication
 \makeabstract
 \tableofcontents
