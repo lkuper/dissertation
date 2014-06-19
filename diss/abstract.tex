@@ -1,0 +1,76 @@
+\TODO{Edit this.}
+
+\lk{Dumped abstract from FHPC paper.}
+
+  Programs written using a {\em deterministic-by-construction} model
+  of parallel computation are guaranteed to always produce the same
+  observable results, offering programmers freedom from subtle,
+  hard-to-reproduce nondeterministic bugs that are the scourge of
+  parallel software.
+  We present \emph{LVars}, a new model for deterministic-by-construction parallel
+  programming that generalizes existing single-assignment models to
+  allow multiple assignments that are monotonically increasing with
+  respect to a user-specified lattice.  
+  LVars ensure determinism by
+  allowing only monotonic writes and ``threshold'' reads that block
+  until a lower bound is reached.  We give a proof of determinism
+  and a prototype implementation
+  for a language with LVars
+  and describe how to extend the LVars model to support a limited form of
+  nondeterminism that admits failures but never wrong answers.
+%   \rn{I'm a bit worried about saying ``both those with shared state''
+%     since shared write-once state is quite a bit different than what
+%     most people usually think of.}
+
+\if{0}
+  There is a need for new proposals that add diversity to the current
+  menu of determistic parallel programming options.
+  This paper presents a variant of the $\lambda$-calculus, $\lambdaLVar$: a
+  parallel, call-by-value calculus that includes shared mutable
+  variables whose states occupy a join semilattice and move
+  monotonically upwards in that lattice.  
+  In this paper we prove $\lambdaLVar$ deterministic.  
+  Further, we explain how $\lambdaLVar$ generalizes a number of
+  existing deterministic parallel programming models, and provides a
+  new foundation for exploring {limited} forms of nondeterminism.
+\fi{}
+
+\lk{Dumped abstract from POPL paper.}
+
+Deterministic-by-construction parallel programming models offer the advantages of parallel speedup while avoiding the nondeterministic, hard-to-reproduce bugs that plague fully concurrent code.
+A principled approach to deterministic-by-construction parallel programming with
+shared state is offered by \emph{LVars}: shared memory locations whose semantics
+are defined in terms of an application-specific lattice.  Writes to an LVar take the
+least upper bound of the old and new values with respect to the lattice, while
+reads from an LVar can observe only that its contents have crossed a specified
+threshold in the lattice.  Although it guarantees determinism, this interface is
+quite limited.
+
+We extend LVars in two ways.  First, we add the ability to ``freeze'' and then
+read the contents of an LVar directly.  Second, we add the ability to attach
+event handlers to an LVar, triggering a callback when the LVar's value changes.
+Together, handlers and freezing enable an expressive and useful style of
+parallel programming.  We prove that in a language where communication takes
+place through these extended LVars, programs are at worst \emph{quasi-deterministic}: on
+every run, they either produce the same answer or raise an error.  We
+demonstrate the viability of our approach by implementing a library for Haskell
+supporting a variety of LVar-based data structures, together with a case
+study that illustrates the programming model and yields promising parallel
+speedup.
+
+\lk{Dumped abstract from DISC submission.}
+
+Convergent replicated data types, or CvRDTs, are lattice-based data
+structures for enforcing the eventual consistency of replicated
+objects in a distributed system.  Although CvRDTs are provably
+eventually consistent, queries of CvRDTs nevertheless allow
+inconsistent intermediate states of replicas to be observed; and
+although in practice, many systems allow a mix of eventually consistent and
+strongly consistent queries, CvRDTs only support the former.  Taking
+inspiration from our previous work on \emph{LVars} for deterministic
+parallel programming, we show how to extend CvRDTs to support
+deterministic, strongly consistent queries using a mechanism called
+\emph{threshold queries}.  The threshold query technique generalizes
+to any lattice, and hence any CvRDT, and allows deterministic
+observations to be made of replicated objects before the replicas'
+states have converged.
