@@ -12,7 +12,7 @@ nondeterministic bugs in parallel code.  While there are many ways to
 construct deterministic parallel programs and to verify the
 determinism of individual programs, only a
 deterministic-by-construction programming model can provide a
-\emph{language-level} guarantee of determinism, ensuring that
+\emph{language-level} guarantee of determinism:
 deterministic programs are the only programs that can be expressed
 within the model.
 
@@ -46,16 +46,11 @@ returns the location's contents will nondeterministically return $3$
 or $4$, depending on the order in which the first two computations
 ran.  Therefore, if a parallel programming model is to guarantee
 determinism by construction, it must necessarily limit sharing of
-mutable state between parallel tasks.
-
-\section{The deterministic-by-construction parallel programming landscape}
-
-Much work has been done on deterministic-by-construction parallel
-programming models over the years and decades.  Taking a moment to
-survey the landscape, we find:
+mutable state between parallel tasks in some way.
+The possibilities include:
 
 \begin{itemize}
-\item \emph{No-shared-state parallel programming.}  One classic
+\item \emph{No-shared-state parallelism.}  One classic
   approach to guaranteeing determinism in a parallel programming model
   is to allow \emph{no} shared mutable state between tasks, forcing
   tasks to produce values independently.  An example of
@@ -70,9 +65,11 @@ survey the landscape, we find:
     parallelism}, such as Data Parallel Haskell~\cite{dph, dph-status}
   or the River Trail API for JavaScript~\cite{river-trail}, each of
   which extend existing languages with \emph{parallel array} data
-  types and operations on them.
+  types and (observably) pure operations on them.
+  \lk{Does it make sense to say that DPH is observably pure?  It does
+    mutate arrays.}
 
-\item \emph{Kahn process networks and data-flow programming.}  In
+\item \emph{Data-flow parallelism.}  In
   \emph{Kahn process networks} (KPNs)~\cite{Kahn-1974}, as well as in
   the more restricted \emph{synchronous data flow}
   systems~\cite{Lee-sdn}, a network of independent ``computing
@@ -87,7 +84,7 @@ survey the landscape, we find:
   for deterministic stream-processing languages such as
   StreamIt~\cite{streamit-asplos}.
 
-\item \emph{Single-assignment parallel programming with IVars.}  In
+\item \emph{Single-assignment parallelism.}  In
   parallel \emph{single-assignment} languages, ``full/empty'' bits are
   associated with memory locations so that they may be written to at
   most once. Single-assignment locations with blocking read semantics
@@ -109,7 +106,7 @@ survey the landscape, we find:
   pure programs, and hence a program in which the only effects are
   @Par@ effects is guaranteed to be deterministic.
 
-\item \emph{Programming with imperative disjoint parallelism.}
+\item \emph{Imperative disjoint parallelism.}
   Finally, yet another approach to guaranteeing determinism is to
   ensure that the state accessed by concurrent threads is
   \emph{disjoint}.  Sophisticated permissions systems and type systems
@@ -121,11 +118,13 @@ survey the landscape, we find:
   example.
 \end{itemize}
 
-At first glance, the four programming models listed
-above---no-shared-state parallelism, dataflow parallelism,
+At first glance, the four parallel programming models listed
+above---no-shared-state parallelism, data-flow parallelism,
 single-assignment parallelism, and imperative disjoint parallelism
 ---all seem to have rather different mechanisms for exposing
 parallelism and for ensuring determinism.
+
+\lk{Left off editing here.}
 
 \lk{TODO: make this next chunk of text way less colloquial.  The idea
   here is to say that there are two problems.  One is that a big
@@ -138,9 +137,9 @@ parallelism and for ensuring determinism.
 Moreover, it might be fine if we just had a big toolkit of unrelated
 choices, and we just picked the right one for the job as needed, but
 what do we do when we want to implement an application that has
-multiple parallelizable kernels that span different points in this
-space?  For instance, what if we have an application that uses
-data-flow pipeline parallelism but also does disjoint parallel
+multiple parallelizable kernels that are best suited to different programming models?
+For instance, what if we have an application that uses
+data-flow pipeline parallelism, but also disjoint parallel
 mutation of a store?
 
 So the question is, can we generalize and unify these points?  And the
