@@ -19,7 +19,7 @@
   * add handlers/quiescence/freezing to the semantics
   * quasi-determinism proof outline
 
-4. The LVish Library: Implementation, Benchmarks, and Case Studies
+4. The LVish Library: Implementation and Evaluation
   * the LVish implementation overview from the POPL paper
   * idea: combine evaluation sections from all our papers that have them
   * Benchmarks from the FHPC paper?  (Maybe not -- these are basically superseded by the POPL paper.)
