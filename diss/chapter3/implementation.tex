@@ -93,7 +93,7 @@ a finite map that was simply protected by a global lock would force all parallel
 threads to sequentialize their access.  Thus, we expect data structure authors
 to draw from the extensive literature on scalable parallel data structures,
 employing techniques like fine-grained locking and lock-free data
-structures~\cite{art}.  Data structures that fit into the $\LVish$ model have a
+structures~\cite{art}.  Data structures that fit into the LVish model have a
 special advantage: because all updates must commute, it may be possible to avoid
 the expensive synchronization which \emph{must} be used for non-commutative
 operations~\cite{lawsOfOrder}.  And in any case, monotonic data structures are usually
@@ -110,11 +110,11 @@ information'' over time.  In a lattice, the smallest such pieces are called the
 \emph{atoms} of the lattice: they are elements not equal to $\bot$, but for
 which the only smaller element is $\bot$.  Lattices for which every element is
 the lub of some set of atoms are called \emph{atomistic}, and in practice most
-application-specific lattices used by $\LVish$ programs 
+application-specific lattices used by LVish programs 
 have this property---especially those whose elements represent
 collections.
 
-In general, the $\LVish$ primitives allow arbitrarily large queries and updates
+In general, the LVish primitives allow arbitrarily large queries and updates
 to an LVar.  But for an atomistic lattice, the corresponding data structure
 usually exposes operations that work at the atom level, semantically limiting
 @put@s to atoms, @get@s to threshold sets of atoms, and event sets to sets of
@@ -136,12 +136,12 @@ to easily and efficiently communicate such changes between @put@s and
 
 While we have emphasized the commutativity of least upper bounds, they also
 provide another important property: \emph{idempotence}, meaning that
-$\userlub{d}{d} = d$ for any element $d$.  In $\LVish$ terms, repeated @put@s or @freeze@s
+$\userlub{d}{d} = d$ for any element $d$.  In LVish terms, repeated @put@s or @freeze@s
 have no effect, and since these are the only way to modify the store, the
-result is that $e; e$ behaves the same as $e$ for any $\LVish$ expression $e$.  
+result is that $e; e$ behaves the same as $e$ for any LVish expression $e$.  
 Idempotence has already been recognized as a useful property for work-stealing
 scheduling~\cite{idempotent}: if the scheduler is allowed to occasionally duplicate work, it is
-possible to substantially save on synchronization costs.  Since $\LVish$
+possible to substantially save on synchronization costs.  Since LVish
 computations are guaranteed to be idempotent, we could use such a scheduler
 (for now we use the standard Chase-Lev deque~\cite{ChaseLev}).  But idempotence
 also helps us deal with races between @put@ and @get@/@addHandler@, as we explain below.

@@ -1,14 +1,14 @@
-\section{$\LVish$, Formally}\label{section:language}
+\section{LVish, Formally}\label{section:language}
 
-In this section, we present a core calculus for $\LVish$---in particular, a
+In this section, we present a core calculus for LVish---in particular, a
 quasi-deterministic, parallel, call-by-value $\lambda$-calculus extended with a
 store containing LVars.  It extends the original LVar formalism to support event
 handlers and freezing.  In comparison to the informal description given in the
 last two sections, we make two simplifications to keep the model lightweight:
 \begin{itemize}
-\item We parameterize the definition of the $\LVish$ calculus by a \emph{single}
+\item We parameterize the definition of the LVish calculus by a \emph{single}
   application-specific lattice, representing the set of states that LVars in the
-  calculus can take on. Therefore $\LVish$ is really a \emph{family} of
+  calculus can take on. Therefore LVish is really a \emph{family} of
   calculi, varying by choice of lattice.  Multiple lattices can in principle be
   encoded using a sum construction, so this modeling choice is just to keep the
   presentation simple; in any case, our Haskell implementation supports multiple
@@ -68,7 +68,7 @@ context.
 %% the state of an LVar with an element $d$ from the application-specific set
 %% $D$, and the application-specific $\userleq$ operation (and the lub operation
 %% it induces) would suffice to define $\PUT$ and $\GET$.  However,
-%% $\LVish$ also supports the $\FREEZE$ and $\freezeafter{\dots}{\dots}$ operations,
+%% LVish also supports the $\FREEZE$ and $\freezeafter{\dots}{\dots}$ operations,
 %% which allow us to make exact observations of the state of an LVar
 %% in exchange for rendering it immutable.  
 
@@ -127,7 +127,7 @@ set.)
 
 \subsection{Stores}
 
-During the evaluation of $\LVish$ programs, a \emph{store} $S$ keeps
+During the evaluation of LVish programs, a \emph{store} $S$ keeps
 track of the states of LVars.  Each LVar is represented by a binding
 from a location $l$, drawn from a set $\Loc$, to its state, which is
 some pair $\state{d}{\status}$ from the set $D_p$.
@@ -166,17 +166,17 @@ then
 \[ \lubstore{\store{\storebinding{l}{d_1}{\status_1}}}{\store{\storebinding{l}{d_2}{\status_2}}} =
 \topS. \] 
 A store containing a binding $\storebinding{l}{\top}{\status}$ can
-never arise during the execution of an $\LVish$ program, because, as we will see
+never arise during the execution of an LVish program, because, as we will see
 in Section~\ref{subsection:newputget}, an attempted $\PUT$ that would take the
 value of $l$ to $\top$ will raise an error.
 
 \subsection{The LVish Calculus}
 
-\FigLVishGrammar[t]
+\FigLambdaLVishGrammar[t]
 
-\FigLVishSemantics[t]
+\FigLambdaLVishSemantics[t]
 
-The syntax and operational semantics of the $\LVish$ calculus appear in Figures
+The syntax and operational semantics of the LVish calculus appear in Figures
 \ref{f:lvish-syntax} and \ref{f:lvish-semantics}, respectively.  As we
 have noted, both the syntax and semantics are parameterized by the
 lattice $(D, \userleq, \bot, \top)$.  The reduction relation $\parstepsto$ is
@@ -186,20 +186,20 @@ is a unique element added to the set of configurations, but we
 consider $\config{\topS}{e}$ to be equal to $\error$ for all
 expressions $e$.  The metavariable $\conf$ ranges over configurations.
 
-$\LVish$ uses a reduction semantics based on evaluation
+LVish uses a reduction semantics based on evaluation
 contexts. %~\cite{FelleisenHiebEvalCtxts}.  
 %% Aaron: NOTE: the following sentence is WRONG! (But also unnecessary)
-%% Every $\LVish$ expression can be
+%% Every LVish expression can be
 %% decomposed into a redex and a single-hole evaluation context around that redex.
 %% LK: Wait, why is it wrong?  That includes the empty context...
 The {\sc E-Eval-Ctxt} rule is a standard context rule, allowing us to apply
 reductions within a context.  The choice of context determines where evaluation
-can occur; in $\LVish$, the order of evaluation is nondeterministic (that is, a
+can occur; in LVish, the order of evaluation is nondeterministic (that is, a
 given expression can generally reduce in various ways), and so it is generally
 \emph{not} the case that an expression has a unique decomposition into redex and
 context.  For example, in an application $\app{e_1}{e_2}$, either $e_1$ or $e_2$
 might reduce first.  The nondeterminism in choice of evaluation context reflects
-the nondeterminism of scheduling between concurrent threads, and in $\LVish$,
+the nondeterminism of scheduling between concurrent threads, and in LVish,
 the arguments to $\GET$, $\PUT$, $\FREEZE$, and application expressions are
 \emph{implicitly} evaluated concurrently.\footnote{This is in contrast to
   the original LVars formalism given in \cite{LVars-paper},
@@ -257,7 +257,7 @@ set of side-effecting $\PUT$/$\GET$/$\FREEZE$ operations on it.
 % \subsection{Semantics of Deterministic LVar Operations}\label{subsection:newputget}
 \subsection{Semantics of $\NEW$, $\PUT$, and $\GET$}\label{subsection:newputget}
 
-In $\LVish$, the $\NEW$, $\PUT$, and $\GET$ operations respectively create,
+In LVish, the $\NEW$, $\PUT$, and $\GET$ operations respectively create,
 write to, and read from LVars in the store:
 
 \begin{itemize}
@@ -306,7 +306,7 @@ of the program, which is guaranteed to subsequently fault.
 \ajt{Note: most of the text that was here before is now explained in the
   previous section, so this just focuses on the semantic modeling.}
 
-The $\LVish$ calculus includes a simple form of $\FREEZE$ that immediately
+The LVish calculus includes a simple form of $\FREEZE$ that immediately
 freezes an LVar (see {\sc E-Freeze-Simple}).  
 More interesting is the $\FAW$ primitive, which
 models the ``freeze-after'' pattern described in Section~\ref{subsection:freeze-after}.
@@ -352,7 +352,7 @@ The callback $e_{\rm cb}$ is a function that
 %% reached state and all the intermediate states below it.
 
 \noindent
-To keep track of the running callbacks, $\LVish$ includes an auxiliary form,{
+To keep track of the running callbacks, LVish includes an auxiliary form,{
 \[
    \freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e, \dots}}{H}
 \]}%
@@ -469,7 +469,7 @@ function that does so, and thereby guarantees full determinism.
 
 \subsection{Modeling Lattice Parameterization in Redex}\label{subsection:redex}
 
-We have developed a runnable version of the $\LVish$ calculus\footnote{Available at \url{http://github.com/iu-parfunc/lvars}.} using the
+We have developed a runnable version of the LVish calculus\footnote{Available at \url{http://github.com/iu-parfunc/lvars}.} using the
 PLT Redex semantics engineering toolkit \cite{redex-book}.
 % (included in the technical report corresponding to this paper \cite{}).
 In the Redex of today, it is not possible to directly parameterize a

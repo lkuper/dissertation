@@ -1,4 +1,4 @@
-\section{$\LVish$, Informally}\label{section:lvish-informal}
+\section{LVish, Informally}\label{section:lvish-informal}
 
 As we explained in Section~\ref{section:intro}, while LVars offer a deterministic
 programming model that allows communication through a wide variety of data structures,
@@ -40,7 +40,7 @@ LVar's lattice, specifying which events should be handled.  Like threshold
 sets, these \emph{event sets} are a mathematical modeling tool only; they have no
 explicit existence in the implementation.
 
-Event handlers in $\LVish$ are somewhat unusual in that they invoke their
+Event handlers in LVish are somewhat unusual in that they invoke their
 callback for \emph{all} events in their event set $Q$ that have taken place
 (\ie, all values in $Q$ less than or equal to the current LVar value), even if
 those events occurred prior to the handler being registered.  To see why
@@ -138,11 +138,11 @@ read.  We expose freezing through the function $\FREEZE$, which takes an LVar as
 its sole argument, and returns the exact value of the LVar as its result.  As we
 explained in Section~\ref{section:intro}, $\PUT$s that would change the value of a frozen
 LVar instead raise an exception, and it is the potential for races between
-such $\PUT$s and $\FREEZE$ that makes $\LVish$ quasi-deterministic, rather than
+such $\PUT$s and $\FREEZE$ that makes LVish quasi-deterministic, rather than
 fully deterministic.
 
 Putting all the above pieces together, we arrive at a particularly common
-pattern of programming in $\LVish$:
+pattern of programming in LVish:
 \[
 \begin{array}[t]{l}
   \termfont{freezeAfter} = \lam{\mathit{lv}}{\lam{Q}{\lam{f}{}}}
