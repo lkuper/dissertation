@@ -1,0 +1,74 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+
+\bibitem{BrewerCAPBlog}
+Brewer, E.: {CAP} twelve years later: How the ``rules'' have changed.
+  \url{http://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have%
+-changed} (2012)
+
+\bibitem{eventually-consistent-transactions}
+Burckhardt, S., Fahndrich, M., Leijen, D., Sagiv, M.: Eventually consistent
+  transactions. In: ESOP (2012)
+
+\bibitem{semantics-concurrent-revisions}
+Burckhardt, S., Leijen, D.: Semantics of concurrent revisions. In: ESOP (2011)
+
+\bibitem{blooml}
+Conway, N., Marczak, W., Alvaro, P., Hellerstein, J.M., Maier, D.: Logic and
+  lattices for distributed programming. In: SOCC (2012)
+
+\bibitem{dynamo}
+DeCandia, G., Hastorun, D., Jampani, M., Kakulapati, G., Lakshman, A., Pilchin,
+  A., Sivasubramanian, S., Vosshall, P., Vogels, W.: Dynamo: Amazon's highly
+  available key-value store. In: SOSP (2007)
+
+\bibitem{gilbert-lynch-cap}
+Gilbert, S., Lynch, N.: Brewer's conjecture and the feasibility of consistent,
+  available, partition-tolerant web services. SIGACT News  33(2) (Jun 2002)
+
+\bibitem{LVars-paper}
+Kuper, L., Newton, R.R.: {LVars}: lattice-based data structures for
+  deterministic parallelism. In: FHPC (2013)
+
+\bibitem{wodet-crdts}
+Kuper, L., Newton, R.R.: Joining forces: Toward a unified account of {LVars}
+  and convergent replicated data types. In: Workshop on Deterministic and
+  Correctness in Parallel Programming (WoDet'14) (2014)
+
+\bibitem{effectzoo}
+Kuper, L., Todd, A., Tobin-Hochstadt, S., Newton, R.R.: Taming the parallel
+  effect zoo: Extensible deterministic parallelism with {LVish}. In: PLDI (2014
+  (to appear))
+
+\bibitem{Freeze-paper}
+Kuper, L., Turon, A., Krishnaswami, N.R., Newton, R.R.: Freeze after writing:
+  Quasi-deterministic parallel programming with {LVars}. In: POPL (2014)
+
+\bibitem{concurrent-revisions-haskell11}
+Leijen, D., Fahndrich, M., Burckhardt, S.: Prettier concurrency: purely
+  functional concurrent revisions. In: Haskell (2011)
+
+\bibitem{crdts-tr}
+Shapiro, M., Pregui{\c c}a, N., Baquero, C., Zawirski, M.: {A comprehensive
+  study of Convergent and Commutative Replicated Data Types}. Tech. Rep.
+  RR-7506, INRIA (Jan 2011)
+
+\bibitem{crdts}
+Shapiro, M., Pregui\c{c}a, N., Baquero, C., Zawirski, M.: Conflict-free
+  replicated data types. In: SSS (2011)
+
+\bibitem{pileus}
+Terry, D.B., Prabhakaran, V., Kotla, R., Balakrishnan, M., Aguilera, M.K.,
+  Abu-Libdeh, H.: Consistency-based service level agreements for cloud storage.
+  In: SOSP (2013)
+
+\bibitem{vogels-ec}
+Vogels, W.: Eventually consistent. Commun. ACM  52(1) (Jan 2009)
+
+\bibitem{simpledb-vogels-article}
+Vogels, W.: Choosing consistency.
+  \url{http://www.allthingsdistributed.com/2010/02/strong_consistency_simpledb%
+.html} (2010)
+
+\end{thebibliography}

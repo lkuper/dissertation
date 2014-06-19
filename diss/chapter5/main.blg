@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99c (Web2C 7.5.7)
+The top-level auxiliary file: main.aux
+The style file: ../latex_common/splncs03.bst
+Database file #1: ../latex_common/refs.bib
+Warning--entry type for "BrewerCAPBlog" isn't style-file defined
+--line 313 of file ../latex_common/refs.bib
+Warning--entry type for "simpledb-vogels-article" isn't style-file defined
+--line 320 of file ../latex_common/refs.bib
+You've used 16 entries,
+            2785 wiz_defined-function locations,
+            659 strings with 7030 characters,
+and the built_in function-call counts, 7592 in all, are:
+= -- 564
+> -- 302
+< -- 3
++ -- 124
+- -- 108
+* -- 466
+:= -- 1060
+add.period$ -- 16
+call.type$ -- 16
+change.case$ -- 124
+chr.to.int$ -- 0
+cite$ -- 16
+duplicate$ -- 708
+empty$ -- 709
+format.name$ -- 121
+if$ -- 1589
+int.to.chr$ -- 0
+int.to.str$ -- 16
+missing$ -- 149
+newline$ -- 53
+num.names$ -- 32
+pop$ -- 329
+preamble$ -- 1
+purify$ -- 86
+quote$ -- 0
+skip$ -- 144
+stack$ -- 0
+substring$ -- 262
+swap$ -- 310
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 64
+warning$ -- 0
+while$ -- 48
+width$ -- 18
+write$ -- 151
+(There were 2 warnings)

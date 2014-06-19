@@ -1,0 +1,40 @@
+\section{Related work}
+
+The extended CvRDT model we present in this paper is based on Shapiro
+\etal's work on conflict-free replicated data types
+\cite{crdts,crdts-tr}, discussed in Section~\ref{s:cvrdts}.  Various
+other authors
+\cite{eventually-consistent-transactions,semantics-concurrent-revisions,blooml}
+have used lattices as a framework for establishing formal guarantees
+about eventually consistent systems and distributed programs.
+Burckhardt \etal~\cite{eventually-consistent-transactions} propose a
+formalism for eventual consistency based on graphs called
+\emph{revision diagrams}.  Burckhardt and
+Leijen~\cite{semantics-concurrent-revisions} show that revision
+diagrams are semilattices, and Leijen, Burckhardt, and Fahndrich apply
+the revision diagrams approach to guaranteed-deterministic concurrent
+functional programming~\cite{concurrent-revisions-haskell11}. Conway
+\etal's Bloom$^L$ language for distributed programming leverages the
+lattice-based semantics of CvRDTs to guarantee
+confluence~\cite{blooml}.  The concept of threshold queries 
+comes from our previous work on the LVars model for
+lattice-based deterministic parallel
+programming~\cite{LVars-paper,Freeze-paper,effectzoo}.
+
+As mentioned in Section~\ref{s:intro}, database services such as
+Amazon's SimpleDB~\cite{simpledb-vogels-article} allow for both
+eventually consistent and strongly consistent reads, chosen at a
+per-query granularity.  Terry \etal's Pileus key-value
+store~\cite{pileus} takes the idea of mixing consistency levels
+further: instead of requiring the application developer to choose the
+consistency level of a particular query at development time, the
+system allows the developer to specify a service-level agreement that
+can dynamically adapt to changing network conditions, for instance.
+%%  a query might
+%% be strongly consistent if it is possible to complete the query within
+%% a given response time and otherwise fall back to a weaker consistency
+%% guarantee.
+However, we are not aware of previous work on using
+lattice-based data structures as a foundation for both eventually
+consistent and strongly consistent queries.
+

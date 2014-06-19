@@ -1,0 +1,66 @@
+\section{Determinism of threshold queries}\label{s:results}
+
+Neither eventual consistency nor strong eventual consistency imply
+that \emph{intermediate} results of the same query $q$ on different
+replicas of a threshold CvRDT will be deterministic.  For
+deterministic intermediate results, we must use the threshold query
+method $t$.  We can show that $t$ is deterministic \emph{without}
+requiring that the same updates have been delivered at the replicas in
+question at the time that $t$ runs.
+
+In our previous work on LVars~\cite{LVars-paper,Freeze-paper}, we
+showed that a threshold read of the contents of a shared-memory
+lattice-based data structure returns a deterministic result regardless
+of how that query is interleaved with updates to the data structure.
+Theorem~\ref{thm:determinism-of-threshold-queries} establishes that
+the same is true for threshold queries of \emph{distributed,
+  replicated} lattice-based data structures---namely, threshold
+CvRDTs.
+
+\begin{theorem}[determinism of threshold queries]
+  \label{thm:determinism-of-threshold-queries}
+  Suppose a given threshold query $t$ on a given threshold CvRDT
+  returns a set of activation states $S_a$ when executed at a replica
+  $i$.  Then, assuming eventual delivery and that no replica's state
+  is ever $\top$ at any point in the execution:
+  \begin{enumerate}
+  \item $t$ will always return $S_a$ on subsequent executions at $i$,
+    and
+  \item $t$ will \emph{eventually} return $S_a$ when executed at
+    \emph{any} replica, and will \emph{block} until it does so.
+  \end{enumerate}
+\end{theorem}
+\begin{proof}
+The proof relies on transitivity of $\leq$ and eventual delivery of
+updates.  See Appendix~\ref{apdx:proofs} for the complete proof.
+\end{proof}
+Although Theorem~\ref{thm:determinism-of-threshold-queries} must
+assume eventual delivery, it does \emph{not} need to assume strong
+convergence or even ordinary convergence.  It so happens that we have
+strong convergence as part of strong eventual consistency of threshold
+CvRDTs (by
+Theorem~\ref{thm:strong-eventual-consistency-of-threshold-cvrdts}),
+but we do not need it to prove
+Theorem~\ref{thm:determinism-of-threshold-queries}.  In particular,
+there is no need for replicas to have the same state in order to
+return the same result from a particular threshold query.  The
+replicas merely both need to be above an activation state from a
+unique set of activation states in the query's threshold set.  Indeed,
+the replicas' states may in fact trigger \emph{different} activation
+states from the same set of activation states.
+
+Theorem~\ref{thm:determinism-of-threshold-queries}'s requirement that
+no replica's state is ever $\top$ rules out situations in which
+replicas disagree in a way that cannot be resolved normally.  This
+would happen if, for instance, updates at two different replicas took
+their states to activation states from two distinct sets of activation
+states from the same threshold set.  The join of the two replicas'
+states would be $\top$, which by eventual delivery would become the
+state of both replicas, but in the meantime, threshold queries of the
+two replicas would return different results.  We rule out this
+situation by assuming that no replica's state goes to $\top$.  (In a
+replicated version of the parallel ``and'' example from
+Section~\ref{s:threshold-reads}, this would happen if, for instance,
+one replica received a write of \il{T} on its left input while another
+received a write of \il{F}, also on its left input---a disagreement
+for which the only resolution is the error state, \il{Top}).

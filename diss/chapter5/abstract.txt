@@ -1,0 +1,13 @@
+Convergent replicated data types, or CvRDTs, are lattice-based data
+structures for enforcing the eventual consistency of replicated
+objects in a distributed system.  Although CvRDTs are provably
+eventually consistent, queries of CvRDTs nevertheless allow
+inconsistent intermediate states of replicas to be observed; and
+although in practice, many systems allow a mix of eventually consistent and
+strongly consistent queries, CvRDTs only support the former.  Taking
+inspiration from our previous work on LVars for deterministic parallel
+programming, we show how to extend CvRDTs to support deterministic,
+strongly consistent queries using a mechanism called threshold
+queries.  The threshold query technique generalizes to any lattice,
+and hence any CvRDT, and allows deterministic observations to be made
+of replicated objects before the replicas' states have converged.

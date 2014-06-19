@@ -1,0 +1,33 @@
+\section{Conclusion}
+
+In this paper we show how to extend CvRDTs with support for
+deterministic queries.  Borrowing from our previous work on LVars for
+deterministic parallel programming, we propose \emph{threshold
+  queries}, which rather than returning the exact contents of a CvRDT,
+only reveal whether the contents have crossed a given ``threshold'' in
+the CvRDT's lattice.  A threshold query blocks until the threshold is
+reached and then returns a deterministic result.  We prove that a
+threshold query that returns a particular answer is guaranteed to
+return the same answer on subsequent queries of that replica,
+regardless of the replica's state.  Moreover, executions of the same
+query on other replicas are guaranteed to eventually return the same
+answer, and to block until they do so.  The threshold query technique
+generalizes to any lattice, and hence any CvRDT, allowing CvRDTs to
+support both eventually consistent and strongly consistent queries
+without waiting for all replicas to agree.
+
+\if{0}
+\subsection*{Acknowledgments}
+
+Thanks to Chung-chieh Shan and Sam Tobin-Hochstadt for their helpful
+comments on drafts of this paper.  This research is supported by NSF
+grant CCF-1218375.
+\fi
+
+
+
+
+
+
+
+ 
