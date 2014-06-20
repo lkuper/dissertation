@@ -1,4 +1,4 @@
-\chapter{Introduction\label{ch:intro}} % 1
+\chapter{Introduction}\label{ch:intro} % 1
 
 Parallel programming---that is, writing programs that can take
 advantage of parallel hardware to go faster---is notoriously
@@ -47,7 +47,13 @@ or $4$, depending on the order in which the first two computations
 ran.  Therefore, if a parallel programming model is to guarantee
 determinism by construction, it must necessarily limit sharing of
 mutable state between parallel tasks in some way.
-The possibilities include:
+
+\section{The deterministic-by-construction parallel programming landscape}\label{s:intro-landscape}
+
+There is long-standing work on deterministic-by-construction parallel
+programming models that limit sharing of state between
+tasks. Surveying the landscape of possibilities, we find that they
+include:
 
 \begin{itemize}
 \item \emph{No-shared-state parallelism.}  One classic
@@ -106,100 +112,92 @@ The possibilities include:
   pure programs, and hence a program in which the only effects are
   @Par@ effects is guaranteed to be deterministic.
 
-\item \emph{Imperative disjoint parallelism.}
-  Finally, yet another approach to guaranteeing determinism is to
-  ensure that the state accessed by concurrent threads is
-  \emph{disjoint}.  Sophisticated permissions systems and type systems
-  make it possible for imperative programs to mutate state in
-  parallel, while guaranteeing that the same state is not accessed
-  simultaneously by multiple threads.  We refer to this style of
-  programming as \emph{imperative disjoint parallelism}, with
-  Deterministic Parallel Java (DPJ)~\cite{dpj-oopsla} as a prominent
-  example.
+\item \emph{Imperative disjoint parallelism.}  Finally, yet another
+  approach to guaranteeing determinism is to ensure that the state
+  accessed by concurrent threads is \emph{disjoint}.\lk{This is the
+    first place I've used the word ``concurrent''.  Should I explain
+    concurrency vs. parallelism in a footnote or something?  Is it
+    even a useful distinction in this context?}  Sophisticated
+  permissions systems and type systems make it possible for imperative
+  programs to mutate state in parallel, while guaranteeing that the
+  same state is not accessed simultaneously by multiple threads.  We
+  refer to this style of programming as \emph{imperative disjoint
+    parallelism}, with Deterministic Parallel Java
+  (DPJ)~\cite{dpj-oopsla} as a prominent example.
 \end{itemize}
+The four parallel programming models listed above---no-shared-state
+parallelism, data-flow parallelism, single-assignment parallelism, and
+imperative disjoint parallelism---all seem to comprise\lk{``have''?
+  ``embody''?} rather different mechanisms for exposing parallelism
+and for ensuring determinism.  If we view these different programming
+models as a toolkit of unrelated choices, though, it is not clear how
+to proceed when we want to implement an application with multiple
+parallelizable components that are best suited to different
+programming models.  For example, suppose we have an application in
+which we wish to use data-flow pipeline parallelism via FIFO queues,
+but also disjoint parallel mutation of arrays.  It is not obvious how
+to compose two programming models that each only allow communication
+through a single type of shared data structure---or, if we do manage
+to compose them, whether or not the determinism guarantee of the
+individual models is preserved by their composition.  Hence we seek a
+general, broadly-applicable model for deterministic parallel
+programming that is not tied to a particular data structure.
 
-At first glance, the four parallel programming models listed
-above---no-shared-state parallelism, data-flow parallelism,
-single-assignment parallelism, and imperative disjoint parallelism
----all seem to have rather different mechanisms for exposing
-parallelism and for ensuring determinism.
-
-\lk{Left off editing here.}
-
-\lk{TODO: make this next chunk of text way less colloquial.  The idea
-  here is to say that there are two problems.  One is that a big
-  toolkit of unrelated choices is bad because what if we need to use
-  more than one?  It is not clear how well they compose.  The second
-  is that a big toolkit of unrelated choices is bad because it's more
-  to learn and reason about.  We show that this is unnecessary because
-  in fact they all fit into the same programming model.}
-
-Moreover, it might be fine if we just had a big toolkit of unrelated
-choices, and we just picked the right one for the job as needed, but
-what do we do when we want to implement an application that has
-multiple parallelizable kernels that are best suited to different programming models?
-For instance, what if we have an application that uses
-data-flow pipeline parallelism, but also disjoint parallel
-mutation of a store?
-
-So the question is, can we generalize and unify these points?  And the
-answer is, yes!  KPNs and single-assignment both fit nicely into the
-LVars programming model that I'm going to talk about, and, all four of
-these turn out to be compatible.  *And*, we can even generalize
-further, beyond what I've shown here.
-
-\lk{TODO: say something about monotonicity as a unifying principle.}
+\section{Monotonic data structures as a basis for deterministic parallelism}\label{s:intro-monotonic}
 
 In KPNs and other data-flow models, communication takes place over
-FIFO queues with ever-increasing \emph{channel histories}, while in
-IVar-based programming models such as CnC and monad-par, a shared data
-store of single-assignment memory locations grows monotonically.
-Hence \emph{monotonic data structures}---data structures to which
-information is only added and never removed---are a common theme of
-guaranteed-deterministic programming models.  Yet such programming
-models emerge independently, without recognition of their common
-basis.  Moreover, they lack \emph{generality}, since in each case,
-communication is only permitted through a single type of shared data
-structure---FIFO queues in KPNs, for instance, or tables of write-once
-locations in CnC---limiting the kinds of algorithms that can be
-expressed---efficiently or at all---in the model.
+blocking FIFO queues with ever-increasing \emph{channel histories},
+while in IVar-based programming models such as CnC and monad-par, a
+shared data store of blocking single-assignment memory locations grows
+monotonically.  Hence \emph{monotonic data structures}---data
+structures to which information can only be added and never removed,
+and for which the order in which information is added is not
+observable---emerge as a common theme of guaranteed-deterministic
+programming models.
 
-\section{LVars: lattice-based monotonic data structures}
-
-In this thesis, I show that \emph{lattice-based} data structures,
-or \emph{LVars}, are the foundation for a model of
+In this dissertation, I show that \emph{lattice-based} data
+structures, or \emph{LVars}, are the foundation for a model of
 deterministic-by-construction parallel programming that allows a more
 general form of communication between tasks than previously existing
 guaranteed-deterministic models allowed.  LVars generalize IVars and
 are so named because the states an LVar can take on are elements of an
 application-specific \emph{lattice}.\footnote{As I will explain in
-  Section~\ref{s:technical-overview}, what I call a ``lattice'' really
+  Chapter~\ref{ch:lvars}, what I am calling a ``lattice'' here really
   need only be a {\em bounded join-semilattice} augmented with a
-  greatest element $\top$.}  \lk{TODO: this should point to chapter 2.} 
-This application-specific lattice
+  greatest element $\top$.}  This application-specific lattice
 determines the semantics of the @put@ and @get@ operations that
 comprise the interface to LVars (which I will explain in detail in
-Section~\ref{s:technical-overview} \lk{TODO: this should point to chapter 2.}):
+Chapter~\ref{ch:lvars}):
 \begin{itemize}
 \item The @put@ operation can only change an LVar's state in a way
-  that is {\em monotonically increasing} with respect to the
-  user-specified lattice, because it takes the least upper bound of
-  the current state and the new state.
+  that is {\em monotonically increasing} with respect to the lattice,
+  because it takes the least upper bound of the current state and the
+  new state.
 \item The @get@ operation allows only limited observations of the
   state of an LVar.  It requires the user to specify a \emph{threshold
     set} of minimum values that can be read from the LVar, where every
   two elements in the threshold set must have the lattice's greatest
-  element $\top$ as their least upper bound.  \lk{TODO: this is no longer quite accurate---figure out what to say here.}A call to @get@ blocks
-  until the LVar in question reaches a (unique) value in the threshold
-  set, then unblocks and returns that value.
+  element $\top$ as their least upper bound.\footnote{See
+    Chapter~\ref{ch:lvars} for a generalization of this
+    definition.\TODO{Figure out what section to link to for
+      generalized threshold sets.}}  A call to @get@ blocks until the
+  LVar in question reaches a (unique) value in the threshold set, then
+  unblocks and returns that value.
 \end{itemize}
 Together, monotonically increasing writes via @put@ and threshold
 reads via @get@ yield a deterministic-by-construction programming
-model.  That is, a program in which @put@ and @get@ operations on LVars are the
-only side effects will have the same observable result in spite of
-parallel execution and schedule nondeterminism.
+model.  That is, a program in which @put@ and @get@ operations on
+LVars are the only side effects will have the same observable result
+in spite of parallel execution and schedule nondeterminism.  \lk{Maybe
+  we don't need the next sentence at all; maybe it's covered by the
+  ``organization'' bullet points below.} As we will see in
+Chapter~\ref{ch:lvars}, no-shared-state parallelism, data-flow
+parallelism and single-assignment parallelism are all subsumed by the
+LVars programming model, and as we will see in
+Chapter~\ref{ch:lvish}\lk{Maybe refer to a specific section?},
+imperative disjoint parallelism is compatible with LVars as well.
 
-\section{Quasi-deterministic programming with LVars}
+\section{Quasi-deterministic programming with LVars}\label{s:intro-quasi}
 
 The LVars model described above guarantees determinism and supports an
 unlimited variety of shared data structures: anything viewable as a
@@ -219,11 +217,11 @@ traversal, for example, neighboring nodes should only be explored if
 the current node is \emph{not yet} in the set; a fixpoint is reached
 only if no new neighbors are found; and, of course, at the end of the
 computation it must be possible to learn exactly which nodes were
-reachable (which entails learning that certain nodes were not).  I
-describe two extensions to the basic LVars model that make such
-computations possible:
+reachable (which entails learning that certain nodes were not).  In
+Chapter~\ref{ch:quasi}, I describe two extensions to the basic LVars
+model that make such computations possible:
 \begin{itemize}
-\item First, I will describe how to add a primitive @freeze@ for
+\item First, I describe how to add a primitive @freeze@ for
   \emph{freezing} an LVar, which allows its contents to be read
   immediately and exactly, rather than the blocking threshold read
   that @get@ allows.  The @freeze@ primitive imposes the following
@@ -237,12 +235,12 @@ computations possible:
   @freeze@ operations are scheduled.  However, we \emph{can} guarantee
   that such programs satisfy \emph{quasi-determinism}: all executions
   that produce a final value produce the \emph{same} final value.
-\item Second, I will describe how to add the ability to attach
-  \emph{event handlers} to an LVar.  When an event handler has been
-  registered with an LVar, it invokes a \emph{callback function} to
-  run, asynchronously, whenever events arrive (in the form of
-  monotonic updates to the LVar).  Crucially, it is possible to check
-  for \emph{quiescence} of a group of handlers, discovering that no
+\item Second, I describe how to add the ability to attach \emph{event
+  handlers} to an LVar.  When an event handler has been registered
+  with an LVar, it invokes a \emph{callback function} to run,
+  asynchronously, whenever events arrive (in the form of monotonic
+  updates to the LVar).  Crucially, it is possible to check for
+  \emph{quiescence} of a group of handlers, discovering that no
   callbacks are currently enabled---a transient, negative property.
   Since quiescence means that there are no further changes to respond
   to, it can be used to tell that a fixpoint has been reached.
@@ -258,10 +256,17 @@ Hence freezing and handlers make possible fixpoint computations like
 the graph traversal described above.  Moreover, if we can ensure that
 the freeze does indeed happen after all writes have completed, then we
 can ensure that the computation is deterministic, and it is possible
-to enforce this ``freeze-last'' idiom at the implementation level; see
-Section~\ref{ss:lvish}.
+to enforce this ``freeze-last'' idiom at the implementation level, as
+I discuss below in Section~\ref{s:intro-lvish}.
 
-\section{LVars and conflict-free replicated data types}
+\lk{Editing mostly good up to here.}
+
+\section{The relationship between LVars and distributed replicated data structures}\label{s:intro-cvrdts}
+
+\lk{Swap this and the next section around to match order of chapters?}
+
+\TODO{Edit this section to reflect what Chapter~\cite{ch:crdts} is
+  actually about!}
 
 The LVars model I've described is closely related to the concept of
 \emph{conflict-free replicated data types} (CRDTs)~\cite{crdts} for
@@ -297,7 +302,7 @@ In Section~\ref{s:crdts} I give additional background on eventual
 consistency and CRDTs and discuss further details of how I plan to
 approach these tasks.
 
-\section{The LVish library}\label{ss:lvish}
+\section{The LVish library}\label{s:intro-lvish}
 
 To demonstrate the practicality of the LVars programming model, I will
 describe \emph{LVish},\footnote{Available at
@@ -384,7 +389,7 @@ will make use of handlers and freezing:
   effect specification system in LVish.
 \end{itemize}
 
-\section{Thesis statement, and organization of the rest of this disseration}\label{s:thesis}
+\section{Thesis statement, and organization of the rest of this dissertation}\label{s:thesis}
 
 With the above background, I can state my thesis:\lk{This format
   ripped off from Josh Dunfield.}
@@ -435,3 +440,8 @@ The rest of this dissertation supports my thesis as follows:
     LVars are applicable to distributed programming by showing how to incorporate
     LVar-style threshold reads to conflict-free replicated data types. \lk{TODO: Add more detail here.}
 \end{itemize}
+
+\TODO{Say something about the previously published papers that this
+  dissertation draws on.  Or, in individual chapters, say, ``The
+  material in this chapter is based on research done jointly with...''
+  and cite the papers.}
