@@ -1,9 +1,13 @@
 ## Outline
 
 1. Introduction
-  * will be much like sections 1/2 of my thesis proposal
-  * introductory material from FHPC/POPL/DISC papers
-  * thesis statement
+  1.1. The deterministic-by-construction parallel programming landscape
+  1.2. Lattice-based, monotonic data structures as a basis for deterministic parallelism
+  1.3. Quasi-deterministic and event-driven programming with LVars
+  1.4. The LVish library
+  1.5. Deterministic threshold queries of distributed data structures
+  1.6. Thesis statement, and organization of the rest of this dissertation
+  1.7. Previously published work
 
 2. LVars: Lattice-based Data Structures for Deterministic Parallelism
   * will be like on sections 3.1-3.5 of my thesis proposal (but slower-paced and more example-driven)
