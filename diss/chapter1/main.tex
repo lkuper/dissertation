@@ -221,7 +221,7 @@ reachable (which entails learning that certain nodes were not).  In
 Chapter~\ref{ch:quasi}, I describe two extensions to the basic LVars
 model that make such computations possible:
 \begin{itemize}
-\item First, I describe how to add a primitive @freeze@ for
+\item First, I describe how to add a primitive operation @freeze@ for
   \emph{freezing} an LVar, which allows its contents to be read
   immediately and exactly, rather than the blocking threshold read
   that @get@ allows.  The @freeze@ primitive imposes the following
@@ -257,82 +257,37 @@ the graph traversal described above.  Moreover, if we can ensure that
 the freeze does indeed happen after all writes have completed, then we
 can ensure that the computation is deterministic, and it is possible
 to enforce this ``freeze-last'' idiom at the implementation level, as
-I discuss below in Section~\ref{s:intro-lvish}.
-
-\lk{Editing mostly good up to here.}
-
-\section{The relationship between LVars and distributed replicated data structures}\label{s:intro-cvrdts}
-
-\lk{Swap this and the next section around to match order of chapters?}
-
-\TODO{Edit this section to reflect what Chapter~\cite{ch:crdts} is
-  actually about!}
-
-The LVars model I've described is closely related to the concept of
-\emph{conflict-free replicated data types} (CRDTs)~\cite{crdts} for
-specifying the behavior of \emph{eventually
-  consistent}~\cite{vogels-ec} replicated objects in a distributed
-system.  In particular, \emph{state-based} or \emph{convergent}
-replicated data types, abbreviated as \emph{CvRDTs}, leverage the
-mathematical properties of join-semilattices to guarantee that all
-replicas of an object (for instance, in a distributed database)
-eventually agree.  Unlike LVars, CvRDTs allow intermediate states to
-be observed: if two replicas are updated independently, reads of those
-replicas may disagree until a (least-upper-bound) merge operation
-takes place.
-
-Since CvRDTs leverage lattice properties to ensure eventual
-consistency in the same way that LVars do so to ensure determinism, a
-sensible next research question is: can we use lessons from the
-growing literature on replicated data types~\cite{crdts, crdts-tr,
-  rdts-popl14} to improve the LVars model, and vice versa?  I will
-approach this question in both directions:
-\begin{itemize}
-\item First, I will show how LVar-style threshold reads apply to the
-  setting of CvRDTs.  Since threshold reads guarantee that the order
-  in which updates occur cannot be observed, they will prevent
-  intermediate states from being observed, ensuring a greater degree
-  of consistency at the price of read availability.
-\item Second, I will show how to use techniques from the CRDT
-  literature to develop LVars that support non-monotonic updates:
-  PN-Counters, which can be decremented as well as incremented, and
-  2P-Sets, from which elements can be removed as well as added.
-\end{itemize}
-In Section~\ref{s:crdts} I give additional background on eventual
-consistency and CRDTs and discuss further details of how I plan to
-approach these tasks.
+I discuss below (and, in more detail, in
+Chapter~\ref{ch:lvish}\lk{Refer to a specific section?}).
 
 \section{The LVish library}\label{s:intro-lvish}
 
-To demonstrate the practicality of the LVars programming model, I will
-describe \emph{LVish},\footnote{Available at
+To demonstrate the practicality of the LVars programming model, in
+Chapter~\ref{ch:lvish} I will describe
+\emph{LVish},\footnote{Available at
   \url{http://hackage.haskell.org/package/lvish}.} a Haskell library
-for deterministic and quasi-deterministic programming with LVars.  We
-describe the implementation of LVish in Kuper
-\etal~\cite{Freeze-paper}; rather than covering implementation
-internals in detail, I will focus on describing the LVish API through
-examples and case studies.
+for deterministic and quasi-deterministic programming with LVars.
 
-LVish provides a @Par@ monad for encapsulating parallel computation,
+LVish provides a @Par@ monad for encapsulating parallel computation
 and enables a notion of lightweight, library-level threads to be
 employed with a custom work-stealing scheduler.\footnote{The
   \lstinline|Par| monad exposed by LVish generalizes the original
   \lstinline|Par| monad exposed by the \emph{monad-par} library
-  ({\url{http://hackage.haskell.org/package/monad-par}}), which allows
-  determinism-preserving communication between threads, but only
-  through IVars, rather than LVars.}  LVar computations run inside the
-@Par@ monad, which is indexed by an \emph{effect level}, allowing
-fine-grained specification of the effects that a given computation is
-allowed to perform.  For instance, since @freeze@ introduces
-quasi-determinism, a computation indexed with a deterministic effect
-level is not allowed to use @freeze@.  Thus, the \emph{static type} of
-an LVish computation reflects its determinism or quasi-determinism
-guarantee.  Furthermore, if a @freeze@ is guaranteed to be the
-\emph{last} effect that occurs in a computation, then it is impossible
-for that @freeze@ to race with a @put@, ruling out the possibility of
-a run-time @put@-after-@freeze@ exception.  LVish exposes a
-@runParThenFreeze@ operation that captures this ``freeze-last'' idiom
-and has a deterministic effect level.
+  ({\url{http://hackage.haskell.org/package/monad-par}}, described by
+  Marlow \etal~\cite{monad-par}), which allows determinism-preserving
+  communication between threads, but only through IVars, rather than
+  LVars.}  LVar computations run inside the @Par@ monad, which is
+indexed by an \emph{effect level}, allowing fine-grained specification
+of the effects that a given computation is allowed to perform.  For
+instance, since @freeze@ introduces quasi-determinism, a computation
+indexed with a deterministic effect level is not allowed to use
+@freeze@.  Thus, the \emph{static type} of an LVish computation
+reflects its determinism or quasi-determinism guarantee.  Furthermore,
+if a @freeze@ is guaranteed to be the \emph{last} effect that occurs
+in a computation, then it is impossible for that @freeze@ to race with
+a @put@, ruling out the possibility of a run-time @put@-after-@freeze@
+exception.  LVish exposes a @runParThenFreeze@ operation that captures
+this ``freeze-last'' idiom and has a deterministic effect level.
 
 LVish also provides a variety of lattice-based data structures (\eg,
 sets, maps, graphs) that support concurrent insertion, but not
@@ -343,38 +298,41 @@ LVars.  I will describe the proof obligations for data structure
 implementors and give examples of applications that use user-defined
 LVars as well as those that the library provides.
 
-I will illustrate LVish through three case studies, drawn from my
+In addition to discussing the implementation of the LVish library and
+introducing the above features with examples, Chapter~\ref{ch:lvish}
+illustrates LVish through three case studies, drawn from my
 collaborators' and my experience using the LVish library, all of which
-will make use of handlers and freezing:
+make use of handlers and freezing:
 \begin{itemize}
-\item First, I will describe using LVish to implement a parallel,
+\item First, I describe using LVish to implement a parallel,
   pipelined, breadth-first graph traversal in which a (possibly
   expensive) function @f@ is mapped over each node in a connected
   component of a graph.  The idea is that the set of results of
   applying @f@ to nodes become incrementally available to other
-  computations.  For this case study, I will reimplement the
-  breadth-first traversal algorithm that appears in Kuper and
-  Newton~\cite{LVars-paper}, which I will update in two ways.  First,
-  the original version uses @runParIO@ and a ``consume'' operation
-  that was a precursor to @freeze@, and I will refactor it to use the
-  safer @runParThenFreeze@.  Second, although the original version is
-  pipelined in that it begins \emph{invoking} @f@ on already-found
-  nodes before all the nodes in the component have been traversed, it
-  does not take advantage of this early invocation to do something
-  useful with the early result of @f@; however, it should be
-  straightforward to do so using event handlers.
-\item Second, I will describe using LVish to parallelize a control
-  flow analysis ($k$-CFA) algorithm.  The goal of $k$-CFA is to
-  compute the flow of values to expressions in a program.  The $k$-CFA
-  algorithm proceeds in two phases: first, it explores a graph of
-  \emph{abstract states} of the program; then, it summarizes the
-  results of the first phase.  Using LVish, these two phases can be
-  pipelined in a manner similar to the pipelined breadth-first graph
-  traversal described above; moreover, the original graph exploration
-  phase can be internally parallelized.  I will contrast the LVish
-  implementation with the original sequential implementation and give
-  performance results.
-\item Third, I will describe using LVish to parallelize
+  computations.
+  %% For this case study, I will reimplement the
+  %% breadth-first traversal algorithm that appears in Kuper and
+  %% Newton~\cite{LVars-paper}, which I will update in two ways.  First,
+  %% the original version uses @runParIO@ and a ``consume'' operation
+  %% that was a precursor to @freeze@, and I will refactor it to use the
+  %% safer @runParThenFreeze@.  Second, although the original version is
+  %% pipelined in that it begins \emph{invoking} @f@ on already-found
+  %% nodes before all the nodes in the component have been traversed, it
+  %% does not take advantage of this early invocation to do something
+  %% useful with the early result of @f@; however, it should be
+  %% straightforward to do so using event handlers.
+\item Second, I describe using LVish to parallelize a control flow
+  analysis ($k$-CFA) algorithm.  The goal of $k$-CFA is to compute the
+  flow of values to expressions in a program.  The $k$-CFA algorithm
+  proceeds in two phases: first, it explores a graph of \emph{abstract
+    states} of the program; then, it summarizes the results of the
+  first phase.  Using LVish, these two phases can be pipelined in a
+  manner similar to the pipelined breadth-first graph traversal
+  described above; moreover, the original graph exploration phase can
+  be internally parallelized.  I contrast the LVish implementation
+  with the original sequential implementation and give performance
+  results.
+\item Third, I describe using LVish to parallelize
   \emph{PhyBin}~\cite{PhyBin}, a bioinformatics application for
   comparing genealogical histories (phylogenetic trees) that relies
   heavily on a parallel tree-edit distance algorithm~\cite{hashrf}.
@@ -382,12 +340,44 @@ will make use of handlers and freezing:
   on the ability to perform writes to LVars that are commutative and
   inflationary with respect to the lattice in question, but \emph{not}
   idempotent (in contrast to the least-upper-bound writes discussed
-  above, which are idempotent).  I will show that these non-idempotent
+  above, which are idempotent).  I argue that these non-idempotent
   writes, which we call @bump@ operations, preserve determinism as
   long as programs do not use @put@ and @bump@ on the same LVar, a
   property that can be statically enforced by the aforementioned
   effect specification system in LVish.
 \end{itemize}
+
+\section{Deterministic threshold queries of distributed data structures}\label{s:intro-cvrdts}
+
+The LVars model is closely related to the concept of
+\emph{conflict-free replicated data types} (CRDTs)~\cite{crdts} for
+enforcing \emph{eventual consistency}~\cite{vogels-ec} of replicated
+objects in a distributed system.  In particular, \emph{state-based} or
+\emph{convergent} replicated data types, abbreviated as
+\emph{CvRDTs}~\cite{crdts, crdts-tr}, leverage the mathematical
+properties of join-semilattices to guarantee that all replicas of an
+object (for instance, in a distributed database) eventually agree.
+
+Although CvRDTs are provably eventually consistent, queries of CvRDTs
+(unlike threshold reads of LVars) nevertheless allow inconsistent
+intermediate states of replicas to be observed.  That is, if two
+replicas of a CvRDT object are updated independently, reads of those
+replicas may disagree until a (least-upper-bound) \emph{merge}
+operation takes place.
+
+Taking inspiration from LVar-style threshold reads, in
+Chapter~\ref{ch:threshold-queries} I show how to extend CvRDTs to
+support provably deterministic, \emph{strongly consistent} queries
+using a mechanism called \emph{threshold queries} (or, seen from
+another angle, I show how to extend threshold reads from a
+shared-memory setting to a distributed one).  The threshold query
+technique generalizes to any lattice, and hence any CvRDT, and allows
+deterministic observations to be made of replicated objects before the
+replicas' states have converged.  This work has immediate practical
+relevance since, while many real distributed database systems allow a
+mix of eventually consistent and strongly consistent queries, CvRDTs
+only support the former, and threshold queries extend the CvRDT model
+to support both.
 
 \section{Thesis statement, and organization of the rest of this dissertation}\label{s:thesis}
 
@@ -400,48 +390,88 @@ With the above background, I can state my thesis:\lk{This format
 \end{quote}
 The rest of this dissertation supports my thesis as follows:
 \begin{itemize}
-  \item \emph{Lattice-based data structures}: In Chapter~\ref{ch:lvars}, I formally define
-    LVars and use them to define $\lambdaLVish$, a call-by-value
-    parallel calculus with shared state, including a runnable version
-    implemented in PLT Redex~\cite{redex-book} for interactive
-    experimentation.\footnote{$\lambdaLVish$ is the \emph{LVish
-        calculus} described in Kuper \etal~\cite{Freeze-paper}.  I
-      call it $\lambdaLVish$ here to avoid confusion with the LVish
-      library discussed in Section~\ref{ss:lvish}.\lk{TODO: That's not quite right -- it's the deterministic fragment of what's in \cite{Freeze-paper}.  Figure out how to organize this.}}
+  \item \emph{Lattice-based data structures}: In
+    Chapter~\ref{ch:lvars}, I formally define LVars and use them to
+    define $\lambdaLVar$, a call-by-value parallel calculus with
+    shared state, including a runnable version implemented in PLT
+    Redex~\cite{redex-book} for interactive experimentation.  In
+    Chapter~\ref{ch:quasi}, I extend $\lambdaLVar$ to add support for
+    event handlers and the @freeze@ operation, calling the resulting
+    language $\lambdaLVish$.\footnote{$\lambdaLVish$ is the
+      \emph{LVish calculus} described in Kuper
+      \etal~\cite{Freeze-paper}.  In this dissertation, I call it
+      $\lambdaLVish$ to avoid confusion with LVish, the Haskell
+      library I describe in Chapter~\ref{ch:lvish}.}
 
-  \item \emph{general}: In Chapter~\ref{ch:lvars}, I defend the generality of the LVars
-    model by showing how previously existing deterministic parallel
-    programming models can be expressed with LVish.  This is possible
-    because the definition of $\lambdaLVish$ is parameterized by the
-    choice of lattice.  For example, a lattice of channel histories
-    with a prefix ordering allows LVars to represent FIFO channels
-    that implement a Kahn process network, whereas instantiating
-    $\lambdaLVish$ with a lattice with one ``empty'' state and
-    multiple ``full'' states (where $\forall{i}.\; \mathit{empty} <
-    \mathit{full_i}$) results in a parallel single-assignment
-    language.  Hence $\lambdaLVish$ is actually a \emph{family} of
-    calculi, varying by choice of lattice.
+  \item \emph{general}: In Chapter~\ref{ch:lvars}, I defend the
+    generality of the LVars model by showing how previously existing
+    deterministic parallel programming models can be expressed with
+    LVish.  This is possible because the definition of $\lambdaLVar$
+    is parameterized by the choice of lattice.  For example, a lattice
+    of channel histories with a prefix ordering allows LVars to
+    represent FIFO channels that implement a Kahn process network,
+    whereas instantiating $\lambdaLVar$ with a lattice with one
+    ``empty'' state and multiple ``full'' states (where $\forall{i}.\;
+    \mathit{empty} < \mathit{full_i}$) results in a parallel
+    single-assignment language.  Hence $\lambdaLVar$ is actually a
+    \emph{family} of calculi, varying by choice of lattice.
 
-  \item \emph{practical}: In Chapter~\ref{ch:lvish}, I defend the practicality of LVars by
-    describing the LVish Haskell library and demonstrating how it is
-    used for practical programming with the three case studies
-    described above, including performance results.
+  \item \emph{practical}: In Chapter~\ref{ch:lvish}, I defend the
+    practicality of LVars by describing the LVish Haskell library and
+    demonstrating how it is used for practical programming with the
+    three case studies described above, including performance results.
 
-  \item \emph{deterministic}: In Chapter~\ref{ch:lvars}, I defend the claim that the basic
-    LVars model guarantees determinism by giving a proof of
-    determinism for $\lambdaLVish$, including the aforementioned
-    @put@, @get@, and non-idempotent @bump@ operations on LVars.
+  \item \emph{deterministic}: In Chapter~\ref{ch:lvars}, I defend the
+    claim that the basic LVars model guarantees determinism by giving
+    a proof of determinism for $\lambdaLVish$, including the
+    aforementioned @put@, @get@, and non-idempotent @bump@ operations
+    on LVars.
 
-  \item \emph{quasi-deterministic}: In Chapter~\ref{ch:quasi}, I defend this claim by giving
-    a proof of quasi-determinism for the full $\lambdaLVish$ calculus
-    with the additions of the @freeze@ operation and event handlers.
+  \item \emph{quasi-deterministic}: In Chapter~\ref{ch:quasi}, I
+    defend this claim by giving a proof of quasi-determinism for the
+    full $\lambdaLVish$ calculus with the additions of the @freeze@
+    operation and event handlers.
 
-  \item \emph{distributed programming}: In Chapter~\ref{ch:crdts}, I defend the claim that
-    LVars are applicable to distributed programming by showing how to incorporate
-    LVar-style threshold reads to conflict-free replicated data types. \lk{TODO: Add more detail here.}
+  \item \emph{distributed programming}: In Chapter~\ref{ch:crdts}, I
+    defend the claim that the LVars programming model is applicable to
+    distributed programming by showing how to extend distributed
+    replicated data structures with LVar-style threshold reads.
 \end{itemize}
 
-\TODO{Say something about the previously published papers that this
-  dissertation draws on.  Or, in individual chapters, say, ``The
-  material in this chapter is based on research done jointly with...''
-  and cite the papers.}
+\section{Previously published work}
+
+This dissertation draws heavily on the earlier work and writing
+appearing in the following papers, written jointly with several
+collaborators:\lk{This exact wording stolen from Aaron Turon.  maybe
+  tweak it?}
+
+\begin{itemize}
+\item Lindsey Kuper and Ryan
+  R. Newton. 2013. \href{http://doi.acm.org/10.1145/2502323.2502326}{LVars:
+    lattice-based data structures for deterministic parallelism.} In
+  \emph{Proceedings of the 2nd ACM SIGPLAN workshop on Functional
+    high-performance computing} (FHPC '13).
+
+\item Lindsey Kuper, Aaron Turon, Neelakantan R. Krishnaswami, and
+  Ryan
+  R. Newton. 2014. \href{http://doi.acm.org/10.1145/2535838.2535842
+  }{Freeze after writing: quasi-deterministic parallel programming
+    with LVars.} In \emph{Proceedings of the 41st ACM SIGPLAN-SIGACT
+    Symposium on Principles of Programming Languages} (POPL '14).
+
+\item Lindsey Kuper, Aaron Todd, Sam Tobin-Hochstadt, and Ryan
+  R. Newton. 2014. \href{http://doi.acm.org/10.1145/2594291.2594312
+  }{Taming the parallel effect zoo: extensible deterministic
+    parallelism with LVish.} In \emph{Proceedings of the 35th ACM
+    SIGPLAN Conference on Programming Language Design and
+    Implementation} (PLDI '14).
+
+\item Lindsey Kuper and Ryan
+  R. Newton. \href{http://www.cs.indiana.edu/~lkuper/papers/threshold-queries-draft.pdf}{Deterministic
+    threshold queries of distributed data structures.} Draft,
+  2014.\TODO{Update this if the paper is accepted.}
+
+\end{itemize}
+
+\lk{Also, in individual chapters, say, ``The material in this chapter
+  is based on research done jointly with...''  and cite the papers.}
