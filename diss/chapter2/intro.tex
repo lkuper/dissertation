@@ -1,135 +1,39 @@
-\section{Introduction}
-
-%% Programs written using a deterministic-by-construction model of
-%% parallel computation always produce the same observable results, {\em
-%%   guaranteed}, offering programmers freedom from subtle,
-%% hard-to-reproduce nondeterministic bugs that are common in 
-%% parallel software.
-
-Programs written using a {\em deterministic-by-construction} model of
+Programs written using a \emph{deterministic-by-construction} model of
 parallel computation are guaranteed to always produce the same
 observable results, offering programmers freedom from subtle,
-hard-to-reproduce nondeterministic bugs that are the scourge of
-parallel software.  While a number of popular languages and language
-extensions (\eg, Cilk \cite{cilk}\lk{Any others?}) encourage
-deterministic parallel programming, few of them guarantee determinism
-for {\em all} programs written using the model.
+hard-to-reproduce nondeterministic bugs.  While a number of popular
+languages and language extensions (\eg, Cilk \cite{cilk}\lk{Any
+  others?}) \emph{encourage} deterministic parallel programming, few
+of them guarantee determinism for \emph{all} programs written using
+the model.
 
-%% The {most} developed deterministic-by-construction parallel
-%% model\footnote{
-%% ``Developed'' in this case
-%%   referring to mature implementations, broadly available, with many libraries and
-%%   reasonable performance.  This is a field without many contestants, however,
-%%   because while many popular languages and language extensions (\eg{} Cilk
-%%   \cite{cilk}) provide features to support deterministic parallel programming,
-%%   few can provide a language-level {\em guarantee}.} is
-%% pure functional programming with function-level task parallelism (futures).
-%% For example, Haskell programs\footnote{With {\tt SafeHaskell} enabled
-%%   and, of course, no {\tt IO}.} using futures via the {\tt par}/{\tt pseq} combinators
-%% \cite{marlow-par} can provide real speedups on practical progams,  
-%% %with % {\em retaining}
-%% determinism guarantee included.
-
-The {most} developed parallel model that offers a
-deterministic-by-construction guarantee for all
-programs---``developed'' here meaning mature implementations, broadly
-available, with many libraries and reasonable performance---is pure
-functional programming with function-level task parallelism, or {\em
-  futures}.  For example, Haskell programs using futures by means of
-the @par@ and @pseq@ combinators can provide
-real speedups on practical programs while guaranteeing determinism
-\cite{marlow-par}.\footnote{With 
-    \lstinline|SafeHaskell| enabled and, of course, no \lstinline|IO|.}
-%% \new{Yet pure programming with futures is not ideal for all problems.
-%% {\bf Producer/consumer computations} are hard to write in this style and 
-%% can have performance problems\footnote{For example, in stream processing it can be beneficial to
-%%   exploit {\em pipeline parallelism}, with producers and consumers scheduled
-%%   on different processors, able to keep their working sets in cache.  
-%% {\em Futures} tend to not support clear boundaries between producers and
-%% consumers, because whenever a consumer forces a future, if it is not available,
-%% the consumer thread immediately switches roles to begin computing the value.
-%% This problem was explored in previous work \cite{monad-par-2011}.}.
+Of the options available to programmers for
+deterministic-by-construction parallel programming, perhaps the most
+mature and broadly available choice is pure functional programming
+with function-level task parallelism, or \emph{futures}.  For example,
+Haskell programs using futures by means of the @par@ and @pseq@
+combinators can provide real speedups on practical programs while
+guaranteeing determinism \cite{marlow-par}.\footnote{The determinism
+  guarantee only obtains if user programs are written in the
+  \emph{Safe Haskell}~\cite{safe-haskell} subset of Haskell (which is
+  implemented in GHC Haskell by means of the \lstinline|SafeHaskell|
+  language pragma), and if they do not use the \lstinline|IO| monad.}
 Yet pure programming with futures is not ideal for all problems.
-Consider a {\em producer/consumer} computation in which producers and 
+Consider a \emph{producer/consumer} computation in which producers and
 consumers can be scheduled onto separate processors, each able to keep
-their working sets in cache.  Such a scenario enables
-{\em pipeline parallelism} and is common, for instance, in
-stream processing.  But a clear separation of producers and consumers is
-difficult with futures, because
-whenever a consumer forces a future, if it is not yet available,
-the consumer immediately switches roles to begin computing the value
-(as explored in previous work \cite{monad-par}).
-
-%
-%require additional synchronization, limiting parallelism, to ensure that
-%nondeterminism doesn't leak in when producing and consuming unordered collections
-
-
-%% Fortunately,}
-%% there is a broader universe of deterministic parallel
-%% programming models.
-%% %\new{including stream-processing languages \cite{streamit,stream-survey}, which
-%% %  are especially suited to a particular class of producer/consumer computations.}
-%% %
-%% But, unfortunately, these remain fragmented and
-%% under-exploited \cite{streamit,dpj-hotpar09,concurrent-revisions-oopsla,Kahn-1974,CnC,monad-par,IStructures}.
-%% %
-%% They are dots on a map, but we have no robust theory to tie them
-%% together (\eg{} no ``lambda cube'').
-
-\lk{I got rid of the ``lambda cube of deterministic parallelism''
-  analogy that used to be here because I'm not as convinced by it as I
-  used to be.  First we lament that there's no ``lambda cube'' of
-  deterministic parallelism that accounts for all of: StreamIt, DPJ,
-  Concurrent Revisions, KPNs, CnC, monad-par, and IVars.  But then we
-  say we aren't going to talk about DPJ and Concurrent Revisions.  So
-  that just leaves the others.  And our whole point is that all the
-  others are subsumed by LVars.  So it's not clear what we are
-  proposing that the corners of this ``cube'' would be.  Maybe I'm
-  taking the analogy too literally, but I think we can do without it.}
-
-%% \new{The common theme is that deterministic languages must restrict access to
-%%   shared, mutable state by concurrent computations.  Some languages accomplish
-%%   this by ensuring the state accessed by concurrent threads is {\em
-%%     disjoint}\footnote
-%% Yet at first glance, 
-%% many of these deterministic models 
-%% are similar \cite{Kahn-1974,CnC,monad-par,IStructures}: they
-%% allow processes to {\em share data} in specific and limited
-%% ways\footnote{There is also a second important family of deterministic models which
-%%   we see as derived from the observation that sequential imperative
-%%   programs are deterministic ({\tt ST} monad), and thus, parallel
-%%   programs that operate on disjoint parts of the state are
-%%   deterministic.
-%% \lk{I think this footnote sets up a sort of false dichotomy.  All
-%%   deterministic parallel models have to do something to tame sharing.
-%%   One way to go about it is the DPJ approach of ensuring that, at any
-%%   given time, the parts of the state that are being written are
-%%   disjoint.  Message-passing/IVars are another approach.  And then
-%%   there's our way, in which there's freely shared state and arbitary
-%%   interleaving in time, but we limit the *observations* you can make
-%%   of the state.  It's these limited observations that set us apart
-%%   from these other models and we need to make that clear.}
-%%   {Systems such as DPJ (Deterministic Parallel Java)
-%%   \cite{dpj-hotpar09} and Concurrent Revisions \cite{concurrent-revisions-oopsla,concurrent-revisions-haskell11} fall
-%%   into this category.  We don't discuss the category further, 
-%%   instead focusing on communicating processes with shared
-%%   data.}.
-%%   Alternatively, shared state is permitted but access is curtailed
-%%   to allow only operations that commute with one another (and thus can tolerate
-%%   nondeterministic thread interleavings).
-%% This paper is concerned with the latter approach; in particular,
-%% with the family of languages where shared
-%% structures grow {\em monotonically}---by publishing information but never
-%% invalidating it---which can enable producer/consumer applications.
-%% }
+their working sets in cache.  Such a scenario enables \emph{pipeline
+  parallelism} and is common, for instance, in stream processing.  But
+a clear separation of producers and consumers is difficult with
+futures, because whenever a consumer forces a future, if it is not yet
+available, the consumer immediately switches roles to begin computing
+the value (as explored by Marlow \etal~\cite{monad-par}).
 
 Since pure programming with futures is a poor fit for
 producer/consumer computations\lk{are we brave enough to say ``a poor
   fit''?  there's also ``less than ideal''}, one might then turn to
 {\em stateful} deterministic parallel models.  Shared state between
-computations allows the possibility for data races that introduce
-nondeterminism, so any parallel model that hopes to preserve
+computations allows the possibility for race condition that introduce
+nondeterminism, so any parallel programming model that hopes to preserve
 determinism must do something to tame sharing---that is, to restrict
 access to mutable state shared among concurrent computations.  Systems
 such as DPJ (Deterministic Parallel Java) \cite{dpj-hotpar09} and
@@ -138,60 +42,23 @@ Concurrent Revisions
 instance, accomplish this by ensuring that the state accessed by
  concurrent threads is {\em
     disjoint}.
-\lk{Another possible way to say this: both these approaches are about
-  ensuring that operations commute, but DPJ does it by ensuring a
-  property on the {\em operands} (the pieces of state being
-  manipulated) while IVars and LVars do it by ensuring a property on
-  the {\em operations} (the semantics of put and get themselves).  Or,
-  theirs is about ruling out bad inputs while ours is about designing
-  operations in such a way that no input can be bad. But I'm still not
-  so sure that we have to set up this big dichotomy...}
 
-In this paper, we are concerned with an alternative approach: allowing
-{\em data} to be shared, but limiting the {\em operations} that can be
-performed on it to only those operations that commute with one another
-and thus can tolerate nondeterministic thread interleavings.  
-%% {\em
-%%   Internal nondeterminism} \cite{netzer-miller} is allowed---that is,
-%%
-%% wait -- lambdaLVar might actually count as internally
-%% deterministic! -- LK
-Although 
-the order in which side-effecting operations occur can differ on
-multiple runs,
-a program will always produce the same externally
-observable result.\footnote{There are many ways to define what is observable
- about a program. In this paper, we define the observable result of a program to
-be the value to which it evaluates.}
-Specifically, we are concerned with models where
-% The determinism of this class of models hinges on the fact that
-shared data structures grow {\em monotonically}---by publishing
-information, but never invalidating it.  These models support pipelining for
-producer/consumer applications.
-%% \rn{There's still a sleight of hand here.  We aren't claiming that the
-%%   monotonic-shared-data-structures languages are the ONLY ones in which
-%%   operations commute with one another.  There seem to be three layers to this
-%%   venn diagram: (1) all deterministic langs (including DPJ), (2) those with
-%%   shared data structures + ops that commute, (3) those, specifically, with
-%%   monotonic data structures.}
-%% \rn{Ok, applied a fix.}
+We are concerned with an alternative approach: allowing {\em data} to
+be shared, but limiting the {\em operations} that can be performed on
+it to only those operations that commute with one another and thus can
+tolerate nondeterministic thread interleavings.  Although the order in
+which side-effecting operations occur can differ on multiple runs, a
+program will always produce the same externally observable
+result.\footnote{There are many ways to define what is observable
+  about a program. We define the observable result of a program to be
+  the value to which it evaluates.\lk{Maybe I should explain this
+    further?  Or point back to where I discussed it in
+    Chapter~\ref{ch:intro}?}}  Specifically, we are concerned with
+models where shared data structures grow {\em monotonically}---by
+publishing information, but never invalidating it.  These models
+support pipelining for producer/consumer applications.
 
-%% \new{In fact, these languages have not previously been treated as one
-%%   family\footnote{In spite of monotonicity being a core idea in deterministic
-%%     parallel systems, and a common tool in the proofs of their determinism
-%%    \cite{featherweight-cnc, Kahn-1974}.}.
-%, and is also at the heart of our proposal.
-% \lk{This, too, is an important idea that I think should come up earlier.}
-%%   Thus, in this paper, we propose an overarching framework to unify and extend them.
-%%   We begin by considering two historical models that use monotonically-changing
-%%   shared structures.
-%% }
-%Consider two example models, each of which 
-%% Each has formed the
-%% basis of many libraries and languages in the literature
-%% (\ie{} they are not so much dots on the map but clusters of dots).
-
-%--------------------------------------------------------------------------------
+\lk{Edited up to this point.}
 
 \paragraph{Existing monotonic models}
 
