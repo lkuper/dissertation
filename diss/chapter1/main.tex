@@ -150,10 +150,13 @@ blocking FIFO queues with ever-increasing \emph{channel histories},
 while in IVar-based programming models such as CnC and monad-par, a
 shared data store of blocking single-assignment memory locations grows
 monotonically.  Hence \emph{monotonic data structures}---data
-structures to which information can only be added and never removed,
-and for which the order in which information is added is not
-observable---emerge as a common theme of guaranteed-deterministic
-programming models.
+structures to which information can only be added and never removed---
+as a common theme of guaranteed-deterministic programming
+models.\footnote{We will later refine this definition of monotonic
+  data structures to mean data structures to which information can
+  only be added and never removed, \emph{and} for which the order in
+  which information is added is not observable.\TODO{Add appropriate
+    forward reference here.}}
 
 In this dissertation, I show that \emph{lattice-based} data
 structures, or \emph{LVars}, are the foundation for a model of
