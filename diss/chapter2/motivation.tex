@@ -1,0 +1,119 @@
+\section{Motivating Example: A Parallel, Pipelined Graph Computation}\label{s:lvars-motivation}
+
+What applications motivate going beyond IVars and FIFO streams?
+
+Consider applications in which independent subcomputations contribute
+information to shared data structures that change monotonically with
+respect to some order.  Hindley-Milner type inference is one example:
+in a parallel type-inference algorithm, each type variable
+monotonically acquires information through unification (which can be
+represented as a lattice). Likewise, in control-flow analysis, the
+\emph{set} of locations to which a variable refers monotonically
+\emph{shrinks}.  In logic programming, a parallel implementation of
+conjunction might asynchronously add information to a logic variable
+from different threads.
+
+To illustrate the issues that arise in computations of this nature, we
+consider a specific problem, drawn from the domain of {\em graph
+  algorithms}, where issues of ordering create a tension between
+parallelism and determinism:
+\begin{itemize}
+\item 
+  In a directed graph, find the connected component containing a
+  vertex $v$, and compute a (possibly expensive) function $f$ over all
+  vertices in that component, making the set of results available
+  asynchronously to other computations.
+\end{itemize}
+For example, in a directed graph representing user profiles on a
+social network and the connections between them, where $v$ represents
+a particular profile, we might wish to find all (or the first $k$
+degrees of) profiles connected to $v$, then map a function $f$ over
+each profile in that set in parallel.
+
+This is a challenge problem for deterministic-by-construction parallel
+programming: existing parallel solutions~\cite{bfs-pbgl} often use a
+nondeterministic traversal of the connected component (even though the
+final connected component is deterministic), and IVars and streams
+provide no obvious aid.  For example, IVars cannot accumulate sets of
+visited nodes, nor can they be used as ``mark bits'' on visited nodes,
+since they can only be written once and not tested for emptiness.
+Streams, on the other hand, impose an excessively strict ordering for
+computing the unordered \emph{set} of vertex labels in a connected
+component.  Yet before considering \emph{new} mechanisms, we must also
+ask if a purely functional program can do the job.
+
+\paragraph{A purely functional attempt}
+
+Figure~\ref{f:bfs-pure} gives a Haskell implementation of a
+\emph{level-synchronized} breadth-first graph traversal that finds the
+connected component reachable from a starting vertex.  Nodes at
+distance one from the starting vertex are discovered---and set-unioned
+into the connected component---before nodes of distance two are
+considered.  Level-synchronization is a popular strategy for parallel
+breadth-first graph traversal (see, for instance, the Parallel Boost
+Graph Library \cite{bfs-pbgl}), although it necessarily sacrifices
+some parallelism for determinism: parallel tasks cannot continue
+discovering nodes in the component (racing to visit neighbor vertices)
+before synchronizing with all other tasks at a given distance from the
+start.
+
+Unfortunately, the code given in Figure~\ref{f:bfs-pure} does not
+quite implement the problem specification given above.  Even though
+connected-component discovery is parallel, members of the output set
+do not become available to other computations until component
+discovery is \emph{finished}, limiting parallelism.  We could manually
+push the @analyze@ invocation inside the @bf_traverse@ function,
+allowing the @analyze@ computation to start sooner, but then we push
+the same problem to the downstream consumer, unless we are able to
+perform a heroic whole-program fusion.  \TODO{Emphasize the following
+  point: we're prevented from PIPELINING the work here because we have
+  no monotonicity guarantee.  Kahn 1974 makes a point of talking about
+  how in KPNs, monotonicity enables both pipelining and determinism.}
+
+If @bf_traverse@ returned a list, lazy evaluation could make it
+possible to \emph{stream} results to consumers incrementally.  But
+since it instead returns a \emph{set}, such pipelining is not
+generally possible: consuming the results early would create a proof
+obligation that the determinism of the consumer does not depend on the
+order in which results emerge from the producer.\footnote{As intuition
+  for this idea, consider that purely functional set data structures,
+  such as Haskell's \lstinline|Data.Set|, are typically represented
+  with balanced trees.  Unlike with lists, the structure of the tree
+  is not known until all elements are present.}
+
+A compromise would be for @bf_traverse@ to return a list of
+``level-sets'': distance one nodes, distance two nodes, and so on.
+Thus level-one results could be consumed before level-two results are
+ready.  Still, the problem would remain: within each level-set, we
+cannot launch all instances of @analyze@ and asynchronously use those
+results that finish \emph{first}.  Moreover, we would still have to
+contend with the previously-mentioned difficulty of separating
+producers and consumers when expressing producer-consumer computations
+using pure programming with futures~\cite{monad-par}.
+
+\begin{figure}
+  \lstinputlisting{chapter2/code/bfs_pure.hs}
+  \caption{\footnotesize A purely functional Haskell program that maps
+    the \lstinline|analyze| function over the connected component of
+    the \lstinline|profiles| graph that is reachable from the node
+    \lstinline|profile0|.  Although component discovery proceeds in
+    parallel, results of \lstinline|analyze| are not asynchronously
+    available to other computations, inhibiting pipelining.}
+  \label{f:bfs-pure}
+\end{figure}
+
+\paragraph{Our solution}
+
+Suppose that we could write a breadth-first traversal in a programming
+model with limited effects that allows \emph{any} data structure to be
+shared among tasks, including sets and graphs, so long as that data
+structure grows \emph{monotonically}.  Consumers of the data structure
+may execute as soon as data is available, but may only observe
+irrevocable, monotonic properties of it. This is possible with a
+programming model based on LVars.
+
+\lk{The following bit needs to go somewhere, but I'm not sure where.}
+I define a \emph{monotonic data structure} to be a data structure that
+meets these criteria: it is a data structure to which information can
+only be added and never removed, and for which the order in which
+information is added is not observable.

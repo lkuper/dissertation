@@ -90,8 +90,8 @@ include:
   for deterministic stream-processing languages such as
   StreamIt~\cite{streamit-asplos}.
 
-\item \emph{Single-assignment parallelism.}  In
-  parallel \emph{single-assignment} languages, ``full/empty'' bits are
+\item \emph{Single-assignment parallelism.}  In parallel
+  \emph{single-assignment} languages, ``full/empty'' bits are
   associated with memory locations so that they may be written to at
   most once. Single-assignment locations with blocking read semantics
   are known as \emph{IVars}~\cite{IStructures} and are a
@@ -100,6 +100,15 @@ include:
   @SyncVar@s~\cite{reppy-cml-book}; in the Intel Concurrent
   Collections (abbreviated ``CnC'') system~\cite{CnC}; and have even
   been implemented in hardware in Cray MTA machines~\cite{cray-mta}.
+  Although most of these uses incorporate IVars into
+  already-nondeterministic programming environments, the
+  \emph{monad-par} Haskell library~\cite{monad-par} uses IVars in a
+  deterministic-by-construction setting, allowing user-created threads
+  to communicate through IVars without requiring the @IO@ monad.
+  Rather, operations that read and write IVars must run inside a @Par@
+  monad, thus encapsulating them inside otherwise pure programs, and
+  hence a program in which the only effects are @Par@ effects is
+  guaranteed to be deterministic.
 
 \item \emph{Imperative disjoint parallelism.}  Finally, yet another
   approach to guaranteeing determinism is to ensure that the state
@@ -112,7 +121,7 @@ include:
   same state is not accessed simultaneously by multiple threads.  We
   refer to this style of programming as \emph{imperative disjoint
     parallelism}, with Deterministic Parallel Java
-  (DPJ)~\cite{dpj-oopsla} as a prominent example.
+  (DPJ)~\cite{dpj-oopsla, dpj-hotpar09} as a prominent example.
 \end{itemize}
 The four parallel programming models listed above---no-shared-state
 parallelism, data-flow parallelism, single-assignment parallelism, and
