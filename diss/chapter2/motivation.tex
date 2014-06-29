@@ -1,7 +1,6 @@
-\section{Motivating Example: A Parallel, Pipelined Graph Computation}\label{s:lvars-motivation}
+\section{Motivating example: a parallel, pipelined graph computation}\label{s:lvars-motivation}
 
 What applications motivate going beyond IVars and FIFO streams?
-
 Consider applications in which independent subcomputations contribute
 information to shared data structures that change monotonically with
 respect to some order.  Hindley-Milner type inference is one example:
@@ -42,7 +41,7 @@ computing the unordered \emph{set} of vertex labels in a connected
 component.  Yet before considering \emph{new} mechanisms, we must also
 ask if a purely functional program can do the job.
 
-\paragraph{A purely functional attempt}
+\subsection{A purely functional attempt}
 
 Figure~\ref{f:bfs-pure} gives a Haskell implementation of a
 \emph{level-synchronized} breadth-first graph traversal that finds the
@@ -102,7 +101,7 @@ using pure programming with futures~\cite{monad-par}.
   \label{f:bfs-pure}
 \end{figure}
 
-\paragraph{Our solution}
+\subsection{Our solution}
 
 Suppose that we could write a breadth-first traversal in a programming
 model with limited effects that allows \emph{any} data structure to be
@@ -110,10 +109,9 @@ shared among tasks, including sets and graphs, so long as that data
 structure grows \emph{monotonically}.  Consumers of the data structure
 may execute as soon as data is available, but may only observe
 irrevocable, monotonic properties of it. This is possible with a
-programming model based on LVars.
-
-\lk{The following bit needs to go somewhere, but I'm not sure where.}
-I define a \emph{monotonic data structure} to be a data structure that
-meets these criteria: it is a data structure to which information can
-only be added and never removed, and for which the order in which
-information is added is not observable.
+programming model based on LVars.  In the rest of this chapter, I will
+formally introduce LVars and the $\lambdaLVar$ language and give a
+proof of determinism for it.  Later, in
+Section~\ref{s:lvars-fixme}\TODO{forward reference to chapter 4?}, I
+will return to @bf_traverse@ and show how to implement a version of it
+using LVars.

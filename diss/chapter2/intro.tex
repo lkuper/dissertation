@@ -4,8 +4,8 @@ observable results, offering programmers freedom from subtle,
 hard-to-reproduce nondeterministic bugs.  While a number of popular
 languages and language extensions (\eg, Cilk~\cite{cilk}\lk{Any
   others?}) \emph{encourage} deterministic parallel programming, few
-of them guarantee determinism at the language level, for \emph{all}
-programs written using the model.
+of them guarantee determinism at the language level---that is, for
+\emph{all} programs that can be written using the model.
 
 Of the options available for parallel programming with a
 language-level determinism guarantee, perhaps the most mature and
@@ -14,55 +14,58 @@ function-level task parallelism, or \emph{futures}.  For example,
 Haskell programs using futures by means of the @par@ and @pseq@
 combinators can provide real speedups on practical programs while
 guaranteeing determinism~\cite{marlow-par}.\footnote{When programming
-  with \lstinline|par| and \lstinline|pseq|, the language-level
-  determinism guarantee only obtains if user programs are written in
-  the \emph{Safe Haskell}~\cite{safe-haskell} subset of Haskell (which
-  is implemented in GHC Haskell by means of the
-  \lstinline|SafeHaskell| language pragma), and if they do not use the
-  \lstinline|IO| monad.}  Yet pure programming with futures is not
-ideal for all problems.  Consider a \emph{producer/consumer}
-computation in which producers and consumers can be scheduled onto
-separate processors, each able to keep their working sets in cache.
-Such a scenario enables \emph{pipeline parallelism} and is common, for
-instance, in stream processing.  But a clear separation of producers
-and consumers is difficult with futures, because whenever a consumer
-forces a producer-side future, if the future is not yet available, the
-consumer immediately switches roles to begin computing the value (as
-explored by Marlow \etal~\cite{monad-par}).
+  with \lstinline|par| and \lstinline|pseq|, a language-level
+  determinism guarantee obtains if user programs are written in the
+  \emph{Safe Haskell}~\cite{safe-haskell} subset of Haskell (which is
+  implemented in GHC Haskell by means of the \lstinline|SafeHaskell|
+  language pragma), and if they do not use the \lstinline|IO| monad.}
+Yet pure programming with futures is not ideal for all problems.
+Consider a \emph{producer/consumer} computation in which producers and
+consumers can be scheduled onto separate processors, each able to keep
+their working sets in cache.  Such a scenario enables \emph{pipeline
+  parallelism} and is common, for instance, in stream processing.  But
+a clear separation of producers and consumers is difficult with
+futures, because whenever a consumer forces a future, if the future is
+not yet available, the consumer immediately switches roles to begin
+computing the value (as explored by Marlow \etal~\cite{monad-par}).
 
 Since pure programming with futures is a poor fit for
 producer/consumer computations, one might then turn to \emph{stateful}
 deterministic parallel models.  Shared state between computations
 allows the possibility for race conditions that introduce
 nondeterminism, so any parallel programming model that hopes to
-preserve determinism must do something to tame sharing---that is, to
+guarantee determinism must do something to tame sharing---that is, to
 restrict access to mutable state shared among concurrent computations.
 Systems such as Deterministic Parallel Java~\cite{dpj-oopsla,
   dpj-hotpar09}, for instance, accomplish this by ensuring that the
-state accessed by concurrent threads is \emph{disjoint}.  I am
-interested in an alternative approach: allowing \emph{data} to be
-shared, but limiting the \emph{operations} that can be performed on it
-to only those operations that commute with one another and thus can
-tolerate nondeterministic thread interleavings.  Although the order in
-which side-effecting operations occur can differ on multiple runs, a
-program will always produce the same observable result.\footnote{There
-  are many ways to define what is observable about a program. As noted
-  in Chapter~\ref{ch:intro}, I define the observable behavior of a
-  program to be the value to which it evaluates.}
+state accessed by concurrent threads is \emph{disjoint}.
+Alternatively, a programming model might allow \emph{data} to be
+shared, but limit the \emph{operations} that can be performed on it to
+only those operations that commute with one another and thus can
+tolerate nondeterministic thread interleavings.  In such a setting,
+although the order in which side-effecting operations occur can differ
+on multiple runs, a program will always produce the same observable
+result.\footnote{There are many ways to define what is observable
+  about a program. As noted in Chapter~\ref{ch:intro}, I define the
+  observable behavior of a program to be the value to which it
+  evaluates.}
 
 In Kahn process networks (KPNs)~\cite{Kahn-1974} and other
 \emph{data-flow parallel} models---which are the basis for
 deterministic stream-processing languages such as
 StreamIt~\cite{streamit-asplos}---communication among processes takes
 place over blocking FIFO queues with ever-increasing \emph{channel
-  histories}.  Meanwhile, in single-assignment, IVar-based programming
-models~\cite{Tesler-1968, IStructures} such as the Intel Concurrent
-Collections system (CnC)~\cite{CnC} and the \emph{monad-par} Haskell
-library~\cite{monad-par}, a shared data store of blocking
-single-assignment memory locations grows monotonically.  Hence
-\emph{monotonic data structures}---data structures to which
-information can only be added and never removed---emerge as a common
-theme of both data-flow and single-assignment models.
+  histories}.  Meanwhile, in
+\emph{single-assignment}~\cite{Tesler-1968} or
+\emph{IVar-based}~\cite{IStructures} programming models, such as the
+Intel Concurrent Collections system (CnC)~\cite{CnC} and the
+\emph{monad-par} Haskell library~\cite{monad-par}, a shared data store
+of blocking single-assignment memory locations grows monotonically.
+Hence \emph{monotonic data structures}---data structures to which
+information can only be added and never removed, and for which the
+order in which information is added is not observable---emerge as a
+common theme of both data-flow and single-assignment parallel
+programming models.
 
 Because state modifications that only add information and never
 destroy it can be structured to commute with one another and thereby
@@ -70,41 +73,41 @@ avoid race conditions, it stands to reason that diverse deterministic
 parallel programming models would leverage the principle of
 monotonicity.  Yet systems like StreamIt, CnC, and monad-par emerge
 independently, without recognition of their common basis.  Moreover,
-since they are each based on a single type of shared data structure,
-these programming models lack \emph{generality}: IVars and FIFO
+since each one of these programming models is based on a single type
+of shared data structure, they lack \emph{generality}: IVars or FIFO
 streams alone cannot support all producer/consumer applications, as I
-discuss in Section~\ref{s:lvars-motivation}.
+discuss in Section~\ref{s:lvars-motivation} below.
 
-Taking monotonicity as a starting point, then, points the way to a new
-model for deterministic parallelism that generalizes existing models
-and can guide the design of new ones.  The model I propose generalizes
-IVars to \emph{LVars}, thus named because the states an LVar can take
-on are elements of an application-specific {\em lattice}.\footnote{As
-  I'll explain in Section~\ref{s:lvars-domains}, this ``lattice'' need
-  only be a {\em bounded join-semilattice} augmented with a greatest
-  element $\top$, in which every two elements have a least upper bound
-  but not necessarily a greatest lower bound.  For brevity, I use the
-  term ``lattice'' in place of ``bounded join-semilattice with a
-  designated greatest element''.}
+Instead of limiting ourselves to a single data type of data structure,
+then, I propose taking the more general notion of monotonic data
+structures as the starting point for a new model for deterministic
+parallelism.  The model I propose generalizes IVars to \emph{LVars},
+thus named because the states an LVar can take on are elements of an
+application-specific \emph{lattice}.\footnote{As I'll explain in
+  Section~\ref{s:lvars-domains}, this ``lattice'' need only be a {\em
+    bounded join-semilattice} augmented with a greatest element
+  $\top$, in which every two elements have a least upper bound but not
+  necessarily a greatest lower bound.  For brevity, I use the term
+  ``lattice'' in place of ``bounded join-semilattice with a designated
+  greatest element''.}  In this chapter, I define LVars and use them
+to define $\lambdaLVar$, a deterministic parallel calculus with shared
+state, based on the call-by-value $\lambda$-calculus.  The
+$\lambdaLVar$ language is general enough to subsume existing
+deterministic parallel languages because it is parameterized by the
+choice of lattice.  For example, a lattice of channel histories with a
+prefix ordering allows LVars to represent FIFO channels that implement
+a Kahn process network, whereas instantiating $\lambdaLVar$ with a
+lattice with ``empty'' and ``full'' states (where $\mathit{empty} <
+\mathit{full}$) results in a parallel single-assignment language.
+Different instantiations of the lattice result in a family of
+deterministic parallel languages.
 
-In this chapter, I define LVars and use them to define $\lambdaLVar$,
-a deterministic parallel calculus with shared state, based on the
-call-by-value $\lambda$-calculus.  The $\lambdaLVar$ language is
-general enough to subsume existing deterministic parallel languages
-because it is parameterized by the choice of lattice.  For example, a
-lattice of channel histories with a prefix ordering allows LVars to
-represent FIFO channels that implement a Kahn process network, whereas
-instantiating $\lambdaLVar$ with a lattice with ``empty'' and ``full''
-states (where $\mathit{empty} < \mathit{full}$) results in a parallel
-single-assignment language.  Different instantiations of the lattice
-result in a family of deterministic parallel languages.
-
-As the main technical result of this chapter, I give a proof of
-determinism for $\lambdaLVar$ (Section~\ref{s:lvars-proof}).  A
-critical aspect of the proof is a ``frame'' property, expressed by the
-Independence lemma (Section~\ref{s:lvars-independence}), that would
-{\em not} hold in a typical language with shared mutable state, but
-holds in our setting because of the monotonic semantics of LVars.
+The main technical result of this chapter is a proof of determinism
+for $\lambdaLVar$ (Section~\ref{s:lvars-proof}).  A critical aspect of
+the proof is a ``frame'' property, expressed by the Independence lemma
+(Section~\ref{s:lvars-independence}), that would {\em not} hold in a
+typical language with shared mutable state, but holds in our setting
+because of the monotonic semantics of LVars.
 
 Because lattices are composable, any number of diverse monotonic data
 structures can be used together safely.  Moreover, as long as a data
