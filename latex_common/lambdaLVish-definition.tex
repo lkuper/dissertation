@@ -104,7 +104,7 @@ $\incomp{P} \defeq \qforall{p_1,p_2 \in P}{(p_1 \neq p_2 \implies \lubp{p_1}{p_2
     \inferrule*[lab=E-Put]
         {S(l) = p_1 \\ p_2 = \lubp{p_1}{\state{d_2}{\frozenfalse}} \\ p_2 \neq \topp}
         {\config{S}{\putexp{l}{d_2}} \parstepsto
-          \config{\extSp{S}{l}{p_2}}{\unit}}
+          \config{\extSRaw{S}{l}{p_2}}{\unit}}
 
     \inferrule*[lab=E-Put-Err]
         {S(l) = p_1 \\ \lubp{p_1}{\state{d_2}{\frozenfalse}} = \topp}

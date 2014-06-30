@@ -58,7 +58,7 @@ structures like tries, it could allow for unification of
 partially-initialized structures.
 
 \begin{figure}
-\includegraphics[width=6in]{chapter2/figures/ExampleLattices2.pdf} 
+\includegraphics[width=5in]{chapter2/figures/ExampleLattices2.pdf} 
   \caption{\footnotesize Example lattices: (a) IVar containing a
     natural number; (b) pair of natural-number-valued IVars; (c)
     positive integers ordered by $\leq$ (see
@@ -117,9 +117,9 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap
 (D-\lbrace \top \rbrace)$, or the distinguished element $\topS$.
 \end{definition}
 
-\noindent We use the notation $\extS{S}{l}{d}$ to denote extending $S$
-with a binding from $l$ to $d$.  If $l \in \dom{S}$, then
-$\extS{S}{l}{d}$ denotes an update to the existing binding for $l$,
+\noindent We use the notation $\extSRaw{S}{l}{d}$ to denote extending
+$S$ with a binding from $l$ to $d$.  If $l \in \dom{S}$, then
+$\extSRaw{S}{l}{d}$ denotes an update to the existing binding for $l$,
 rather than an extension.  We can also denote a store by explicitly
 writing out all its bindings, using the notation
 $\store{\storebinding{l_1}{d_1}, \dots, \storebinding{l_n}{d_n}}$.

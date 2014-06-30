@@ -1,0 +1,82 @@
+%%% The syntax and semantics of lambdaLVar.
+
+\newcommand{\FigLambdaLVarGrammar}[1][t]{
+\begin{figure}[#1]
+  Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$:
+    \[
+    \begin{array}{rlcl}
+      \mbox{configurations} & \conf & \bnfdef & \config{S}{e} \sep \error \\
+      \mbox{expressions} & e & \bnfdef & 
+           x \sep 
+           v \sep 
+           \app{e}{e} \sep 
+           \getexp{e}{e} \sep 
+           \putexp{e}{e} \sep
+           \NEW \\
+      % N.B. unit and d are part of the set of values because (unlike
+      % in the FHPC paper) get and put don't take and return sets.
+      % Before, put returned an empty set (we overloaded the idea of
+      % an empty threshold set) and get returned a singleton set.
+      % This was to keep the grammar clean, but it's silly; it makes
+      % more sense to just have two more value forms.
+      \mbox{values} & v & \bnfdef & \unit \sep d \sep l \sep T \sep \lam{x}{e} \\
+      \mbox{threshold sets} & T & \bnfdef & \stateset{d_1,\,d_2,\,\dots} \\
+      % N.B. In Redex we actually rule out store values being Top in
+      % the grammar, and have a special StoreVal type for elements
+      % other than Top.  Here we don't bother, and we just say that
+      % stores contain bindings from locations l to pairs p.
+      \mbox{stores} & S & \bnfdef &
+        \store{\storebindingRaw{l_1}{d_1},\,\dots, \storebindingRaw{l_n}{d_n}} \sep \topS \\
+      \mbox{evaluation contexts} & E & \bnfdef &
+           [~] \sep
+           \app{E}{e} \sep
+           \app{e}{E} \sep
+           \getexp{E}{e} \sep
+           \getexp{e}{E} \sep 
+           \putexp{E}{e} \sep
+           \putexp{e}{E}
+    \end{array}
+    \]
+  \caption{Syntax for $\lambdaLVar$.}
+  \label{f:lvars-lambdaLVar-syntax}
+\end{figure}
+}
+
+\newcommand{\FigLambdaLVarSemantics}[1][t]{
+\begin{figure*}[#1]
+  Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$:
+  \bigskip
+  $\incomp{T} \defeq \qforall{d_1,d_2 \in T}{(d_1 \neq d_2 \implies \userlub{d_1}{d_2}
+    = \top)}$\hfill \fbox{$\conf \parstepsto \conf'$}
+  \bigskip
+  \begin{mathpar}
+    \inferrule*[lab=E-Eval-Ctxt]
+        {\config{S}{e} \parstepsto \config{S'}{e'}}
+        {\config{S}{\E{e}} \parstepsto \config{S'}{\E{e'}}}
+
+    \inferrule*[lab=E-Beta]
+        {~}
+        {\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \config{S}{\subst{e}{x}{v}}}
+
+    \inferrule*[lab=E-New, right=\textnormal{($l \notin \dom{S}$)}]
+        {~}
+        {\config{S}{\NEW} \parstepsto \config{\extSRaw{S}{l}{\bot}}{l}}
+
+    \inferrule*[lab=E-Put]
+        {S(l) = d_1 \\ \userlub{d_1}{d_2} \neq \top}
+        {\config{S}{\putexp{l}{d_2}} \parstepsto
+          \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}}
+
+    \inferrule*[lab=E-Put-Err]
+        {S(l) = d_1 \\ \userlub{d_1}{d_2} = \top}
+        {\config{S}{\putexp{l}{d_2}} \parstepsto 
+          \error}
+
+    \inferrule*[lab=E-Get]
+        {S(l) = d_1 \\ \incomp{T} \\ d_2 \in T \\ d_2 \userleq d_1}
+        {\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}}
+  \end{mathpar}
+  \caption{An operational semantics for $\lambdaLVar$.}
+  \label{f:lvars-lambdaLVar-semantics}
+\end{figure*}
+}

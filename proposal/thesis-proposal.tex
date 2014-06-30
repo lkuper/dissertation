@@ -1086,7 +1086,7 @@ both the LVars and CvRDT models.  I propose to do the following:
     \inferrule*[lab=E-Bump]
         {S(l) = \state{d_1}{\frozenfalse} \\ d_1 \userleq f(d_1) \\ f(d_1) \neq \top}
         {\config{S}{\bumpexp{l}} \parstepsto
-          \config{\extSp{S}{l}{\state{f(d_1)}{\frozenfalse}}}{\unit}}
+          \config{\extSRaw{S}{l}{\state{f(d_1)}{\frozenfalse}}}{\unit}}
 \end{mathpar}
   Support for inflationary non-lub updates should make the LVars model
   more expressive (while retaining determinism) and bring the LVars
