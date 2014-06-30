@@ -1,12 +1,13 @@
 NAME=dissertation
+LATEX=xelatex
 UNAME := $(shell uname)
 SOURCES = $(wildcard *.tex *.bib) $(wildcard */*.tex) $(wildcard */figures/*.pdf) $(wildcard ../latex_common/*.tex)
 
 $(NAME).pdf: $(SOURCES)
-	pdflatex $(NAME).tex
+	${LATEX} $(NAME).tex
 	bibtex $(NAME)
-	pdflatex $(NAME).tex
-	pdflatex $(NAME).tex
+	${LATEX} $(NAME).tex
+	${LATEX} $(NAME).tex
 	${MAKE} open
 
 #-----------------------------------------------
