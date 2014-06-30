@@ -1,26 +1,17 @@
+\section{$\lambdaLVar$: Syntax and Semantics}\label{s:lvars-lambdalvar}
 
-
-\section{$\lambdaLVar$: Syntax and Semantics}\label{section:programming}
-
-The syntax and operational semantics of $\lambdaLVar$ appear in Figures
-\ref{f:lambdaLVar-grammar} and \ref{f:lambdaLVar-refl}, respectively.\footnote{
-We have implemented $\lambdaLVar$
-as a runnable PLT Redex \cite{redex-book} model, available
-in the LVars repository.}
-As we have noted, both the syntax and semantics are
-parameterized by the lattice $D$.  The reduction relation $\parstepsto$ is defined
-on \emph{configurations} $\config{S}{e}$ comprising a store and an
-expression.  
-%We identify any configuration in which $S = \topS$
-The \emph{error configuration}, written
-$\error$,
-%
-is a unique element added to the set of
-  configurations, but 
-%% it also forms an equivalence class such that for all $e$, 
-%%   $\config{\topS}{e} = \error$.
-we consider $\config{\topS}{e}$ to be equal to $\error$, for all expressions $e$.
-The metavariable $\conf$ ranges over configurations.
+The syntax and operational semantics of $\lambdaLVar$ appear in
+Figures \ref{f:lambdaLVar-grammar} and \ref{f:lambdaLVar-refl},
+respectively.\footnote{We have implemented $\lambdaLVar$ as a runnable
+  PLT Redex \cite{redex-book} model, available in the LVars
+  repository.}  As we have noted, both the syntax and semantics are
+parameterized by the lattice $D$.  The reduction relation
+$\parstepsto$ is defined on \emph{configurations} $\config{S}{e}$
+comprising a store and an expression.  The \emph{error configuration},
+written $\error$, is a unique element added to the set of
+configurations, but we consider $\config{\topS}{e}$ to be equal to
+$\error$, for all expressions $e$.  The metavariable $\conf$ ranges
+over configurations.
 
 Figure~\ref{f:lambdaLVar-refl} shows two disjoint sets of reduction
 rules: those that step to configurations other than $\error$, and
