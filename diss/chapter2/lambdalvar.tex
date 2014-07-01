@@ -21,20 +21,44 @@ set of configurations, but $\config{\topS}{e}$ is equal to $\error$
 for all expressions $e$.  The metavariable $\conf$ ranges over
 configurations.
 
-\TODO{Explain the rules in Figure~\ref{f:lvars-lambdaLVar-semantics}
-  using either text from my thesis proposal or the POPL paper (leaving
-  out the handlers/quiescence/freezing stuff.}
+$\lambdaLVar$ uses a reduction semantics based on evaluation contexts.
+The {\sc E-Eval-Ctxt} rule is a standard context rule, allowing
+reductions to apply within a context.  The choice of context
+determines where evaluation can occur; in $\lambdaLVar$, the order of
+evaluation is nondeterministic (that is, a given expression can
+generally reduce in more than one way), and so it is generally
+\emph{not} the case that an expression has a unique decomposition into
+redex and context.  For example, in an application $\app{e_1}{e_2}$,
+either $e_1$ or $e_2$ might reduce first.  The nondeterminism in
+choice of evaluation context reflects the nondeterminism of scheduling
+between concurrent threads, and in $\lambdaLVar$, the arguments to
+@get@, @put@, and application expressions are \emph{implicitly}
+evaluated concurrently.
+
+\TODO{Audit consistency of use of term notation: \lstinline|get|
+  vs. \termfont{get} vs. $\GET$.}
+
+The rules {\sc E-New}, {\sc E-Put}/{\sc E-Put-Err}, and {\sc E-Get}
+respectively express the semantics of the $\NEW$, $\PUT$, and $\GET$
+operations described in
+Section~\ref{subsection:lvars-communication-primitives}.  The {\sc
+  E-Put-Err} rule applies when a @put@ to a location would take its
+state to $\top$; in that case, the semantics steps to $\error$.  The
+incompatibility of the threshold set argument to $\GET$ is enforced in
+the {\sc E-Get} rule by the $\incomp{T}$ premise, which requires that
+the least upper bound of any two distinct elements in $T$ must be
+$\top$.
 
 \subsection{Fork-Join Parallelism}\label{subsection:fork-join}
 
 $\lambdaLVar$ has a call-by-value semantics: arguments must be fully
 evaluated before function application ($\beta$-reduction, modeled by
-the {\sc E-Beta} rule) can occur.  We can exploit this property to
-define a syntactic sugar $\LETPAR$ for \emph{parallel composition},
-which computes two subexpressions $e_1$ and $e_2$ in parallel before
-computing $e_3$:
+the {\sc E-Beta} rule) can occur.  I exploit this property to define a
+syntactic sugar $\LETPAR$ for \emph{parallel composition}, which
+computes two subexpressions $e_1$ and $e_2$ in parallel before
+computing $e_3$:\TODO{Figure out why the typesetting here is wonky.}
 \begin{displaymath}
-\begin{minipage}[b]{0.8in}
+\begin{minipage}[b]{2in}
   \begin{equation*}
 \begin{split}
 & \LETPAR ~x = e_1 \\ 
@@ -43,11 +67,11 @@ computing $e_3$:
 \end{split}
 \end{equation*}
 \end{minipage}
-\begin{minipage}[b]{0.6in}
+\begin{minipage}[b]{1in}
 \centering
 $\defeq$
 \end{minipage}
-\begin{minipage}[b]{1in}
+\begin{minipage}[b]{2in}
 \begin{equation*}
   \app{(\app{(\lam{x}{(\lam{y}{e_3})})}{e_1})}{e_2}
 \end{equation*}
@@ -92,6 +116,9 @@ useful for, for instance, allocating a new LVar before beginning a
 sequence of side-effecting $\PUT$ and $\GET$ operations on it.
 
 \subsection{Programming with $\PUT$ and $\GET$}\label{subsection:lvars-programming-with-put-and-get}
+
+\lk{Edited up to this point.}
+
 For our first example of a $\lambdaLVar$ program, we choose the
 elements of our lattice to be pairs of natural-number-valued IVars, as
 shown in Figure~\ref{f:lattice-examples}(b).  We can then write the
