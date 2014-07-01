@@ -2,18 +2,18 @@
 
 What applications motivate going beyond IVars and FIFO streams?
 Consider applications in which independent subcomputations contribute
-information to shared data structures that change monotonically with
-respect to some order.  Hindley-Milner type inference is one example:
-in a parallel type-inference algorithm, each type variable
-monotonically acquires information through unification (which can be
-represented as a lattice). Likewise, in control-flow analysis, the
-\emph{set} of locations to which a variable refers monotonically
-\emph{shrinks}.  In logic programming, a parallel implementation of
-conjunction might asynchronously add information to a logic variable
-from different threads.
+information to shared mutable data structures that change
+monotonically.  Hindley-Milner type inference is one example: in a
+parallel type-inference algorithm, each type variable monotonically
+acquires information through unification (which can be represented as
+a lattice). Likewise, in control-flow analysis, the \emph{set} of
+locations to which a variable refers monotonically \emph{shrinks}.  In
+logic programming, a parallel implementation of conjunction might
+asynchronously add information to a logic variable from different
+threads.
 
 To illustrate the issues that arise in computations of this nature,
-consider a specific problem, drawn from the domain of {\em graph
+consider a specific problem, drawn from the domain of \emph{graph
   algorithms}, where issues of ordering create a tension between
 parallelism and determinism:
 \begin{itemize}
@@ -30,24 +30,27 @@ degrees of) profiles connected to $v$, then map a function $f$ over
 each profile in that set in parallel.
 
 This is a challenge problem for deterministic-by-construction parallel
-programming: existing parallel solutions~\cite{bfs-pbgl} often use a
-nondeterministic traversal of the connected component (even though the
-final connected component is deterministic), and IVars and streams
-provide no obvious aid.  For example, IVars cannot accumulate sets of
-visited nodes, nor can they be used as ``mark bits'' on visited nodes,
-since they can only be written once and not tested for emptiness.
-Streams, on the other hand, impose an excessively strict ordering for
-computing the unordered \emph{set} of vertex labels in a connected
-component.  Yet before considering \emph{new} mechanisms, we must also
-ask if a purely functional program can do the job.
+programming: existing parallel solutions (such as, for instance, the
+parallel breadth-first graph traversal implementation from the
+Parallel Boost Graph Library~\cite{bfs-pbgl}) often traverse the
+connected component in a nondeterministic order (even though the
+outcome of the program---that is, the final connected component---is
+deterministic), and IVars and streams provide no obvious aid.  For
+example, IVars cannot accumulate sets of visited nodes, nor can they
+be used as ``mark bits'' on visited nodes, since they can only be
+written once and not tested for emptiness.  Streams, on the other
+hand, impose an excessively strict ordering for computing the
+unordered \emph{set} of vertex labels in a connected component.  Yet
+before considering new mechanisms, we must also ask if a purely
+functional program can do the job.
 
 \subsection{A purely functional attempt}
 
 \begin{figure}
   \lstinputlisting{chapter2/code/bfs_pure.hs}
-  \caption{\footnotesize A purely functional Haskell program that maps
-    the \lstinline|analyze| function over the connected component of
-    the \lstinline|profiles| graph that is reachable from the node
+  \caption{A purely functional Haskell program that maps the
+    \lstinline|analyze| function over the connected component of the
+    \lstinline|profiles| graph that is reachable from the node
     \lstinline|profile0|.  Although component discovery proceeds in
     parallel, results of \lstinline|analyze| are not asynchronously
     available to other computations, inhibiting pipelining.}
@@ -60,12 +63,12 @@ connected component reachable from a starting vertex.  Nodes at
 distance one from the starting vertex are discovered---and set-unioned
 into the connected component---before nodes of distance two are
 considered.  Level-synchronization is a popular strategy for parallel
-breadth-first graph traversal (see, for instance, the Parallel Boost
-Graph Library \cite{bfs-pbgl}), although it necessarily sacrifices
-some parallelism for determinism: parallel tasks cannot continue
-discovering nodes in the component (racing to visit neighbor vertices)
-before synchronizing with all other tasks at a given distance from the
-start.
+breadth-first graph traversal (in fact, the aforementioned
+implementation from the Parallel Boost Graph Library~\cite{bfs-pbgl}
+uses level-synchronization), although it necessarily sacrifices some
+parallelism for determinism: parallel tasks cannot continue
+discovering nodes in the component before synchronizing with all other
+tasks at a given distance from the start.
 
 Unfortunately, the code given in Figure~\ref{f:bfs-pure} does not
 quite implement the problem specification given above.  Even though
@@ -75,10 +78,7 @@ discovery is \emph{finished}, limiting parallelism.  We could manually
 push the @analyze@ invocation inside the @bf_traverse@ function,
 allowing the @analyze@ computation to start sooner, but then we push
 the same problem to the downstream consumer, unless we are able to
-perform a heroic whole-program fusion.  \TODO{Emphasize the following
-  point: we're prevented from PIPELINING the work here because we have
-  no monotonicity guarantee.  Kahn 1974 makes a point of talking about
-  how in KPNs, monotonicity enables both pipelining and determinism.}
+perform a heroic whole-program fusion.
 
 If @bf_traverse@ returned a list, lazy evaluation could make it
 possible to \emph{stream} results to consumers incrementally.  But
@@ -106,13 +106,14 @@ using pure programming with futures~\cite{monad-par}.
 Suppose that we could write a breadth-first traversal in a programming
 model with limited effects that allows \emph{any} data structure to be
 shared among tasks, including sets and graphs, so long as that data
-structure grows \emph{monotonically}.  Consumers of the data structure
-may execute as soon as data is available, but may only observe
-irrevocable, monotonic properties of it. This is possible with a
-programming model based on LVars.  In the rest of this chapter, I will
-formally introduce LVars and the $\lambdaLVar$ language and give a
-proof of determinism for $\lambdaLVar$.  Later, in
+structure grows monotonically.  Consumers of the data structure may
+execute as soon as data is available, enabling pipelining, but may
+only observe irrevocable, monotonic properties of it. This is possible
+with a programming model based on LVars.  In the rest of this chapter,
+I will formally introduce LVars and the $\lambdaLVar$ language and
+give a proof of determinism for $\lambdaLVar$.  Later, in
 Section~\ref{s:lvars-fixme}, I will return to @bf_traverse@ and show
-how to implement a version of it using LVars. \TODO{Put a forward
-  reference to chapter 4 here instead?  Or maybe just do the solution
-  in this chapter?}
+how to implement a version of it using LVars that makes pipelining
+possible and truly satisfies the above specification. \TODO{Put a
+  forward reference to chapter 4 here instead?  Or maybe just do the
+  solution in this chapter?}

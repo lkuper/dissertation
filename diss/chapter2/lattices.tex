@@ -26,7 +26,7 @@ LVar's state.  In this section, I discuss how lattices and stores work
 in $\lambdaLVar$ and explain how the semantics of $\PUT$ and $\GET$
 together enforce determinism in $\lambdaLVar$ programs.
 
-\subsection{Lattices}\label{subsection:domains}
+\subsection{Lattices}\label{subsection:lvars-lattices}
 
 The definition of $\lambdaLVar$ is parameterized by $D$: to write
 concrete $\lambdaLVar$ programs, one must specify the set of LVar
@@ -43,40 +43,40 @@ greatest element $\top$.  That is, $D$ has the following structure:
   state that results from conflicting updates to an LVar.
 \item $D$ comes equipped with a partial order $\userleq$, where $\bot
   \userleq d \userleq \top$ for all $d \in D$.
-\item Every pair of elements in $D$ has a least upper bound (lub)
-  $\sqcup$.  Intuitively, the existence of a lub for every two
+\item Every pair of elements in $D$ has a least upper bound (lub),
+  written $\sqcup$.  Intuitively, the existence of a lub for every two
   elements in $D$ means that it is possible for two subcomputations to
   independently update an LVar, and then deterministically merge the
   results by taking the lub of the resulting two states.
 \end{itemize}
 
-\noindent Virtually any data structure to which information
-is added gradually can be represented as a lattice, including pairs,
-arrays, trees, maps, and infinite streams.  In the case of maps or
-sets, $\sqcup$ could be defined as union; for pointer-based data
-structures like tries, it could allow for unification of
-partially-initialized structures.
+Virtually any data structure to which information is added gradually
+can be represented as a lattice, including pairs, arrays, trees, maps,
+and infinite streams.  In the case of maps or sets, $\sqcup$ could be
+defined as union; for pointer-based data structures like tries, it
+could allow for unification of partially-initialized structures.
 
 \begin{figure}
 \includegraphics[width=5in]{chapter2/figures/ExampleLattices2.pdf} 
-  \caption{\footnotesize Example lattices: (a) IVar containing a
-    natural number; (b) pair of natural-number-valued IVars; (c)
-    positive integers ordered by $\leq$ (see
-    Section~\ref{subsection:bump}).  Subfigure (b) is annotated with
-    example threshold sets that would correspond to a blocking read of
-    the first or second element of the pair (see
-    Sections~\ref{subsection:putget}
-    and \ref{subsection:programming-with-put-and-get}).  Any state
+  \caption{Example lattices: (a) IVar containing a natural number; (b)
+    pair of natural-number-valued IVars; (c) positive integers ordered
+    by $\leq$ (see Section~\ref{subsection:lvars-fixme}).  Subfigure
+    (b) is annotated with example threshold sets that would correspond
+    to a blocking read of the first or second element of the pair (see
+    Sections~\ref{subsection:putget} and
+    \ref{subsection:lvars-programming-with-put-and-get}).  Any state
     transition crossing the ``tripwire'' for \termfont{getSnd} causes
     it to unblock and return a result.}
     \label{f:lvars-example-lattices}
 \end{figure}
 
 Figure~\ref{f:lvars-example-lattices} gives three examples of lattices
-for common data structures.  The simplest example of a useful lattice
-is one that represents the states that a a single-assignment variable
-(that is, an IVar) can take on.  A natural-number-valued IVar, for
-instance, has a state space corresponding to the lattice in
+for common data structures.\TODO{Add forward reference to
+  Figure~\ref{f:lvars-example-lattices}'s caption to where I talk
+  about generalizing put to bump.}  The simplest example of a useful
+lattice is one that represents the states that a a single-assignment
+variable (that is, an IVar) can take on.  A natural-number-valued
+IVar, for instance, has a state space corresponding to the lattice in
 Figure~\ref{f:lvars-example-lattices}(a), that is,
 \begin{displaymath}
   D = (\lbrace \top, \bot \rbrace \cup \mathbb{N}, \userleq), 
@@ -117,24 +117,24 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap
 (D-\lbrace \top \rbrace)$, or the distinguished element $\topS$.
 \end{definition}
 
-\noindent We use the notation $\extSRaw{S}{l}{d}$ to denote extending
-$S$ with a binding from $l$ to $d$.  If $l \in \dom{S}$, then
-$\extSRaw{S}{l}{d}$ denotes an update to the existing binding for $l$,
-rather than an extension.  We can also denote a store by explicitly
-writing out all its bindings, using the notation
-$\store{\storebinding{l_1}{d_1}, \dots, \storebinding{l_n}{d_n}}$.
-The state space of stores forms a bounded join-semilattice augmented
-with a greatest element, just as $D$ does, with the empty store
-$\bot_S$ as its least element and $\topS$ as its greatest element.  It
-is straightforward to lift the $\userleq$ and $\sqcup$ operations
-defined on elements of $D$ to the level of stores:
+We use the notation $\extSRaw{S}{l}{d}$ to denote extending $S$ with a
+binding from $l$ to $d$.  If $l \in \dom{S}$, then $\extSRaw{S}{l}{d}$
+denotes an update to the existing binding for $l$, rather than an
+extension.  We can also denote a store by explicitly writing out all
+its bindings, using the notation $\store{\storebinding{l_1}{d_1},
+  \dots, \storebinding{l_n}{d_n}}$.  The state space of stores forms a
+bounded join-semilattice augmented with a greatest element, just as
+$D$ does, with the empty store $\bot_S$ as its least element and
+$\topS$ as its greatest element.  It is straightforward to lift the
+$\userleq$ and $\sqcup$ operations defined on elements of $D$ to the
+level of stores:
 
 \DefLeqStore
 
 \DefLubStore
 
-\noindent By Definition~\ref{def:store-lub}, if $\userlub{d_1}{d_2} =
-\top$, then
+By Definition~\ref{def:store-lub}, if $\userlub{d_1}{d_2} = \top$,
+then
 $\lubstore{\store{\storebinding{l}{d_1}}}{\store{\storebinding{l}{d_2}}}
 = \topS$.  Notice that a store containing a binding
 $\storebinding{l}{\top}$ can never arise during the execution of a
@@ -168,19 +168,19 @@ occur.
   incompatible.
 \end{itemize}
 
-\noindent The intuition behind $\GET$ is that
-it specifies a subset of the lattice that is ``horizontal'': no two
-elements in the threshold set can be above or below one another.
-Intuitively, each element in the threshold set is an ``alarm'' that
-detects the activation of itself or any state above it.  One way of
-visualizing the threshold set for a $\GET$ operation is as a subset of
-edges in the lattice that, if crossed, set off the corresponding
-alarm.  Together these edges form a ``tripwire''.  This visualization
-is pictured in Figure~\ref{f:lvars-example-lattices}(b).  The
-threshold set $\stateset{(\bot, 0), (\bot, 1), ...}$ (or a subset
-thereof) would pass the incompatibility test, as would the threshold
-set $\stateset{(0, \bot), (1, \bot), ...}$ (or a subset thereof), but
-a combination of the two would not pass.
+The intuition behind $\GET$ is that it specifies a subset of the
+lattice that is ``horizontal'': no two elements in the threshold set
+can be above or below one another.  Intuitively, each element in the
+threshold set is an ``alarm'' that detects the activation of itself or
+any state above it.  One way of visualizing the threshold set for a
+$\GET$ operation is as a subset of edges in the lattice that, if
+crossed, set off the corresponding alarm.  Together these edges form a
+``tripwire''.  This visualization is pictured in
+Figure~\ref{f:lvars-example-lattices}(b).  The threshold set
+$\stateset{(\bot, 0), (\bot, 1), ...}$ (or a subset thereof) would
+pass the incompatibility test, as would the threshold set
+$\stateset{(0, \bot), (1, \bot), ...}$ (or a subset thereof), but a
+combination of the two would not pass.
 
 The requirement that the elements of a threshold set be pairwise
 incompatible limits the expressivity of threshold sets.  In fact, it
@@ -206,10 +206,10 @@ is defined to be at $\bot$.}
 
 \DefLeqStoreCnC
 
-\noindent Our Definition~\ref{def:leqstore} is reminiscent of
+Our Definition~\ref{def:leqstore} is reminiscent of
 Definition~\ref{def:leqstore-cnc}, but
-Definition~\ref{def:leqstore-cnc} requires that $S(l)$ and $S'(l)$
-be \emph{equal}, instead of our weaker requirement that $S(l) \userleq
+Definition~\ref{def:leqstore-cnc} requires that $S(l)$ and $S'(l)$ be
+\emph{equal}, instead of our weaker requirement that $S(l) \userleq
 S'(l)$ according to the user-provided partial order $\userleq$.  In
 $\lambdaLVar$, stores may grow by updating existing bindings via
 repeated $\PUT$s, so Definition~\ref{def:leqstore-cnc} would be too

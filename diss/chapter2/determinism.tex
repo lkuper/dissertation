@@ -1,4 +1,4 @@
-\section{Proof of Determinism for $\lambdaLVar$}\label{section:proof}
+\section{Proof of Determinism for $\lambdaLVar$}\label{s:lvars-proof}
 
 \begin{figure*}
 %% \rn{I see ``By IH'' is used a lot in the full proof.  But this is the
@@ -33,15 +33,15 @@ report \cite{lampar-TR}.
 The complete proofs appear in Appendix~\ref{app:proof}.
 \fi
 
-\subsection{Supporting Lemmas}\label{subsection:independence}
+\subsection{Supporting Lemmas}\label{subsection:lvars-independence}
 
 Figure~\ref{f:frame-rule} shows a \emph{frame rule}, due to O'Hearn
 \etal~\cite{OHearnLocalReasoning}, which captures the idea that, given
-a program $c$ with a precondition $p$ that holds before it runs and
-a postcondition $q$ that holds afterward, a disjoint condition $r$
-that holds before $c$ runs will continue to hold afterward.
-Moreover, the original postcondition $q$ will continue to hold.
-For $\lambdaLVar$, we can state and prove an analogous \emph{local reasoning} property.
+a program $c$ with a precondition $p$ that holds before it runs and a
+postcondition $q$ that holds afterward, a disjoint condition $r$ that
+holds before $c$ runs will continue to hold afterward.  Moreover, the
+original postcondition $q$ will continue to hold.  For $\lambdaLVar$,
+we can state and prove an analogous \emph{local reasoning} property.
 %% If we think of $c$ as a
 %% $\PUT$ operation, and of $p$ and $q$ as, respectively, the state of an
 %% LVar before and after the $\PUT$ occurs, then the \emph{local

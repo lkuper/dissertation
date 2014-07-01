@@ -78,19 +78,19 @@ of shared data structure, they lack \emph{generality}: IVars or FIFO
 streams alone cannot support all producer/consumer applications, as I
 discuss in Section~\ref{s:lvars-motivation} below.
 
-Instead of limiting ourselves to a single data type of data structure,
-then, I propose taking the more general notion of monotonic data
-structures as the starting point for a new model for deterministic
-parallelism.  The model I propose generalizes IVars to \emph{LVars},
-thus named because the states an LVar can take on are elements of an
-application-specific \emph{lattice}.\footnote{As I'll explain in
-  Section~\ref{s:lvars-domains}, this ``lattice'' need only be a {\em
-    bounded join-semilattice} augmented with a greatest element
-  $\top$, in which every two elements have a least upper bound but not
-  necessarily a greatest lower bound.  For brevity, I use the term
-  ``lattice'' in place of ``bounded join-semilattice with a designated
-  greatest element''.}  In this chapter, I define LVars and use them
-to define $\lambdaLVar$, a deterministic parallel calculus with shared
+Instead of limiting ourselves to a single type of shared data
+structure, then, I propose taking the more general notion of monotonic
+data structures as a starting point for a new deterministic parallel
+programming model.  The model I propose generalizes IVars
+to \emph{LVars}, thus named because the states an LVar can take on are
+elements of an application-specific \emph{lattice}.\footnote{As I'll
+explain in Section~\ref{s:lvars-domains}, this ``lattice'' need only
+be a {\em bounded join-semilattice} augmented with a greatest element
+$\top$, in which every two elements have a least upper bound but not
+necessarily a greatest lower bound.  For brevity, I use the term
+``lattice'' in place of ``bounded join-semilattice with a designated
+greatest element''.}  In this chapter, I define LVars and use them to
+define $\lambdaLVar$, a deterministic parallel calculus with shared
 state, based on the call-by-value $\lambda$-calculus.  The
 $\lambdaLVar$ language is general enough to subsume existing
 deterministic parallel languages because it is parameterized by the
@@ -105,20 +105,21 @@ deterministic parallel languages.
 The main technical result of this chapter is a proof of determinism
 for $\lambdaLVar$ (Section~\ref{s:lvars-proof}).  A critical aspect of
 the proof is a ``frame'' property, expressed by the Independence lemma
-(Section~\ref{s:lvars-independence}), that would {\em not} hold in a
-typical language with shared mutable state, but holds in our setting
-because of the monotonic semantics of LVars.
+(Section~\ref{subsection:lvars-independence}), that would \emph{not}
+hold in a typical language with shared mutable state, but holds in the
+setting of $\lambdaLVar$ because of the monotonic semantics of
+LVars.
 
 Because lattices are composable, any number of diverse monotonic data
 structures can be used together safely.  Moreover, as long as a data
 structure presents the LVar interface, it is fine to use an existing,
 optimized concurrent data structure implementation; we need not
 rewrite the world's data structures to leverage the $\lambdaLVar$
-determinism result. I discuss how to formulate a few common data
-structures (pairs, arrays, FIFOs) as lattices
-(Sections~\ref{s:lvars-domains} and
-\ref{s:lvars-programming-with-put-and-get}) and how to implement
-operations on them within the $\lambdaLVar$ model.
+determinism result. In Sections~\ref{subsection:lvars-lattices}
+and~\ref{subsection:lvars-programming-with-put-and-get}, I discuss how
+to formulate a few common data structures (pairs, arrays, FIFOs) as
+lattices and how to implement operations on them within the
+$\lambdaLVar$ model.
 
 The material in this chapter is based on research done jointly with
 Ryan Newton~\cite{LVars-paper, LVars-tr}.

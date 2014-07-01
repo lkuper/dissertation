@@ -54,23 +54,24 @@ $\defeq$
 \end{equation*}
 \end{minipage}
 \end{displaymath}
-\noindent Although $e_1$ and $e_2$ can be evaluated in parallel, $e_3$
-cannot be evaluated until both $e_1$ and $e_2$ are values, because the
+
+Although $e_1$ and $e_2$ can be evaluated in parallel, $e_3$ cannot be
+evaluated until both $e_1$ and $e_2$ are values, because the
 call-by-value semantics does not allow $\beta$-reduction until the
 operand is fully evaluated, and because it further disallows reduction
 under $\lambda$-terms (sometimes called ``full $\beta$-reduction'').
 In the terminology of parallel programming, a $\LETPAR$ expression
-executes both a \emph{fork} and a \emph{join}.  Indeed, it is common for
-fork and join to be combined in a single language construct, for
+executes both a \emph{fork} and a \emph{join}.  Indeed, it is common
+for fork and join to be combined in a single language construct, for
 example, in languages with parallel tuple expressions such as
 Manticore~\cite{manticore_parallel_tuples}.
 
 \begin{figure}[tb]
   \centering 
 \includegraphics[width=4in]{chapter2/figures/SeriesParallel.pdf} 
-\caption{\footnotesize A series-parallel graph induced by parallel
-    $\lambda$-calculus evaluation (a); a non-series-parallel
-    graph induced by $\PUT$/$\GET$ operations (b).}
+\caption{A series-parallel graph induced by parallel
+  $\lambda$-calculus evaluation (a); a non-series-parallel graph
+  induced by $\PUT$/$\GET$ operations (b).}
   \label{f:series-parallel}
 \end{figure}
 
@@ -91,7 +92,7 @@ desugars to $\app{(\lam{\_}{e_2})}{e_1}$.  Sequential composition is
 useful for, for instance, allocating a new LVar before beginning a
 sequence of side-effecting $\PUT$ and $\GET$ operations on it.
 
-\subsection{Programming with $\PUT$ and $\GET$}\label{subsection:programming-with-put-and-get}
+\subsection{Programming with $\PUT$ and $\GET$}\label{subsection:lvars-programming-with-put-and-get}
 
 For our first example of a $\lambdaLVar$ program, we choose the
 elements of our lattice to be pairs of natural-number-valued IVars, as
