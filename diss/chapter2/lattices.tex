@@ -63,7 +63,7 @@ could allow for unification of partially-initialized structures.
     by $\leq$ (see Section~\ref{subsection:lvars-fixme}).  Subfigure
     (b) is annotated with example threshold sets that would correspond
     to a blocking read of the first or second element of the pair (see
-    Sections~\ref{subsection:putget} and
+    Sections~\ref{subsection:lvars-communication-primitives} and
     \ref{subsection:lvars-programming-with-put-and-get}).  Any state
     transition crossing the ``tripwire'' for \termfont{getSnd} causes
     it to unblock and return a result.}
@@ -98,7 +98,7 @@ will be $2$, since $2 \sqcup 1 = 2$.  Here, the unreachability of
 $\top$ models the fact that no conflicting updates can occur to the
 LVar.
 
-\subsection{Stores}\label{subsection:stores}
+\subsection{Stores}\label{subsection:lvars-stores}
 
 During the evaluation of a $\lambdaLVar$ program, a \emph{store} $S$
 keeps track of the states of LVars.  Each LVar is represented by a
@@ -109,10 +109,10 @@ lattice $D$.  We can do this with no loss of generality because
 lattices corresponding to different types of LVars could always be
 unioned into a single lattice (with shared $\top$ and $\bot$
 elements).\footnote{Alternatively, in a typed formulation of
-$\lambdaLVar$, the type of an LVar might determine the lattice of its
-states.}
+  $\lambdaLVar$, the type of an LVar might determine the lattice of
+  its states.}
 
-\begin{definition}\label{def:store}
+\begin{definition}\label{def:lvars-store}
 A \emph{store} is either a finite partial mapping $S : \Loc \fmap
 (D-\lbrace \top \rbrace)$, or the distinguished element $\topS$.
 \end{definition}
@@ -121,37 +121,41 @@ We use the notation $\extSRaw{S}{l}{d}$ to denote extending $S$ with a
 binding from $l$ to $d$.  If $l \in \dom{S}$, then $\extSRaw{S}{l}{d}$
 denotes an update to the existing binding for $l$, rather than an
 extension.  We can also denote a store by explicitly writing out all
-its bindings, using the notation $\store{\storebinding{l_1}{d_1},
-  \dots, \storebinding{l_n}{d_n}}$.  The state space of stores forms a
+its bindings, using the notation $\store{\storebindingRaw{l_1}{d_1},
+  \dots, \storebindingRaw{l_n}{d_n}}$.  The state space of stores forms a
 bounded join-semilattice augmented with a greatest element, just as
 $D$ does, with the empty store $\bot_S$ as its least element and
 $\topS$ as its greatest element.  It is straightforward to lift the
 $\userleq$ and $\sqcup$ operations defined on elements of $D$ to the
 level of stores:
 
-\DefLeqStore
+\LVarsDefLeqStore
 
-\DefLubStore
+\LVarsDefLubStore
 
-By Definition~\ref{def:store-lub}, if $\userlub{d_1}{d_2} = \top$,
-then
-$\lubstore{\store{\storebinding{l}{d_1}}}{\store{\storebinding{l}{d_2}}}
+By Definition~\ref{def:lvars-lubstore}, if $\userlub{d_1}{d_2} =
+\top$, then
+$\lubstore{\store{\storebindingRaw{l}{d_1}}}{\store{\storebindingRaw{l}{d_2}}}
 = \topS$.  Notice that a store containing a binding
-$\storebinding{l}{\top}$ can never arise during the execution of a
+$\storebindingRaw{l}{\top}$ can never arise during the execution of a
 $\lambdaLVar$ program, because (as we will see in
-Section~\ref{section:programming}) an attempted write that would take
+Section~\ref{s:lvars-lambdalvar}) an attempted write that would take
 the state of $l$ to $\top$ would raise an error before the write can
 occur.
 
-\subsection{Communication Primitives}\label{subsection:putget}
+\subsection{Communication Primitives}\label{subsection:lvars-communication-primitives}
+
+The $\NEW$, $\PUT$, and $\GET$ operations create, write to, and read
+from LVars, respectively. The interface is similar to that presented
+by mutable references:
 
 \begin{itemize}
 \item $\NEW$ extends the store with a binding for a new LVar whose
   initial state is $\bot$, and returns the location $l$ of that LVar
   (\ie, a pointer to the LVar).
 \item $\PUT$ takes a pointer to an LVar and a singleton set containing
-  a new state and updates the LVar's state to the {\em least upper
-  bound} of the current state and the new state, potentially pushing
+  a new state and updates the LVar's state to the \emph{least upper
+    bound} of the current state and the new state, potentially pushing
   the state of the LVar upward in the lattice.  Any update that would
   take the state of an LVar to $\top$ results in an error.
 \item $\GET$ performs a blocking ``threshold'' read that allows
@@ -159,12 +163,12 @@ occur.
   an LVar and a \emph{threshold set} $Q$, which is a non-empty subset
   of $D$ that is \emph{pairwise incompatible}, meaning that the lub of
   any two distinct elements in $Q$ is $\top$.  If the LVar's state $d$
-  in the lattice is {\em at or above} some $d' \in Q$, the $\GET$
-  operation unblocks and returns the singleton set $\lbrace
-  d' \rbrace$.  Note that $d'$ is a unique element of $Q$, for if
-  there is another $d'' \neq d'$ in the threshold set such that
-  $d'' \userleq d$, it would follow that $d' \sqcup d'' \userleq
-  d \neq \top$, which contradicts the requirement that $Q$ be pairwise
+  in the lattice is \emph{at or above} some $d' \in Q$, the $\GET$
+  operation unblocks and returns the singleton set $\lbrace d'
+  \rbrace$.  Note that $d'$ is a unique element of $Q$, for if there
+  is another $d'' \neq d'$ in the threshold set such that $d''
+  \userleq d$, it would follow that $d' \sqcup d'' \userleq d \neq
+  \top$, which contradicts the requirement that $Q$ be pairwise
   incompatible.
 \end{itemize}
 
@@ -175,12 +179,12 @@ threshold set is an ``alarm'' that detects the activation of itself or
 any state above it.  One way of visualizing the threshold set for a
 $\GET$ operation is as a subset of edges in the lattice that, if
 crossed, set off the corresponding alarm.  Together these edges form a
-``tripwire''.  This visualization is pictured in
-Figure~\ref{f:lvars-example-lattices}(b).  The threshold set
-$\stateset{(\bot, 0), (\bot, 1), ...}$ (or a subset thereof) would
-pass the incompatibility test, as would the threshold set
-$\stateset{(0, \bot), (1, \bot), ...}$ (or a subset thereof), but a
-combination of the two would not pass.
+``tripwire''.  Figure~\ref{f:lvars-example-lattices}(b) shows what the
+``tripwire'' looks like for an example $\GET$ operation.  The
+threshold set $\stateset{(\bot, 0), (\bot, 1), ...}$ (or a subset
+thereof) would pass the incompatibility test, as would the threshold
+set $\stateset{(0, \bot), (1, \bot), ...}$ (or a subset thereof), but
+a combination of the two would not pass.
 
 The requirement that the elements of a threshold set be pairwise
 incompatible limits the expressivity of threshold sets.  In fact, it
@@ -190,38 +194,42 @@ explain how to generalize the definition of a threshold set to make
 more programs expressible.  For now, I will proceed with the simpler
 definition above.
 
-\subsection{Monotonic Store Growth and Determinism}\label{subsection:monotonicity}
+\subsection{Monotonic Store Growth and Determinism}\label{subsection:lvars-monotonic-store-growth}
 
 In IVar-based languages, a store can only change in one of two ways: a
-new binding is added at $\bot$, or a previously $\bot$ binding is
-permanently updated to a meaningful value.  It is therefore
-straightforward in such languages to define an ordering on stores and
-establish determinism based on the fact that stores grow monotonically
-with respect to the ordering. For instance, \emph{Featherweight
-CnC} \cite{CnC}, a single-assignment imperative calculus that models
-the Intel Concurrent Collections (CnC) system, defines ordering on
-stores as follows:\footnote{In Featherweight CnC, no store location is
-explicitly bound to $\bot$.  Instead, if $l \notin \dom{S}$ then $l$
-is defined to be at $\bot$.}
+new, empty location (pointing to $\bot$) is created, or a previously
+$\bot$ binding is permanently updated to a meaningful value.  It is
+therefore straightforward in such languages to define an ordering on
+stores and establish determinism based on the fact that stores grow
+monotonically with respect to the ordering. For instance,
+\emph{Featherweight CnC}~\cite{CnC}, a single-assignment imperative
+calculus that models the Intel Concurrent Collections (CnC) system,
+defines ordering on stores as follows:\footnote{A minor difference
+  between $\lambdaLVar$ and Featherweight CnC is that, n Featherweight
+  CnC, no store location is explicitly bound to $\bot$.  Instead, if
+  $l \notin \dom{S}$, then $l$ is defined to point to $\bot$.}
 
-\DefLeqStoreCnC
+\LVarsDefLeqStoreCnC
 
-Our Definition~\ref{def:leqstore} is reminiscent of
-Definition~\ref{def:leqstore-cnc}, but
-Definition~\ref{def:leqstore-cnc} requires that $S(l)$ and $S'(l)$ be
-\emph{equal}, instead of our weaker requirement that $S(l) \userleq
-S'(l)$ according to the user-provided partial order $\userleq$.  In
-$\lambdaLVar$, stores may grow by updating existing bindings via
-repeated $\PUT$s, so Definition~\ref{def:leqstore-cnc} would be too
-strong; for instance, if $\bot \userlt d_1 \userleq d_2$ for distinct
-$d_1, d_2 \in D$, the relationship
+Our Definition~\ref{def:lvars-leqstore} is reminiscent of
+Definition~\ref{def:lvars-leqstore-cnc}, but
+Definition~\ref{def:lvars-leqstore-cnc} requires that $S(l)$ and
+$S'(l)$ be \emph{equal}, instead of our weaker requirement that $S(l)
+\userleq S'(l)$ according to the user-provided partial order
+$\userleq$.  In $\lambdaLVar$, stores may grow by updating existing
+bindings via repeated $\PUT$s, so
+Definition~\ref{def:lvars-leqstore-cnc} would be too strong; for
+instance, if $\bot \userlt d_1 \userleq d_2$ for distinct $d_1, d_2
+\in D$, the relationship
 $\leqstore{\store{\storebinding{l}{d_1}}}{\store{\storebinding{l}{d_2}}}$
-holds under Definition~\ref{def:leqstore}, but would not hold under
-Definition~\ref{def:leqstore-cnc}.  That is, in $\lambdaLVar$ an LVar
-could take on the state $d_1$ followed by $d_2$, which would not be
-possible in Featherweight CnC.  We establish in
-Section~\ref{s:lvars-proof} that $\lambdaLVar$ remains deterministic
-despite the relatively weak $\leqstore{}{}$ relation given in
-Definition~\ref{def:leqstore}.  The keys to maintaining determinism
-are the blocking semantics of the $\GET$ operation and the fact that
-it allows only \emph{limited} observations of the state of an LVar.
+holds under Definition~\ref{def:lvars-leqstore}, but would not hold
+under Definition~\ref{def:lvars-leqstore-cnc}.  That is, in
+$\lambdaLVar$ an LVar could take on the state $d_1$ followed by $d_2$,
+which would not be possible in Featherweight CnC.
+
+I establish in Section~\ref{s:lvars-proof} that $\lambdaLVar$ remains
+deterministic despite the relatively weak $\leqstore{}{}$ relation
+given in Definition~\ref{def:lvars-leqstore}.  The keys to maintaining
+determinism are the blocking semantics of the $\GET$ operation and the
+fact that it allows only \emph{limited} observations of the state of
+an LVar.

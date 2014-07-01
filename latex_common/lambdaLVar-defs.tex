@@ -9,46 +9,46 @@
 %% \end{definition}
 %% }
 
-%% \newcommand{\DefLeqStore}{
-%% \begin{definition}\label{def:leqstore}
-%%   A store $S$ is \emph{less than or equal to} a store $S'$ (written
-%%   $\leqstore{S}{S'}$) iff:
-%%   \begin{itemize}
-%%   \item $S' = \topS$, or
-%%   \item $\dom{S} \subseteq \dom{S'}$ and for all $l
-%%     \in \dom{S}$, $S(l) \myleq S'(l)$.
-%%   \end{itemize}
-%% \end{definition}
-%% }
+\newcommand{\LVarsDefLeqStore}{
+\begin{definition}\label{def:lvars-leqstore}
+  A store $S$ is \emph{less than or equal to} a store $S'$ (written
+  $\leqstore{S}{S'}$) iff:
+  \begin{itemize}
+  \item $S' = \topS$, or
+  \item $\dom{S} \subseteq \dom{S'}$ and for all $l
+    \in \dom{S}$, $S(l) \userleq S'(l)$.
+  \end{itemize}
+\end{definition}
+}
 
-%% \newcommand{\DefLubStore}{
-%% \begin{definition}\label{def:store-lub}
+\newcommand{\LVarsDefLubStore}{
+\begin{definition}\label{def:lvars-lubstore}
 
-%%   The \emph{least upper bound (lub)} of two stores $S_1$ and $S_2$ (written
-%%   $\lubstore{S_1}{S_2}$) is defined as follows:
+  The \emph{least upper bound (lub)} of two stores $S_1$ and $S_2$ (written
+  $\lubstore{S_1}{S_2}$) is defined as follows:
   
-%%   \begin{itemize}
-%%   \item $\lubstore{S_1}{S_2} = \topS$ iff there exists some $l \in
-%%     \dom{S_1} \cap \dom{S_2}$ such that $\lub{S_1(l)}{S_2(l)} = \top$.
-%%   \item Otherwise, $\lubstore{S_1}{S_2}$ is the store $S$ such that:
+  \begin{itemize}
+  \item $\lubstore{S_1}{S_2} = \topS$ iff there exists some $l \in
+    \dom{S_1} \cap \dom{S_2}$ such that $\userlub{S_1(l)}{S_2(l)} = \top$.
+  \item Otherwise, $\lubstore{S_1}{S_2}$ is the store $S$ such that:
 
-%%   \begin{itemize}
-%%   \item $\dom{S} = \dom{S_1} \cup \dom{S_2}$, and
-%%   \item For all $l \in \dom{S}$:
-%%   \end{itemize}
-%%     \begin{displaymath}
-%%       S(l) = \left\{ \begin{array}{ll}
-%%         \lub{S_1(l)}{S_2(l)} & \textrm{if $l \in \dom{S_1} \cap \dom{S_2}$} \\
-%%         S_1(l) & \textrm{if $l \notin \dom{S_2}$} \\
-%%         S_2(l) & \textrm{if $l \notin \dom{S_1}$}
-%%         \end{array} \right.
-%%     \end{displaymath}
-%%   \end{itemize}
-%% \end{definition}
-%% }
+  \begin{itemize}
+  \item $\dom{S} = \dom{S_1} \cup \dom{S_2}$, and
+  \item For all $l \in \dom{S}$:
+  \end{itemize}
+    \begin{displaymath}
+      S(l) = \left\{ \begin{array}{ll}
+        \userlub{S_1(l)}{S_2(l)} & \textrm{if $l \in \dom{S_1} \cap \dom{S_2}$} \\
+        S_1(l) & \textrm{if $l \notin \dom{S_2}$} \\
+        S_2(l) & \textrm{if $l \notin \dom{S_1}$}
+        \end{array} \right.
+    \end{displaymath}
+  \end{itemize}
+\end{definition}
+}
 
-\newcommand{\DefLeqStoreCnC}{
-\begin{definition}[store ordering, Featherweight CnC]\label{def:leqstore-cnc}
+\newcommand{\LVarsDefLeqStoreCnC}{
+\begin{definition}[store ordering, Featherweight CnC]\label{def:lvars-leqstore-cnc}
   A store $S$ is \emph{less than or equal to} a store $S'$ (written
   $\leqstore{S}{S'}$) iff $\dom{S} \subseteq \dom{S'}$ and for all $l
   \in \dom{S}$, $S(l) = S'(l)$.

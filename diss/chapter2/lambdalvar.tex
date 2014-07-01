@@ -11,16 +11,15 @@
 
 The syntax and operational semantics of $\lambdaLVar$ appear in
 Figures~\ref{f:lvars-lambdaLVar-syntax} and
-\ref{f:lvars-lambdaLVar-semantics}, respectively.\footnote{We have
-  implemented $\lambdaLVar$ as a runnable PLT Redex \cite{redex-book}
-  model, available in the LVars repository.}  As we have noted, both
-the syntax and semantics are parameterized by the lattice $D$.  The
+\ref{f:lvars-lambdaLVar-semantics}, respectively.\TODO{Freshen up the
+  Redex model of $\lambdaLVar$ and add it as an appendix.}  Both the
+syntax and semantics are parameterized by the lattice $D$.  The
 reduction relation $\parstepsto$ is defined on \emph{configurations}
 $\config{S}{e}$ comprising a store and an expression.  The \emph{error
   configuration}, written $\error$, is a unique element added to the
-set of configurations, but we consider $\config{\topS}{e}$ to be equal
-to $\error$, for all expressions $e$.  The metavariable $\conf$ ranges
-over configurations.
+set of configurations, but $\config{\topS}{e}$ is equal to $\error$
+for all expressions $e$.  The metavariable $\conf$ ranges over
+configurations.
 
 \TODO{Explain the rules in Figure~\ref{f:lvars-lambdaLVar-semantics}
   using either text from my thesis proposal or the POPL paper (leaving
@@ -93,7 +92,6 @@ useful for, for instance, allocating a new LVar before beginning a
 sequence of side-effecting $\PUT$ and $\GET$ operations on it.
 
 \subsection{Programming with $\PUT$ and $\GET$}\label{subsection:lvars-programming-with-put-and-get}
-
 For our first example of a $\lambdaLVar$ program, we choose the
 elements of our lattice to be pairs of natural-number-valued IVars, as
 shown in Figure~\ref{f:lattice-examples}(b).  We can then write the
@@ -141,7 +139,7 @@ $\putexp{p}{\stateset{(\bot,4)}}$, the $\GET$ expression would still
 return $\stateset{(\bot,4)}$.  It is therefore possible to safely
 query an incomplete data structure---say, an object that is in the
 process of being initialized by a constructor.  However, notice that
-we {\em cannot} define a $\GETFSTORSND$ function that returns if
+we \emph{cannot} define a $\GETFSTORSND$ function that returns if
 either entry of a pair is filled in.  Doing so would amount to passing
 all of the boxed elements of the lattice in
 Figure~\ref{f:lattice-examples}(b) to $\GET$ as a single threshold
@@ -163,7 +161,7 @@ On the other hand, consider the following:
 Here $\GETFST$ can attempt to read from the first entry of $p$ before
 it has been written to.  However, thanks to $\LETPAR$, the $\GETFST$
 operation is being evaluated in parallel with a $\PUT$ operation that
-will give it a value to read, so $\GETFST$ simply {\em blocks} until
+will give it a value to read, so $\GETFST$ simply \emph{blocks} until
 $\putexp{p}{\stateset{(3,4)}}$ has been evaluated, at which point the
 evaluation of $\getfstexp{p}$ can proceed.
 
