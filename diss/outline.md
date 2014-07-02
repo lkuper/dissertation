@@ -10,12 +10,12 @@
   1.7. Previously published work
 
 2. LVars: Lattice-based Data Structures for Deterministic Parallelism
-  * will be like on sections 3.1-3.5 of my thesis proposal (but slower-paced and more example-driven)
-  * LVar basics from the FHPC paper, but updated to use the POPL paper's formalism minus handlers/quiescence/freezing
-  * explain lattices
-  * explain basic threshold reads
-  * explain generalized threshold reads (use example from DISC paper)
-  * determinism proof outline
+  2.1. Motivating example: a parallel, pipelined graph computation
+  2.2. Lattices, stores, and determinism
+  2.3. lambdaLVar: syntax and semantics
+  2.4. Proof of determinism for lambdaLVar
+  2.5. Generalizing the `put` and `get` operations
+  2.6. Conclusion (?)
 
 3. Quasi-Deterministic and Event-Driven Programming with LVars
   * will be like sections 3.6-3.7 of my thesis proposal (but slower-paced and more example-driven)
