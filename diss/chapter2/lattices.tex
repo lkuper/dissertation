@@ -130,6 +130,12 @@ the level of stores:
 
 \LVarsDefLubStore
 
+Equivalence of stores is also straightforward.  Two stores are equal
+if they are both $\topS$ or if they both have the same set of
+bindings:
+
+\LVarsDefEqStore
+
 By Definition~\ref{def:lvars-lubstore}, if $\userlub{d_1}{d_2} =
 \top$, then
 $\lubstore{\store{\storebindingRaw{l}{d_1}}}{\store{\storebindingRaw{l}{d_2}}}
@@ -150,22 +156,22 @@ by mutable references:
 \item @new@ extends the store with a binding for a new LVar whose
   initial state is $\bot$, and returns the location $l$ of that LVar
   (\ie, a pointer to the LVar).
-\item @put@ takes a pointer to an LVar and a singleton set containing
-  a new state and updates the LVar's state to the \emph{least upper
-    bound} of the current state and the new state, potentially pushing
-  the state of the LVar upward in the lattice.  Any update that would
-  take the state of an LVar to $\top$ results in an error.
-\item @get@ performs a blocking ``threshold'' read that allows
-  limited observations of the state of an LVar.  It takes a pointer to
-  an LVar and a \emph{threshold set} $Q$, which is a non-empty subset
-  of $D$ that is \emph{pairwise incompatible}, meaning that the lub of
-  any two distinct elements in $Q$ is $\top$.  If the LVar's state $d$
-  in the lattice is \emph{at or above} some $d' \in Q$, the @get@
-  operation unblocks and returns the singleton set $\lbrace d'
-  \rbrace$.  Note that $d'$ is a unique element of $Q$, for if there
-  is another $d'' \neq d'$ in the threshold set such that $d''
-  \userleq d$, it would follow that $d' \sqcup d'' \userleq d \neq
-  \top$, which contradicts the requirement that $Q$ be pairwise
+\item @put@ takes a pointer to an LVar and a new state and updates the
+  LVar's state to the \emph{least upper bound} of the current state
+  and the new state, potentially pushing the state of the LVar upward
+  in the lattice.  Any update that would take the state of an LVar to
+  $\top$ results in an error.
+\item @get@ performs a blocking ``threshold'' read that allows limited
+  observations of the state of an LVar.  It takes a pointer to an LVar
+  and a \emph{threshold set} $T$, which is a non-empty subset of $D$
+  that is \emph{pairwise incompatible}, meaning that the lub of any
+  two distinct elements in $T$ is $\top$.  If the LVar's state $d_1$
+  in the lattice is \emph{at or above} some $d_2 \in T$, the @get@
+  operation unblocks and returns $d_2$.  Note that $d_2$ is a unique
+  element of $T$, for if there is another $d_2' \neq d_2$ in the
+  threshold set such that $d_2' \userleq d_1$, it would follow that
+  $d_2 \sqcup d_2' \userleq d_1$, and so $d_2 \sqcup d_2'$ cannot be
+  $\top$, which contradicts the requirement that $T$ be pairwise
   incompatible.
 \end{itemize}
 

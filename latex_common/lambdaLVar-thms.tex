@@ -1,62 +1,12 @@
-%% \newcommand{\LemLocRenaming}{
-%% \begin{lem}[Renaming of Locations During a Step]\label{lem:loc-renaming}
+\newcommand{\LVarsLemMonotonicity}{
+\begin{lem}[Monotonicity]\label{lem:lvars-monotonicity}
+  If $\config{S}{e} \parstepsto \config{S'}{e'}$,
+  then $\leqstore{S}{S'}$.
+\end{lem}
+}
 
-%%   If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
-%%   $\config{S'}{e'} \neq \textup{\error}$) and $\lbrace l_1, \dots, l_n
-%%   \rbrace = \dom{S'} - \dom{S}$, then:
-
-%%   For all sets \lk{(including the empty set)} $\lbrace l'_1, \dots,
-%%   l'_n \rbrace$ such that $l'_i \notin \dom{S'}$ for $i \in [1..n]$:
-%%   \begin{displaymath}
-%%     \begin{split}
-%%       &\config{S}{e} \parstepsto 
-%%       \\
-%%       &\config{\extS{\Soldlocs}{l'_1}{S'(l_1)} \dots [\storebinding{l'_n}{S'(l_n)}]}
-%%       {\subst{e'}{l_1}{l'_1} \dots [l_n := l'_n]} \\
-%%       &\mbox{($\neq \textup{\error}$)},
-%%     \end{split}
-%%   \end{displaymath}
-%%   where $\Soldlocs$ is defined as follows: $\dom{\Soldlocs} =
-%%   \dom{S}$, and for all $l \in \dom{\Soldlocs}$, $\Soldlocs(l) =
-%%   S'(l)$.
-%% \end{lem}
-%% }
-
-%% \newcommand{\LemRenamingAfterAStep}{
-%% \begin{lem}[Renaming of Locations After a Step]\label{lem:renaming-after-a-step}
-
-%%   If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
-%%   $\config{S'}{e'} \neq \textup{\error}$) and $\lbrace l_1, \dots, l_n
-%%   \rbrace = \dom{S'} - \dom{S}$, then:
-
-%%   For all sets \lk{(including the empty set)} $\lbrace l'_1, \dots,
-%%   l'_n \rbrace$ such that $l'_i \notin \dom{S'}$ for $i \in [1..n]$:
-%%   \begin{displaymath}
-%%     \begin{split}
-%%       &\config{S'}{e'} \parstepsto 
-%%       \\
-%%       &\config{\extS{\Soldlocs}{l'_1}{S'(l_1)} \dots [\storebinding{l'_n}{S'(l_n)}]}
-%%       {\subst{e'}{l_1}{l'_1} \dots [l_n := l'_n]} \\
-%%       &\mbox{($\neq \textup{\error}$)},
-%%     \end{split}
-%%   \end{displaymath}
-%%   where $\Soldlocs$ is defined as follows: $\dom{\Soldlocs} =
-%%   \dom{S}$, and for all $l \in \dom{\Soldlocs}$, $\Soldlocs(l) =
-%%   S'(l)$.
-%% \end{lem}
-%% }
-
-%% \newcommand{\LemSafetyOfRename}{
-%% \begin{lem}[Safety of $\mathit{rename}$]\label{lem:safety-of-rename}
-%%   If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
-%%   $\config{S'}{e'} \neq \textup{\error}$) and $S'' \neq \topS$, then:
-
-%%   $\config{S}{e} \parstepsto \renamelocs{\config{S'}{e'}}{S''}{S}$.
-%% \end{lem}
-%% }
-
-\newcommand{\LemIndependenceBasic}{
-\begin{lem}[Independence]\label{lem:independence-basic}
+\newcommand{\LVarsLemIndependence}{
+\begin{lem}[Independence]\label{lem:lvars-independence}
   If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
   $\config{S'}{e'} \neq \textup{\error}$), then for all $S''$ such
   that $S''$ is non-conflicting with $\config{S}{e} \parstepsto
@@ -66,8 +16,8 @@
 \end{lem}
 }
 
-\newcommand{\LemClashBasic}{
-\begin{lem}[Clash]\label{lem:clash-basic}
+\newcommand{\LVarsLemClash}{
+\begin{lem}[Clash]\label{lem:lvars-clash}
   If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
   $\config{S'}{e'} \neq \textup{\error}$), then for all $S''$ such
   that $S''$ is non-conflicting with $\config{S}{e} \parstepsto
@@ -85,20 +35,16 @@
 \end{lem}
 }
 
-%% Note: Error preservation is exactly the same from lambdaLVar to
-%% lambdaLVish, so I just commented this one out.  This may or may not
-%% be the right course of action.
+\newcommand{\LVarsLemErrorPreservation}{
+\begin{lem}[Error Preservation]\label{lem:lvars-error-preservation}
+  If $\config{S}{e} \parstepsto \textup{\error}$ and $\leqstore{S}{S'}$, then
+  $\config{S'}{e} \parstepsto \textup{\error}$.
 
-%% \newcommand{\LemErrorPreservation}{
-%% \begin{lem}[Error Preservation]\label{lem:error-preservation}
-%%   If $\config{S}{e} \parstepsto \textup{\error}$ and $\leqstore{S}{S'}$, then
-%%   $\config{S'}{e} \parstepsto \textup{\error}$.
+\end{lem}
+}
 
-%% \end{lem}
-%% }
-
-\newcommand{\LemDiamond}{
-\begin{lem}[Diamond]\label{lem:diamond}
+\newcommand{\LVarsLemDiamond}{
+\begin{lem}[Diamond]\label{lem:lvars-diamond}
   If $\conf \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$,
   then there exists $\conf_c$ such that either:
   \begin{itemize}
@@ -110,8 +56,8 @@
 \end{lem}
 }
 
-\newcommand{\LemStrongLocalConfluence}{
-\begin{cor}[Strong Local Confluence]\label{cor:strong-local-confluence}
+\newcommand{\LVarsCorStrongLocalConfluence}{
+\begin{cor}[Strong Local Confluence]\label{cor:lvars-strong-local-confluence}
   If $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$,
   then there exist $\conf_c, i, j$ such that $\conf' \parstepsto^i
   \conf_c$ and $\conf'' \parstepsto^j \conf_c$ and $i \leq 1$ and
@@ -119,12 +65,12 @@
 \end{cor}
 \begin{proof}
   Choose $i = j = 1$.  The proof follows immediately from
-  Lemma~\ref{lem:diamond}.
+  Lemma~\ref{lem:lvars-diamond}.
 \end{proof}
 }
 
-\newcommand{\LemStrongOneSidedConfluence}{
-\begin{lem}[Strong One-Sided Confluence]\label{lem:strong-one-sided-confluence}
+\newcommand{\LVarsLemStrongOneSidedConfluence}{
+\begin{lem}[Strong One-Sided Confluence]\label{lem:lvars-strong-one-sided-confluence}
   If $\conf \parstepsto \conf'$ and $\conf \parstepsto^m \conf''$,
   where $1 \leq m$, then there exist $\conf_c, i, j$ such that
   $\conf' \parstepsto^i \conf_c$ and $\conf'' \parstepsto^j
@@ -132,8 +78,8 @@
 \end{lem}
 }
 
-\newcommand{\LemStrongConfluence}{
-\begin{lem}[Strong Confluence]\label{lem:strong-confluence}
+\newcommand{\LVarsLemStrongConfluence}{
+\begin{lem}[Strong Confluence]\label{lem:lvars-strong-confluence}
   If $\conf \parstepsto^n \conf'$ and $\conf \parstepsto^m
   \conf''$, where $1 \leq n$ and $1 \leq m$, then there exist
   $\conf_c, i, j$ such that $\conf' \parstepsto^i \conf_c$ and
@@ -141,27 +87,26 @@
 \end{lem}
 }
 
-\newcommand{\LemConfluence}{
-\begin{lem}[Confluence]\label{lem:confluence}
+\newcommand{\LVarsLemConfluence}{
+\begin{lem}[Confluence]\label{lem:lvars-confluence}
   If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^*
   \conf''$, then there exists $\conf_c$ such that $\conf'
   \parstepsto^* \conf_c$ and $\conf'' \parstepsto^* \conf_c$.
 \end{lem}
 \begin{proof}
-  Strong Confluence (Lemma~\ref{lem:strong-confluence}) implies
+  Strong Confluence (Lemma~\ref{lem:lvars-strong-confluence}) implies
   Confluence.
 \end{proof}
 }
 
-\newcommand{\ThmDeterminism}{
-\begin{thm}[Determinism]\label{thm:determinism}
-  If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^*
-  \conf''$, and neither $\conf'$ nor $\conf''$ can take a step
-  except by {\sc E-Refl} or {\sc E-ReflErr}, then $\conf' =
-  \conf''$.
+\newcommand{\LVarsThmDeterminism}{
+\begin{thm}[Determinism]\label{thm:lvars-determinism}
+  If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^* \conf''$,
+  and neither $\conf'$ nor $\conf''$ can take a step, then $\conf' =
+  \conf''$ up to a permutation on configurations.
 \end{thm}
 \begin{proof}
-  We have from Lemma~\ref{lem:confluence} that there exists $\conf_c$
+  We have from Lemma~\ref{lem:lvars-confluence} that there exists $\conf_c$
   such that $\conf' \parstepsto^* \conf_c$ and $\conf''
   \parstepsto^* \conf_c$.  Since $\conf'$ and $\conf''$ can only
   step to themselves, we must have $\conf' = \conf_c$ and $\conf''

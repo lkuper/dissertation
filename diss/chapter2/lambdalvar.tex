@@ -38,12 +38,15 @@ The rules {\sc E-New}, {\sc E-Put}/{\sc E-Put-Err}, and {\sc E-Get}
 respectively express the semantics of the @new@, @put@, and @get@
 operations described in
 Section~\ref{subsection:lvars-communication-primitives}.  The {\sc
-  E-Put-Err} rule applies when a @put@ to a location would take its
-state to $\top$; in that case, the semantics steps to $\error$.  The
-incompatibility of the threshold set argument to @get@ is enforced in
-the {\sc E-Get} rule by the $\incomp{T}$ premise, which requires that
-the least upper bound of any two distinct elements in $T$ must be
-$\top$.
+  E-New} rule creates a new binding in the store and returns a pointer
+to it; the side condition $l \notin \dom{S}$ ensures that $l$ is a
+fresh location.  The {\sc E-Put} rule updates the store and returns
+$\unit$, the unit value.  The {\sc E-Put-Err} rule applies when a
+@put@ to a location would take its state to $\top$; in that case, the
+semantics steps to $\error$.  The incompatibility of the threshold set
+argument to @get@ is enforced in the {\sc E-Get} rule by the
+$\incomp{T}$ premise, which requires that the least upper bound of any
+two distinct elements in $T$ must be $\top$.
 
 \subsection{Fork-Join Parallelism}\label{subsection:fork-join}
 

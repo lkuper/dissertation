@@ -1,12 +1,196 @@
-\section{Proof of determinism for $\lambdaLVar$}\label{s:lvars-proof}
+\section{Proof of determinism for
+  $\lambdaLVar$}\label{s:lvars-proof}
 
 The main technical result of this chapter is a proof of determinism
-for the $\lambdaLVar$ language.  \TODO{Say something about how later
-  I'll show determinism for generalized monotonic writes and
-  generalized threshold reads, if in fact I'm going to do that!}
+for the $\lambdaLVar$ language.  The determinism theorem says that if
+two executions starting from a given configuration $\conf$ terminate
+in configurations $\conf'$ and $\conf''$, then $\conf'$ and $\conf''$
+are the same configuration, up to a permutation on locations.
 
-\TODO{The entire determinism proof, and hence the rest of this
-  section, needs to be redone.}
+In order to prove determinism for $\lambdaLVar$, I first prove several
+supporting lemmas.  The structure of the proof is similar to that of
+the proof of determinism for Featherweight CnC given by Budimli\'c
+\etal~\cite{CnC}.  I reuse the naming conventions of Budimli\'c
+\etal~for Lemmas~\ref{lem:lvars-monotonicity} through
+\ref{lem:lvars-diamond}, although the statements and proofs of those
+lemmas differ considerably in the setting of $\lambdaLVar$, due to the
+generality of LVars.
+
+However, Lemmas~\ref{lem:lvars-strong-one-sided-confluence},
+\ref{lem:lvars-strong-confluence}, and \ref{lem:lvars-confluence} are
+nearly identical to the corresponding lemmas in the Featherweight CnC
+determinism proof.  This is the case because, once
+Lemmas~\ref{lem:lvars-monotonicity} through \ref{lem:lvars-diamond}
+are established, the remainder of the determinism proof does not need
+to deal specifically with the semantics of LVars. \TODO{Something like
+  this is true, but audit this pargraph to make sure after the proof
+  is done.}
+
+\TODO{Say something about how later I'll show determinism for
+  generalized monotonic writes and generalized threshold reads, if in
+  fact I'm going to do that!}
+
+\subsection{Monotonicity lemma}
+
+The Monotonicity lemma says that, as evaluation proceeds according to
+the $\parstepsto$ relation, the store can only grow with respect to
+the $\leqstore{}{}$ ordering.
+
+\LVarsLemMonotonicity
+\begin{proof}
+  By induction on the derivation of $\config{S}{e} \parstepsto
+  \config{S'}{e'}$, by cases on the last rule in the derivation.
+
+  \begin{itemize}
+
+    \item Case {\sc E-Eval-Ctxt}:
+
+      Given: $\config{S}{\E{e}} \parstepsto \config{S'}{\E{e'}}$.
+
+      To show: $\leqstore{S}{S'}$.
+
+      From the premise of {\sc E-Eval-Ctxt}, $\config{S}{e}
+      \parstepsto \config{S'}{e'}$.
+
+      Hence by IH, $\leqstore{S}{S'}$, as we were required to show.
+
+    \item Case {\sc E-Beta}:
+
+      Immediate by the definition of $\leqstore{}{}$, since $S$ does
+      not change.
+
+    \item Case {\sc E-New}:
+
+      Given: $\config{S}{\NEW} \parstepsto
+      \config{\extSRaw{S}{l}{\bot}}{l}$.
+
+      To show: $\leqstore{S}{\extSRaw{S}{l}{\bot}}$.
+
+      By Definition~\ref{def:lvars-leqstore}, we have to show that
+      $\dom{S} \subseteq \dom{\extS{S}{l}{\bot}{\frozenfalse}}$ and
+      that for all $l' \in \dom{S}$, $S(l') \userleq
+      (\extSRaw{S}{l}{\bot})(l')$.
+
+      By definition, a store update operation on $S$ can only either
+      update an existing binding in $S$ or extend $S$ with a new
+      binding.  Hence $\dom{S} \subseteq \dom{\extSRaw{S}{l}{\bot}}$.
+
+      From the side condition of {\sc E-New}, $l \notin \dom{S}$.
+      Hence $\extSRaw{S}{l}{\bot}$ adds a new binding for $l$ in $S$.
+
+      Hence $\extSRaw{S}{l}{\bot}$ does not update any existing
+      bindings in $S$.
+
+      Hence, for all $l' \in \dom{S}, S(l') \userleq
+      (\extSRaw{S}{l}{\bot})(l')$.
+
+      Therefore $\leqstore{S}{\extS{S}{l}{\bot}{\frozenfalse}}$, as
+      required.
+
+    \item Case {\sc E-Put}:
+
+      Given: $\config{S}{\putexp{l}{d_2}} \parstepsto
+      \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$.
+
+      To show: $\leqstore{S}{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}$.
+
+      By Definition~\ref{def:lvars-leqstore}, we have to show that
+      $\dom{S} \subseteq \dom{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}$ and
+      that for all $l' \in \dom{S}$, $S(l') \userleq
+      (\extSRaw{S}{l}{\userlub{d_1}{d_2}})(l')$.
+
+      By definition, a store update operation on $S$ can only either
+      update an existing binding in $S$ or extend $S$ with a new
+      binding.  Hence $\dom{S} \subseteq \dom{\extSRaw{S}{l}{p_2}}$.
+
+      From the premises of {\sc E-Put}, $S(l) = d_1$.  Therefore $l
+      \in \dom{S}$.
+
+      Hence $\extSRaw{S}{l}{\userlub{d_1}{d_2}}$ updates the existing
+      binding for $l$ in $S$ from $d_1$ to $\userlub{d_1}{d_2}$.
+
+      By the definition of $\userlub{}{}$, $d_1 \userleq
+      (\userlub{d_1}{d_2})$.  $\extSRaw{S}{l}{\userlub{d_1}{d_2}}$
+      does not update any other bindings in $S$, hence, for all $l'
+      \in \dom{S}, S(l') \userleq
+      (\extSRaw{S}{l}{\userlub{d_1}{d_2}})(l')$.
+
+      Hence $\leqstore{S}{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}$, as
+      required.
+
+    \item Case {\sc E-Put-Err}:
+
+      Given: $\config{S}{\putexp{l}{d_2}} \parstepsto \error$.
+
+      By the definition of $\error$, $\error = \config{\topS}{e}$ for
+      any $e$.
+
+      To show: $\leqstore{S}{\topS}$.
+
+      Immediate by the definition of $\leqstore{}{}$.
+
+    \item Case {\sc E-Get}:
+
+      Immediate by the definition of $\leqstore{}{}$, since $S$ does
+      not change.
+
+  \end{itemize}
+
+\end{proof}
+
+\subsection{Independence lemma}
+
+\LVarsLemIndependence
+
+\TODO{proof}
+
+\subsection{Clash lemma}
+
+\LVarsLemClash
+
+\TODO{proof}
+
+\subsection{Error Preservation lemma}
+
+\LVarsLemErrorPreservation
+
+\TODO{proof}
+
+\subsection{Diamond lemma}
+
+\LVarsLemDiamond
+
+\TODO{Deal with permutation stuff here.}
+
+\TODO{proof}
+
+\subsection{Confluence lemmas and determinism theorem}
+
+\LVarsCorStrongLocalConfluence
+
+\TODO{Deal with permutation stuff here.}
+
+\TODO{proof}
+
+\LVarsLemStrongOneSidedConfluence
+
+\TODO{Deal with permutation stuff here.}
+
+\TODO{proof}
+
+\LVarsLemStrongConfluence
+
+\TODO{Deal with permutation stuff here.}
+
+\TODO{proof}
+
+\LVarsLemConfluence
+
+\TODO{Deal with permutation stuff here.}
+
+\LVarsThmDeterminism
+
+\TODO{Deal with permutation stuff here.}
 
 \subsection{Discussion: termination}
 
@@ -14,23 +198,23 @@ I have followed Budimli\'c \etal~\cite{CnC} in treating
 \emph{determinism} separately from the issue of \emph{termination}.
 Yet one might legitimately be concerned that in $\lambdaLVar$, a
 configuration could have both an infinite reduction path and one that
-terminates with a value.  Theorem~\ref{thm:determinism} says that if
-two runs of a given $\lambdaLVar$ program reach configurations where
-no more reductions are possible (except by reflexive rules), then they
-have reached the same configuration.  Hence
-Theorem~\ref{thm:determinism} handles the case of \emph{deadlocks}
-already: a $\lambdaLVar$ program can deadlock (\eg, with a blocked
-$\GET$), but it will do so deterministically.
+terminates with a value.  Theorem~\ref{thm:lvars-determinism} says
+that if two runs of a given $\lambdaLVar$ program reach configurations
+where no more reductions are possible (except by reflexive rules),
+then they have reached the same configuration.  Hence
+Theorem~\ref{thm:lvars-determinism} handles the case of
+\emph{deadlocks} already: a $\lambdaLVar$ program can deadlock (\eg,
+with a blocked $\GET$), but it will do so deterministically.
 
-However, Theorem~\ref{thm:determinism} has nothing to say about
+However, Theorem~\ref{thm:lvars-determinism} has nothing to say about
 \emph{livelocks}, in which a program reduces infinitely.  It would be
 desirable to have a {\em consistent termination} property which would
 guarantee that if one run of a given $\lambdaLVar$ program terminates
 with a non-$\error$ result, then every run will.  I conjecture (but do
 not prove) that such a consistent termination property holds for
 $\lambdaLVar$.  Such a property could be paired with
-Theorem~\ref{thm:determinism} to guarantee that if one run of a given
-$\lambdaLVar$ program terminates in a non-$\error$ configuration
+Theorem~\ref{thm:lvars-determinism} to guarantee that if one run of a
+given $\lambdaLVar$ program terminates in a non-$\error$ configuration
 $\sigma$, then every run of that program terminates in $\sigma$.  (The
 ``non-$\error$ configuration'' condition is necessary because it is
 possible to construct a $\lambdaLVar$ program that can terminate in
