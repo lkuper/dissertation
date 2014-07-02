@@ -1,0 +1,130 @@
+\begin{proof}
+  By induction on the derivation of $\conf \parstepsto \conf_a$, by
+  cases on the last rule in the derivation.
+
+  \begin{itemize}
+    \item {\sc E-Eval-Ctxt}: \TODO{Figure out what to do here.}
+
+    \item {\sc E-Beta}: $\conf = \config{S}{\app{(\lam{x}{e})}{v}}$,
+      and $\conf_a = \config{S}{\subst{e}{x}{v}}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto
+        \config{S}{\subst{e}{x}{v}}$, and
+      \item $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\config{S}{\subst{e}{x}{v}} \parstepsto^i \conf_c$ and $\conf_b
+      \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b =
+      \config{S}{\subst{e}{x}{v}}$.
+
+      Choose $\conf_c = \config{S}{\subst{e}{x}{v}}$, $i = 0$ and $j =
+      0$.
+
+      Then $\config{S}{\subst{e}{x}{v}} = \conf_c$ and $\conf_b =
+      \conf_c$, as required.
+
+    \item {\sc E-New}: $\conf = \config{S}{\NEW}$, and $\conf_a =
+      \config{\extSRaw{S}{l}{\bot}}{l}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\NEW} \parstepsto
+        \config{\extSRaw{S}{l}{\bot}}{l}$, and
+      \item $\config{S}{\NEW} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\config{\extSRaw{S}{l}{\bot}}{l} \parstepsto^i
+      \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and
+      $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b =
+      \config{\extSRaw{S}{l'}{\bot}}{l'}$.
+
+      From the side condition of {\sc E-New}, $l \notin S$.
+
+      Therefore, in $\config{\extSRaw{S}{l'}{\bot}}{l'}$,
+      we can $\alpha$-rename $l'$ to $l$, resulting in
+      $\config{\extSRaw{S}{l}{\bot}}{l}$.
+
+      Choose $\conf_c = \config{\extSRaw{S}{l}{\bot}}{l}$,
+      $i = 0$ and $j = 0$.
+
+      Then $\config{S}{\subst{e}{x}{v}} = \conf_c$ and $\conf_b =
+      \conf_c$, as required.
+
+    \item {\sc E-Put}: $\conf = \config{S}{\putexp{l}{d_2}}$, and
+      $\conf_a = \config{\extSRaw{S}{l}{d_2}}{\unit}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\putexp{l}{d_2}} \parstepsto
+        \config{\extSRaw{S}{l}{d_2}}{\unit}$, and
+      \item $\config{S}{\putexp{l}{d_2}} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\config{\extSRaw{S}{l}{d_2}}{\unit} \parstepsto^i \conf_c$ and
+      $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b =
+      \config{\extSRaw{S}{l}{d_2}}{\unit}$.
+
+      Choose $\conf_c = \config{\extSRaw{S}{l}{d_2}}{\unit}$, $i = 0$
+      and $j = 0$.
+
+      Then $\config{\extSRaw{S}{l}{d_2}}{\unit} = \conf_c$ and $\conf_b
+      = \conf_c$, as required.
+
+    \item {\sc E-Put-Err}: $\conf = \config{S}{\putexp{l}{d_2}}$, and
+      $\conf_a = \error$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\putexp{l}{d_2}} \parstepsto \error$, and
+      \item $\config{S}{\putexp{l}{d_2}} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\error \parstepsto^i \conf_c$ and $\conf_b \parstepsto^j
+      \conf_c$ and $i \leq 1$ and $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b = \error$.
+
+      Choose $\conf_c = \error$, $i = 0$ and $j = 0$.
+
+      Then $\error = \conf_c$ and $\conf_b = \conf_c$, as required.
+
+    \item {\sc E-Get}: $\conf = \config{S}{\getexp{l}{T}}$, and
+      $\conf_a = \config{S}{d_2}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}$,
+        and
+      \item $\config{S}{\getexp{l}{T}} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\config{S}{d_2} \parstepsto^i \conf_c$ and $\conf_b
+      \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b =
+      \config{S}{d_2}$.
+
+      Choose $\conf_c = \config{S}{d_2}$, $i = 0$ and $j = 0$.
+
+      Then $\config{S}{d_2} = \conf_c$ and $\conf_b = \conf_c$, as
+      required.
+  \end{itemize}
+\end{proof}
