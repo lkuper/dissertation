@@ -13,6 +13,7 @@ bf_traverse g seen nu =
            nu'    = difference allNbr seen'
        in bf_traverse g seen' nu'
 
--- Next we traverse the connected component, starting with the vertex `profile0':
+-- Next we traverse the connected component, starting with the vertex
+-- `profile0':
 ccmp = bf_traverse profiles S.empty     profile0Sing
 result = parMap analyze ccmp

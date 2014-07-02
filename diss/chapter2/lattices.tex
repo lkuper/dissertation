@@ -59,11 +59,9 @@ could allow for unification of partially-initialized structures.
 \includegraphics[width=5in]{chapter2/figures/ExampleLattices2.pdf} 
   \caption{Example lattices: (a) IVar containing a natural number; (b)
     pair of natural-number-valued IVars; (c) positive integers ordered
-    by $\leq$ (see Section~\ref{subsection:lvars-fixme}\TODO{Add
-      forward reference to section on generalized monotonic writes.}).
-    Subfigure (b) is annotated with example threshold sets that would
-    correspond to a blocking read of the first or second element of
-    the pair (see
+    by $\leq$.  Subfigure (b) is annotated with example threshold sets
+    that would correspond to a blocking read of the first or second
+    element of the pair (see
     Sections~\ref{subsection:lvars-communication-primitives} and
     \ref{subsection:lvars-programming-with-put-and-get}).  Any state
     transition crossing the ``tripwire'' for \termfont{getSnd} causes
@@ -188,8 +186,7 @@ a combination of the two would not pass.
 The requirement that the elements of a threshold set be pairwise
 incompatible limits the expressivity of threshold sets.  In fact, it
 is a stronger requirement than we need to ensure determinism.  Later
-on, in Section~\ref{s:lvars-fixme}\TODO{Add forward reference to
-  section on generalized threshold reads.}, I will explain how to
+on, in Section~\ref{s:lvars-generalizing}, I will explain how to
 generalize the definition of a threshold set to make more programs
 expressible.  For now, I will proceed with the simpler definition
 above.
