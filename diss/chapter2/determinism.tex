@@ -200,15 +200,14 @@ Yet one might legitimately be concerned that in $\lambdaLVar$, a
 configuration could have both an infinite reduction path and one that
 terminates with a value.  Theorem~\ref{thm:lvars-determinism} says
 that if two runs of a given $\lambdaLVar$ program reach configurations
-where no more reductions are possible (except by reflexive rules),
-then they have reached the same configuration.  Hence
-Theorem~\ref{thm:lvars-determinism} handles the case of
-\emph{deadlocks} already: a $\lambdaLVar$ program can deadlock (\eg,
-with a blocked $\GET$), but it will do so deterministically.
+where no more reductions are possible, then they have reached the same
+configuration.  Hence Theorem~\ref{thm:lvars-determinism} handles the
+case of \emph{deadlocks} already: a $\lambdaLVar$ program can deadlock
+(\eg, with a blocked $\GET$), but it will do so deterministically.
 
 However, Theorem~\ref{thm:lvars-determinism} has nothing to say about
 \emph{livelocks}, in which a program reduces infinitely.  It would be
-desirable to have a {\em consistent termination} property which would
+desirable to have a \emph{consistent termination} property which would
 guarantee that if one run of a given $\lambdaLVar$ program terminates
 with a non-$\error$ result, then every run will.  I conjecture (but do
 not prove) that such a consistent termination property holds for
