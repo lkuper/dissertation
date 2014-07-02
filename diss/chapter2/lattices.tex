@@ -1,30 +1,29 @@
 \section{Lattices, stores, and determinism}\label{s:lvars-lattices}
 
 As a minimal substrate for LVars, I introduce $\lambdaLVar$, a
- parallel call-by-value $\lambda$-calculus extended with
- a \emph{store} and with communication primitives $\PUT$ and $\GET$
- that operate on data in the store.  The class of programs that I am
- interested in modeling with $\lambdaLVar$ are those with explicit
- effectful operations on shared data structures, in which parallel
- subcomputations may communicate with each other via the $\PUT$ and
- $\GET$ operations.
+parallel call-by-value $\lambda$-calculus extended with a \emph{store}
+and with communication primitives @put@ and @get@ that operate on data
+in the store.  The class of programs that I am interested in modeling
+with $\lambdaLVar$ are those with explicit effectful operations on
+shared data structures, in which parallel subcomputations may
+communicate with each other via the @put@ and @get@ operations.
 
 In this setting of shared mutable state, the trick that $\lambdaLVar$
 employs to maintain determinism is that stores contain \emph{LVars},
 which are a generalization of IVars.\footnote{IVars are so named
-because they are a special case
-of \emph{I-structures}~\cite{IStructures}---namely, those with only
-one cell.}  Whereas IVars are single-assignment variables---either
-empty or filled with an immutable value---an LVar may have an
-arbitrary number of states forming a set $D$, which is partially
-ordered by a relation $\userleq$.  An LVar can take on any sequence of
-states from $D$, so long as that sequence respects the partial
-order---that is, so long as updates to the LVar (made via the $\PUT$
-operation) are \emph{inflationary} with respect to $\userleq$.
-Moreover, the $\GET$ operation allows only limited observations of the
-LVar's state.  In this section, I discuss how lattices and stores work
-in $\lambdaLVar$ and explain how the semantics of $\PUT$ and $\GET$
-together enforce determinism in $\lambdaLVar$ programs.
+  because they are a special case of
+  \emph{I-structures}~\cite{IStructures}---namely, those with only one
+  cell.}  Whereas IVars are single-assignment variables---either empty
+or filled with an immutable value---an LVar may have an arbitrary
+number of states forming a set $D$, which is partially ordered by a
+relation $\userleq$.  An LVar can take on any sequence of states from
+$D$, so long as that sequence respects the partial order---that is, so
+long as updates to the LVar (made via the @put@ operation) are
+\emph{inflationary} with respect to $\userleq$.  Moreover, the @get@
+operation allows only limited observations of the LVar's state.  In
+this section, I discuss how lattices and stores work in $\lambdaLVar$
+and explain how the semantics of @put@ and @get@ together enforce
+determinism in $\lambdaLVar$ programs.
 
 \subsection{Lattices}\label{subsection:lvars-lattices}
 
@@ -81,14 +80,14 @@ Figure~\ref{f:lvars-example-lattices}(a), that is,
 \begin{displaymath}
   D = (\lbrace \top, \bot \rbrace \cup \mathbb{N}, \userleq), 
 \end{displaymath}
-where the partial order $\userleq$ is defined by setting $\bot \userleq d
-\userleq \top$ and $d \userleq d$ for all $d \in D$.  This is a lattice of
-height three and infinite width, where the naturals are arranged
-horizontally.  After the initial write of some $n \in \mathbb{N}$, any
-further conflicting writes would push the state of the IVar to $\top$
-(an error).  For instance, if one thread writes $2$ and another writes
-$1$ to an IVar (in arbitrary order), the second of the two writes
-would result in an error because $2 \sqcup 1 = \top$.
+where the partial order $\userleq$ is defined by setting $\bot
+\userleq d \userleq \top$ and $d \userleq d$ for all $d \in D$.  This
+is a lattice of height three and infinite width, where the naturals
+are arranged horizontally.  After the initial write of some $n \in
+\mathbb{N}$, any further conflicting writes would push the state of
+the IVar to $\top$ (an error).  For instance, if one thread writes $2$
+and another writes $1$ to an IVar (in arbitrary order), the second of
+the two writes would result in an error because $2 \sqcup 1 = \top$.
 
 In the lattice of Figure~\ref{f:lvars-example-lattices}(c), on the
 other hand, the $\top$ state is unreachable, because the least upper
@@ -117,17 +116,17 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap
 (D-\lbrace \top \rbrace)$, or the distinguished element $\topS$.
 \end{definition}
 
-We use the notation $\extSRaw{S}{l}{d}$ to denote extending $S$ with a
+I use the notation $\extSRaw{S}{l}{d}$ to denote extending $S$ with a
 binding from $l$ to $d$.  If $l \in \dom{S}$, then $\extSRaw{S}{l}{d}$
 denotes an update to the existing binding for $l$, rather than an
-extension.  We can also denote a store by explicitly writing out all
-its bindings, using the notation $\store{\storebindingRaw{l_1}{d_1},
-  \dots, \storebindingRaw{l_n}{d_n}}$.  The state space of stores forms a
-bounded join-semilattice augmented with a greatest element, just as
-$D$ does, with the empty store $\bot_S$ as its least element and
-$\topS$ as its greatest element.  It is straightforward to lift the
-$\userleq$ and $\sqcup$ operations defined on elements of $D$ to the
-level of stores:
+extension.  I also denote a store by explicitly writing out all its
+bindings, using the notation $\store{\storebindingRaw{l_1}{d_1},
+  \dots, \storebindingRaw{l_n}{d_n}}$.  The state space of stores
+forms a bounded join-semilattice augmented with a greatest element,
+just as $D$ does, with the empty store $\bot_S$ as its least element
+and $\topS$ as its greatest element.  It is straightforward to lift
+the $\userleq$ and $\sqcup$ operations defined on elements of $D$ to
+the level of stores:
 
 \LVarsDefLeqStore
 
@@ -138,32 +137,32 @@ By Definition~\ref{def:lvars-lubstore}, if $\userlub{d_1}{d_2} =
 $\lubstore{\store{\storebindingRaw{l}{d_1}}}{\store{\storebindingRaw{l}{d_2}}}
 = \topS$.  Notice that a store containing a binding
 $\storebindingRaw{l}{\top}$ can never arise during the execution of a
-$\lambdaLVar$ program, because (as we will see in
+$\lambdaLVar$ program, because (as I will show in
 Section~\ref{s:lvars-lambdalvar}) an attempted write that would take
 the state of $l$ to $\top$ would raise an error before the write can
 occur.
 
 \subsection{Communication Primitives}\label{subsection:lvars-communication-primitives}
 
-The $\NEW$, $\PUT$, and $\GET$ operations create, write to, and read
+The @new@, @put@, and @get@ operations create, write to, and read
 from LVars, respectively. The interface is similar to that presented
 by mutable references:
 
 \begin{itemize}
-\item $\NEW$ extends the store with a binding for a new LVar whose
+\item @new@ extends the store with a binding for a new LVar whose
   initial state is $\bot$, and returns the location $l$ of that LVar
   (\ie, a pointer to the LVar).
-\item $\PUT$ takes a pointer to an LVar and a singleton set containing
+\item @put@ takes a pointer to an LVar and a singleton set containing
   a new state and updates the LVar's state to the \emph{least upper
     bound} of the current state and the new state, potentially pushing
   the state of the LVar upward in the lattice.  Any update that would
   take the state of an LVar to $\top$ results in an error.
-\item $\GET$ performs a blocking ``threshold'' read that allows
+\item @get@ performs a blocking ``threshold'' read that allows
   limited observations of the state of an LVar.  It takes a pointer to
   an LVar and a \emph{threshold set} $Q$, which is a non-empty subset
   of $D$ that is \emph{pairwise incompatible}, meaning that the lub of
   any two distinct elements in $Q$ is $\top$.  If the LVar's state $d$
-  in the lattice is \emph{at or above} some $d' \in Q$, the $\GET$
+  in the lattice is \emph{at or above} some $d' \in Q$, the @get@
   operation unblocks and returns the singleton set $\lbrace d'
   \rbrace$.  Note that $d'$ is a unique element of $Q$, for if there
   is another $d'' \neq d'$ in the threshold set such that $d''
@@ -172,15 +171,15 @@ by mutable references:
   incompatible.
 \end{itemize}
 
-The intuition behind $\GET$ is that it specifies a subset of the
+The intuition behind @get@ is that it specifies a subset of the
 lattice that is ``horizontal'': no two elements in the threshold set
 can be above or below one another.  Intuitively, each element in the
 threshold set is an ``alarm'' that detects the activation of itself or
 any state above it.  One way of visualizing the threshold set for a
-$\GET$ operation is as a subset of edges in the lattice that, if
+@get@ operation is as a subset of edges in the lattice that, if
 crossed, set off the corresponding alarm.  Together these edges form a
 ``tripwire''.  Figure~\ref{f:lvars-example-lattices}(b) shows what the
-``tripwire'' looks like for an example $\GET$ operation.  The
+``tripwire'' looks like for an example @get@ operation.  The
 threshold set $\stateset{(\bot, 0), (\bot, 1), ...}$ (or a subset
 thereof) would pass the incompatibility test, as would the threshold
 set $\stateset{(0, \bot), (1, \bot), ...}$ (or a subset thereof), but
@@ -217,7 +216,7 @@ Definition~\ref{def:lvars-leqstore-cnc} requires that $S(l)$ and
 $S'(l)$ be \emph{equal}, instead of our weaker requirement that $S(l)
 \userleq S'(l)$ according to the user-provided partial order
 $\userleq$.  In $\lambdaLVar$, stores may grow by updating existing
-bindings via repeated $\PUT$s, so
+bindings via repeated @put@s, so
 Definition~\ref{def:lvars-leqstore-cnc} would be too strong; for
 instance, if $\bot \userlt d_1 \userleq d_2$ for distinct $d_1, d_2
 \in D$, the relationship
@@ -230,6 +229,6 @@ which would not be possible in Featherweight CnC.
 I establish in Section~\ref{s:lvars-proof} that $\lambdaLVar$ remains
 deterministic despite the relatively weak $\leqstore{}{}$ relation
 given in Definition~\ref{def:lvars-leqstore}.  The keys to maintaining
-determinism are the blocking semantics of the $\GET$ operation and the
+determinism are the blocking semantics of the @get@ operation and the
 fact that it allows only \emph{limited} observations of the state of
 an LVar.

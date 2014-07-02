@@ -17,16 +17,16 @@ are the only programs that can be expressed within the model.
 
 A deterministic-by-construction programming model is one that ensures
 that all programs written using the model have the same
-\emph{observable behavior} every time they are run.  How do we define
-what is observable about a program's behavior?  Certainly, we do
-\emph{not} wish to preserve behaviors such as running time across
-multiple runs---ideally, a deterministic-by-construction parallel
-program will run faster when more parallel resources are available.
-Moreover, we do not want to count scheduling behavior as observable.
-In fact, we want to specifically allow tasks to be scheduled
-dynamically and unpredictably, without allowing such \emph{schedule
-  nondeterminism} to affect the observable behavior of a program.
-Therefore, we define the observable behavior of a program to be
+\emph{observable behavior} every time they are run.  What, then, is
+observable about a program's behavior?  Certainly, one does \emph{not}
+wish to preserve behaviors such as running time across multiple
+runs---ideally, a deterministic-by-construction parallel program will
+run faster when more parallel resources are available.  Moreover, I do
+not want to count scheduling behavior as observable---in fact, I want
+to specifically \emph{allow} tasks to be scheduled dynamically and
+unpredictably, without allowing such \emph{schedule nondeterminism} to
+affect the observable behavior of a program.  Therefore, in this
+dissertation I will define the observable behavior of a program to be
 \emph{the value to which the program evaluates}.
 
 \lk{In my proposal, I had a footnote here: ``We assume that programs
@@ -34,60 +34,57 @@ Therefore, we define the observable behavior of a program to be
   just want to say that we \emph{ignore} other side effects.  They can
   \emph{happen}; it's just that they don't count.}
 
-Our definition of observable behavior ignores side effects other than
-\emph{state}.  Even under this limited definition of what is
-observable, though, sharing of state between parallel computations
+This definition of observable behavior ignores side effects other than
+\emph{state}.  Even so, sharing of state between parallel computations
 raises the possibility of \emph{race conditions} that allow schedule
 nondeterminism to be observed in the outcome of a program.  For
-instance, if one computation writes $3$ to a shared location while
-another writes $4$, then a subsequent third computation that reads and
-returns the location's contents will nondeterministically return $3$
-or $4$, depending on the order in which the first two computations
-ran.  Therefore, if a parallel programming model is to guarantee
-determinism by construction, it must necessarily limit sharing of
-mutable state between parallel tasks in some way.
+instance, if a computation writes $3$ to a shared location while
+another computation writes $4$, then a subsequent third computation
+that reads and returns the location's contents will
+nondeterministically return $3$ or $4$, depending on the order in
+which the first two computations ran.  Therefore, if a parallel
+programming model is to guarantee determinism by construction, it must
+necessarily limit sharing of mutable state between parallel tasks in
+some way.
 
 \section{The deterministic-by-construction parallel programming landscape}\label{s:intro-landscape}
 
 There is long-standing work on deterministic-by-construction parallel
-programming models that limit sharing of state between
-tasks. Surveying the landscape of possibilities, we find that they
-include:
+programming models that limit sharing of state between tasks. The
+possibilities include:
 
 \begin{itemize}
-\item \emph{No-shared-state parallelism.}  One classic
-  approach to guaranteeing determinism in a parallel programming model
-  is to allow \emph{no} shared mutable state between tasks, forcing
-  tasks to produce values independently.  An example of
-  no-shared-state parallelism is pure functional programming with
-  function-level task parallelism, or \emph{futures}---for instance,
-  in Haskell programs that use the @par@ and @pseq@
-  combinators~\cite{marlow-par}.  The key characteristic of this style
-  of programming is lack of side effects: because programs don't have
-  side effects, expressions can evaluate simultaneously without
-  affecting the eventual value of the program.  Also belonging in this
-  category are parallel programming models based on \emph{pure data
-    parallelism}, such as Data Parallel Haskell~\cite{dph, dph-status}
-  or the River Trail API for JavaScript~\cite{river-trail}, each of
-  which extend existing languages with \emph{parallel array} data
-  types and (observably) pure operations on them.
-  \lk{Does it make sense to say that DPH is observably pure?  It does
-    mutate arrays.}
+\item \emph{No-shared-state parallelism.}  One classic approach to
+  guaranteeing determinism in a parallel programming model is to allow
+  \emph{no} shared mutable state between tasks, forcing tasks to
+  produce values independently.  An example of no-shared-state
+  parallelism is pure functional programming with function-level task
+  parallelism, or \emph{futures}---for instance, in Haskell programs
+  that use the @par@ and @pseq@ combinators~\cite{marlow-par}.  The
+  key characteristic of this style of programming is lack of side
+  effects: because programs don't have side effects, expressions can
+  evaluate simultaneously without affecting the eventual value of the
+  program.  Also belonging in this category are parallel programming
+  models based on \emph{pure data parallelism}, such as Data Parallel
+  Haskell~\cite{dph, dph-status} or the River Trail API for
+  JavaScript~\cite{river-trail}, each of which extend existing
+  languages with \emph{parallel array} data types and (observably)
+  pure operations on them.  \lk{Does it make sense to say that DPH is
+    observably pure?  It does mutate arrays.}
 
-\item \emph{Data-flow parallelism.}  In
-  \emph{Kahn process networks} (KPNs)~\cite{Kahn-1974}, as well as in
-  the more restricted \emph{synchronous data flow}
-  systems~\cite{Lee-sdn}, a network of independent ``computing
-  stations'' communicate with each other through first-in first-out
-  (FIFO) queues, or \emph{channels}.  Reading data out of such a FIFO
-  queue is a \emph{blocking} operation: once an attempt to read has
-  started, a computing station cannot do anything else until the data
-  to be read is available.  Each station computes a sequential,
-  monotonic function from the \emph{history} of its input channels
-  (\ie, the input it has received so far) to the history of its output
-  channels (the output it has produced so far).  KPNs are the basis
-  for deterministic stream-processing languages such as
-  StreamIt~\cite{streamit-asplos}.
+\item \emph{Data-flow parallelism.}  In \emph{Kahn process networks}
+  (KPNs)~\cite{Kahn-1974}, as well as in the more restricted
+  \emph{synchronous data flow} systems~\cite{Lee-sdn}, a network of
+  independent ``computing stations'' communicate with each other
+  through first-in first-out (FIFO) queues, or \emph{channels}.
+  Reading data out of such a FIFO queue is a \emph{blocking}
+  operation: once an attempt to read has started, a computing station
+  cannot do anything else until the data to be read is available.
+  Each station computes a sequential, monotonic function from the
+  \emph{history} of its input channels (\ie, the input it has received
+  so far) to the history of its output channels (the output it has
+  produced so far).  KPNs are the basis for deterministic
+  stream-processing languages such as StreamIt~\cite{streamit-asplos}.
 
 \item \emph{Single-assignment parallelism.}  In parallel
   \emph{single-assignment} languages, ``full/empty'' bits are
@@ -117,28 +114,28 @@ include:
     even a useful distinction in this context?}  Sophisticated
   permissions systems and type systems make it possible for imperative
   programs to mutate state in parallel, while guaranteeing that the
-  same state is not accessed simultaneously by multiple threads.  We
-  refer to this style of programming as \emph{imperative disjoint
+  same state is not accessed simultaneously by multiple threads.  I
+  will refer to this style of programming as \emph{imperative disjoint
     parallelism}, with Deterministic Parallel Java
   (DPJ)~\cite{dpj-oopsla, dpj-hotpar09} as a prominent example.
 \end{itemize}
 The four parallel programming models listed above---no-shared-state
 parallelism, data-flow parallelism, single-assignment parallelism, and
-imperative disjoint parallelism---all seem to comprise\lk{``have''?
-  ``embody''?} rather different mechanisms for exposing parallelism
-and for ensuring determinism.  If we view these different programming
-models as a toolkit of unrelated choices, though, it is not clear how
-to proceed when we want to implement an application with multiple
-parallelizable components that are best suited to different
-programming models.  For example, suppose we have an application in
-which we wish to use data-flow pipeline parallelism via FIFO queues,
-but also disjoint parallel mutation of arrays.  It is not obvious how
-to compose two programming models that each only allow communication
-through a single type of shared data structure---or, if we do manage
-to compose them, whether or not the determinism guarantee of the
-individual models is preserved by their composition.  Hence we seek a
-general, broadly-applicable model for deterministic parallel
-programming that is not tied to a particular data structure.
+imperative disjoint parallelism---all seem to embody rather different
+mechanisms for exposing parallelism and for ensuring determinism.  If
+one views these different programming models as a toolkit of unrelated
+choices, though, it is not clear how to proceed when one wants to
+implement an application with multiple parallelizable components that
+are best suited to different programming models.  For example, suppose
+I have an application in which I wish to use data-flow pipeline
+parallelism via FIFO queues, but also disjoint parallel mutation of
+arrays.  It is not obvious how to compose two programming models that
+each only allow communication through a single type of shared data
+structure---or, if I do manage to compose them, whether or not the
+determinism guarantee of the individual models is preserved by their
+composition.  Hence I seek a general, broadly-applicable model for
+deterministic parallel programming that is not tied to a particular
+data structure.
 
 \section{Lattice-based, monotonic data structures as a basis for deterministic parallelism}\label{s:intro-monotonic}
 
@@ -149,11 +146,11 @@ shared data store of blocking single-assignment memory locations grows
 monotonically.  Hence \emph{monotonic data structures}---data
 structures to which information can only be added and never
 removed---emerge as a common theme of guaranteed-deterministic
-programming models.\footnote{We will later refine this definition of
-  monotonic data structures to mean data structures to which
-  information can only be added and never removed, \emph{and} for
-  which the order in which information is added is not
-  observable.\TODO{Add appropriate forward reference here.}}
+programming models.\footnote{In Chapter~\ref{ch:lvars}, I will refine
+  this definition of ``monotonic data structures ``to mean data
+  structures to which information can only be added and never removed,
+  \emph{and} for which the order in which information is added is not
+  observable.}
 
 In this dissertation, I show that \emph{lattice-based} data
 structures, or \emph{LVars}, are the foundation for a model of
@@ -177,25 +174,29 @@ Chapter~\ref{ch:lvars}):
   state of an LVar.  It requires the user to specify a \emph{threshold
     set} of minimum values that can be read from the LVar, where every
   two elements in the threshold set must have the lattice's greatest
-  element $\top$ as their least upper bound.\footnote{See
-    Chapter~\ref{ch:lvars} for a generalization of this
-    definition.\TODO{Figure out what section to link to for
-      generalized threshold sets.}}  A call to @get@ blocks until the
+  element $\top$ as their least upper bound.  A call to @get@ blocks until the
   LVar in question reaches a (unique) value in the threshold set, then
   unblocks and returns that value.
 \end{itemize}
-Together, monotonically increasing writes via @put@ and threshold
-reads via @get@ yield a deterministic-by-construction programming
-model.  That is, a program in which @put@ and @get@ operations on
-LVars are the only side effects will have the same observable result
-in spite of parallel execution and schedule nondeterminism.  \lk{Maybe
-  we don't need the next sentence at all; maybe it's covered by the
-  ``organization'' bullet points below.} As we will see in
+Together, least-upper-bound writes via @put@ and threshold reads via
+@get@ yield a deterministic-by-construction programming model.  That
+is, a program in which @put@ and @get@ operations on LVars are the
+only side effects will have the same observable result in spite of
+parallel execution and schedule nondeterminism.  \lk{Maybe I don't
+  need the next sentence at all; maybe it's covered by the
+  ``organization'' bullet points below.} As I will show in
 Chapter~\ref{ch:lvars}, no-shared-state parallelism, data-flow
 parallelism and single-assignment parallelism are all subsumed by the
-LVars programming model, and as we will see in
+LVars programming model, and as I will show in
 Chapter~\ref{ch:lvish}\lk{Maybe refer to a specific section?},
 imperative disjoint parallelism is compatible with LVars as well.
+
+\subsection{Generalizing from least-upper-bound writes and threshold reads}\label{subsection:intro-generalizing}
+
+\TODO{Say something about generalizing from least-upper-bound writes
+  to inflationary and commutative writes, and from threshold reads to
+  generalized threshold reads and then to threshold functions.  Also
+  say what we've proved about what!}
 
 \section{Quasi-deterministic and event-driven programming with LVars}\label{s:intro-quasi}
 
@@ -208,7 +209,10 @@ nodes''; neighbors of seen nodes are fed back into the set until it
 reaches a fixed point.  Such fixpoint computations are ubiquitous, and
 would seem to be a perfect match for the LVars model due to their use
 of monotonicity.  But they are not expressible using the threshold
-@get@ and least-upper-bound @put@ operations described above.
+@get@ and least-upper-bound @put@ operations described in
+Section~\label{s:intro-monotonic}, nor even with the more general
+alternatives to @get@ and @put@ described in
+Section~\label{subsection:intro-generalizing}.
 
 The problem is that these computations rely on \emph{negative}
 information about a monotonic data structure, \ie, on the
@@ -232,9 +236,9 @@ model that make such computations possible:
   blocking.  Therefore, LVar programs that use @freeze@ are \emph{not}
   guaranteed to be deterministic, because they could
   nondeterministically raise an exception depending on how @put@ and
-  @freeze@ operations are scheduled.  However, we \emph{can} guarantee
-  that such programs satisfy \emph{quasi-determinism}: all executions
-  that produce a final value produce the \emph{same} final value.
+  @freeze@ operations are scheduled.  However, such programs satisfy
+  \emph{quasi-determinism}: all executions that produce a final value
+  produce the \emph{same} final value.
 \item Second, I describe how to add the ability to attach \emph{event
   handlers} to an LVar.  When an event handler has been registered
   with an LVar, it invokes a \emph{callback function} to run,
@@ -251,14 +255,14 @@ LVar being written to can only be read through @get@ or @freeze@
 operations anyway, early quiescence poses no risk to determinism or
 quasi-determinism, respectively.  In fact, freezing and quiescence
 work particularly well together because freezing provides a mechanism
-by which we can safely ``place a bet'' that all writes have completed.
-Hence freezing and handlers make possible fixpoint computations like
-the graph traversal described above.  Moreover, if we can ensure that
-the freeze does indeed happen after all writes have completed, then we
-can ensure that the computation is deterministic, and it is possible
-to enforce this ``freeze-last'' idiom at the implementation level, as
-I discuss below (and, in more detail, in
-Chapter~\ref{ch:lvish}\lk{Refer to a specific section?}).
+by which the programmer can safely ``place a bet'' that all writes
+have completed.  Hence freezing and handlers make possible fixpoint
+computations like the graph traversal described above.  Moreover, if
+one can ensure that the freeze does indeed happen after all writes
+have completed, then one can ensure that the computation is
+deterministic, and it is possible to enforce this ``freeze-last''
+idiom at the implementation level, as I discuss below (and, in more
+detail, in Chapter~\ref{ch:lvish}\lk{Refer to a specific section?}).
 
 \section{The LVish library}\label{s:intro-lvish}
 
@@ -305,22 +309,11 @@ collaborators' and my experience using the LVish library, all of which
 make use of handlers and freezing:
 \begin{itemize}
 \item First, I describe using LVish to implement a parallel,
-  pipelined, breadth-first graph traversal in which a (possibly
-  expensive) function @f@ is mapped over each node in a connected
-  component of a graph.  The idea is that the set of results of
-  applying @f@ to nodes become incrementally available to other
-  computations.
-  %% For this case study, I will reimplement the
-  %% breadth-first traversal algorithm that appears in Kuper and
-  %% Newton~\cite{LVars-paper}, which I will update in two ways.  First,
-  %% the original version uses @runParIO@ and a ``consume'' operation
-  %% that was a precursor to @freeze@, and I will refactor it to use the
-  %% safer @runParThenFreeze@.  Second, although the original version is
-  %% pipelined in that it begins \emph{invoking} @f@ on already-found
-  %% nodes before all the nodes in the component have been traversed, it
-  %% does not take advantage of this early invocation to do something
-  %% useful with the early result of @f@; however, it should be
-  %% straightforward to do so using event handlers.
+  pipelined, breadth-first graph traversal that finds the connected
+  component of a graph starting from a given node and maps a (possibly
+  expensive) function $f$ over each node in the connected component of
+  a graph.  The idea is that the set of results of applying $f$ to
+  nodes become incrementally available to other computations.
 \item Second, I describe using LVish to parallelize a control flow
   analysis ($k$-CFA) algorithm.  The goal of $k$-CFA is to compute the
   flow of values to expressions in a program.  The $k$-CFA algorithm
@@ -366,42 +359,45 @@ replicas may disagree until a (least-upper-bound) \emph{merge}
 operation takes place.
 
 Taking inspiration from LVar-style threshold reads, in
-Chapter~\ref{ch:threshold-queries} I show how to extend CvRDTs to
-support provably deterministic, \emph{strongly consistent} queries
-using a mechanism called \emph{threshold queries} (or, seen from
-another angle, I show how to extend threshold reads from a
-shared-memory setting to a distributed one).  The threshold query
-technique generalizes to any lattice, and hence any CvRDT, and allows
-deterministic observations to be made of replicated objects before the
-replicas' states have converged.  This work has immediate practical
-relevance since, while many real distributed database systems allow a
-mix of eventually consistent and strongly consistent queries, CvRDTs
-only support the former, and threshold queries extend the CvRDT model
-to support both.
+Chapter~\ref{ch:deterministic} I show how to extend CvRDTs to support
+deterministic, \emph{strongly consistent} queries using a mechanism
+called \emph{threshold queries} (or, seen from another angle, I show
+how to port threshold reads from a shared-memory setting to a
+distributed one).  The threshold query technique generalizes to any
+lattice, and hence any CvRDT, and allows deterministic observations to
+be made of replicated objects before the replicas' states have
+converged.  This work has practical relevance since, while many real
+distributed database systems allow a mix of eventually consistent and
+strongly consistent queries, CvRDTs only support the former, and
+threshold queries extend the CvRDT model to support both.
 
 \section{Thesis statement, and organization of the rest of this dissertation}\label{s:thesis}
 
 With the above background, I can state my thesis:\lk{This format
   ripped off from Josh Dunfield.}
 \begin{quote}
-  Lattice-based data structures are a general and practical foundation
-  for deterministic and quasi-deterministic parallel and distributed
-  programming.
+  Lattice-based data structures are a novel, general, and practical
+  foundation for provably deterministic and quasi-deterministic
+  parallel and distributed programming.
 \end{quote}
 The rest of this dissertation supports my thesis as follows:
 \begin{itemize}
   \item \emph{Lattice-based data structures}: In
     Chapter~\ref{ch:lvars}, I formally define LVars and use them to
     define $\lambdaLVar$, a call-by-value parallel calculus with
-    shared state, including a runnable version implemented in PLT
-    Redex~\cite{redex-book} for interactive experimentation.  In
-    Chapter~\ref{ch:quasi}, I extend $\lambdaLVar$ to add support for
-    event handlers and the @freeze@ operation, calling the resulting
-    language $\lambdaLVish$.\footnote{$\lambdaLVish$ is the
-      \emph{LVish calculus} described in Kuper
+    shared state. In Chapter~\ref{ch:quasi}, I extend $\lambdaLVar$ to
+    add support for event handlers and the @freeze@ operation, calling
+    the resulting language $\lambdaLVish$.\footnote{$\lambdaLVish$ is
+      the \emph{LVish calculus} described in Kuper
       \etal~\cite{Freeze-paper}.  In this dissertation, I call it
       $\lambdaLVish$ to avoid confusion with LVish, the Haskell
       library I describe in Chapter~\ref{ch:lvish}.}
+    Appendices~\ref{app:fixme} and~\ref{app:fixme}\TODO{Freshen up the
+      Redex models of $\lambdaLVar$ and $\lambdaLVish$ and add them as
+      appendices.} contain runnable versions of $\lambdaLVar$ and
+    $\lambdaLVish$ implemented using the PLT Redex semantics
+    engineering system~\cite{redex-book} for interactive
+    experimentation.
 
   \item \emph{general}: In Chapter~\ref{ch:lvars}, I defend the
     generality of the LVars model by showing how previously existing
@@ -415,26 +411,37 @@ The rest of this dissertation supports my thesis as follows:
     \mathit{empty} < \mathit{full_i}$) results in a parallel
     single-assignment language.  Hence $\lambdaLVar$ is actually a
     \emph{family} of calculi, varying by choice of lattice.
+    \TODO{Something about generalizing from least-upper-bound writes
+      to inflationary and commutative writes, and from threshold reads
+      to generalized threshold reads and then to threshold functions,
+      should go here as well.}
 
-  \item \emph{practical}: In Chapter~\ref{ch:lvish}, I defend the
-    practicality of LVars by describing the LVish Haskell library and
-    demonstrating how it is used for practical programming with the
-    three case studies described above, including performance results.
-
-  \item \emph{deterministic}: In Chapter~\ref{ch:lvars}, I defend the
-    claim that the basic LVars model guarantees determinism by giving
-    a proof of determinism for $\lambdaLVar$, including the
-    aforementioned @put@ and @get@ operations on LVars.
+  \item \emph{provably deterministic}: In Chapter~\ref{ch:lvars}, I
+    defend the claim that the basic LVars model guarantees determinism
+    by giving a proof of determinism for $\lambdaLVar$, including the
+    aforementioned @put@ and @get@ operations on LVars.\TODO{Also say
+      something about the proof for generalized inflationary and
+      commutative writes and for threshold functions.}
 
   \item \emph{quasi-deterministic}: In Chapter~\ref{ch:quasi}, I
     defend this claim by defining quasi-determinism and giving a proof
     of quasi-determinism for the full $\lambdaLVish$ calculus with the
     additions of the @freeze@ operation and event handlers.
 
-  \item \emph{distributed programming}: In Chapter~\ref{ch:crdts}, I
-    defend the claim that the LVars programming model is applicable to
-    distributed programming by showing how to extend distributed
-    replicated data structures with LVar-style threshold reads.
+  \item \emph{practical}: In Chapter~\ref{ch:lvish}, I defend the
+    practicality of LVars by describing the LVish Haskell library,
+    which is based on the LVars programming model and demonstrating
+    how it is used for practical programming with the three case
+    studies described above, including performance results.
+
+  \item \emph{distributed programming}: In
+    Chapter~\ref{ch:distributed}, I defend the claim that the LVars
+    programming model is applicable to distributed programming by
+    showing how to extend distributed replicated data structures with
+    LVar-style threshold reads.
+
+  \item \emph{new}: In Chapter~\ref{ch:related}, I defend the novelty
+    of the LVars model by comparing it to related work.
 \end{itemize}
 
 \section{Previously published work}

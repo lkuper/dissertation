@@ -78,14 +78,15 @@ of shared data structure, they lack \emph{generality}: IVars or FIFO
 streams alone cannot support all producer/consumer applications, as I
 discuss in Section~\ref{s:lvars-motivation} below.
 
-Instead of limiting ourselves to a single type of shared data
-structure, then, I propose taking the more general notion of monotonic
-data structures as a starting point for a new deterministic parallel
-programming model.  The model I propose generalizes IVars
-to \emph{LVars}, thus named because the states an LVar can take on are
-elements of an application-specific \emph{lattice}.\footnote{As I'll
-explain in Section~\ref{s:lvars-domains}, this ``lattice'' need only
-be a \emph{bounded join-semilattice} augmented with a greatest element
+Instead of using a programming model that is limited to a single type
+of shared data structure, then, I propose taking the more general
+notion of monotonic data structures as a starting point for a new
+deterministic parallel programming model.  The model I propose
+generalizes IVars to \emph{LVars}, thus named because the states an
+LVar can take on are elements of an
+application-specific \emph{lattice}.\footnote{As I'll explain in
+Section~\ref{s:lvars-domains}, this ``lattice'' need only be
+a \emph{bounded join-semilattice} augmented with a greatest element
 $\top$, in which every two elements have a least upper bound but not
 necessarily a greatest lower bound.  For brevity, I use the term
 ``lattice'' in place of ``bounded join-semilattice with a designated

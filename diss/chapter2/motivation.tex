@@ -25,7 +25,7 @@ parallelism and determinism:
 \end{itemize}
 For example, in a directed graph representing user profiles on a
 social network and the connections between them, where $v$ represents
-a particular profile, we might wish to find all (or the first $k$
+a particular profile, one might wish to find all (or the first $k$
 degrees of) profiles connected to $v$, then map a function $f$ over
 each profile in that set in parallel.
 
@@ -40,9 +40,10 @@ example, IVars cannot accumulate sets of visited nodes, nor can they
 be used as ``mark bits'' on visited nodes, since they can only be
 written once and not tested for emptiness.  Streams, on the other
 hand, impose an excessively strict ordering for computing the
-unordered \emph{set} of vertex labels in a connected component.  Yet
-before considering new mechanisms, we must also ask if a purely
-functional program can do the job.
+unordered \emph{set} of vertex labels in a connected component.
+Before turning to an LVar-based approach, though, I will consider
+whether a purely functional (and therefore deterministic by
+construction) program can meet the specification.
 
 \subsection{A purely functional attempt}
 
@@ -74,11 +75,11 @@ Unfortunately, the code given in Figure~\ref{f:bfs-pure} does not
 quite implement the problem specification given above.  Even though
 connected-component discovery is parallel, members of the output set
 do not become available to other computations until component
-discovery is \emph{finished}, limiting parallelism.  We could manually
-push the @analyze@ invocation inside the @bf_traverse@ function,
-allowing the @analyze@ computation to start sooner, but then we push
-the same problem to the downstream consumer, unless we are able to
-perform a heroic whole-program fusion.
+discovery is \emph{finished}, limiting parallelism.  One could
+manually push the @analyze@ invocation inside the @bf_traverse@
+function, allowing the @analyze@ computation to start sooner, but
+doing so just passes the problem to the downstream consumer, unless
+there is a way to perform a heroic whole-program fusion.
 
 If @bf_traverse@ returned a list, lazy evaluation could make it
 possible to \emph{stream} results to consumers incrementally.  But
@@ -94,17 +95,18 @@ order in which results emerge from the producer.\footnote{As intuition
 A compromise would be for @bf_traverse@ to return a list of
 ``level-sets'': distance one nodes, distance two nodes, and so on.
 Thus level-one results could be consumed before level-two results are
-ready.  Still, the problem would remain: within each level-set, we
-cannot launch all instances of @analyze@ and asynchronously use those
-results that finish \emph{first}.  Moreover, we would still have to
-contend with the previously-mentioned difficulty of separating
-producers and consumers when expressing producer-consumer computations
-using pure programming with futures~\cite{monad-par}.
+ready.  Still, at the granularity of the individual level-sets, the
+problem would remain: within each level-set, one would not be able to
+launch all instances of @analyze@ and asynchronously use those results
+that finished first.  Moreover, one would still have to contend with
+the previously-mentioned difficulty of separating producers and
+consumers when expressing producer-consumer computations when using
+pure programming with futures~\cite{monad-par}.
 
 \subsection{An LVar-based solution}
 
-Suppose that we could write a breadth-first traversal in a programming
-model with limited effects that allows \emph{any} data structure to be
+Consider a version of @bf_traverse@ written using a programming model
+with limited effects that allows \emph{any} data structure to be
 shared among tasks, including sets and graphs, so long as that data
 structure grows monotonically.  Consumers of the data structure may
 execute as soon as data is available, enabling pipelining, but may
