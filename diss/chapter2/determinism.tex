@@ -37,112 +37,37 @@ the $\parstepsto$ relation, the store can only grow with respect to
 the $\leqstore{}{}$ ordering.
 
 \LVarsLemMonotonicity
-\begin{proof}
-  By induction on the derivation of $\config{S}{e} \parstepsto
-  \config{S'}{e'}$, by cases on the last rule in the derivation.
-
-  \begin{itemize}
-
-    \item Case {\sc E-Eval-Ctxt}:
-
-      Given: $\config{S}{\E{e}} \parstepsto \config{S'}{\E{e'}}$.
-
-      To show: $\leqstore{S}{S'}$.
-
-      From the premise of {\sc E-Eval-Ctxt}, $\config{S}{e}
-      \parstepsto \config{S'}{e'}$.
-
-      Hence by IH, $\leqstore{S}{S'}$, as we were required to show.
-
-    \item Case {\sc E-Beta}:
-
-      Immediate by the definition of $\leqstore{}{}$, since $S$ does
-      not change.
-
-    \item Case {\sc E-New}:
-
-      Given: $\config{S}{\NEW} \parstepsto
-      \config{\extSRaw{S}{l}{\bot}}{l}$.
-
-      To show: $\leqstore{S}{\extSRaw{S}{l}{\bot}}$.
-
-      By Definition~\ref{def:lvars-leqstore}, we have to show that
-      $\dom{S} \subseteq \dom{\extS{S}{l}{\bot}{\frozenfalse}}$ and
-      that for all $l' \in \dom{S}$, $S(l') \userleq
-      (\extSRaw{S}{l}{\bot})(l')$.
-
-      By definition, a store update operation on $S$ can only either
-      update an existing binding in $S$ or extend $S$ with a new
-      binding.  Hence $\dom{S} \subseteq \dom{\extSRaw{S}{l}{\bot}}$.
-
-      From the side condition of {\sc E-New}, $l \notin \dom{S}$.
-      Hence $\extSRaw{S}{l}{\bot}$ adds a new binding for $l$ in $S$.
-
-      Hence $\extSRaw{S}{l}{\bot}$ does not update any existing
-      bindings in $S$.
-
-      Hence, for all $l' \in \dom{S}, S(l') \userleq
-      (\extSRaw{S}{l}{\bot})(l')$.
-
-      Therefore $\leqstore{S}{\extS{S}{l}{\bot}{\frozenfalse}}$, as
-      required.
-
-    \item Case {\sc E-Put}:
-
-      Given: $\config{S}{\putexp{l}{d_2}} \parstepsto
-      \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$.
-
-      To show: $\leqstore{S}{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}$.
-
-      By Definition~\ref{def:lvars-leqstore}, we have to show that
-      $\dom{S} \subseteq \dom{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}$ and
-      that for all $l' \in \dom{S}$, $S(l') \userleq
-      (\extSRaw{S}{l}{\userlub{d_1}{d_2}})(l')$.
-
-      By definition, a store update operation on $S$ can only either
-      update an existing binding in $S$ or extend $S$ with a new
-      binding.  Hence $\dom{S} \subseteq \dom{\extSRaw{S}{l}{p_2}}$.
-
-      From the premises of {\sc E-Put}, $S(l) = d_1$.  Therefore $l
-      \in \dom{S}$.
-
-      Hence $\extSRaw{S}{l}{\userlub{d_1}{d_2}}$ updates the existing
-      binding for $l$ in $S$ from $d_1$ to $\userlub{d_1}{d_2}$.
-
-      By the definition of $\userlub{}{}$, $d_1 \userleq
-      (\userlub{d_1}{d_2})$.  $\extSRaw{S}{l}{\userlub{d_1}{d_2}}$
-      does not update any other bindings in $S$, hence, for all $l'
-      \in \dom{S}, S(l') \userleq
-      (\extSRaw{S}{l}{\userlub{d_1}{d_2}})(l')$.
-
-      Hence $\leqstore{S}{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}$, as
-      required.
-
-    \item Case {\sc E-Put-Err}:
-
-      Given: $\config{S}{\putexp{l}{d_2}} \parstepsto \error$.
-
-      By the definition of $\error$, $\error = \config{\topS}{e}$ for
-      any $e$.
-
-      To show: $\leqstore{S}{\topS}$.
-
-      Immediate by the definition of $\leqstore{}{}$.
-
-    \item Case {\sc E-Get}:
-
-      Immediate by the definition of $\leqstore{}{}$, since $S$ does
-      not change.
-
-  \end{itemize}
-
-\end{proof}
+\input{chapter2/determinism-monotonicity-proof}
 
 \subsection{Independence lemma}
 
-\LVarsLemIndependence
+In order to show
+Lemma~\ref{lem:lvars-strong-local-confluence}\TODO{audit}, I first
+establish a ``frame property'' for $\lambdaLVar$ that captures the
+idea that independent effects commute with each other.
+Lemma~\ref{lem:lvars-independence}, the Independence lemma, is this
+frame property.  Consider an expression $e$ that runs starting in
+store $S$ and steps to $e'$, updating the store to $S'$.  The
+Independence lemma provides a double-edged guarantee about what will
+happen if one runs $e$ starting from a larger store
+$\lubstore{S}{S''}$: first, $e$ will update the store to
+$\lubstore{S'}{S''}$; second, it will step to $e'$ as it did before.
+Here $\lubstore{S}{S''}$ is the least upper bound of the original $S$
+and some other store $S''$ that is ``framed on'' to $S$; intuitively,
+$S''$ is the store resulting from some other independently-running
+computation.
 
-\TODO{proof}
+Lemma~\ref{lem:lvars-independence} requires as a precondition that the
+store $S''$ must be \emph{non-conflicting} with the original
+transition from $\config{S}{e}$ to $\config{S'}{e'}$, meaning that
+locations in $S''$ cannot share names with locations newly allocated
+during the transition; this rules out location name conflicts caused
+by allocation.
+
+\LVarsDefNonConflicting
+
+\LVarsLemIndependence
+\input{chapter2/determinism-independence-proof}
 
 \subsection{Clash lemma}
 
