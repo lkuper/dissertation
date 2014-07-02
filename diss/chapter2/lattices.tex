@@ -59,9 +59,11 @@ could allow for unification of partially-initialized structures.
 \includegraphics[width=5in]{chapter2/figures/ExampleLattices2.pdf} 
   \caption{Example lattices: (a) IVar containing a natural number; (b)
     pair of natural-number-valued IVars; (c) positive integers ordered
-    by $\leq$ (see Section~\ref{subsection:lvars-fixme}).  Subfigure
-    (b) is annotated with example threshold sets that would correspond
-    to a blocking read of the first or second element of the pair (see
+    by $\leq$ (see Section~\ref{subsection:lvars-fixme}\TODO{Add
+      forward reference to to where I talk about generalizing put to
+      bump.}).  Subfigure (b) is annotated with example threshold sets
+    that would correspond to a blocking read of the first or second
+    element of the pair (see
     Sections~\ref{subsection:lvars-communication-primitives} and
     \ref{subsection:lvars-programming-with-put-and-get}).  Any state
     transition crossing the ``tripwire'' for \termfont{getSnd} causes
@@ -70,9 +72,7 @@ could allow for unification of partially-initialized structures.
 \end{figure}
 
 Figure~\ref{f:lvars-example-lattices} gives three examples of lattices
-for common data structures.\TODO{Add forward reference to
-  Figure~\ref{f:lvars-example-lattices}'s caption to where I talk
-  about generalizing put to bump.}  The simplest example of a useful
+for common data structures.  The simplest example of a useful
 lattice is one that represents the states that a a single-assignment
 variable (that is, an IVar) can take on.  A natural-number-valued
 IVar, for instance, has a state space corresponding to the lattice in
