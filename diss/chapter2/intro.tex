@@ -84,11 +84,11 @@ notion of monotonic data structures as a starting point for a new
 deterministic parallel programming model.  The model I propose
 generalizes IVars to \emph{LVars}, thus named because the states an
 LVar can take on are elements of an
-application-specific \emph{lattice}.\footnote{As I'll explain in
-Section~\ref{s:lvars-domains}, this ``lattice'' need only be
-a \emph{bounded join-semilattice} augmented with a greatest element
-$\top$, in which every two elements have a least upper bound but not
-necessarily a greatest lower bound.  For brevity, I use the term
+application-specific \emph{lattice}.\footnote{This ``lattice'' need
+only be a \emph{bounded join-semilattice} augmented with a greatest
+element $\top$, in which every two elements have a least upper bound
+but not necessarily a greatest lower bound; see
+Section~\ref{subsection:lvars-lattices}.  For brevity, I use the term
 ``lattice'' in place of ``bounded join-semilattice with a designated
 greatest element''.}  In this chapter, I define LVars and use them to
 define $\lambdaLVar$, a deterministic parallel calculus with shared
