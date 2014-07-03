@@ -79,15 +79,14 @@ streams alone cannot support all producer/consumer applications, as I
 discuss in Section~\ref{s:lvars-motivation} below.
 
 Instead of using a programming model that is limited to a single type
-of shared data structure, then, I propose taking the more general
-notion of monotonic data structures as a starting point for a new
-deterministic parallel programming model.  The model I propose
-generalizes IVars to \emph{LVars}, thus named because the states an
-LVar can take on are elements of an
-application-specific \emph{lattice}.\footnote{This ``lattice'' need
-only be a \emph{bounded join-semilattice} augmented with a greatest
-element $\top$, in which every two elements have a least upper bound
-but not necessarily a greatest lower bound; see
+of shared data structure, then, I take the more general notion of
+monotonic data structures as a starting point for a new deterministic
+parallel programming model.  This new model generalizes IVars
+to \emph{LVars}, thus named because the states an LVar can take on are
+elements of an application-specific \emph{lattice}.\footnote{This
+``lattice'' need only be a \emph{bounded join-semilattice} augmented
+with a greatest element $\top$, in which every two elements have a
+least upper bound but not necessarily a greatest lower bound; see
 Section~\ref{subsection:lvars-lattices}.  For brevity, I use the term
 ``lattice'' in place of ``bounded join-semilattice with a designated
 greatest element''.}  In this chapter, I define LVars and use them to
@@ -104,12 +103,16 @@ Different instantiations of the lattice result in a family of
 deterministic parallel languages.
 
 The main technical result of this chapter is a proof of determinism
-for $\lambdaLVar$ (Section~\ref{s:lvars-proof}).  A critical aspect of
-the proof is a ``frame'' property, expressed by the Independence lemma
-(Section~\ref{subsection:lvars-independence}), that would \emph{not}
-hold in a typical language with shared mutable state, but holds in the
-setting of $\lambdaLVar$ because of the monotonic semantics of
-LVars.
+for $\lambdaLVar$ (Section~\ref{s:lvars-proof}).  The key lemma,
+Independence (Section~\ref{subsection:lvars-independence}), gives a
+kind of \emph{frame property} for LVar computations: very roughly, if
+a computation takes an LVar from state $d$ to $d'$, then it would take
+the same LVar from the state $\userlub{d}{d_F}$ to
+$\userlub{d'}{d_F}$.  The Independence lemma captures the commutative
+effects of LVar computations.  Interestingly, such a property
+would \emph{not} hold in a typical language with shared mutable state,
+but holds in the setting of $\lambdaLVar$ because of the monotonic
+semantics of LVars.
 
 Because lattices are composable, any number of diverse monotonic data
 structures can be used together safely.  Moreover, as long as a data
