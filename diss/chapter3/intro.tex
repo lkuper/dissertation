@@ -106,20 +106,20 @@ traversal algorithm in the following simple fashion:
 \lstinputlisting{chapter3/code/bfs_new.hs}
 
 This code, written using the LVish Haskell library (described in
-Chapter~\ref{ch:lvish}),\footnote{The \texttt{Par} type constructor is
-  the monad in which LVar computations live.}  discovers (in parallel)
-the set of nodes in a graph @g@ reachable from a given node @startV@,
-and is guaranteed to produce a deterministic result.  It works by
-creating a fresh @Set@ LVar (corresponding to a lattice whose elements
-are sets, with set union as least upper bound), and seeding it with
-the starting node.  The @freezeSetAfter@ function combines the two new
-constructs---freezing and event handlers---described above.  First, it
-installs the callback @handle@ as a handler for the @seen@ set, which
-will asynchronously put the neighbors of each visited node into the
-set, possibly triggering further callbacks, recursively.  Second, when
-no further callbacks are ready to run---\ie, when the @seen@ set has
-reached a fixpoint---@freezeSetAfter@ will freeze the set and return
-its exact value.
+Chapter~\ref{ch:lvish}),\footnote{The \lstinline|Par| type constructor
+  is the monad in which LVar computations live.}  discovers (in
+parallel) the set of nodes in a graph @g@ reachable from a given node
+@startV@, and is guaranteed to produce a deterministic result.  It
+works by creating a fresh @Set@ LVar (corresponding to a lattice whose
+elements are sets, with set union as least upper bound), and seeding
+it with the starting node.  The @freezeSetAfter@ function combines the
+two new constructs---freezing and event handlers---described above.
+First, it installs the callback @handle@ as a handler for the @seen@
+set, which will asynchronously put the neighbors of each visited node
+into the set, possibly triggering further callbacks, recursively.
+Second, when no further callbacks are ready to run---\ie, when the
+@seen@ set has reached a fixpoint---@freezeSetAfter@ will freeze the
+set and return its exact value.
 
 \subsection{Quasi-determinism}
 
