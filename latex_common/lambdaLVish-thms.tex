@@ -59,23 +59,6 @@ $E_0[e'_0] = E'_1[e_1]$.
 \end{lem}
 }
 
-\newcommand{\LemAlwaysCrash}{
-\begin{lem}[Always Crash]\label{lem:always-crash}
-Suppose $\config{S}{e} \parstepsto \error$. Then if $\config{S}{e}$ goes to a halting state,
-then that state will be $\error$. 
-\end{lem}
-}
-
-\newcommand{\LemErrorPreservation}{
-\begin{lem}[Error Preservation]\label{lem:error-preservation}
-  If $\config{S}{e} \parstepsto \textup{\error}$ and
-  $\leqstore{S}{S'}$, then $\config{S'}{e} \parstepsto
-  \textup{\error}$.
-\end{lem}
-}
-
-
-
 \newcommand{\LemRenaming}{
   \begin{lem}[Renaming]\label{lem:renaming}
     If $\pi$ is a permutation and $\sigma \parstepsto \sigma'$, then 
@@ -103,26 +86,6 @@ then that state will be $\error$.
     \item $\lubstore{S'}{S''} \statuseq S$, and
     \item$\lubstore{S'}{S''} \neq \topS$.
   \end{itemize}
-\end{lem}
-}
-
-\newcommand{\LemClash}{
-\begin{lem}[Clash]\label{lem:clash}
-  If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
-  $\config{S'}{e'} \neq \textup{\error}$), then:
-
-  $\config{\lubstore{S}{S''}}{e} \parstepsto^i \textup{\error}$, where
-  $i \leq 1$,
-
-  where $S''$ is any store meeting the following conditions:
-  \begin{itemize}
-    \item $S''$ is non-conflicting with $\config{S}{e} \parstepsto \config{S'}{e'}$,
-    \item $\lubstore{S'}{S''} \statuseq S$, and
-    \item$\lubstore{S'}{S''} = \topS$.
-  \end{itemize}
-
-  \lk{This lemma *may* not actually need the $\lubstore{S'}{S''}
-    \statuseq S$ assumption.  Still to be determined.}
 \end{lem}
 }
 
