@@ -1,0 +1,219 @@
+\begin{proof}
+  Consider arbitrary $S''$ such that $S''$ is non-conflicting with
+  $\config{S}{e} \parstepsto \config{S'}{e'}$ and $\lubstore{S'}{S''}
+  = \topS$.
+
+  To show: $\config{\lubstore{S}{S''}}{e} \parstepsto \error$.
+
+  The proof is by induction on the derivation of $\config{S}{e}
+  \parstepsto \config{S'}{e'}$, by cases on the last rule in the
+  derivation.  In every case we may assume that $\config{S'}{e'} \neq
+  \error$.  Since $\config{S'}{e'} \neq \error$, we do not need to
+  consider the {\sc E-Put-Err} rule.
+
+  \begin{itemize}
+
+    \item Case {\sc E-Eval-Ctxt}:
+
+      Given: $\config{S}{\E{e}} \parstepsto \config{S'}{\E{e'}}$.
+
+      To show: $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto^i
+      \error$, where $i \leq 1$.
+
+      From the premise of {\sc E-Eval-Ctxt}, we have that
+      $\config{S}{e} \parstepsto \config{S'}{e'}$.
+
+      Therefore, by IH, we have that $\config{\lubstore{S}{S''}}{e}
+      \parstepsto^{'i} \error$, where $i' \leq 1$.
+
+      We proceed by cases on $i'$:
+
+      \begin{itemize}
+        \item $i' = 0$:
+
+          In this case, $\config{\lubstore{S}{S''}}{e} = \error$.
+
+          Hence, by the definition of $\error$, $\lubstore{S}{S''} =
+          \topS$.
+
+          Hence $\config{\lubstore{S}{S''}}{\E{e}} = \error$.
+
+          Hence $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto^i
+          \error$, with $i = 0$.
+
+        \item $i' = 1$:
+
+          In this case, $\config{\lubstore{S}{S''}}{e} \parstepsto
+          \error$.
+
+          By the definition of $\error$, $\error =
+          \config{\topS}{e''}$ for any $e''$.
+
+          Hence $\config{\lubstore{S}{S''}}{e} \parstepsto
+          \config{\topS}{e''}$.
+
+          Hence, by {\sc E-Eval-Ctxt},
+          $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto
+          \config{\topS}{\E{e''}}$.
+
+          By the definition of $\error$, $\config{\topS}{\E{e''}} =
+          \error$.
+
+          Hence $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto
+          \error$.
+
+          Hence $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto^i
+          \error$, with $i = 1$.
+
+      \end{itemize}
+
+    \item Case {\sc E-Beta}:
+
+      Given: $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto
+      \config{S}{\subst{e}{x}{v}}$.
+
+      To show: $\config{\lubstore{S}{S''}}{\app{(\lam{x}{e})}{v}}
+      \parstepsto^i \error$, where $i \leq 1$.
+
+      By assumption, $\lubstore{S}{S''} = \topS$.
+
+      Hence, by the definition of $\error$,
+      $\config{\lubstore{S}{S''}}{\app{(\lam{x}{e})}{v}} = \error$.
+
+      Hence $\config{\lubstore{S}{S''}}{\app{(\lam{x}{e})}{v}}
+      \parstepsto^i \error$, with $i = 0$.
+
+    \item Case {\sc E-New}:
+
+      Given: $\config{S}{\NEW} \parstepsto
+      \config{\extSRaw{S}{l}{\bot}}{l}$.
+
+      To show: $\config{\lubstore{S}{S''}}{\NEW} \parstepsto^i
+      \error$, where $i \leq 1$.
+
+      By {\sc E-New}, $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
+      \config{\extSRaw{(\lubstore{S}{S''})}{l}{\bot}}{l}$,
+      where $l \notin \dom{\lubstore{S}{S''}}$.
+
+      \lk{TODO: don't assume it's the same $l$!}
+
+      By assumption, $\lubstore{\extSRaw{S}{l}{\bot}}{S''}
+      = \topS$.
+
+      Note that:
+      \begin{align*}
+        \topS &= \lubstore{\extSRaw{S}{l}{\bot}}{S''} \\ &=
+        \lubstore{\lubstore{S}{\store{\storebinding{l}{\bot}}}}{S''}
+        \\ &=
+        \lubstore{\lubstore{S}{S''}}{\store{\storebinding{l}{\bot}}}
+        \\ &=
+        \lubstore{(\lubstore{S}{S''})}{\store{\storebinding{l}{\bot}}}
+        \\ &= \extSRaw{(\lubstore{S}{S''})}{l}{\bot} .
+      \end{align*}
+
+      Hence $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
+      \config{\topS}{l}$.
+
+      Hence, by the definition of $\error$,
+      $\config{\lubstore{S}{S''}}{\NEW} \parstepsto \error$.
+
+      Hence $\config{\lubstore{S}{S''}}{\NEW} \parstepsto^i \error$,
+      with $i = 1$.
+
+    \item Case {\sc E-Put}:
+
+      Given: $\config{S}{\putexp{l}{d_2}} \parstepsto
+      \config{\extSRaw{S}{l}{d_2}}{\unit}$.
+
+      To show: $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}}
+      \parstepsto^i \error$, where $i \leq 1$.
+
+      We proceed by cases on $\lubstore{S}{S''}$:
+
+      \begin{itemize}
+
+        \item $\lubstore{S}{S''} = \topS$:
+
+          In this case, by the definition of $\error$,
+          $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} = \error$.
+
+          Hence $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}}
+          \parstepsto^i \error$, with $i = 0$.
+
+        \item $\lubstore{S}{S''} \neq \topS$:
+
+          From the premises of {\sc E-Put}, we have that $S(l) = d_1$.
+
+          Hence $(\lubstore{S}{S''})(l) = d'_1$, where $d_1 \userleq
+          d'_1$.
+
+          We show that $\userlub{d'_1}{d_2} =
+          \top$, as follows:
+
+          By assumption, $\lubstore{\extSRaw{S}{l}{d_2}}{S''} = \topS$.
+
+          Hence, by Definition~\ref{def:lubstore}, there exists some
+          $l' \in \dom{\extSRaw{S}{l}{d_2}} \cap \dom{S''}$ \\ such that
+          $\userlub{(\extSRaw{S}{l}{d_2})(l')}{S''(l')} = \top$.
+
+          Now case on $l'$:
+
+          \begin{itemize}
+            \item $l' \neq l$:
+
+              In this case, $(\extSRaw{S}{l}{d_2})(l') = S(l')$.
+
+              Since $\userlub{(\extSRaw{S}{l}{d_2})(l')}{S''(l')} = \top$,
+              we then have that $\userlub{S(l')}{S''(l')} = \top$.
+
+              However, this is a contradiction since
+              $\lubstore{S}{S''} \neq \topS$.
+
+              Hence this case cannot occur.
+
+            \item $l' = l$:
+
+              Then $\userlub{(\extSRaw{S}{l}{d_2})(l)}{S''(l)} = \top$.
+
+              Note that:
+              \begin{align*}
+                \top &= \userlub{(\extSRaw{S}{l}{d_2})(l)}{S''(l)} \\ &=
+                \userlub{d_2}{S''(l)} \\ &=
+                \userlub{\userlub{d_1}{d_2}}{S''(l)}
+                \\ &=
+                \userlub{\userlub{S(l)}{d_2}}{S''(l)}
+                \\ &=
+                \userlub{\userlub{S(l)}{S''(l)}}{d_2}
+                \\ &=
+                \userlub{(\lubstore{S}{S''})(l)}{d_2}
+                \\ &= \userlub{d'_1}{d_2}.
+              \end{align*}
+              Hence $\userlub{d'_1}{d_2} = \top$.
+
+              Hence, by {\sc E-Put-Err},
+              $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} \parstepsto
+              \error$.
+
+              Hence $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}}
+              \parstepsto^i \error$, with $i = 1$.
+
+          \end{itemize}
+
+      \end{itemize}
+
+    \item Case {\sc E-Get}:
+
+      Given: $\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}$.
+
+      To show: $\config{\lubstore{S}{S''}}{\getexp{l}{T}}
+      \parstepsto^i \error$, where $i \leq 1$.
+
+      By assumption, $\lubstore{S}{S''} = \topS$.
+
+      Hence, by the definition of $\error$,
+      $\config{\lubstore{S}{S''}}{\getexp{l}{T}} = \error$.
+
+      Hence $\config{\lubstore{S}{S''}}{\getexp{l}{T}} \parstepsto^i
+      \error$, with $i = 0$.
+  \end{itemize}
+\end{proof}
