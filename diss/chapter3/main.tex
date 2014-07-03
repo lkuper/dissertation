@@ -1,35 +1,14 @@
-\chapter{Quasi-Deterministic and Event-Driven Programming with LVars\label{ch:quasi}} % 2
-
-\TODO{Move Listings junk out of here.}
-
-\newcommand{\figbfs}{
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{c | c | c | c | c | c | c}
-         & verts & seq  & best    & best  & work/ & verts/  \\ 
-         & $\times 10^6$    & time & speedup & cores & vert  & sec   \\ \hline 
- BFS IStruct         & 0  & 0 & 0  & 0  & 0 & 0 \\ \hline 
- BFS IStrct/unbox    & 0  & 0 & 0  & 0  & 0 & 0 \\ \hline 
- BFS linked Set      & 0  & 0 & 0  & 0  & 0 & 0 \\ \hline 
- BFS no work         & 0  & 0 & 0  & 0  & 0 & 0 \\ \hline 
-\hline 
- MIS IStruct         & 0  & 0 & 0  & 0  & 0 & 0 \\ \hline 
- MIS IStrct/unbox    & 0  & 0 & 0  & 0  & 0 & 0 \\ \hline 
- MIS linked Set      & 0  & 0 & 0  & 0  & 0 & 0 \\ \hline 
- MIS no work         & 0  & 0 & 0  & 0  & 0 & 0 \\ \hline 
-\end{tabular}
-\end{center}
-\caption{Throughput in vertices per second as a function of per-vertex task size.}
-\label{fig:bfs}
-\end{table}
-}
+\chapter{Quasi-Deterministic and Event-Driven Programming with LVars\label{ch:quasi}} % 3
 
 \input{chapter3/intro}
-
-\input{chapter3/lvars-refresher}
 
 \input{chapter3/lvish-informal}
 
 \input{chapter3/lvish-formal}
 
 \input{chapter3/proofs}
+
+\TODO{Figure out if the stuff from the ``LVars refresher'' chapter
+  that was cut from here should go in chapter 2.}
+
+\TODO{Clean up the figures directory in this chapter.}

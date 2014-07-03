@@ -1,460 +1,216 @@
-\section{Introduction} \label{section:intro}
-
-\TODO{The following three paragraphs were cribbed from the ``Safe,
-  limited nondeterminism'' section that was cut from
-  Chapter~\ref{ch:lvars}.  Figure out if they belong in this chapter,
-  and, if so, where.}
-
-In practice, a major problem with nondeterministic programs is that
-they can {\em silently} go wrong.  Most parallel programming models
-are {\em unsafe} in this sense, but we may classify a nondeterministic
-language as {\em safe} if all occurrences of nondeterminism---that is,
-execution paths that would yield a wrong answer---are trapped and
-reported as errors.  This notion of \emph{safe nondeterminism} is
-analogous to the concept of type safety: type-safe programs can throw
-exceptions, but they will not ``go wrong''.  We find that there are
-various extensions to a deterministic language that make it safely
-nondeterministic.\footnote{For instance, while not recognized
-  explicitly by the authors as such, a recent extension to CnC for
-  memory management \cite{cnc-space-folding} incidentally fell into
-  this category.}  Here, we will look at one such extension:
-\emph{exact but destructive observations}.
-
-We begin by noting that when the state of an LVar has come to
-rest---when no more $\PUT$s will occur---then its final value is a
-deterministic function of program inputs, and is therefore safe to
-read directly, rather than through a thresholded $\GET$.  For
-instance, once no more elements will be added to the @l_acc@
-accumulator variable in the @bf_traverse@ example of
-Figure~\ref{f:bfs-lvar}, it is safe to read the exact, complete set
-contents.
-
-The problem is determining automatically {\em when} an LVar has come
-to rest; usually, the programmer must determine this based on the
-control flow of the program.  We may, however, provide a mechanism for
-the programmer to place their bet.  {\em If} the value of an LVar is
-indeed at rest, then we do no harm to it by corrupting its state in
-such a way that further modification will lead to an error.  We then
-propose a new operation, @freeze@, that takes a pointer to an LVar
-$l$, updates the store, setting $l$'s state to $\textit{probation}$,
-and returns a singleton set containing the {\em exact} previous state
-of $l$, rather than a lower bound on that state.  The idea is to
-ensure that, after a @freeze@, any further operations on $l$ will go
-awry: $\PUT$ operations will attempt to move the state of $l$ to
-$\top$, resulting in $\error$.
-
-% Parallel programming requires a careful balance.  On the one hand, 
-
-Flexible parallelism requires tasks to be scheduled dynamically, in response to
-the vagaries of an execution.  But if the resulting schedule nondeterminism is
-\emph{observable} within a program, it becomes much more difficult for
-programmers to discover and correct bugs by testing, let alone to reason about
-their code in the first place.
-
-While much work has focused on identifying methods of deterministic parallel
-programming \cite{CnC, concurrent-revisions-haskell11, dpj-oopsla,
-  Kahn-1974,Lee-sdn,Tesler-1968}, {\em guaranteed} determinism in real parallel
-programs remains a lofty and rarely achieved goal.  It places stringent
-constraints on the programming model: concurrent tasks must communicate in
-restricted ways that prevent them from observing the effects of scheduling, a
-restriction that must be enforced at the language or runtime level.
+Flexible parallelism requires tasks to be scheduled dynamically, in
+response to the vagaries of an execution.  But if the resulting
+schedule nondeterminism is \emph{observable} within a program, it
+becomes much more difficult for programmers to discover and correct
+bugs by testing, let alone to reason about their code in the first
+place.  While much work has focused on identifying methods of
+deterministic parallel programming \cite{CnC,
+  concurrent-revisions-haskell11, dpj-oopsla,
+  Kahn-1974,Lee-sdn,Tesler-1968}, \emph{guaranteed} determinism in
+real parallel programs remains a lofty and rarely achieved goal.  It
+places stringent constraints on the programming model: concurrent
+tasks must communicate in restricted ways that prevent them from
+observing the effects of scheduling, a restriction that must be
+enforced at the language or runtime level.
 
 The simplest strategy is to allow \emph{no} communication, forcing
-concurrent tasks to produce values independently.  Pure data-parallel languages
-follow this strategy~\cite{dph}, as do languages that force references to be
-either task-unique or immutable~\cite{dpj-oopsla}.  But some algorithms are
-more naturally or efficiently written using shared state or message passing.  A
-variety of deterministic-by-construction models allow limited communication
-along these lines\lk{...so to speak}, but they tend to be narrow in scope and 
-%centered around a
-permit communication through only a
-single data structure: for instance, FIFO queues in Kahn process networks
-\cite{Kahn-1974} and StreamIt \cite{streamit-asplos}, or shared write-only
-tables in Intel Concurrent Collections \cite{CnC}.
+concurrent tasks to produce values independently.  Pure data-parallel
+languages follow this strategy~\cite{dph}, as do languages that force
+references to be either task-unique or immutable~\cite{dpj-oopsla}.
+But, as I discussed in Chapter~\ref{ch:lvars}, some algorithms are
+more naturally or efficiently written using shared state or message
+passing.  A variety of deterministic-by-construction models allow
+limited communication along these lines, but they tend to be narrow in
+scope and permit communication through only a single data structure:
+for instance, FIFO queues in Kahn process networks~\cite{Kahn-1974}
+and StreamIt~\cite{streamit-asplos}, or shared write-only tables in
+Intel Concurrent Collections~\cite{CnC}.
 
-\paragraph{Big-tent deterministic parallelism}
+The LVars programming model presented in Chapter~\ref{ch:lvars} is a
+step toward generalizing these existing deterministic-by-construction
+programming environments.  The starting point for the LVars model is
+the idea of \emph{monotonic data structures}, in which (1) information
+can only be added, never removed, and (2) the order in which
+information is added is not observable.  A paradigmatic example is a
+set that supports insertion but not removal, but there are many
+others.  In the LVars model, all shared data structures (called LVars)
+are monotonic, and the states that an LVar can take on form a
+\emph{lattice}.  Writes to an LVar must correspond to a \emph{join}
+(least upper bound) operation in the lattice, which means that they
+monotonically increase the information in the LVar, and that they
+commute with one another.  But commuting writes are not enough to
+guarantee determinism: if a read can observe whether or not a
+concurrent write has happened, then it can observe differences in
+scheduling.  So, in the LVars model, the answer to the question ``has
+a write occurred?'' (\ie, is the LVar above a certain lattice value?)
+is always \emph{yes}; the reading thread will block until the LVar's
+contents reach a desired threshold.  In a monotonic data structure,
+the absence of information is transient---another thread could add
+that information at any time---but the presence of information is
+forever.
 
-Our goal is to create a broader, general-purpose deterministic-by-construction
-programming environment to increase the appeal and applicability of the method.
-We seek an approach that is not tied to a particular data structure and that
-supports familiar idioms from both functional and imperative programming styles.
-Our starting point is the idea of \emph{monotonic} data structures,
-in which (1) information can only be added, never removed, and (2) the order in
-which information is added is not observable.  A paradigmatic example is a set
-that supports insertion but not removal, but there are many others.  
-
-
-%% and the language must rule out any side-channels that might allow
-%% the
-
-
-%% \item The language for
-%% sequential computations be restricted enough to prevent the programmer from
-%% breaking those rules.  
-
-%%The latter requirement 
-%% % disqualifies many otherwise-deterministic approaches and
-%% effectively narrows the
-%% scope to only approaches implemented in languages with controlled side effects,
-%% such as Haskell.
-
-%% There have been many proposals for navigating this tension, but they generally
-%% follow a common pattern: 
-%% %% to reap the benefits of nondeterminism without the
-%% %% pitfalls, 
-%% they limit the ways that concurrent tasks can communicate, and thereby limit the
-%% ways scheduling can be observed.  
-
-
-%% % \paragraph{A bigger deterministic tent}
-%% % \paragraph{Broadening deterministic parallelism}
-%% Further, whether they meet these stringent requirements or only come close,
-%% % in addition to these stringent requirements
-
-%% \paragraph{Broadening deterministic parallelism}
-%% %We believe it is important 
-
-
-%% To that end,
-%% %% we aim to extend
-%% %% guaranteed-deterministic parallel programming to include
-%% %% % arbitrary 
-%% %% unlimited
-%% %% combinations of the following capabilities:
-%% %% \begin{enumerate}
-%% %% \item Traditional purely-functional programming
-%% %% \item Both single-threaded imperative programming (@ST@ monad), and parallel imperative
-%% %%       programming with disjoint slices of heap state 
-%% %%        % (\eg{} Deterministic  Parallel Java \cite{dpj})
-%% %% \item Producer/consumer communication through general, shared, {\em monotonic}
-%% %%       data structures.
-%% %% \end{enumerate}
-%% %% To summarize: targeting languages such as Haskell adequately addresses
-%% %% (1); whereas (2) 
-%% %% % is beyond the scope of this paper, but 
-%% %% is well understood \cite{dpj} and addressed
-%% %% briefly in Section \ref{section:ParVec}; and (3) is partially addressed by our
-%% %% preliminary work on {\em LVars} in the attached workshop paper.
-%% \lk{I removed the part about actually attaching the LVars paper.  They
-%%   were pretty clear in the guidelines for authors that they just
-%%   wanted authors to cite their own work in the third person.}
-%% \new{we must combine the strengths of traditional purely-functional
-%% programming and imperative shared-state programming:
-%% \begin{itemize}
-%% \item Purely functional programming is inherently parallel and
-%%   deterministic, but disallows communication between parallel tasks.
-%% \item Imperative programming allows communication through shared
-%%   state, but a would-be deterministic-by-construction language must
-%%   carefully control access to the state in order to ensure
-%%   determinism.
-%% \end{itemize}
-%% One approach to ensuring determinism in an imperative language is to
-%% ensure that parallel tasks only access disjoint parts of the state.
-%% In this paper, on the other hand, we advocate a different approach:
-%% producer/consumer communication through shared {\em monotonic} data
-%% structures.}
-%%  review LVars
-%% in the next section, 
-
-Our recently proposed {\em LVars} programming model \cite{LVars-paper} makes an
-initial foray into programming with monotonic data
-structures.  
-\lk{Since we call it the ``LVars model'' here, let's be consistent in
-  calling it that, rather than ``LVar model''.}
-In this model (which we review in
-Section~\ref{section:lvars-refresher}), all shared data structures (called
-LVars) are monotonic, and 
-%% each one is associated with a \emph{lattice} from
-%% which its states are drawn.
-the states that an LVar can take on form a \emph{lattice}.
-Writes to an LVar must correspond to a \emph{join}
-(least upper bound) in the lattice, which means that they monotonically increase
-the information in the LVar, and that they commute with one another.  But
-commuting writes are not enough to guarantee determinism: if a read can observe
-whether or not a concurrent write has happened, then it can observe differences
-in scheduling.  So in the LVars model, the answer to the question ``has a write
-occurred?'' (\ie, is the LVar above a certain lattice value?) is always
-\emph{yes}; the reading thread will block until the LVar's contents reach a desired
-threshold.  In a monotonic data structure, the absence of information is
-transient---another thread could add that information at any time---but the
-presence of information is forever.
-
-The LVars model guarantees determinism, supports an unlimited variety of data
-structures (anything viewable as a lattice), and provides a familiar
-API, so it already achieves several of our goals.
-Unfortunately, it is not as general-purpose as one might hope.
-
-Consider an unordered graph traversal.
-A typical implementation involves a
-monotonically growing set of ``seen nodes''; neighbors of seen nodes are fed
-back into the set until it reaches a fixed point.  Such fixpoint computations
-are ubiquitous, and would seem to be a perfect match for the LVars model due to
-their use of monotonicity.
-But they are not expressible using the threshold read
+The LVars model guarantees determinism and supports an unlimited
+variety of shared data structures: anything viewable as a lattice.
+However, it is not as general-purpose as one might hope.  Consider,
+for instance, an algorithm for unordered graph traversal.  A typical
+implementation involves a monotonically growing set of ``seen nodes'';
+neighbors of seen nodes are fed back into the set until it reaches a
+fixed point.  Such fixpoint computations are ubiquitous, and would
+seem to be a perfect match for the LVars model due to their use of
+monotonicity.  But they are not expressible using the threshold read
 and least-upper-bound write operations described above.
 
-%% Similar algorithms are common enough
-%% in static analysis to warrant a generic ``Monotone Framework'' for expressing
-%% them~\cite{monotone-frameworks}.  
+The problem is that these computations rely on \emph{negative}
+information about a monotonic data structure, \ie, on the
+\emph{absence} of certain writes to the data structure.  In a graph
+traversal, for example, neighboring nodes should only be explored if
+the current node is \emph{not yet} in the set; a fixpoint is reached
+only if no new neighbors are found; and, of course, at the end of the
+computation it must be possible to learn exactly which nodes were
+reachable (which entails learning that certain nodes were not).  But
+in the LVars model, asking whether a node is in a set means waiting
+until the node \emph{is} in the set, and it is not clear how to lift
+this restriction while retaining determinism.
 
-The problem is that these computations rely on \emph{negative} information about
-a monotonic data structure, \emph{i.e.}, on the \emph{absence} of certain writes
-to the data structure.  In a graph traversal, for example, neighboring nodes
-should only be explored if the current node is \emph{not yet} in the set; a
-fixpoint is reached only if no new neighbors are found; and, of course, at the
-end of the computation it must be possible to learn exactly which nodes were
-reachable (which entails learning that certain nodes were not).  But in the
-LVars model, asking whether a node is in a set means waiting until the node
-\emph{is} in the set, and it is not clear how to lift this restriction while
-retaining determinism.
+\subsection{Monotonic data structures that can say ``no''}
 
-\paragraph{Monotonic data structures that can say ``no''}
+In this chapter, I describe two extensions to the basic LVars model of
+Chapter~\ref{ch:lvars}:
 
-In this paper, we propose two additions to the LVars model that significantly
-extend its reach.
+\begin{itemize}
+\item First, I extend the model with a primitive operation @freeze@
+  for \emph{freezing} an LVar, which comes with the following
+  tradeoff: once an LVar is frozen, any further writes that would
+  change its value instead throw an exception; on the other hand, it
+  becomes possible to discover the exact value of the LVar, learning
+  both positive and negative information about it, without blocking.
+\item
+  Second, I add the ability to attach \emph{event handlers} to an
+  LVar.  When an event handler has been registered with an LVar, it
+  invokes a \emph{callback function} to run asynchronously, whenever
+  events arrive (in the form of monotonic updates to the LVar).
+  Ordinary LVar reads encourage a synchronous, \emph{pull} model of
+  programming in which threads ask specific questions of an LVar,
+  potentially blocking until the answer is ``yes''.  Handlers, by
+  contrast, support an asynchronous, \emph{push} model of programming.
+  Crucially, it is possible to check for \emph{quiescence} of a
+  handler, discovering that no callbacks are currently enabled---a
+  transient, negative property.  Since quiescence means that there are
+  no further changes to respond to, it can be used to tell that a
+  fixpoint has been reached.
+\end{itemize}
 
-First, we add \emph{event handlers}, a mechanism for attaching a callback
-function to an LVar that runs, asynchronously, whenever events arrive (in the
-form of monotonic updates to the LVar).  Ordinary LVar reads encourage a
-synchronous, \emph{pull} model of programming in which threads ask specific
-questions of an LVar, potentially blocking until the answer is ``yes''.
-Handlers, by contrast, support an asynchronous, \emph{push} model of
-programming.  Crucially, it is possible to check for \emph{quiescence} of a
-handler, discovering that no callbacks are currently enabled---a transient,
-negative property.  Since quiescence means that there are no further changes to
-respond to, it can be used to tell that a fixpoint has been reached.
-
-\lk{I want to say something like: ``If \emph{all} writes happen
-  through callbacks, we know that quiescence is really quiescence.''
-  (If we have some writes coming in otherwise, then quiescence is less
-  helpful.)}
-
-Second, we add a primitive for \emph{freezing} an LVar, which comes with the
-following tradeoff: once an LVar is frozen, any further writes that would change
-its value instead throw an exception; on the other hand, it becomes possible to
-discover the exact value of the LVar, learning both positive and negative
-information about it, without blocking.\footnote{Our original work on LVars
-\cite{LVars-paper}
-  included a brief sketch of a similar proposal for a ``consume'' operation on
-  LVars, but did not study it in detail.  Here, we include freezing in our
-  model, prove quasi-determinism for it, and show how to program with it in
-  conjunction with our other proposal, handlers.}
-
-%% % Aaron: I like the paragraph below, but I think it's redundant at this point.
-
-%% As a concrete example, consider a monotonically growing set: our proposal makes
-%% it possible to insert elements into the set, wait for the presence of certain
-%% elements, wait for the set to reach a certain size, and register
-%% callbacks that fire with each new element added---all while the set
-%% contents are changing concurrently.  But to read the full contents of the set
-%% all at once requires freezing the set, after which no further changes are allowed
-
-Putting these features together, we can write a parallel graph traversal algorithm
-in the following simple fashion:
+Putting these features together, one can write a parallel graph
+traversal algorithm in the following simple fashion:
 
 \lstinputlisting{chapter3/code/bfs_new.hs}
 
-\noindent
-This code, written using our Haskell implementation (described in Section~\ref{section:implementation}),\footnote{The
-  \texttt{Par} type constructor is the monad in which LVar computations live.}
-discovers (in parallel) the set of nodes in a graph @g@ reachable from a given node
-@startV@, and is guaranteed to produce a deterministic result.  It works by creating a fresh @Set@ LVar
-(corresponding to a lattice whose elements are sets, with set union as least upper bound), and seeding it
-with the starting node.  The @freezeSetAfter@ function combines the constructs
-proposed above.  First, it installs the callback @handle@ as a handler for the
-@seen@ set, which will asynchronously put the neighbors of each visited node
-into the set, possibly triggering further callbacks, recursively.  Second, when
-no further callbacks are ready to run---\emph{i.e.}, when the @seen@ set has
-reached a fixpoint---@freezeSetAfter@ will freeze the set and return its exact
-value.
+This code, written using the LVish Haskell library (described in
+Chapter~\ref{ch:lvish}),\footnote{The \texttt{Par} type constructor is
+  the monad in which LVar computations live.}  discovers (in parallel)
+the set of nodes in a graph @g@ reachable from a given node @startV@,
+and is guaranteed to produce a deterministic result.  It works by
+creating a fresh @Set@ LVar (corresponding to a lattice whose elements
+are sets, with set union as least upper bound), and seeding it with
+the starting node.  The @freezeSetAfter@ function combines the two new
+constructs---freezing and event handlers---described above.  First, it
+installs the callback @handle@ as a handler for the @seen@ set, which
+will asynchronously put the neighbors of each visited node into the
+set, possibly triggering further callbacks, recursively.  Second, when
+no further callbacks are ready to run---\ie, when the @seen@ set has
+reached a fixpoint---@freezeSetAfter@ will freeze the set and return
+its exact value.
 
-\paragraph{Quasi-determinism}
+\subsection{Quasi-determinism}
 
 Unfortunately, freezing does not commute with writes that change an
 LVar.\footnote{The same is true for quiescence detection; see
-  Section~\ref{sec:quiescence-informal}.}  If a freeze is interleaved before
-such a write, the write will raise an exception; if it is interleaved
-afterwards, the program will proceed normally.  It would appear that the price
-of negative information is the loss of determinism!
+  Section~\ref{sec:quiescence-informal}.}  If a freeze is interleaved
+before such a write, the write will raise an exception; if it is
+interleaved afterwards, the program will proceed normally.  It would
+appear that the price of negative information is the loss of
+determinism!
 
-Fortunately, the loss is not total.  Although LVar programs with freezing are not
-guaranteed to be deterministic, they do satisfy a related property that we call
-\emph{quasi-determinism}: all executions that produce a final value produce the
-\emph{same} final value.  To put it another way, a quasi-deterministic program
-can be trusted to never change its answer due to nondeterminism; at worst, it
-might raise an exception on some runs.  In our proposed model, this exception
-can in principle pinpoint the exact pair of freeze and write operations
-that are racing, greatly
-easing debugging.  
+Fortunately, the loss is not total.  Although LVar programs with
+freezing are not guaranteed to be deterministic, they do satisfy a
+related property that I call \emph{quasi-determinism}: all executions
+that produce a final value produce the \emph{same} final value.  To
+put it another way, a quasi-deterministic program can be trusted to
+never change its answer due to nondeterminism; at worst, it might
+raise an exception on some runs.  This exception can in principle
+pinpoint the exact pair of freeze and write operations that are
+racing, greatly easing debugging.
 
-%% Of course, some nondeterministic exceptions might never show
-%% up in testing, but quasi-determinism is also helpful for moving into production:
-%% in many cases, a programmer can choose the defensive technique of catching the
-%% exception and retrying the computation (perhaps from a snapshot), under the
-%% assumption that the exception is unlikely to occur again.
+In general, the ability to make exact observations of the contents of
+data structures is in tension with the goal of guaranteed determinism.
+Since pushing towards full-featured, general monotonic data structures
+leads to flirtation with nondeterminism, perhaps the best way of
+ultimately getting deterministic outcomes is to traipse a small
+distance into nondeterminism, and make one's way back.  The
+identification of quasi-deterministic programs as a useful
+intermediate class of programs is a contribution of this dissertation.
+That said, in many cases the @freeze@ construct is only used as the
+very final step of a computation: after a global barrier, freezing is
+used to extract an answer.  In this common case, determinism is
+guaranteed, since no writes can subsequently occur.
 
-Our general observation is that {\em pushing towards full-featured, general
-  monotonic data structures leads to flirtation with nondeterminism}; perhaps
-the best way of ultimately getting deterministic outcomes is to traipse a small
-distance into nondeterminism, and make our way back.  The identification of
-quasi-deterministic programs as a useful intermediate class is a contribution of
-this paper.  That said, in many cases our freezing construct is only used as the
-very final step of a computation: after a global barrier, freezing is used to
-extract an answer.  In this common case, we can guarantee determinism, since no
-writes can subsequently occur.
+In this chapter, I introduce a quasi-deterministic parallel
+programming model that extends LVars to incorporate freezing and event
+handlers.  In addition to the high-level
+design~(Section~\ref{s:quasi-informal}), I extend the $\lambdaLVar$
+calculus of Chapter~\ref{ch:lvars} to add support for event handlers
+and the @freeze@ operation, calling the resulting language
+$\lambdaLVish$~(Section~\ref{s:quasi-formal}).  In
+Chapter~\ref{ch:lvish}, I will go on to describe LVish, a Haskell
+library for practical quasi-deterministic parallel programming based
+on $\lambdaLVish$.
 
-%% \lk{We've been flipping back and forth between ``manipulate
-%%   nondeterminism'' and ``manage nondeterminism'' --- let's stick with
-%%   one.  I picked ``manage''.}
-%% \rn{A different way of saying this is that we need to get very close to
-%%   nondeterminism, in order to ultimately come up with a great deterministic
-%%   model (once you kick in the recovery methods).  I guess if we wanted we could
-%%   be more clear that quasi-determinism is not an end-goal so much as a way of
-%%   getting to determinism.}
+The main technical result of this chapter is a proof of
+quasi-determinism for
+$\lambdaLVish$~(Section~\ref{s:quasi-proof}). Just as with the
+determinism proof I gave for $\lambdaLVar$ in Chapter~\ref{ch:lvars},
+the quasi-determinism proof for $\lambdaLVish$ relies on an
+Independence lemma (Section~\ref{subsection:quasi-independence}) that
+captures the commutative effects of LVar computations.
 
-%% \paragraph{Managing nondeterminism}
-%% % It is difficult to construct 
-%% What does it mean to manage nondeterminism?
-%% %% Most programs are either
-%% %% deterministic or they aren't.  
-%% Ordinarily, we think of determinism as a binary property: a program is deterministic or it is not, and if
-%%  any component of a program is
-%% nondeterministic, then all outputs that depend on it are ``tainted'' with nondeterminism.  
-%% %
-%% Before
-%% presenting the details of our own proposal, we review one example of what we
-%% mean by managing nondeterminism.
+\TODO{Figure out if the stuff from the ``Safe, limited
+  nondeterminism'' section that was cut from Chapter~\ref{ch:lvars}
+  belongs in this chapter anywhere.}
 
-%% Consider {\em non-deterministic search} where
-%% the first valid answer is returned.  This is a traditional example of
-%% ``don't-care'' nondeterminism, but
-%% %in this case we look at such a program differently
-%% viewed from another perspective, it is really a nondeterministic sampling of a deterministic
-%% program!
-%% %To explain, consider 
-%% At the point where we return the first answer found (and cancel
-%% subsequent search), we could instead pause the search and return a lazy stream
-%% carrying the set of {\em all} valid answers, which could then be
-%% manipulated, filtered, and so forth.  The streaming version of the program would be deterministic, but 
-%% %at the final point where 
-%% when the user runs the
-%% complete program, they could choose whether to wait for all answers or introduce
-%% nondeterminism by picking one.
-%% % 
-%% % take only the first answer or leave
-%% %a background process computing all answers to verify that no exception occurs.
-%% %
-%% Because streamed sets are expressible as LVars, this is one example of a choice
-%% a user could make in our proposed framework.
-%% \lk{We should also say why this example is specific to the extensions
-%%   in this paper and not just the original model.  Does the ``picking
-%%   one'' part count as freezing?}
+%% In practice, a major problem with nondeterministic programs is that
+%% they can {\em silently} go wrong.  Most parallel programming models
+%% are {\em unsafe} in this sense, but we may classify a nondeterministic
+%% language as {\em safe} if all occurrences of nondeterminism---that is,
+%% execution paths that would yield a wrong answer---are trapped and
+%% reported as errors.  This notion of \emph{safe nondeterminism} is
+%% analogous to the concept of type safety: type-safe programs can throw
+%% exceptions, but they will not ``go wrong''.  We find that there are
+%% various extensions to a deterministic language that make it safely
+%% nondeterministic.\footnote{For instance, while not recognized
+%%   explicitly by the authors as such, a recent extension to CnC for
+%%   memory management \cite{cnc-space-folding} incidentally fell into
+%%   this category.}  Here, we will look at one such extension:
+%% \emph{exact but destructive observations}.
 
-%% \paragraph{Quasi-determinism}
-%% %% We make a specific contribution towards the overarching goal of managing
-%% %% nondeterminism in this paper; namely, we 
-%% In this paper, our specific contribution toward the overarching goal
-%% of managing nondeterminism is to
-%% identify a new family of {\em
-%%   quasi-deterministic} languages.  
-%% Quasi-deterministic languages are those in which
-%% only a single value can result from any \new{\emph{non-faulting}} execution of a program, but
-%% in which
-%% nondeterministic events may occur and will be caught as exceptions.
-%% \lk{I had to be very careful here not to say anything about
-%%   termination.  We have been dancing around that.  I think we should
-%%   probably point out up front what we mean by determinism: our
-%%   determinism is only wrt the value a program evaluates to (i.e. we're
-%%   not talking about print statements), and that we don't make claims
-%%   about termination.}
-%% \new{In other words, while a deterministic program produces the same output
-%% on every run, a quasi-deterministic program is one in which two
-%% outcomes are possible: a program will produce the same output on every
-%% run that does not fault, but it may also raise an exception.}
-%% % other recent authors bumped up against quasi-determinism and chose to ... (FlowPools)
-%% The benefits of quasi-determinism are:
-%% \begin{itemize}
-%% \item Quasi-determinism is easier to debug than full nondeterminism, in the
-%%   same way exceptions in type-safe languages are easier to deal with than
-%%   arbitrary state corruptions causing downstream program failures. \lk{what are state corruptions?  should this be ``uncaught type errors''?}
-%% \item Quasi-determinism can be converted back into full determinism, for a
-%%   price, when and where the user chooses to do so.
-%% \end{itemize}
-%% We argue that quasi-determinism is a natural category.
-%% For instance, a recent attempt to add a form of garbage collection to
-%% the Intel Concurrent Collections \cite{CnC} system for deterministic
-%% parallel programming inadvertently introduced quasi-determinism to the
-%% language \cite{cnc-space-folding}. \lk{Maybe one more sentence about
-%%   this would be good.}
-%% \lk{I moved the following part over from what Ryan had cut out of
-%% Section~\ref{section:lvars-refresher}.  It's awkward to keep referring
-%% to our own work (that they probably haven't read), but I think it's
-%% important to be very up-front about the fact that this paper is not
-%% the first place where we've proposed something like quasi-determinism
-%% (otherwise we're claiming too much credit); it's just the first place
-%% where we've fleshed it out and proved that it works.}
-%% \new{Similarly, Kuper and Newton proposed extending the
-%% basic LVar model with a ``consume'' operation that would allow exact
-%% reads (rather than only threshold reads) of shared state; they
-%% conjectured that the nondeterminism introduced by exact reads would
-%% admit failures, but not wrong answers.  In this paper, we prove that
-%% this is in fact the case (Section~\ref{section:proof}).}
+%% We begin by noting that when the state of an LVar has come to
+%% rest---when no more $\PUT$s will occur---then its final value is a
+%% deterministic function of program inputs, and is therefore safe to
+%% read directly, rather than through a thresholded $\GET$.  For
+%% instance, once no more elements will be added to the @l_acc@
+%% accumulator variable in the @bf_traverse@ example of
+%% Figure~\ref{f:bfs-lvar}, it is safe to read the exact, complete set
+%% contents.
 
-%% By providing users with options in how to respond to nondeterminism (as in
-%% the nondeterministic search example above), they can choose where and how to
-%% deal with it.  We discuss options for 
-%% %responding to 
-%% recovering from
-%% quasi-determinism in
-%% Section~\ref{section:recovering}.
-
-\paragraph{Contributions}
-
-The technical contributions of this paper are:
-
-\begin{itemize}
-\item We introduce \emph{LVish}, a quasi-deterministic parallel programming
-  model that extends LVars to incorporate freezing and event handlers
-  (Section~\ref{section:lvish-informal}).  In addition to our high-level design,
-  we present a core calculus for LVish (Section~\ref{section:language}),
-  formalizing its semantics, and include a runnable version,
-  implemented in PLT Redex (Section~\ref{subsection:redex}), for
-  interactive experimentation.
-\item We give a proof of quasi-determinism for the LVish calculus
-  (Section~\ref{section:proof}). The key lemma, Independence, gives a kind of
-  \emph{frame property} for LVish computations: very roughly, if a computation
-  takes an LVar from state $p$ to $p'$, then it would take the same LVar from
-  the state $\userlub{p}{p_F}$ to $\userlub{p'}{p_F}$.  The Independence lemma
-  captures
-  the commutative effects of LVish computations.
-\item We describe a Haskell library for practical quasi-deterministic parallel
-  programming based on LVish (Section~\ref{section:implementation}).  Our
-  library comes with a number of monotonic data structures, including sets,
-  maps, counters, and single-assignment variables.  Further, it can be extended
-  with new data structures, all of which can be used compositionally within the
-  same program.  Adding a new data structure typically involves porting an
-  existing scalable (\eg, {\em lock-free}) data structure to Haskell, then
-  wrapping it to expose a (quasi-)deterministic LVar interface.  Our library exposes
-  a monad that is \emph{indexed} by a determinism level: fully deterministic or
-  quasi-deterministic.  Thus, the \emph{static type} of an LVish computation
-  reflects its guarantee, and in particular the freeze-last idiom allows freezing
-  to be used safely with a fully-deterministic index.
-%% To make this possible, we have extended
-%% Haskell with the capability to perform atomic memory operations safely (Section~\ref{subsection:atomics}), which is non-trivial in a lazy, pure language.
-\item In Section~\ref{section:eval}, we evaluate our library with a case study:
-  parallelizing control flow analysis.  The case study begins with an existing
-  implementation of $k$-CFA~\cite{MightkCFABlog} written
-  in a purely functional style.  We show how this code can easily and safely be
-  parallelized by adapting it to the LVish model---an adaptation that yields
-  promising parallel speedup, and also turns out to have benefits even in the
-  sequential case.
-%% in the context of
-%%   two application domains: graph algorithms and control flow analysis.  We use
-%%   graph benchmarks from the Problem Based Benchmark Suite \cite{pbbs} and an
-%%   algorithm for $k$-CFA proposed by Might .  These two
-%%   domains illustrate the advantage of LVars over more limited forms of
-%%   deterministic parallelism.
-
-\end{itemize}
-%% All our proofs and machine-runnable artifacts (the Redex model and library) are
-%% available in the included supplementary material.
+%% The problem is determining automatically {\em when} an LVar has come
+%% to rest; usually, the programmer must determine this based on the
+%% control flow of the program.  We may, however, provide a mechanism for
+%% the programmer to place their bet.  {\em If} the value of an LVar is
+%% indeed at rest, then we do no harm to it by corrupting its state in
+%% such a way that further modification will lead to an error.  We then
+%% propose a new operation, @freeze@, that takes a pointer to an LVar
+%% $l$, updates the store, setting $l$'s state to $\textit{probation}$,
+%% and returns a singleton set containing the {\em exact} previous state
+%% of $l$, rather than a lower bound on that state.  The idea is to
+%% ensure that, after a @freeze@, any further operations on $l$ will go
+%% awry: $\PUT$ operations will attempt to move the state of $l$ to
+%% $\top$, resulting in $\error$.
