@@ -71,17 +71,24 @@ by allocation.
 
 \subsection{Clash lemma}
 
+The Clash lemma, Lemma~\ref{lem:lvars-clash}, is similar to the
+Independence lemma, but handles the case where $\lubstore{S'}{S''} =
+\topS$.  It establishes that, in that case,
+$\config{\lubstore{S}{S''}}{e}$ steps to $\error$.
+
 \lk{We didn't need the Clash lemma for the quasi-determinism proof,
   but I'm pretty sure the only reason we didn't need it was because
   quasi-determinism is ``...or $\error$''.  I think we actually do
   need it here.}
 
-\TODO{Read over this proof.}
-
 \LVarsLemClash
 \input{chapter2/determinism-clash-proof}
 
 \subsection{Error Preservation lemma}
+
+Lemma~\ref{lem:lvars-error-preservation}, says that if a configuration
+$\config{S}{e}$ steps to $\error$, then evaluating $e$ in the context
+of some larger store will also result in $\error$.
 
 \lk{We didn't need the Error Preservation lemma for the
   quasi-determinism proof, but I'm pretty sure the only reason we
@@ -89,8 +96,7 @@ by allocation.
   I think we actually do need it here.}
 
 \LVarsLemErrorPreservation
-
-\TODO{proof}
+\input{chapter2/determinism-error-preservation-proof}
 
 \subsection{Diamond lemma}
 

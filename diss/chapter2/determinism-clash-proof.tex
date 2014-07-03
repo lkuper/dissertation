@@ -24,7 +24,7 @@
       $\config{S}{e} \parstepsto \config{S'}{e'}$.
 
       Therefore, by IH, we have that $\config{\lubstore{S}{S''}}{e}
-      \parstepsto^{'i} \error$, where $i' \leq 1$.
+      \parstepsto^{i'} \error$, where $i' \leq 1$.
 
       We proceed by cases on $i'$:
 
@@ -95,7 +95,8 @@
       \config{\extSRaw{(\lubstore{S}{S''})}{l}{\bot}}{l}$,
       where $l \notin \dom{\lubstore{S}{S''}}$.
 
-      \lk{TODO: don't assume it's the same $l$!}
+      \TODO{Don't assume it's the same $l$!  I might be able to do the
+        same thing here that I do in the next case.}
 
       By assumption, $\lubstore{\extSRaw{S}{l}{\bot}}{S''}
       = \topS$.
@@ -103,11 +104,11 @@
       Note that:
       \begin{align*}
         \topS &= \lubstore{\extSRaw{S}{l}{\bot}}{S''} \\ &=
-        \lubstore{\lubstore{S}{\store{\storebinding{l}{\bot}}}}{S''}
+        \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{S''}
         \\ &=
-        \lubstore{\lubstore{S}{S''}}{\store{\storebinding{l}{\bot}}}
+        \lubstore{\lubstore{S}{S''}}{\store{\storebindingRaw{l}{\bot}}}
         \\ &=
-        \lubstore{(\lubstore{S}{S''})}{\store{\storebinding{l}{\bot}}}
+        \lubstore{(\lubstore{S}{S''})}{\store{\storebindingRaw{l}{\bot}}}
         \\ &= \extSRaw{(\lubstore{S}{S''})}{l}{\bot} .
       \end{align*}
 
@@ -152,9 +153,9 @@
 
           By assumption, $\lubstore{\extSRaw{S}{l}{d_2}}{S''} = \topS$.
 
-          Hence, by Definition~\ref{def:lubstore}, there exists some
-          $l' \in \dom{\extSRaw{S}{l}{d_2}} \cap \dom{S''}$ \\ such that
-          $\userlub{(\extSRaw{S}{l}{d_2})(l')}{S''(l')} = \top$.
+          Hence, by Definition~\ref{def:lvars-lubstore}, there exists
+          some $l' \in \dom{\extSRaw{S}{l}{d_2}} \cap \dom{S''}$ such
+          that $\userlub{(\extSRaw{S}{l}{d_2})(l')}{S''(l')} = \top$.
 
           Now case on $l'$:
 
