@@ -262,11 +262,11 @@ others.\lk{I changed the wording here from ``execution'' to ``complete
 
 Finally, we can directly leverage Shapiro 
 \etal's SEC result for CvRDTs to show that a threshold CvRDT is SEC:
-\begin{theorem}[strong eventual consistency of threshold CvRDTs]
+\begin{thm}[Strong Eventual Consistency of Threshold CvRDTs]
   \label{thm:strong-eventual-consistency-of-threshold-cvrdts}
   Assuming eventual delivery and termination, an object that meets
   the criteria for a threshold CvRDT is SEC.
-\end{theorem}
+\end{thm}
 \begin{proof}
 From Shapiro \etal, we have that an object that meets the criteria for
 a CvRDT is SEC~\cite{crdts}.  Shapiro \etal's proof also assumes that
@@ -278,7 +278,6 @@ of the least upper bound operation.  Since, according to our
 Definition~\ref{def:causal-history}, threshold queries do not affect
 causal history, we can leverage Shapiro \etal's result to say that a
 threshold CvRDT is also SEC.
-\qed
 \end{proof}
 
 \rn{Do we not need to grapple with the blocking forever behavior here
