@@ -17,17 +17,18 @@ are the only programs that can be expressed within the model.
 
 A deterministic-by-construction programming model is one that ensures
 that all programs written using the model have the same
-\emph{observable behavior} every time they are run.  What, then, is
-observable about a program's behavior?  Certainly, one does \emph{not}
-wish to preserve behaviors such as running time across multiple
-runs---ideally, a deterministic-by-construction parallel program will
-run faster when more parallel resources are available.  Moreover, I do
-not want to count scheduling behavior as observable---in fact, I want
-to specifically \emph{allow} tasks to be scheduled dynamically and
-unpredictably, without allowing such \emph{schedule nondeterminism} to
-affect the observable behavior of a program.  Therefore, in this
-dissertation I will define the observable behavior of a program to be
-\emph{the value to which the program evaluates}.
+\emph{observable behavior} every time they are run.  How do we define
+what is observable about a program's behavior?  Certainly, we do
+\emph{not} wish to preserve behaviors such as running time across
+multiple runs---ideally, a deterministic-by-construction parallel
+program will run faster when more parallel resources are available.
+Moreover, we do not want to count scheduling behavior as
+observable---in fact, we want to specifically \emph{allow} tasks to be
+scheduled dynamically and unpredictably, without allowing such
+\emph{schedule nondeterminism} to affect the observable behavior of a
+program.  Therefore, in this dissertation I will define the observable
+behavior of a program to be \emph{the value to which the program
+  evaluates}.
 
 \lk{In my proposal, I had a footnote here: ``We assume that programs
   have no side effects other than state effects.'' I think I instead
@@ -123,19 +124,19 @@ The four parallel programming models listed above---no-shared-state
 parallelism, data-flow parallelism, single-assignment parallelism, and
 imperative disjoint parallelism---all seem to embody rather different
 mechanisms for exposing parallelism and for ensuring determinism.  If
-one views these different programming models as a toolkit of unrelated
-choices, though, it is not clear how to proceed when one wants to
+we view these different programming models as a toolkit of unrelated
+choices, though, it is not clear how to proceed when we want to
 implement an application with multiple parallelizable components that
 are best suited to different programming models.  For example, suppose
-I have an application in which I wish to use data-flow pipeline
+we have an application in which we wish to use data-flow pipeline
 parallelism via FIFO queues, but also disjoint parallel mutation of
 arrays.  It is not obvious how to compose two programming models that
 each only allow communication through a single type of shared data
-structure---or, if I do manage to compose them, whether or not the
+structure---or, if we do manage to compose them, whether or not the
 determinism guarantee of the individual models is preserved by their
-composition.  Hence I seek a general, broadly-applicable model for
-deterministic parallel programming that is not tied to a particular
-data structure.
+composition.  Therefore, we seek a general, broadly-applicable model
+for deterministic parallel programming that is not tied to a
+particular data structure.
 
 \section{Lattice-based, monotonic data structures as a basis for deterministic parallelism}\label{s:intro-monotonic}
 
@@ -184,10 +185,10 @@ is, a program in which @put@ and @get@ operations on LVars are the
 only side effects will have the same observable result in spite of
 parallel execution and schedule nondeterminism.  \lk{Maybe I don't
   need the next sentence at all; maybe it's covered by the
-  ``organization'' bullet points below.} As I will show in
+  ``organization'' bullet points below.} As we will see in
 Chapter~\ref{ch:lvars}, no-shared-state parallelism, data-flow
 parallelism and single-assignment parallelism are all subsumed by the
-LVars programming model, and as I will show in
+LVars programming model, and as we will see in
 Chapter~\ref{ch:lvish}\lk{Maybe refer to a specific section?},
 imperative disjoint parallelism is compatible with LVars as well.
 
@@ -224,8 +225,8 @@ reachable (which entails learning that certain nodes were not).  In
 Chapter~\ref{ch:quasi}, I describe two extensions to the basic LVars
 model that make such computations possible:
 \begin{itemize}
-\item First, I describe how to add a primitive operation @freeze@ for
-  \emph{freezing} an LVar, which allows its contents to be read
+\item First, I extend the model with a primitive operation @freeze@
+  for \emph{freezing} an LVar, which allows its contents to be read
   immediately and exactly, rather than the blocking threshold read
   that @get@ allows.  The @freeze@ primitive imposes the following
   trade-off: once an LVar has been frozen, any further writes that
@@ -238,15 +239,15 @@ model that make such computations possible:
   @freeze@ operations are scheduled.  However, such programs satisfy
   \emph{quasi-determinism}: all executions that produce a final value
   produce the \emph{same} final value.
-\item Second, I describe how to add the ability to attach \emph{event
-  handlers} to an LVar.  When an event handler has been registered
-  with an LVar, it invokes a \emph{callback function} to run,
-  asynchronously, whenever events arrive (in the form of monotonic
-  updates to the LVar).  Crucially, it is possible to check for
-  \emph{quiescence} of a group of handlers, discovering that no
-  callbacks are currently enabled---a transient, negative property.
-  Since quiescence means that there are no further changes to respond
-  to, it can be used to tell that a fixpoint has been reached.
+\item Second, I add the ability to attach \emph{event handlers} to an
+  LVar.  When an event handler has been registered with an LVar, it
+  invokes a \emph{callback function} to run, asynchronously, whenever
+  events arrive (in the form of monotonic updates to the LVar).
+  Crucially, it is possible to check for \emph{quiescence} of a group
+  of handlers, discovering that no callbacks are currently enabled---a
+  transient, negative property.  Since quiescence means that there are
+  no further changes to respond to, it can be used to tell that a
+  fixpoint has been reached.
 \end{itemize}
 Of course, since more events could arrive later, there is no way to
 guarantee that quiescence is permanent---but since the contents of the
@@ -257,11 +258,11 @@ work particularly well together because freezing provides a mechanism
 by which the programmer can safely ``place a bet'' that all writes
 have completed.  Hence freezing and handlers make possible fixpoint
 computations like the graph traversal described above.  Moreover, if
-one can ensure that the freeze does indeed happen after all writes
-have completed, then one can ensure that the computation is
-deterministic, and it is possible to enforce this ``freeze-last''
-idiom at the implementation level, as I discuss below (and, in more
-detail, in Chapter~\ref{ch:lvish}\lk{Refer to a specific section?}).
+we can ensure that the freeze does indeed happen after all writes have
+completed, then we can ensure that the computation is deterministic,
+and it is possible to enforce this ``freeze-last'' idiom at the
+implementation level, as I discuss below (and, in more detail, in
+Chapter~\ref{ch:lvish}\lk{Refer to a specific section?}).
 
 \section{The LVish library}\label{s:intro-lvish}
 
@@ -336,7 +337,9 @@ make use of handlers and freezing:
   writes, which we call @bump@ operations, preserve determinism as
   long as programs do not use @put@ and @bump@ on the same LVar, a
   property that can be statically enforced by the aforementioned
-  effect specification system in LVish.
+  effect specification system in LVish.  \TODO{Revise this; say
+    something about Section~\ref{s:lvars-generalizing}.}
+
 \end{itemize}
 
 \section{Deterministic threshold queries of distributed data structures}\label{s:intro-cvrdts}
