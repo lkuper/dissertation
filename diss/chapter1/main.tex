@@ -193,10 +193,9 @@ imperative disjoint parallelism is compatible with LVars as well.
 
 \subsection{Generalizing from least-upper-bound writes and threshold reads}\label{subsection:intro-generalizing}
 
-\TODO{Say something about generalizing from least-upper-bound writes
-  to inflationary and commutative writes, and from threshold reads to
-  generalized threshold reads and then to threshold functions.  Also
-  say what we've proved about what!}
+\TODO{Say something about Section~\ref{s:lvars-generalizing}, and if
+  there's going to be a proof about the generalized model, mention
+  that.}
 
 \section{Quasi-deterministic and event-driven programming with LVars}\label{s:intro-quasi}
 
@@ -411,17 +410,16 @@ The rest of this dissertation supports my thesis as follows:
     \mathit{empty} < \mathit{full_i}$) results in a parallel
     single-assignment language.  Hence $\lambdaLVar$ is actually a
     \emph{family} of calculi, varying by choice of lattice.
-    \TODO{Something about generalizing from least-upper-bound writes
-      to inflationary and commutative writes, and from threshold reads
-      to generalized threshold reads and then to threshold functions,
-      should go here as well.}
+    \TODO{Something about Section~\ref{s:lvars-generalizing} should go
+      here as well.}
 
   \item \emph{provably deterministic}: In Chapter~\ref{ch:lvars}, I
     defend the claim that the basic LVars model guarantees determinism
     by giving a proof of determinism for $\lambdaLVar$, including the
-    aforementioned @put@ and @get@ operations on LVars.\TODO{Also say
-      something about the proof for generalized inflationary and
-      commutative writes and for threshold functions.}
+    aforementioned @put@ and @get@ operations on LVars.  \TODO{If
+      there's a proof to accompany the generalized model in
+      Section~\ref{s:lvars-generalizing}, something about that should
+      go here.}
 
   \item \emph{quasi-deterministic}: In Chapter~\ref{ch:quasi}, I
     defend this claim by defining quasi-determinism and giving a proof
