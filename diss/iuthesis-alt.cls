@@ -106,10 +106,12 @@
 \LoadClass{amsbook}[1995/01/27]
 
 \topmargin 0pt
-\oddsidemargin=.5in
+%\oddsidemargin=.5in
+\oddsidemargin 0pt
 \evensidemargin=\oddsidemargin
 \advance\headheight 2pt
-\textwidth 6in
+%\textwidth 6in
+\textwidth 6.5in
 \textheight 8.9in
 \advance\textheight by -\headheight
 \advance\textheight by -\headsep
