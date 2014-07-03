@@ -15,13 +15,11 @@
   2.3. lambdaLVar: syntax and semantics
   2.4. Proof of determinism for lambdaLVar
   2.5. Generalizing the `put` and `get` operations
-  2.6. Conclusion (?)
 
 3. Quasi-Deterministic and Event-Driven Programming with LVars
-  * will be like sections 3.6-3.7 of my thesis proposal (but slower-paced and more example-driven)
-  * introduce handlers/quiescence/freezing, by example, as in the POPL paper
-  * add handlers/quiescence/freezing to the semantics
-  * quasi-determinism proof outline
+  3.1. LVish, informally
+  3.2. LVish, formally
+  3.3. Proof of quasi-determinism for lambdaLVish
 
 4. The LVish Library: Implementation and Evaluation
   * the LVish implementation overview from the POPL paper
