@@ -1,53 +1,22 @@
-Flexible parallelism requires tasks to be scheduled dynamically, in
-response to the vagaries of an execution.  But if the resulting
-schedule nondeterminism is \emph{observable} within a program, it
-becomes much more difficult for programmers to discover and correct
-bugs by testing, let alone to reason about their code in the first
-place.  While much work has focused on identifying methods of
-deterministic parallel programming \cite{CnC,
-  concurrent-revisions-haskell11, dpj-oopsla,
-  Kahn-1974,Lee-sdn,Tesler-1968}, \emph{guaranteed} determinism in
-real parallel programs remains a lofty and rarely achieved goal.  It
-places stringent constraints on the programming model: concurrent
-tasks must communicate in restricted ways that prevent them from
-observing the effects of scheduling, a restriction that must be
-enforced at the language or runtime level.
-
-The simplest strategy is to allow \emph{no} communication, forcing
-concurrent tasks to produce values independently.  Pure data-parallel
-languages follow this strategy~\cite{dph}, as do languages that force
-references to be either task-unique or immutable~\cite{dpj-oopsla}.
-But, as I discussed in Chapter~\ref{ch:lvars}, some algorithms are
-more naturally or efficiently written using shared state or message
-passing.  A variety of deterministic-by-construction models allow
-limited communication along these lines, but they tend to be narrow in
-scope and permit communication through only a single data structure:
-for instance, FIFO queues in Kahn process networks~\cite{Kahn-1974}
-and StreamIt~\cite{streamit-asplos}, or shared write-only tables in
-Intel Concurrent Collections~\cite{CnC}.
-
-The LVars programming model presented in Chapter~\ref{ch:lvars} is a
-step toward generalizing these existing deterministic-by-construction
-programming environments.  The starting point for the LVars model is
-the idea of \emph{monotonic data structures}, in which (1) information
-can only be added, never removed, and (2) the order in which
-information is added is not observable.  A paradigmatic example is a
-set that supports insertion but not removal, but there are many
+The LVars programming model presented in Chapter~\ref{ch:lvars} is
+based on the idea of \emph{monotonic data structures}, in which (1)
+information can only be added, never removed, and (2) the order in
+which information is added is not observable.  A paradigmatic example
+is a set that supports insertion but not removal, but there are many
 others.  In the LVars model, all shared data structures (called LVars)
 are monotonic, and the states that an LVar can take on form a
-\emph{lattice}.  Writes to an LVar must correspond to a \emph{join}
-(least upper bound) operation in the lattice, which means that they
-monotonically increase the information in the LVar, and that they
-commute with one another.  But commuting writes are not enough to
-guarantee determinism: if a read can observe whether or not a
-concurrent write has happened, then it can observe differences in
-scheduling.  So, in the LVars model, the answer to the question ``has
-a write occurred?'' (\ie, is the LVar above a certain lattice value?)
-is always \emph{yes}; the reading thread will block until the LVar's
-contents reach a desired threshold.  In a monotonic data structure,
-the absence of information is transient---another thread could add
-that information at any time---but the presence of information is
-forever.
+\emph{lattice}.  Writes to an LVar must correspond to a least upper
+bound operation in the lattice, which means that they monotonically
+increase the information in the LVar, and that they commute with one
+another.  But commuting writes are not enough to guarantee
+determinism: if a read can observe whether or not a concurrent write
+has happened, then it can observe differences in scheduling.  So, in
+the LVars model, the answer to the question ``has a write occurred?''
+(\ie, is the LVar above a certain lattice value?)  is always
+\emph{yes}; the reading thread will block until the LVar's contents
+reach a desired threshold.  In a monotonic data structure, the absence
+of information is transient---another thread could add that
+information at any time---but the presence of information is forever.
 
 The LVars model guarantees determinism and supports an unlimited
 variety of shared data structures: anything viewable as a lattice.
@@ -71,8 +40,6 @@ reachable (which entails learning that certain nodes were not).  But
 in the LVars model, asking whether a node is in a set means waiting
 until the node \emph{is} in the set, and it is not clear how to lift
 this restriction while retaining determinism.
-
-\subsection{Monotonic data structures that can say ``no''}
 
 In this chapter, I describe two extensions to the basic LVars model of
 Chapter~\ref{ch:lvars}:
@@ -120,8 +87,6 @@ into the set, possibly triggering further callbacks, recursively.
 Second, when no further callbacks are ready to run---\ie, when the
 @seen@ set has reached a fixpoint---@freezeSetAfter@ will freeze the
 set and return its exact value.
-
-\subsection{Quasi-determinism}
 
 Unfortunately, freezing does not commute with writes that change an
 LVar.\footnote{The same is true for quiescence detection; see
