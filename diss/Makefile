@@ -48,4 +48,4 @@ ifeq (${UNAME}, Linux)
 endif
 
 clean:
-	rm -f *.blg *.bbl *.aux *.log $(NAME).pdf *.idx *.out *.toc
+	rm -f *.blg *.bbl *.aux *.log $(NAME).pdf *.idx *.out *.toc chapter*/main.aux
