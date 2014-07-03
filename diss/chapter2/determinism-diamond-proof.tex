@@ -3,7 +3,9 @@
   cases on the last rule in the derivation.
 
   \begin{itemize}
-    \item {\sc E-Eval-Ctxt}: \TODO{Figure out what to do here.}
+    \item {\sc E-Eval-Ctxt}: \TODO{Figure out what to do here.  This
+      is the only interesting case.  Could we just go case-by-case on
+      evaluation contexts?}
 
     \item {\sc E-Beta}: $\conf = \config{S}{\app{(\lam{x}{e})}{v}}$,
       and $\conf_a = \config{S}{\subst{e}{x}{v}}$.

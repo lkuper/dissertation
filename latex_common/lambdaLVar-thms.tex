@@ -46,14 +46,10 @@
 
 \newcommand{\LVarsLemDiamond}{
 \begin{lem}[Diamond]\label{lem:lvars-diamond}
-  If $\conf \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$,
-  then there exists $\conf_c$ such that either:
-  \begin{itemize}
-    \item $\conf_a \parstepsto \conf_c$ and $\conf_b \parstepsto \conf_c$, or
-    \item there exists a safe renaming $\conf_b'$ of $\conf_b$ with
-      respect to $\conf \parstepsto \conf_b$, such that $\conf_a
-      \parstepsto \conf_c$ and $\conf_b' \parstepsto \conf_c$.
-  \end{itemize}
+  If $\conf \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$, then
+  there exist $i$, $j$, and $\conf_c$ such that $\conf_a \parstepsto^i
+  \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and $j
+  \leq 1$.
 \end{lem}
 }
 
