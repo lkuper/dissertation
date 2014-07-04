@@ -110,8 +110,8 @@ In general, the ability to make exact observations of the contents of
 data structures is in tension with the goal of guaranteed determinism.
 Since pushing towards full-featured, general monotonic data structures
 leads to flirtation with nondeterminism, perhaps the best way of
-ultimately getting deterministic outcomes is to traipse a small
-distance into nondeterminism, and make one's way back.  The
+ultimately getting deterministic outcomes is to traipse a short
+distance into nondeterministic territory, and make our way back.  The
 identification of quasi-deterministic programs as a useful
 intermediate class of programs is a contribution of this dissertation.
 That said, in many cases the @freeze@ construct is only used as the
@@ -119,24 +119,22 @@ very final step of a computation: after a global barrier, freezing is
 used to extract an answer.  In this common case, determinism is
 guaranteed, since no writes can subsequently occur.
 
-In this chapter, I introduce a quasi-deterministic parallel
-programming model that extends LVars to incorporate freezing and event
-handlers.  In addition to the high-level
-design~(Section~\ref{s:quasi-informal}), I extend the $\lambdaLVar$
-calculus of Chapter~\ref{ch:lvars} to add support for event handlers
-and the @freeze@ operation, calling the resulting language
-$\lambdaLVish$~(Section~\ref{s:quasi-formal}).  In
-Chapter~\ref{ch:lvish}, I will go on to describe LVish, a Haskell
-library for practical quasi-deterministic parallel programming based
-on $\lambdaLVish$.
-
-The main technical result of this chapter is a proof of
-quasi-determinism for
+The rest of this chapter is organized as follows: in
+Section~\ref{s:quasi-informal}, I explain how freezing and event
+handlers work at a high level.  Then, in Section~\ref{s:quasi-formal},
+I extend the $\lambdaLVar$ calculus of Chapter~\ref{ch:lvars} to add
+support for event handlers and the @freeze@ operation, calling the
+resulting language $\lambdaLVish$.  The main technical result of this
+chapter is a proof of quasi-determinism for
 $\lambdaLVish$~(Section~\ref{s:quasi-proof}). Just as with the
 determinism proof I gave for $\lambdaLVar$ in Chapter~\ref{ch:lvars},
 the quasi-determinism proof for $\lambdaLVish$ relies on an
 Independence lemma (Section~\ref{subsection:quasi-independence}) that
-captures the commutative effects of LVar computations.
+captures the commutative effects of LVar computations.  Later, in
+Chapter~\ref{ch:lvish}, I will go on to describe the implementation of
+LVish, a Haskell library for practical deterministic and
+quasi-deterministic parallel programming, which is based on the
+concepts presented in this chapter.
 
 \TODO{Figure out if the stuff from the ``Safe, limited
   nondeterminism'' section that was cut from Chapter~\ref{ch:lvars}
