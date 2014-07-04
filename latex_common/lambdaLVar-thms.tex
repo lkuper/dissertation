@@ -103,10 +103,10 @@
   \conf''$ up to a permutation on configurations.
 \end{thm}
 \begin{proof}
-  We have from Lemma~\ref{lem:lvars-confluence} that there exists $\conf_c$
-  such that $\conf' \parstepsto^* \conf_c$ and $\conf''
-  \parstepsto^* \conf_c$.  Since $\conf'$ and $\conf''$ can only
-  step to themselves, we must have $\conf' = \conf_c$ and $\conf''
-  = \conf_c$, hence $\conf' = \conf''$.
+  We have from Lemma~\ref{lem:lvars-confluence} that there exists
+  $\conf_c$ such that $\conf' \parstepsto^* \conf_c$ and $\conf''
+  \parstepsto^* \conf_c$.  Since neither $\conf'$ nor $\conf''$ can
+  take a step, we must have $\conf' = \conf_c$ and $\conf'' =
+  \conf_c$, hence $\conf' = \conf''$.
 \end{proof}
 }
