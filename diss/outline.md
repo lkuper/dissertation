@@ -11,10 +11,11 @@
 
 2. LVars: Lattice-based Data Structures for Deterministic Parallelism
   2.1. Motivating example: a parallel, pipelined graph computation
-  2.2. Lattices, stores, and determinism
-  2.3. lambdaLVar: syntax and semantics
-  2.4. Proof of determinism for lambdaLVar
-  2.5. Generalizing the `put` and `get` operations
+  2.2. LVars by example
+  2.3. Lattices, stores, and determinism
+  2.4. lambdaLVar: syntax and semantics
+  2.5. Proof of determinism for lambdaLVar
+  2.6. Generalizing the `put` and `get` operations
 
 3. Quasi-Deterministic and Event-Driven Programming with LVars
   3.1. LVish, informally
