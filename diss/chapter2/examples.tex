@@ -1,4 +1,4 @@
-\section{LVars by example}\label{section:lvars-examples}
+\section{LVars by example}\label{s:lvars-examples}
 
 \emph{IVars} \cite{IStructures, id, CnC, monad-par} are a well-known
 mechanism for deterministic parallel programming.  An IVar is a
@@ -11,7 +11,7 @@ with respect to an application-specific lattice of states.
 
 Consider a program in which two parallel computations write to an LVar
 $\mathit{lv}$, with one thread writing the value $2$ and the other
-writing $3$:
+writing $3$:\TODO{Figure out why the typesetting here is wonky.}
 \begin{equation}
 \begin{split}
 & \LETPAR ~\_ = \putexp{\mathit{lv}}{3} \\
@@ -34,7 +34,7 @@ state and the new state being written.
 
 \begin{figure}
 \centering
-\includegraphics[width=5in]{chapter3/figures/ExampleLattices3.pdf} 
+\includegraphics[width=5in]{chapter2/figures/lvars-example-lattices.pdf} 
   \caption{Example LVar lattices: (a) positive integers ordered by
     $\leq$; (b) IVar containing a positive integer; (c) pair of
     natural-number-valued IVars, annotated with example threshold sets
@@ -67,7 +67,7 @@ integer and itself is that integer---corresponding to the fact that
 multiple writes of the same value do not allow any nondeterminism to
 be observed.
 
-\paragraph{Threshold reads}
+\subsection{Threshold reads}
 
 However, merely ensuring that writes to an LVar are monotonically
 increasing is not enough to ensure that programs behave
@@ -103,10 +103,10 @@ We can make \ref{e:lvar-example-2} behave deterministically by passing
 a threshold set argument to @get@:
 \begin{equation}
 \begin{split}
-\LETPAR ~\_ = \putexp{\mathit{lv}}{3};
-  ~\_ = \putexp{\mathit{lv}}{2}; 
-  ~x = \getexp{\mathit{lv}}{\setof{3}} 
-  ~ \IN~x
+\LETPAR ~\_ = \putexp{\mathit{lv}}{3} \\
+&  ~\_ = \putexp{\mathit{lv}}{2} \\
+&  ~x = \getexp{\mathit{lv}}{\setof{3}} \\
+&  ~ \IN~x
 \end{split}
 \label{e:lvar-example-3}
 \end{equation}
@@ -161,8 +161,9 @@ risk of nondeterminism because the elements of the threshold set are
 \emph{pairwise incompatible} with respect to $\mathit{lv}$'s lattice:
 informally, since the second entry of $\mathit{lv}$ can only be
 written once, no more than one state from the set $\setof{(\bot, 0),
-  (\bot, 1), \dots}$ can ever be reached.  (We formalize this
-incompatibility requirement in Section~\ref{subsection:newputget}.)
+  (\bot, 1), \dots}$ can ever be reached.  (I formalize this
+incompatibility requirement in
+Section~\ref{subsection:lvars-communication-primitives}.)
 
 In the case of \ref{e:lvar-example-4}, $\getsndexp{\mathit{lv}}$ may
 unblock and return $(\bot, 4)$ any time after the second entry of

@@ -89,17 +89,18 @@ with a greatest element $\top$, in which every two elements have a
 least upper bound but not necessarily a greatest lower bound; see
 Section~\ref{subsection:lvars-lattices}.  For brevity, I use the term
 ``lattice'' in place of ``bounded join-semilattice with a designated
-greatest element''.}  Section~\ref{s:lvars-examples} introduces the
-concept of LVars through a series of examples.  Then, in
-Sections~\ref{s:lvars-lattices} and~\ref{s:lvars-lambdalvar} I
-formally define $\lambdaLVar$, a deterministic parallel calculus with
-shared state, based on the call-by-value $\lambda$-calculus.  The
-$\lambdaLVar$ language is general enough to subsume existing
-deterministic parallel languages because it is parameterized by the
-choice of lattice.  For example, a lattice of channel histories with a
-prefix ordering allows LVars to represent FIFO channels that implement
-a Kahn process network, whereas instantiating $\lambdaLVar$ with a
-lattice with ``empty'' and ``full'' states (where $\mathit{empty} <
+greatest element'' throughout this dissertation.}
+Section~\ref{s:lvars-examples} introduces the concept of LVars through
+a series of examples.  Then, in Sections~\ref{s:lvars-lattices}
+and~\ref{s:lvars-lambdalvar} I formally define $\lambdaLVar$, a
+deterministic parallel calculus with shared state, based on the
+call-by-value $\lambda$-calculus.  The $\lambdaLVar$ language is
+general enough to subsume existing deterministic parallel languages
+because it is parameterized by the choice of lattice.  For example, a
+lattice of channel histories with a prefix ordering allows LVars to
+represent FIFO channels that implement a Kahn process network, whereas
+instantiating $\lambdaLVar$ with a lattice with ``empty'' and ``full''
+states (where $\mathit{empty} <
 \mathit{full}$) results in a parallel single-assignment language.
 Different instantiations of the lattice result in a family of
 deterministic parallel languages.

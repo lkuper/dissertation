@@ -55,20 +55,6 @@ and infinite streams.  In the case of maps or sets, $\sqcup$ could be
 defined as union; for pointer-based data structures like tries, it
 could allow for unification of partially-initialized structures.
 
-\begin{figure}
-\includegraphics[width=5in]{chapter2/figures/ExampleLattices2.pdf} 
-  \caption{Example lattices: (a) IVar containing a natural number; (b)
-    pair of natural-number-valued IVars; (c) positive integers ordered
-    by $\leq$.  Subfigure (b) is annotated with example threshold sets
-    that would correspond to a blocking read of the first or second
-    element of the pair (see
-    Sections~\ref{subsection:lvars-communication-primitives} and
-    \ref{subsection:lvars-programming-with-put-and-get}).  Any state
-    transition crossing the ``tripwire'' for \termfont{getSnd} causes
-    it to unblock and return a result.}
-    \label{f:lvars-example-lattices}
-\end{figure}
-
 Figure~\ref{f:lvars-example-lattices} gives three examples of lattices
 for common data structures.  The simplest example of a useful
 lattice is one that represents the states that a a single-assignment
