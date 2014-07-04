@@ -67,26 +67,30 @@ Chapter~\ref{ch:lvars}:
   fixpoint has been reached.
 \end{itemize}
 
-Putting these features together, one can write a parallel graph
-traversal algorithm in the following simple fashion:
+I will refer to this extended LVars model as the \emph{LVish model} or
+simply \emph{LVish}.  Using handlers, quiesence, and freezing, we can
+use LVish to write a parallel graph traversal algorithm in the
+following simple fashion:
 
 \lstinputlisting{chapter3/code/bfs_new.hs}
 
-This code, written using the LVish Haskell library (described in
-Chapter~\ref{ch:lvish}),\footnote{The \lstinline|Par| type constructor
-  is the monad in which LVar computations live.}  discovers (in
-parallel) the set of nodes in a graph @g@ reachable from a given node
-@startV@, and is guaranteed to produce a deterministic result.  It
-works by creating a fresh @Set@ LVar (corresponding to a lattice whose
-elements are sets, with set union as least upper bound), and seeding
-it with the starting node.  The @freezeSetAfter@ function combines the
-two new constructs---freezing and event handlers---described above.
-First, it installs the callback @handle@ as a handler for the @seen@
-set, which will asynchronously put the neighbors of each visited node
-into the set, possibly triggering further callbacks, recursively.
-Second, when no further callbacks are ready to run---\ie, when the
-@seen@ set has reached a fixpoint---@freezeSetAfter@ will freeze the
-set and return its exact value.
+This code, written using our Haskell library based on the LVish model
+(which I will go on to describe in Chapter~\ref{ch:lvish}), discovers
+(in parallel) the set of nodes in a graph @g@ reachable from a given
+node @startV@, and is guaranteed to produce a deterministic
+result.\footnote{In the LVish Haskell library, the \lstinline|Par|
+  type constructor is the monad in which LVar computations run; see
+  Chapter~\ref{ch:lvish} for details.}  It works by creating a fresh
+@Set@ LVar (corresponding to a lattice whose elements are sets, with
+set union as least upper bound), and seeding it with the starting
+node.  The @freezeSetAfter@ function combines the two new
+constructs---freezing and event handlers---described above.  First, it
+installs the callback @handle@ as a handler for the @seen@ set, which
+will asynchronously put the neighbors of each visited node into the
+set, possibly triggering further callbacks, recursively.  Second, when
+no further callbacks are ready to run---\ie, when the @seen@ set has
+reached a fixpoint---@freezeSetAfter@ will freeze the set and return
+its exact value.
 
 Unfortunately, freezing does not commute with writes that change an
 LVar.\footnote{The same is true for quiescence detection; see
@@ -120,60 +124,15 @@ used to extract an answer.  In this common case, determinism is
 guaranteed, since no writes can subsequently occur.
 
 The rest of this chapter is organized as follows: in
-Section~\ref{s:quasi-informal}, I explain how freezing and event
-handlers work at a high level.  Then, in Section~\ref{s:quasi-formal},
-I extend the $\lambdaLVar$ calculus of Chapter~\ref{ch:lvars} to add
-support for event handlers and the @freeze@ operation, calling the
-resulting language $\lambdaLVish$.  The main technical result of this
-chapter is a proof of quasi-determinism for
+Section~\ref{s:quasi-informal}, I introduce the LVish programming
+model through a series of examples.  Then, in
+Section~\ref{s:quasi-formal}, I extend the $\lambdaLVar$ calculus of
+Chapter~\ref{ch:lvars} to add support for event handlers and the
+@freeze@ operation, calling the resulting language $\lambdaLVish$.
+The main technical result of this chapter is a proof of
+quasi-determinism for
 $\lambdaLVish$~(Section~\ref{s:quasi-proof}). Just as with the
 determinism proof I gave for $\lambdaLVar$ in Chapter~\ref{ch:lvars},
 the quasi-determinism proof for $\lambdaLVish$ relies on an
 Independence lemma (Section~\ref{subsection:quasi-independence}) that
-captures the commutative effects of LVar computations.  Later, in
-Chapter~\ref{ch:lvish}, I will go on to describe the implementation of
-LVish, a Haskell library for practical deterministic and
-quasi-deterministic parallel programming, which is based on the
-concepts presented in this chapter.
-
-\TODO{Figure out if the stuff from the ``Safe, limited
-  nondeterminism'' section that was cut from Chapter~\ref{ch:lvars}
-  belongs in this chapter anywhere.}
-
-%% In practice, a major problem with nondeterministic programs is that
-%% they can {\em silently} go wrong.  Most parallel programming models
-%% are {\em unsafe} in this sense, but we may classify a nondeterministic
-%% language as {\em safe} if all occurrences of nondeterminism---that is,
-%% execution paths that would yield a wrong answer---are trapped and
-%% reported as errors.  This notion of \emph{safe nondeterminism} is
-%% analogous to the concept of type safety: type-safe programs can throw
-%% exceptions, but they will not ``go wrong''.  We find that there are
-%% various extensions to a deterministic language that make it safely
-%% nondeterministic.\footnote{For instance, while not recognized
-%%   explicitly by the authors as such, a recent extension to CnC for
-%%   memory management \cite{cnc-space-folding} incidentally fell into
-%%   this category.}  Here, we will look at one such extension:
-%% \emph{exact but destructive observations}.
-
-%% We begin by noting that when the state of an LVar has come to
-%% rest---when no more $\PUT$s will occur---then its final value is a
-%% deterministic function of program inputs, and is therefore safe to
-%% read directly, rather than through a thresholded $\GET$.  For
-%% instance, once no more elements will be added to the @l_acc@
-%% accumulator variable in the @bf_traverse@ example of
-%% Figure~\ref{f:bfs-lvar}, it is safe to read the exact, complete set
-%% contents.
-
-%% The problem is determining automatically {\em when} an LVar has come
-%% to rest; usually, the programmer must determine this based on the
-%% control flow of the program.  We may, however, provide a mechanism for
-%% the programmer to place their bet.  {\em If} the value of an LVar is
-%% indeed at rest, then we do no harm to it by corrupting its state in
-%% such a way that further modification will lead to an error.  We then
-%% propose a new operation, @freeze@, that takes a pointer to an LVar
-%% $l$, updates the store, setting $l$'s state to $\textit{probation}$,
-%% and returns a singleton set containing the {\em exact} previous state
-%% of $l$, rather than a lower bound on that state.  The idea is to
-%% ensure that, after a @freeze@, any further operations on $l$ will go
-%% awry: $\PUT$ operations will attempt to move the state of $l$ to
-%% $\top$, resulting in $\error$.
+captures the commutative effects of LVar computations.
