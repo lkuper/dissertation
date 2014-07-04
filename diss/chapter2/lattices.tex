@@ -55,12 +55,16 @@ and infinite streams.  In the case of maps or sets, $\sqcup$ could be
 defined as union; for pointer-based data structures like tries, it
 could allow for unification of partially-initialized structures.
 
-Figure~\ref{f:lvars-example-lattices} gives three examples of lattices
-for common data structures.  The simplest example of a useful
-lattice is one that represents the states that a a single-assignment
-variable (that is, an IVar) can take on.  A natural-number-valued
-IVar, for instance, has a state space corresponding to the lattice in
-Figure~\ref{f:lvars-example-lattices}(a), that is,
+\lk{Since I've already talked abut this stuff in
+  Section~\ref{s:lvars-examples}, I'm kind of worried that having it
+  here again belabors the point, although the treatment here is more
+  formal.}
+
+The simplest example of a useful lattice is one that represents the
+states that a a single-assignment variable (that is, an IVar) can take
+on.  A natural-number-valued IVar, for instance, has a state space
+corresponding to the lattice in
+Figure~\ref{f:lvars-example-lattices}(b), that is,
 \begin{displaymath}
   D = (\lbrace \top, \bot \rbrace \cup \mathbb{N}, \userleq), 
 \end{displaymath}
@@ -73,13 +77,12 @@ the IVar to $\top$ (an error).  For instance, if one thread writes $2$
 and another writes $1$ to an IVar (in arbitrary order), the second of
 the two writes would result in an error because $2 \sqcup 1 = \top$.
 
-In the lattice of Figure~\ref{f:lvars-example-lattices}(c), on the
+In the lattice of Figure~\ref{f:lvars-example-lattices}(a), on the
 other hand, the $\top$ state is unreachable, because the least upper
-bound of any two writes is just the maximum of the two.  For instance,
-if one thread writes $2$ and another writes $1$, the resulting state
-will be $2$, since $2 \sqcup 1 = 2$.  Here, the unreachability of
-$\top$ models the fact that no conflicting updates can occur to the
-LVar.
+bound of any two writes is just the maximum of the two.  If one thread
+writes $2$ and another writes $1$, the resulting state will be $2$,
+since $2 \sqcup 1 = 2$.  Here, the unreachability of $\top$ models the
+fact that no conflicting updates can occur to the LVar.
 
 \subsection{Stores}\label{subsection:lvars-stores}
 
@@ -194,19 +197,20 @@ monotonically with respect to the ordering. For instance,
 \emph{Featherweight CnC}~\cite{CnC}, a single-assignment imperative
 calculus that models the Intel Concurrent Collections (CnC) system,
 defines ordering on stores as follows:\footnote{A minor difference
-  between $\lambdaLVar$ and Featherweight CnC is that, n Featherweight
-  CnC, no store location is explicitly bound to $\bot$.  Instead, if
-  $l \notin \dom{S}$, then $l$ is defined to point to $\bot$.}
+  between $\lambdaLVar$ and Featherweight CnC is that, in
+  Featherweight CnC, no store location is explicitly bound to $\bot$.
+  Instead, if $l \notin \dom{S}$, then $l$ is defined to point to
+  $\bot$.}
 
 \LVarsDefLeqStoreCnC
 
 Our Definition~\ref{def:lvars-leqstore} is reminiscent of
 Definition~\ref{def:lvars-leqstore-cnc}, but
 Definition~\ref{def:lvars-leqstore-cnc} requires that $S(l)$ and
-$S'(l)$ be \emph{equal}, instead of our weaker requirement that $S(l)
-\userleq S'(l)$ according to the user-provided partial order
-$\userleq$.  In $\lambdaLVar$, stores may grow by updating existing
-bindings via repeated @put@s, so
+$S'(l)$ be \emph{equal}, instead of our weaker requirement that $S(l)$
+be \emph{less than or equal to} $S'(l)$ according to the
+application-specific lattice $\userleq$.  In $\lambdaLVar$, stores may
+grow by updating existing bindings via repeated @put@s, so
 Definition~\ref{def:lvars-leqstore-cnc} would be too strong; for
 instance, if $\bot \userlt d_1 \userleq d_2$ for distinct $d_1, d_2
 \in D$, the relationship
