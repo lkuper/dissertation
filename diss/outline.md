@@ -9,7 +9,7 @@
   1.6. Thesis statement, and organization of the rest of this dissertation
   1.7. Previously published work
 
-2. LVars: Lattice-based Data Structures for Deterministic Parallelism
+2. LVars: lattice-based data structures for deterministic parallelism
   2.1. Motivating example: a parallel, pipelined graph computation
   2.2. LVars by example
   2.3. Lattices, stores, and determinism
@@ -17,7 +17,7 @@
   2.5. Proof of determinism for lambdaLVar
   2.6. Generalizing the `put` and `get` operations
 
-3. Quasi-Deterministic and Event-Driven Programming with LVars
+3. Quasi-deterministic and event-driven programming with LVars
   3.1. LVish, informally
   3.2. LVish, formally
   3.3. Proof of quasi-determinism for lambdaLVish
