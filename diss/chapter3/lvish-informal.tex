@@ -1,24 +1,28 @@
-\section{LVish, Informally}\label{s:quasi-informal}
+\section{LVish, informally}\label{s:quasi-informal}
 
-\TODO{Revise this section.}
+While LVars offer a deterministic programming model that allows
+communication through a wide variety of data structures, they are not
+powerful enough to express common algorithmic patterns, like fixpoint
+computations, that require both positive and negative queries.  In
+this section, I explain our extensions to the LVar model at a high
+level; Section~\ref{s:quasi-formal} then formalizes them.
 
-As we explained in Section~\ref{section:intro}, while LVars offer a deterministic
-programming model that allows communication through a wide variety of data structures,
-they are not powerful enough to express common algorithmic patterns, like fixpoint
-computations, that require both positive and negative queries.  In this section,
-we explain our extensions to the LVar model at a high level;
-Section~\ref{section:language} then formalizes them, while
-Section~\ref{section:implementation} shows how to implement them.
+\subsection{Asynchrony through event handlers}
 
-\subsection{Asynchrony through Event Handlers}
+Our first extension to LVars is the ability to do asynchronous,
+event-driven programming through event handlers.  An \emph{event} for
+an LVar can be represented by a lattice element; the event
+\emph{occurs} when the LVar's current value reaches a point at or
+above that lattice element.  An \emph{event handler} ties together an
+LVar with a callback function that is asynchronously invoked whenever
+some events of interest occur.
 
-Our first extension to LVars is the ability to do asynchronous, event-driven
-programming through event handlers.  An \emph{event} for an LVar can be
-represented by a lattice element; the event \emph{occurs} when the LVar's
-current value reaches a point at or above that lattice element.  An \emph{event handler} ties
-together an LVar with a callback function that is asynchronously invoked
-whenever some events of interest occur.  For example, if $\mathit{lv}$ is an LVar
-whose lattice is that of Figure~\ref{f:lattice-examples}(a), the expression
+\lk{Edited up to this point.}
+
+\TODO{Finish revising this section.}
+
+For example, if $\mathit{lv}$ is an LVar whose lattice is that of
+Figure~\ref{f:lattice-examples}(a), the expression
 \begin{equation}
   \ADDHANDLER~\mathit{lv}~\{ 1, 3, 5, \dots \}~(\lam{x}{\putexp{\mathit{lv}}{x+1}})
 \label{e:lvish-example-1}
@@ -93,7 +97,7 @@ that it corresponds closely to our implementation strategy.
 %% In many lattices, element is the least upper bound of some collection of
 %% \emph{atoms}, where an atom is a
 
-\subsection{Quiescence through Handler Pools}
+\subsection{Quiescence through handler pools}
 \label{sec:quiescence-informal}
 
 Because event handlers are asynchronous, we need a separate mechanism to
@@ -132,7 +136,7 @@ such questions must be asked through LVar functions like $\GET$.  In
 practice, $\QUIESCE$ is almost always used together with freezing, which we
 explain next.
 
-\subsection{Freezing and the Freeze-After Pattern}\label{subsection:freeze-after}
+\subsection{Freezing and the ``freeze-after'' pattern}\label{subsection:freeze-after}
 
 Our final addition to the LVar model is the ability to \emph{freeze} an LVar,
 which forbids further changes to it, but in return allows its exact value to be

@@ -1,4 +1,4 @@
-\section{LVish, Formally}\label{s:quasi-formal}
+\section{LVish, formally}\label{s:quasi-formal}
 
 \TODO{Revise this section.}
 
@@ -172,7 +172,7 @@ never arise during the execution of an LVish program, because, as we will see
 in Section~\ref{subsection:newputget}, an attempted $\PUT$ that would take the
 value of $l$ to $\top$ will raise an error.
 
-\subsection{The LVish Calculus}
+\subsection{$\lambdaLVish$: syntax and semantics}
 
 \FigLambdaLVishGrammar[t]
 
@@ -256,11 +256,10 @@ desugars to $\app{(\lam{\_}{e_2})}{e_1}$.  Sequential composition is
 useful, for instance, when allocating a new LVar before beginning a
 set of side-effecting $\PUT$/$\GET$/$\FREEZE$ operations on it.
 
-% \subsection{Semantics of Deterministic LVar Operations}\label{subsection:newputget}
-\subsection{Semantics of $\NEW$, $\PUT$, and $\GET$}\label{subsection:newputget}
+\subsection{Semantics of \lstinline|new|, \lstinline|put|, and \lstinline|get|}\label{subsection:newputget}
 
-In LVish, the $\NEW$, $\PUT$, and $\GET$ operations respectively create,
-write to, and read from LVars in the store:
+In LVish, the $\NEW$, $\PUT$, and $\GET$ operations respectively
+create, write to, and read from LVars in the store:
 
 \begin{itemize}
 \item $\NEW$ (implemented by the {\sc E-New} rule) extends the store
@@ -303,7 +302,7 @@ could return either $p_1$ or $p_2$.  Therefore, $\GET$ \emph{can} behave
 nondeterministically---but this behavior is not observable in the final answer
 of the program, which is guaranteed to subsequently fault.
 
-\subsection{The $\FAW$ Primitive}\label{subsection:language-freezing}
+\subsection{The $\FAW$ primitive}\label{subsection:language-freezing}
 
 \ajt{Note: most of the text that was here before is now explained in the
   previous section, so this just focuses on the semantic modeling.}
@@ -333,27 +332,6 @@ The callback $e_{\rm cb}$ is a function that
   underapproximation of the state, as with $\GET$).
 \end{itemize}
 
-%% Attaching a callback to an LVar with $\freezeafter{...}{...}$ is
-%% \emph{not} the same thing as typical event handler registration!
-%% Typically, if one registers an event handler to, say, respond to mouse
-%% clicks, then any clicks that happened \emph{before} the handler was
-%% registered will just go unhandled; it is as though those clicks never
-%% happened.  LVar callbacks are different: if we write to an LVar
-%% several times and then attach a callback, then the callback will run
-%% for each write that already occurred.
-
-%% In fact, if $A$ and $B$ are possible states of an LVar, where $A \leqp
-%% B$, and a write has occurred that leaves the LVar in state $B$, then
-%% the callback will be triggered \emph{twice}, once for $A$ and once for
-%% $B$.  In general, the callback will run for every LVar state \emph{at
-%%   or below} the current state at the time the callback is
-%% attached. \lk{TODO: say something about idempotency?}
-
-%% Moreover, if the LVar's state increases further \emph{while} those
-%% callbacks are running, then the callback will run for the newly
-%% reached state and all the intermediate states below it.
-
-\noindent
 To keep track of the running callbacks, LVish includes an auxiliary form,{
 \[
    \freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e, \dots}}{H}
@@ -405,69 +383,7 @@ usually the very last step of an algorithm, permitting its result to be
 extracted. Our implementation provides a special \termfont{runParThenFreeze}
 function that does so, and thereby guarantees full determinism.
 
-%% There are two common strategies for ensuring that we will win our bet.  The
-%% simplest is just to keep $\FREEZE$ at the outermost layer of our program,
-%% guaranteeing that it cannot be concurrent with any $\PUT$s.  
-
-%% Moreover, if we write our programs in such a way that all writes to an LVar are
-%% done \emph{by the callback function} rather than by some other $\PUT$ that is
-%% racing to finish before $\freezeafter{...}{...}$ does, then we are guaranteed
-%% determinism and not just quasi-determinism. \lk{I need fact-checking here.}
-
-%% $\freezeafter{...}{...}$ keeps track of those LVar states that have
-%% been handled by the callback so far.  It can also determine the set of
-%% all states that are at or below the current state of the LVar (which
-%% will always be a finite set, even if the LVar has infinite states).
-%% When we reach a point of \emph{quiescence}---that is, a point such
-%% that the set of handled states includes all states that are at or
-%% below the current state of the LVar---the $\freezeafter{...}{...}$
-%% computation ends, returning the LVar's current state.
-
-%%   This is why we freeze the state of the LVar before
-%% returning it.  A frozen LVar's state can no longer change, and any
-%% attempt to $\PUT$ a value to a frozen LVar that would increase its
-%% state will result in an error.
-
-
-
-
-
-%% \paragraph{Semantics of $\freezeafter{...}{...}$}
-
-%% The expression $\freezeafter{l}{\lam{x}{e}}$ has the following
-%% semantics.  First, we look up the state of the LVar $l$.  Then, for
-%% each state in the lattice that is at or below the state of $l$, we
-%% call $\lam{x}{e}$ with that state as its argument.  Even if $l$ has
-%% never been written to, in which case its state is $(\bot,
-%% \frozenfalse)$, the least element of the lattice, we still run
-%% $\lam{x}{e}$ once, with $(\bot, \frozenfalse)$ as its argument.
-
-%% Whenever we invoke the callback function on a state, we add that state
-%% to the ``handled'' set.  When we reach a point where the handled set
-%% contains all states at or below the current state of the LVar, we're
-%% done, and we freeze the LVar and return its current state.
-
-%% A callback attached to an LVar is invoked every time the LVar is
-%% written to.  Such a callback can itself write to the LVar, triggering
-%% yet more callbacks.  This allows for some interesting programming
-%% patterns.
-
-%% Since $n_0$ is already in the set, the callback runs with $n_0$ as its
-%% argument, and $n_0$ is added to the handled set.  If $n_0$ has
-%% neighbors $n_1$ and $n_2$, then $\putexp{l}{n_1}$ and
-%% $\putexp{l}{n_2}$ both run, themselves each triggering another set of
-%% callbacks and bumping the state of $l$ up to $\setof{n_0, n_1, n_2}$.
-%% (In this example, the callback will be invoked multiple times for each
-%% state.  This is no problem, since LVar writes are idempotent.  This
-%% process continues until the handled set contains all states that are
-%% at or below the state of $l$, at which point the LVar is considered to
-%% have quiesced, and we freeze it and return its state.
-
-%% What if another $\PUT$ to $l$ is racing with this whole process?  If it
-%% completes first, then the LVar will not quiesce; it will keep running
-%% until $l$'s new state and the states below it have all been handled.
-%% If the $\freezeafter{}{}$ completes first, then the $\PUT$ will fault.
-%% These are the two possibilities that quasi-determinism permits.
+\TODO{Move the following section to an appendix.}
 
 \subsection{Modeling Lattice Parameterization in Redex}\label{subsection:redex}
 
