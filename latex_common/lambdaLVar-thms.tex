@@ -49,16 +49,19 @@
   If $\conf \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$, then
   there exist $i$, $j$, and $\conf_c$ such that $\conf_a \parstepsto^i
   \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and $j
-  \leq 1$.
+  \leq 1$.  \TODO{Figure out if we need to mention permutations in the
+    statement of the proof.}
 \end{lem}
 }
 
 \newcommand{\LVarsCorStrongLocalConfluence}{
 \begin{cor}[Strong Local Confluence]\label{cor:lvars-strong-local-confluence}
-  If $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$,
-  then there exist $\conf_c, i, j$ such that $\conf' \parstepsto^i
-  \conf_c$ and $\conf'' \parstepsto^j \conf_c$ and $i \leq 1$ and
-  $j \leq 1$.
+  If $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$, then
+  there exist $\conf_c, i, j$ such that $\conf' \parstepsto^i \conf_c$
+  and $\conf'' \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+  \TODO{If the statement of Lemma~\ref{lem:lvars-diamond} changes to
+    mention permutations, then figure out how the statement of this
+    one has to change as well.}
 \end{cor}
 \begin{proof}
   Choose $i = j = 1$.  The proof follows immediately from
@@ -72,6 +75,9 @@
   where $1 \leq m$, then there exist $\conf_c, i, j$ such that
   $\conf' \parstepsto^i \conf_c$ and $\conf'' \parstepsto^j
   \conf_c$ and $i \leq m$ and $j \leq 1$.
+  \TODO{If the statement of Lemma~\ref{lem:lvars-diamond} changes to
+    mention permutations, then figure out how the statement of this
+    one has to change as well.}
 \end{lem}
 }
 
@@ -81,6 +87,9 @@
   \conf''$, where $1 \leq n$ and $1 \leq m$, then there exist
   $\conf_c, i, j$ such that $\conf' \parstepsto^i \conf_c$ and
   $\conf'' \parstepsto^j \conf_c$ and $i \leq m$ and $j \leq n$.
+  \TODO{If the statement of Lemma~\ref{lem:lvars-diamond} changes to
+    mention permutations, then figure out how the statement of this
+    one has to change as well.}
 \end{lem}
 }
 
@@ -89,6 +98,9 @@
   If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^*
   \conf''$, then there exists $\conf_c$ such that $\conf'
   \parstepsto^* \conf_c$ and $\conf'' \parstepsto^* \conf_c$.
+  \TODO{If the statement of Lemma~\ref{lem:lvars-diamond} changes to
+    mention permutations, then figure out how the statement of this
+    one has to change as well.}
 \end{lem}
 \begin{proof}
   Strong Confluence (Lemma~\ref{lem:lvars-strong-confluence}) implies
@@ -100,7 +112,9 @@
 \begin{thm}[Determinism]\label{thm:lvars-determinism}
   If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^* \conf''$,
   and neither $\conf'$ nor $\conf''$ can take a step, then $\conf' =
-  \conf''$ up to a permutation on configurations.
+  \conf''$.  \TODO{If the statement of Lemma~\ref{lem:lvars-diamond}
+    changes to mention permutations, then figure out how the statement
+    (and proof) of this one has to change as well.}
 \end{thm}
 \begin{proof}
   We have from Lemma~\ref{lem:lvars-confluence} that there exists
