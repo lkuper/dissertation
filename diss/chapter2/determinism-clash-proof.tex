@@ -92,11 +92,25 @@
       \error$, where $i \leq 1$.
 
       By {\sc E-New}, $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
-      \config{\extSRaw{(\lubstore{S}{S''})}{l}{\bot}}{l}$,
-      where $l \notin \dom{\lubstore{S}{S''}}$.
+      \config{\extSRaw{(\lubstore{S}{S''})}{l'}{\bot}}{l'}$, where $l'
+      \notin \dom{\lubstore{S}{S''}}$.
 
-      \TODO{Don't assume it's the same $l$!  I might be able to do the
-        same thing here that I do in the next case.}
+      By assumption, $S''$ is non-conflicting with $\config{S}{\NEW}
+      \parstepsto \config{\extSRaw{S}{l}{\bot}}{l}$.
+ 
+      Therefore $l \notin \dom{S''}$.
+
+      From the side condition of {\sc E-New}, $l \notin \dom{S}$.
+
+      Therefore $l \notin \dom{\lubstore{S}{S''}}$.
+
+      Therefore, in
+      $\config{\extSRaw{(\lubstore{S}{S''})}{l'}{\bot}}{l'}$, we can
+      $\alpha$-rename $l'$ to $l$, \\ resulting in
+      $\config{\extSRaw{(\lubstore{S}{S''})}{l}{\bot}}{l}$.
+
+      Therefore $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
+      \config{\extSRaw{(\lubstore{S}{S''})}{l}{\bot}}{l}$.
 
       By assumption, $\lubstore{\extSRaw{S}{l}{\bot}}{S''}
       = \topS$.
