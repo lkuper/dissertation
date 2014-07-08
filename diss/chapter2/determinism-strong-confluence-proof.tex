@@ -1,0 +1,38 @@
+\begin{proof}
+  We proceed by induction on $n$.  In the base case of $n = 1$, the
+  result is immediate from
+  Lemma~\ref{lem:lvars-strong-one-sided-confluence}.
+
+  For the induction step, suppose $\conf \parstepsto^n \conf'
+  \parstepsto \conf'''$ and suppose the lemma holds for $n$.
+
+  We show that it holds for $n + 1$, as follows.
+
+  We are required to show that there exist $\conf_c, i, j$ such that
+  $\conf''' \parstepsto^i \conf_c$ and $\conf'' \parstepsto^j \conf_c$
+  and $i \leq m$ and $j \leq n + 1$.
+
+  From the induction hypothesis, we have that there exist $\conf'_c,
+  i', j'$ such that $\conf' \parstepsto^{i'} \conf'_c$ and $\conf''
+  \parstepsto^{j'} \conf'_c$ and $i' \leq m$ and $j' \leq n$.
+
+  We proceed by cases on $i'$:
+  \begin{itemize}
+
+  \item If $i' = 0$, then $\conf' = \conf_c'$.  We can then choose
+    $\conf_c = \conf'''$ and $i = 0$ and $j = j' + 1$.
+
+  \item If $i' \geq 1$:
+
+    From $\conf' \parstepsto \conf'''$ and $\conf' \parstepsto^{i'}
+    \conf_c'$ and Lemma~\ref{lem:lvars-strong-one-sided-confluence},
+    we have that there exist $\conf_c''$ and $i''$ and $j''$ such that
+    $\conf''' \parstepsto^{i''} \conf_c''$ and $\conf_c'
+    \parstepsto^{j''} \conf_c''$ and $i'' \leq i'$ and $j'' \leq 1$.
+    So we also have $\conf'' \parstepsto^{j'} \conf_c'
+    \parstepsto^{j''} \conf_c''$.  In summary, we pick $\conf_c =
+    \conf_c''$ and $i = i''$ and $j = j' + j''$, which is sufficient
+    because $i = i'' \leq i' \leq m$ and $j = j' + j'' \leq n + 1$.
+  \end{itemize}
+
+\end{proof}
