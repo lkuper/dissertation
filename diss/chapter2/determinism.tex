@@ -11,20 +11,19 @@ In order to prove determinism for $\lambdaLVar$, I first prove several
 supporting lemmas.  The structure of the proof is similar to that of
 the proof of determinism for Featherweight CnC given by Budimli\'c
 \etal~\cite{CnC}.  I reuse the naming conventions of Budimli\'c
-\etal~for Lemmas~\ref{lem:lvars-monotonicity} through
-\ref{lem:lvars-diamond}, although the statements and proofs of those
-lemmas differ considerably in the setting of $\lambdaLVar$, due to the
-generality of LVars.
+\etal~for Lemmas~\ref{lem:lvars-monotonicity}
+through~\ref{lem:lvars-diamond}, although the statements and proofs of
+those lemmas differ considerably in the setting of $\lambdaLVar$, due
+to the generality of LVars.
 
-However, Lemmas~\ref{lem:lvars-strong-one-sided-confluence},
-\ref{lem:lvars-strong-confluence}, and \ref{lem:lvars-confluence} are
-nearly identical to the corresponding lemmas in the Featherweight CnC
-determinism proof.  This is the case because, once
-Lemmas~\ref{lem:lvars-monotonicity} through \ref{lem:lvars-diamond}
-are established, the remainder of the determinism proof does not need
-to deal specifically with the semantics of LVars. \TODO{Something like
-  this is true, but audit this paragraph to make sure after the proof
-  is done.}
+However, Lemmas~\ref{lem:lvars-strong-local-confluence}
+through~\ref{lem:lvars-confluence} are nearly identical to the
+corresponding lemmas in the Featherweight CnC determinism proof.  This
+is the case because, once Lemmas~\ref{lem:lvars-monotonicity} through
+\ref{lem:lvars-diamond} are established, the remainder of the
+determinism proof does not need to deal specifically with the
+semantics of LVars, lattices, or the store, and instead deals only
+with execution steps at a high level.
 
 \TODO{Say something about how later I'll show determinism for
   generalized monotonic writes and generalized threshold reads, if in
@@ -41,12 +40,9 @@ the $\leqstore{}{}$ ordering.
 
 \subsection{Independence lemma}\label{subsection:lvars-independence}
 
-In order to show
-Lemma~\ref{lem:lvars-strong-local-confluence}\TODO{audit}, I first
-establish a ``frame property'' for $\lambdaLVar$ that captures the
-idea that independent effects commute with each other.
-Lemma~\ref{lem:lvars-independence}, the Independence lemma, is this
-frame property.  Consider an expression $e$ that runs starting in
+The Independence lemma establishes a ``frame property'' for
+$\lambdaLVar$ that captures the idea that independent effects commute
+with each other.  Consider an expression $e$ that runs starting in
 store $S$ and steps to $e'$, updating the store to $S'$.  The
 Independence lemma provides a double-edged guarantee about what will
 happen if we evaluate $e$ starting from a larger store
