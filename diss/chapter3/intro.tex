@@ -23,13 +23,12 @@ variety of shared data structures: anything viewable as a lattice.
 However, it is not as general-purpose as one might hope.  Consider
 again the challenge problem for deterministic-by-construction parallel
 programming that we saw in Chapter~\ref{ch:lvars}:
-\begin{itemize}
-\item 
+\begin{quote}
   In a directed graph, find the connected component containing a
   vertex $v$, and compute a (possibly expensive) function $f$ over all
   vertices in that component, making the set of results available
   asynchronously to other computations.
-\end{itemize}
+\end{quote}
 In Section~\ref{s:lvars-motivation}, we considered an attempt at a
 solution for this problem using purely functional parallelism (shown
 in Figure~\ref{f:bfs-pure}).  Unfortunately, our purely functional
