@@ -1,7 +1,7 @@
 \begin{proof}
   We proceed by induction on $m$.  In the base case of $m = 1$, the
   result is immediate from
-  Corollary~\ref{cor:lvars-strong-local-confluence}.
+  Lemma~\ref{lem:lvars-strong-local-confluence}.
 
   For the induction step, suppose $\conf \parstepsto^m \conf''
   \parstepsto \conf'''$ and suppose the lemma holds for $m$.
@@ -22,12 +22,12 @@
   \item If $j' = 0$, then $\conf'' = \conf_c'$.  We can then
     choose $\conf_c = \conf'''$ and $i = i' + 1$ and $j = 0$.
     
-  \item If $j' = 1$:
-    From $\conf'' \parstepsto \conf'''$ and $\conf'' \parstepsto^{j'}
-    \conf_c'$ and Corollary~\ref{cor:lvars-strong-local-confluence},
-    we have that there exist $\conf_c''$ and $i''$ and $j''$ such that
-    $\conf'_c \parstepsto^{i''} \conf_c''$ and $\conf'''
-    \parstepsto^{j''} \conf_c''$ and $i'' \leq 1$ and $j'' \leq 1$.
+  \item If $j' = 1$: From $\conf'' \parstepsto \conf'''$ and $\conf''
+    \parstepsto^{j'} \conf_c'$ and
+    Lemma~\ref{lem:lvars-strong-local-confluence}, we have that there
+    exist $\conf_c''$ and $i''$ and $j''$ such that $\conf'_c
+    \parstepsto^{i''} \conf_c''$ and $\conf''' \parstepsto^{j''}
+    \conf_c''$ and $i'' \leq 1$ and $j'' \leq 1$.
 
     So we also have $\conf' \parstepsto^{i'} \conf_c'
     \parstepsto^{i''} \conf_c''$.  In summary, we pick $\conf_c =

@@ -54,15 +54,15 @@
 \end{lem}
 }
 
-\newcommand{\LVarsCorStrongLocalConfluence}{
-\begin{cor}[Strong Local Confluence]\label{cor:lvars-strong-local-confluence}
+\newcommand{\LVarsLemStrongLocalConfluence}{
+\begin{lem}[Strong Local Confluence]\label{lem:lvars-strong-local-confluence}
   If $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$, then
   there exist $\conf_c, i, j$ such that $\conf' \parstepsto^i \conf_c$
   and $\conf'' \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
   \TODO{If the statement of Lemma~\ref{lem:lvars-diamond} changes to
     mention permutations, then figure out how the statement of this
     one has to change as well.}
-\end{cor}
+\end{lem}
 \begin{proof}
   Choose $i = j = 1$.  The proof follows immediately from
   Lemma~\ref{lem:lvars-diamond}.
