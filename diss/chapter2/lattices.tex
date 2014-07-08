@@ -49,6 +49,13 @@ greatest element $\top$.  That is, $D$ has the following structure:
   results by taking the lub of the resulting two states.
 \end{itemize}
 
+The application-specific lattice is given as a 4-tuple $(D, \userleq,
+\bot, \top)$ where $D$ is a set, $\userleq$ is a partial order on the
+elements of $D$, $\bot$ is the least element of $D$ according to
+$\userleq$, and $\top$ is the greatest.  However, I often use $D$ as a
+shorthand for the entire 4-tuple $(D, \userleq, \bot, \top)$ when its
+meaning is clear from the context.
+
 Virtually any data structure to which information is added gradually
 can be represented as a lattice, including pairs, arrays, trees, maps,
 and infinite streams.  In the case of maps or sets, $\sqcup$ could be
@@ -66,7 +73,7 @@ on.  A natural-number-valued IVar, for instance, has a state space
 corresponding to the lattice in
 Figure~\ref{f:lvars-example-lattices}(b), that is,
 \begin{displaymath}
-  D = (\lbrace \top, \bot \rbrace \cup \mathbb{N}, \userleq), 
+  D = (\lbrace \top, \bot \rbrace \cup \mathbb{N}, \userleq, \bot, \top), 
 \end{displaymath}
 where the partial order $\userleq$ is defined by setting $\bot
 \userleq d \userleq \top$ and $d \userleq d$ for all $d \in D$.  This
