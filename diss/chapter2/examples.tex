@@ -9,9 +9,9 @@ IVars: unlike IVars, which can only be written to once, LVars allow
 multiple writes, so long as those writes are monotonically increasing
 with respect to an application-specific lattice of states.
 
-Consider a program in which two parallel computations write to an LVar
-$\mathit{lv}$, with one thread writing the value $2$ and the other
-writing $3$:
+Consider a program (written in a hypothetical language) in which two
+parallel computations write to an LVar $\mathit{lv}$, with one thread
+writing the value $2$ and the other writing $3$:
 \begin{equation}
 \begin{split}
 & \LETPAR ~\_ = \putexp{\mathit{lv}}{3} \\

@@ -110,11 +110,7 @@ structures can be used together safely.  Moreover, as long as a data
 structure presents the LVar interface, it is fine to use an existing,
 optimized concurrent data structure implementation; we need not
 rewrite the world's data structures to leverage the $\lambdaLVar$
-determinism result. In Sections~\ref{subsection:lvars-lattices}
-and~\ref{subsection:lvars-programming-with-put-and-get}, I discuss how
-to formulate a few common data structures (pairs, arrays, FIFOs) as
-lattices and how to implement operations on them within the
-$\lambdaLVar$ model.
+determinism result.
 
 The main technical result of this chapter is a proof of determinism
 for $\lambdaLVar$ (Section~\ref{s:lvars-proof}).  The key lemma,
