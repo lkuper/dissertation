@@ -20,14 +20,34 @@ information at any time---but the presence of information is forever.
 
 The LVars model guarantees determinism and supports an unlimited
 variety of shared data structures: anything viewable as a lattice.
-However, it is not as general-purpose as one might hope.  Consider,
-for instance, an algorithm for unordered graph traversal.  A typical
-implementation involves a monotonically growing set of ``seen nodes'';
-neighbors of seen nodes are fed back into the set until it reaches a
-fixed point.  Such fixpoint computations are ubiquitous, and would
-seem to be a perfect match for the LVars model due to their use of
-monotonicity.  But they are not expressible using the threshold read
-and least-upper-bound write operations described above.
+However, it is not as general-purpose as one might hope.  Consider
+again the challenge problem for deterministic-by-construction parallel
+programming that we saw in Chapter~\ref{ch:lvars}:
+\begin{itemize}
+\item 
+  In a directed graph, find the connected component containing a
+  vertex $v$, and compute a (possibly expensive) function $f$ over all
+  vertices in that component, making the set of results available
+  asynchronously to other computations.
+\end{itemize}
+In Section~\ref{s:lvars-motivation}, we considered an attempt at a
+solution for this problem using purely functional parallelism (shown
+in Figure~\ref{f:bfs-pure}).  Unfortunately, our purely functional
+attempt did not quite satisfy the above specification: although
+connected component discovery proceeded in parallel, members of the
+output set did not become available to other computations until the
+entire connected component had been traversed, limiting parallelism.
+
+What would happen if we tried to solve this problem using LVars?  A
+typical implementation of the graph-traversal part of the
+problem---including the purely functional implementation of
+Section~\ref{s:lvars-motivation}---involves a monotonically growing
+set of ``seen nodes''; neighbors of seen nodes are fed back into the
+set until it reaches a fixed point.  Such fixpoint computations are
+ubiquitous, and would seem to be a perfect match for the LVars model
+due to their use of monotonicity.  But they are not expressible using
+the threshold read and least-upper-bound write operations of the basic
+LVars model.
 
 The problem is that these computations rely on \emph{negative}
 information about a monotonic data structure, \ie, on the
@@ -42,7 +62,8 @@ until the node \emph{is} in the set, and it is not clear how to lift
 this restriction while retaining determinism.
 
 In this chapter, I describe two extensions to the basic LVars model of
-Chapter~\ref{ch:lvars}:
+Chapter~\ref{ch:lvars} that make it possible for monotonic data
+structures to ``say no'':
 
 \begin{itemize}
 \item First, I extend the model with a primitive operation @freeze@
@@ -67,37 +88,12 @@ Chapter~\ref{ch:lvars}:
   fixpoint has been reached.
 \end{itemize}
 
-I will refer to this extended LVars model as the \emph{LVish model} or
-simply \emph{LVish}.  Using handlers, quiesence, and freezing, we can
-use LVish to write a parallel graph traversal algorithm in the
-following simple fashion:
-
-\lstinputlisting{chapter3/code/bfs_new.hs}
-
-This code, written using our Haskell library based on the LVish model
-(which I will go on to describe in Chapter~\ref{ch:lvish}), discovers
-(in parallel) the set of nodes in a graph @g@ reachable from a given
-node @startV@, and is guaranteed to produce a deterministic
-result.\footnote{In the LVish Haskell library, the \lstinline|Par|
-  type constructor is the monad in which LVar computations run; see
-  Chapter~\ref{ch:lvish} for details.}  It works by creating a fresh
-@Set@ LVar (corresponding to a lattice whose elements are sets, with
-set union as least upper bound), and seeding it with the starting
-node.  The @freezeSetAfter@ function combines the two new
-constructs---freezing and event handlers---described above.  First, it
-installs the callback @handle@ as a handler for the @seen@ set, which
-will asynchronously put the neighbors of each visited node into the
-set, possibly triggering further callbacks, recursively.  Second, when
-no further callbacks are ready to run---\ie, when the @seen@ set has
-reached a fixpoint---@freezeSetAfter@ will freeze the set and return
-its exact value.
-
 Unfortunately, freezing does not commute with writes that change an
 LVar.\footnote{The same is true for quiescence detection; see
-  Section~\ref{sec:quiescence-informal}.}  If a freeze is interleaved
-before such a write, the write will raise an exception; if it is
-interleaved afterwards, the program will proceed normally.  It would
-appear that the price of negative information is the loss of
+Section~\ref{subsection:quasi-quiescence}.}  If a freeze is
+interleaved before such a write, the write will raise an exception; if
+it is interleaved afterwards, the program will proceed normally.  It
+would appear that the price of negative information is the loss of
 determinism!
 
 Fortunately, the loss is not total.  Although LVar programs with
@@ -123,14 +119,20 @@ very final step of a computation: after a global barrier, freezing is
 used to extract an answer.  In this common case, determinism is
 guaranteed, since no writes can subsequently occur.
 
-The rest of this chapter is organized as follows: in
-Section~\ref{s:quasi-informal}, I introduce the LVish programming
-model through a series of examples.  Then, in
-Section~\ref{s:quasi-formal}, I extend the $\lambdaLVar$ calculus of
-Chapter~\ref{ch:lvars} to add support for event handlers and the
-@freeze@ operation, calling the resulting language $\lambdaLVish$.
-The main technical result of this chapter is a proof of
-quasi-determinism for
+I will refer to the LVars model, extended with handlers, quiescence,
+and freezing, as the \emph{LVish model}.  The rest of this chapter is
+organized as follows: in Section~\ref{s:quasi-informal}, I introduce
+the LVish programming model informally, through a series of examples.
+I will also return to the parallel, pipelined graph computation of
+Section~\ref{s:lvars-motivation} and show how to implement it using
+the LVish Haskell library (which I will go on to discuss the internals
+of in Chapter~\ref{ch:lvish}).
+
+Then, in Section~\ref{s:quasi-formal}, I formalize the LVish model by
+extending the $\lambdaLVar$ calculus of Chapter~\ref{ch:lvars} to add
+support for handlers, quiescence, and freezing, calling the resulting
+language $\lambdaLVish$.  The main technical result of this chapter is
+a proof of quasi-determinism for
 $\lambdaLVish$~(Section~\ref{s:quasi-proof}). Just as with the
 determinism proof I gave for $\lambdaLVar$ in Chapter~\ref{ch:lvars},
 the quasi-determinism proof for $\lambdaLVish$ relies on an

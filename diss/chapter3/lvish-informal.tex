@@ -96,7 +96,7 @@ see that this kind of handler set can be specified in a
 lattice-generic way, and in Section~\ref{section:implementation} we
 will see that it corresponds closely to our implementation strategy.
 
-\subsection{Quiescence through handler pools}
+\subsection{Quiescence through handler pools}\label{subsection:quasi-quiescence}
 
 Because event handlers are asynchronous, we need a separate mechanism
 to determine when they have reached a \emph{quiescent} state, \ie,
@@ -172,4 +172,24 @@ subsequently quiesced, and then the LVar is frozen and its exact value
 is returned.  The @freezeSetAfter@ function in the graph traversal
 example in Section~\ref{s:quasi-intro} is a set-specific variant of
 this pattern.
+
+\lstinputlisting{chapter3/code/bfs_new.hs}
+
+This code, written using our Haskell library based on the LVish model
+(which I will go on to describe in Chapter~\ref{ch:lvish}), discovers
+(in parallel) the set of nodes in a graph @g@ reachable from a given
+node @startV@, and is guaranteed to produce a deterministic
+result.\footnote{In the LVish Haskell library, the \lstinline|Par|
+  type constructor is the monad in which LVar computations run; see
+  Chapter~\ref{ch:lvish} for details.}  It works by creating a fresh
+@Set@ LVar (corresponding to a lattice whose elements are sets, with
+set union as least upper bound), and seeding it with the starting
+node.  The @freezeSetAfter@ function combines the two new
+constructs---freezing and event handlers---described above.  First, it
+installs the callback @handle@ as a handler for the @seen@ set, which
+will asynchronously put the neighbors of each visited node into the
+set, possibly triggering further callbacks, recursively.  Second, when
+no further callbacks are ready to run---\ie, when the @seen@ set has
+reached a fixpoint---@freezeSetAfter@ will freeze the set and return
+its exact value.
 
