@@ -48,11 +48,10 @@ greatest element $\top$.  That is, $D$ has the following structure:
   independently update an LVar, and then deterministically merge the
   results by taking the lub of the resulting two states.
 \end{itemize}
-
-The application-specific lattice is given as a 4-tuple $(D, \userleq,
-\bot, \top)$ where $D$ is a set, $\userleq$ is a partial order on the
+We can specify all these components as a 4-tuple $(D, \userleq, \bot,
+\top)$ where $D$ is a set, $\userleq$ is a partial order on the
 elements of $D$, $\bot$ is the least element of $D$ according to
-$\userleq$, and $\top$ is the greatest.  However, I often use $D$ as a
+$\userleq$, and $\top$ is the greatest.  However, I use $D$ as a
 shorthand for the entire 4-tuple $(D, \userleq, \bot, \top)$ when its
 meaning is clear from the context.
 
@@ -113,14 +112,15 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap
 I use the notation $\extSRaw{S}{l}{d}$ to denote extending $S$ with a
 binding from $l$ to $d$.  If $l \in \dom{S}$, then $\extSRaw{S}{l}{d}$
 denotes an update to the existing binding for $l$, rather than an
-extension.  I also denote a store by explicitly writing out all its
-bindings, using the notation $\store{\storebindingRaw{l_1}{d_1},
-  \dots, \storebindingRaw{l_n}{d_n}}$.  The state space of stores
-forms a bounded join-semilattice augmented with a greatest element,
-just as $D$ does, with the empty store $\bot_S$ as its least element
-and $\topS$ as its greatest element.  It is straightforward to lift
-the $\userleq$ and $\sqcup$ operations defined on elements of $D$ to
-the level of stores:
+extension.  Another way to denote a store is by explicitly writing out
+all its bindings, using the notation
+$\store{\storebindingRaw{l_1}{d_1}, \dots,
+  \storebindingRaw{l_n}{d_n}}$.  The state space of stores forms a
+bounded join-semilattice augmented with a greatest element, just as
+$D$ does, with the empty store $\bot_S$ as its least element and
+$\topS$ as its greatest element.  It is straightforward to lift the
+$\userleq$ and $\sqcup$ operations defined on elements of $D$ to the
+level of stores:
 
 \LVarsDefLeqStore
 

@@ -4,14 +4,11 @@
   \end{definition}
 }
 
-
-
-
-\newcommand{\DefLatticeFreezing}{
-\begin{definition}[Lattice freezing]\label{def:lattice-freezing}
+\newcommand{\DefLatticeWithStatusBits}{
+\begin{definition}\label{def:lattice-with-status-bits}
 Suppose $(D, \userleq, \bot, \top)$ is a lattice.  We define an
 operation $\Freeze{D, \userleq, \bot, \top} \defeq (D_p, \leqp, \botp,
-\topp)$ as follows: {\small
+\topp)$ as follows:
 \begin{enumerate}
 \item $D_p$ is a set defined as follows:
 \begin{equation*}
@@ -37,14 +34,13 @@ operation $\Freeze{D, \userleq, \bot, \top} \defeq (D_p, \leqp, \botp,
 
 \item $\topp \defeq \state{\top}{\frozenfalse}$.
 \end{enumerate}
-}%
 \end{definition}
 }
 
 \newcommand{\DefLubP}{
 \begin{definition}\label{def:lubp}
 We define a binary operator $\lubp{}{} \in D_p \times D_p \to D_p$ as
-follows:{\small
+follows:
   \begin{displaymath}
     \begin{array}{lcl}
       \lubp{\state{d_1}{\frozenfalse}}{\state{d_2}{\frozenfalse}} & = & \state{\userlub{d_1}{d_2}}{\frozenfalse} \\ 
@@ -67,7 +63,7 @@ follows:{\small
                                        \end{array}
                                      \right. \\
     \end{array}
-  \end{displaymath}}
+  \end{displaymath}
 \end{definition}
 }
 
@@ -107,7 +103,7 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 
   The \emph{least upper bound (lub)} of two stores $S_1$ and $S_2$ (written
   $\lubstore{S_1}{S_2}$) is defined as follows:
-{\small  
+
   \begin{itemize}
   \item $\lubstore{S_1}{S_2} = \topS$ iff $S_1 = \topS$ or $S_2 = \topS$.
   \item $\lubstore{S_1}{S_2} = \topS$ iff there exists some $l \in
@@ -125,7 +121,7 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
         S_2(l) & \textrm{if $l \notin \dom{S_1}$}
         \end{array} \right.
     \end{displaymath}
-  \end{itemize}}
+  \end{itemize}
 \end{definition}
 }
 

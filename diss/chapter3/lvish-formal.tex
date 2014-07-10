@@ -1,24 +1,23 @@
 \section{LVish, formally}\label{s:quasi-formal}
 
-\TODO{Finish editing this section.}
-
-In this section, I present a core calculus for the LVish programming
-model---in particular, a quasi-deterministic, parallel, call-by-value
-$\lambda$-calculus extended with a store containing LVars.  It extends
-the original $\lambdaLVar$ language of Chapter~\ref{ch:lvars} to
-support the new features in the LVish model.  In comparison to the
-informal description in the previous section, I make two
-simplifications to keep the model lightweight:
+In this section, I present $\lambdaLVish$, a core calculus for the
+LVish programming model. $\lambdaLVish$ is a quasi-deterministic,
+parallel, call-by-value $\lambda$-calculus extended with a store
+containing LVars.  It extends the original $\lambdaLVar$ language of
+Chapter~\ref{ch:lvars} to support the new features in the LVish model
+that I described in the previous section.  In comparison to the
+informal description in Section~\ref{s:quasi-informal}, though, I make
+two simplifications to keep the model lightweight:
 \begin{itemize}
 \item As with $\lambdaLVar$ in Chapter~\ref{ch:lvars}, I parameterize
-  the definition of the LVish calculus by a \emph{single}
+  the definition of $\lambdaLVish$ by a \emph{single}
   application-specific lattice, representing the set of states that
-  LVars in the calculus can take on. Therefore LVish is really a
-  \emph{family} of calculi, varying by choice of lattice.  Multiple
-  lattices can in principle be encoded using a sum construction, so
-  this modeling choice is just to keep the presentation simple; in any
-  case, our Haskell implementation supports multiple lattices
-  natively.
+  LVars in the calculus can take on. Therefore $\lambdaLVish$ is
+  really a \emph{family} of calculi, varying by choice of lattice.
+  Multiple lattices can in principle be encoded using a sum
+  construction, so this modeling choice is just to keep the
+  presentation simple; in any case, our Haskell implementation
+  supports multiple lattices natively.
 \item Rather than modeling the full ensemble of event handlers,
   handler pools, quiescence, and freezing as separate primitives, I
   instead formalize the ``freeze-after'' pattern---which combined
@@ -38,28 +37,33 @@ of every LVar, while $\top$ represents the ``error'' state that would
 result from conflicting updates to an LVar.  The partial order
 $\userleq$ represents the order in which an LVar may take on states.
 It induces a binary \emph{least upper bound} (lub) operation
-$\userlub{}{}$ on the elements of $D$.  We require that every two
-elements of $D$ have a least upper bound in $D$.  Intuitively, the
-existence of a lub for every two elements of $D$ means that it is
-possible for two subcomputations to independently update an LVar, and
-then deterministically merge the results by taking the lub of the
-resulting two states.  Formally, this makes $(D, \userleq, \bot,
-\top)$ a \emph{bounded join-semilattice} with a designated greatest
-element $\top$; I continue to use ``lattice'' as shorthand, and I use
-$D$ as a shorthand for the entire 4-tuple $(D, \userleq, \bot, \top)$
-when its meaning is clear from the context.
+$\userlub{}{}$ on the elements of $D$.
+
+Every two elements of $D$ must have a least upper bound in $D$.
+Intuitively, the existence of a lub for every two elements of $D$
+means that it is possible for two subcomputations to independently
+update an LVar, and then deterministically merge the results by taking
+the lub of the resulting two states.  Formally, this makes $(D,
+\userleq, \bot, \top)$ a \emph{bounded join-semilattice} with a
+designated greatest element $\top$; I continue to use ``lattice'' as
+shorthand, and I use $D$ as a shorthand for the entire 4-tuple $(D,
+\userleq, \bot, \top)$ when its meaning is clear from the context.
 
 \subsection{Freezing}
 
 To model freezing, we need to generalize the notion of the state of an
 LVar to include information about whether it is ``frozen'' or not.
-Thus, in our model an LVar's \emph{state} is a pair
+Thus, in $\lambdaLVish$ an LVar's \emph{state} is a pair
 $\state{d}{\status}$, where $d$ is an element of the
 application-specific set $D$ and $\status$ is a ``status bit'' of
-either $\frozentrue$ or $\frozenfalse$.  We can define an ordering
-$\leqp$ on LVar states $\state{d}{\status}$ in terms of the
-application-specific ordering $\userleq$ on elements of $D$.  Every
-element of $D$ is ``freezable'' except $\top$.  Informally:
+either $\frozentrue$ or $\frozenfalse$.  A state where $\status$ is
+$\frozenfalse$ is ``unfrozen'', and one where $\status$ is
+$\frozentrue$ is ``frozen''.
+
+We can define an ordering $\leqp$ on LVar states $\state{d}{\status}$
+in terms of the application-specific ordering $\userleq$ on elements
+of $D$.  Every element of $D$ is ``freezable'' except $\top$.
+Informally:
 \begin{itemize}
 \item Two unfrozen states are ordered according to the
   application-specific $\userleq$; that is, $\state{d}{\frozenfalse}
@@ -75,14 +79,16 @@ element of $D$ is ``freezable'' except $\top$.  Informally:
   $\state{d}{\frozentrue} \leqp \state{d'}{\frozenfalse}$ exactly when
   $d' = \top$.
 \end{itemize}
-The addition of status bits to the application-specific lattice
-results in a new lattice $(D_p, \leqp, \botp, \topp)$, and we write
-$\lubp{}{}$ for the least upper bound operation that $\leqp$ induces.
-Definitions~\ref{def:lattice-freezing} and \ref{def:lubp} and
-Lemmas~\ref{lem:partition-of-Dp}
-and~\ref{lem:lattice-structure} formalize this notion.
+Adding status bits to each element (except $\top$) of the lattice $(D,
+\userleq, \bot, \top)$ results in a new lattice $(D_p, \leqp, \botp,
+\topp)$.  (The $p$ stands for pair, since elements of this new lattice
+are pairs $\state{d}{\status}$.) I write $\lubp{}{}$ for the least
+upper bound operation that $\leqp$ induces.
+Definitions~\ref{def:lattice-with-status-bits} and \ref{def:lubp} and
+Lemmas~\ref{lem:partition-of-Dp} and~\ref{lem:lattice-structure}
+formalize this notion.
 
-\DefLatticeFreezing
+\DefLatticeWithStatusBits
 
 \LemPartitionOfDp
 
@@ -92,28 +98,31 @@ Lemma~\ref{lem:lattice-structure} says that if $(D, \leq, \bot, \top)$
 is a lattice, then $(D_p, \leqp, \botp, \topp)$ is as well:
 
 \LemLatticeStructure
-
-\TODO{Bring the proof of \ref{lem:lattice-structure} in from the TR?}
+\input{chapter3/lvish-formal-proof-lattice-structure}
 
 \subsection{Stores}
 
-During the evaluation of LVish programs, a \emph{store} $S$ keeps
-track of the states of LVars.  Each LVar is represented by a binding
-from a location $l$, drawn from a set $\Loc$, to its state, which is
-some pair $\state{d}{\status}$ from the set $D_p$.
+During the evaluation of $\lambdaLVish$ programs, a \emph{store} $S$
+keeps track of the states of LVars.  Each LVar is represented by a
+binding from a location $l$, drawn from a set $\Loc$, to its state,
+which is some pair $\state{d}{\status}$ from the set $D_p$.  The way
+that stores are handled in $\lambdaLVish$ is very similar to how they
+are handled in $\lambdaLVar$, except that store bindings now point to
+states $\state{d}{\status}$, that is, elements of $D_p$, instead of
+merely to $d$, that is, elements of $D$.
 
 \DefStore
 
-We use the notation $\extS{S}{l}{d}{\status}$ to denote extending $S$
+I use the notation $\extS{S}{l}{d}{\status}$ to denote extending $S$
 with a binding from $l$ to $\state{d}{\status}$.  If $l \in \dom{S}$,
 then $\extS{S}{l}{d}{\status}$ denotes an update to the existing
-binding for $l$, rather than an extension.  We can also denote a store
-by explicitly writing out all its bindings, using the notation
-$\store{\storebinding{l_1}{d_1}{\status_1},
+binding for $l$, rather than an extension.  Another way to denote a
+store is by explicitly writing out all its bindings, using the
+notation $\store{\storebinding{l_1}{d_1}{\status_1},
   \storebinding{l_2}{d_2}{\status_2}, \dots}$.
 
-It is straightforward to lift the $\leqp$ and $\lubp{}{}$ operations
-defined on elements of $D_p$ to the level of stores:
+We can lift the $\leqp$ and $\lubp{}{}$ operations defined on elements
+of $D_p$ to the level of stores:
 
 \DefLeqStore
 
@@ -123,11 +132,15 @@ If, for example,
 \[ \lubp{\state{d_1}{\status_1}}{\state{d_2}{\status_2}} = \topp, \]
 then
 \[ \lubstore{\store{\storebinding{l}{d_1}{\status_1}}}{\store{\storebinding{l}{d_2}{\status_2}}} =
-\topS. \] A store containing a binding
-$\storebinding{l}{\top}{\status}$ can never arise during the execution
-of an LVish program, because, as we will see in
-Section~\ref{subsection:newputget}, an attempted @put@ that would
-take the value of $l$ to $\top$ will raise an error.
+\topS. \]
+
+Just as a a store containing a binding $\storebindingRaw{l}{\top}$ can
+never arise during the execution of a $\lambdaLVar$ program, a store
+containing a binding $\storebinding{l}{\top}{\status}$ can never arise
+during the execution of a $\lambdaLVish$ program. An attempted @put@
+that would take the value of $l$ to $\state{\top}{\frozenfalse}$, that
+is, $\topp$ will raise an error, and there is no
+$\state{\top}{\frozentrue}$ element of $D_p$.
 
 \subsection{$\lambdaLVish$: syntax and semantics}
 
@@ -135,51 +148,39 @@ take the value of $l$ to $\top$ will raise an error.
 
 \FigLambdaLVishSemantics
 
-\TODO{Edit all this so it doesn't repeat $\lambdaLVar$ stuff.  In
-  fact, just point out where things are similar to $\lambdaLVar$.}
-
 The syntax and operational semantics of $\lambdaLVish$ appear in
 Figures \ref{f:lambdaLVish-syntax} and \ref{f:lambdaLVish-semantics},
-respectively.  As with $\lambdaLVar$, both the syntax and semantics
-are parameterized by the lattice $(D, \userleq, \bot, \top)$.  The
-reduction relation $\parstepsto$ is defined on \emph{configurations}
-$\config{S}{e}$ comprising a store and an expression.  The \emph{error
-  configuration}, written $\error$, is a unique element added to the
-set of configurations, but we consider $\config{\topS}{e}$ to be equal
-to $\error$ for all expressions $e$.  The metavariable $\conf$ ranges
-over configurations.
+respectively.  $\lambdaLVish$ is reminiscent of $\lambdaLVar$ in a
+number of ways:
+\begin{itemize}
+\item The syntax and semantics of $\lambdaLVish$ are parameterized by
+  the lattice $(D, \userleq, \bot, \top)$.
 
-LVish uses a reduction semantics based on evaluation contexts.  The
-{\sc E-Eval-Ctxt} rule is a standard context rule, allowing us to
-apply reductions within a context.  The choice of context determines
-where evaluation can occur; in LVish, the order of evaluation is
-nondeterministic (that is, a given expression can generally reduce in
-various ways), and so it is generally \emph{not} the case that an
-expression has a unique decomposition into redex and context.  For
-example, in an application $\app{e_1}{e_2}$, either $e_1$ or $e_2$
-might reduce first.  The nondeterminism in choice of evaluation
-context reflects the nondeterminism of scheduling between concurrent
-threads, and in LVish, the arguments to @get@, @put@, @freeze@, and
-application expressions are \emph{implicitly} evaluated concurrently.
+\item The reduction relation $\parstepsto$ is defined on
+  \emph{configurations} $\config{S}{e}$ comprising a store and an
+  expression.
 
-Arguments must be fully evaluated, however, before function
-application ($\beta$-reduction, modeled by the {\sc E-Beta} rule) can
-occur.  We can exploit this property to define $\LETPAR$ as syntactic
-sugar:
-\[
-\LETPAR ~x = e_1;~~y = e_2~\IN~e_3 \;\;\defeq\;\;
-\app{(\app{(\lam{x}{(\lam{y}{e_3})})}{e_1})}{e_2}
-\]
-Because we do not reduce under $\lambda$-terms, we can sequentially
-compose $e_1$ before $e_2$ by writing $\letexp{\_}{e_1}{e_2}$, which
-desugars to $\app{(\lam{\_}{e_2})}{e_1}$.  Sequential composition is
-useful, for instance, when allocating a new LVar before beginning a
-set of side-effecting @put@/@get@/@freeze@ operations on it.
+\item The \emph{error configuration}, written $\error$, is a unique
+  element added to the set of configurations, but $\config{\topS}{e}$
+  is equal to $\error$ for all expressions $e$.
+
+\item The metavariable $\conf$ ranges over configurations.
+
+\item $\lambdaLVish$ uses a reduction semantics based on evaluation
+  contexts.  The {\sc E-Eval-Ctxt} rule allows us to apply reductions
+  within a context, and is identical to the corresponding rule in
+  $\lambdaLVar$, although the set of evaluation contexts that the
+  metavariable $E$ ranges over has grown.
+
+\item The {\sc E-Beta} rule is also identical to its counterpart in
+  $\lambdaLVar$.
+\end{itemize}
 
 \subsection{Semantics of \lstinline|new|, \lstinline|put|, and \lstinline|get|}\label{subsection:newputget}
 
-In LVish, the @new@, @put@, and @get@ operations respectively
-create, write to, and read from LVars in the store:
+Because of the addition of status bits, though, the {\sc E-New}, {\sc
+  E-Put}, {\sc E-Put-Err}, {\sc E-Get} rules have changed slightly
+from their counterparts in $\lambdaLVar$:
 
 \begin{itemize}
 \item @new@ (implemented by the {\sc E-New} rule) extends the store
@@ -224,14 +225,19 @@ Therefore, @get@ \emph{can} behave nondeterministically---but this
 behavior is not observable in the final answer of the program, which
 is guaranteed to subsequently fault.
 
-\subsection{The $\FAW$ primitive}\label{subsection:language-freezing}
+\subsection{Freezing and the $\FAW$ primitive}\label{subsection:language-freezing}
 
-The LVish calculus includes a simple form of @freeze@ that immediately
-freezes an LVar (see {\sc E-Freeze-Simple}).  More interesting is the
-$\FAW$ primitive, which models the ``freeze-after'' pattern described
-in Section~\ref{subsection:freeze-after}.  The expression
-$\freezeafter{e_{\rm lv}}{e_{\rm events}}{e_{\rm cb}}$ has the
-following semantics:
+The {\sc E-Freeze-Init}, {\sc E-Spawn-Handler}, {\sc E-Freeze-Final},
+and {\sc E-Freeze-Simple} rules are all new additions to
+$\lambdaLVish$.  The {\sc E-Freeze-Simple} rule gives the semantics
+for the @freeze@ expression, which takes an LVar as argument and
+immediately freezes and returns its contents.
+
+More interesting is the $\FAW$ primitive, which models the
+``freeze-after'' pattern I described in
+Section~\ref{subsection:quasi-freeze-after}.  The expression
+\[ \freezeafter{e_{\rm lv}}{e_{\rm events}}{e_{\rm cb}} \]
+has the following semantics:
 \begin{itemize}
 \item It attaches the callback $e_{\rm cb}$ to the LVar $e_{\rm lv}$.
   The expression $e_{\rm events}$ must evaluate to a event set $Q$;
@@ -245,8 +251,8 @@ following semantics:
   is frozen, and its \emph{exact} state is returned (rather than an
   underapproximation of the state, as with @get@).
 \end{itemize}
-
-To keep track of the running callbacks, LVish includes an auxiliary form,
+To keep track of the running callbacks, $\lambdaLVish$ includes an
+auxiliary form,
 \[
 \freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e, \dots}}{H}
 \]
@@ -301,49 +307,3 @@ fixpoint computations).  In practice, freezing is usually the very
 last step of an algorithm, permitting its result to be extracted. Our
 implementation provides a special @runParThenFreeze@ function that
 does so, and thereby guarantees full determinism.
-
-\TODO{Move the following section to an appendix.}
-
-\subsection{Modeling Lattice Parameterization in Redex}\label{subsection:redex}
-
-We have developed a runnable version of the LVish
-calculus\footnote{Available at
-  \url{http://github.com/iu-parfunc/lvars}.} using the PLT Redex
-semantics engineering toolkit \cite{redex-book}.  In the Redex of
-today, it is not possible to directly parameterize a language
-definition by a lattice.\footnote{See discussion at
-  \url{http://lists.racket-lang.org/users/archive/2013-April/057075.html}.}
-Instead, taking advantage of Racket's syntactic abstraction
-capabilities, we define a Racket macro,
-\texttt{define-LVish-language}, that wraps a template implementing the
-lattice-agnostic semantics of Figure~\ref{f:lvish-semantics}, and
-takes the following arguments:
-\begin{itemize}
-\item a \emph{name}, which becomes the \emph{lang-name} passed to
-  Redex's \texttt{define-language} form;
-\item a \emph{``downset'' operation}, a Racket-level procedure that
-  takes a lattice element and returns the (finite) set of all lattice
-  elements that are below that element (this operation is used to
-  implement the semantics of $\FAW$, in particular, to determine when
-  the {\sc E-Freeze-Final} rule can fire);
-\item a \emph{lub operation}, a Racket-level procedure that takes two
-  lattice elements and returns a lattice element; and
-\item a (possibly infinite) set of \emph{lattice elements} represented
-  as Redex \emph{patterns}.
-\end{itemize}
-Given these arguments, \texttt{define-LVish-language} generates a
-Redex model specialized to the application-specific lattice in
-question. For instance, to instantiate a model called \texttt{nat},
-where the application-specific lattice is the natural numbers with
-\texttt{max} as the least upper bound, one writes:
-\[
-\texttt{(define-LVish-language nat downset-op max natural)}
-\]
-where \texttt{downset-op} is separately defined.  Here,
-\texttt{downset-op} and \texttt{max} are Racket procedures.
-\texttt{natural} is a Redex pattern that has no meaning to Racket
-proper, but because \texttt{define-LVish-language} is a macro,
-\texttt{natural} is not evaluated until it is in the context of
-Redex.\lk{This might be too much information, or a little confusing.
-  It's a nice illustration of the power of macros, though.  I'd
-  welcome suggestions for how to word it differently.}

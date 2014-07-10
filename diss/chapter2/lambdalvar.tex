@@ -11,14 +11,14 @@
 
 The syntax and operational semantics of $\lambdaLVar$ appear in
 Figures~\ref{f:lvars-lambdaLVar-syntax} and
-\ref{f:lvars-lambdaLVar-semantics}, respectively.  Both the
-syntax and semantics are parameterized by the lattice $D$.  The
-reduction relation $\parstepsto$ is defined on \emph{configurations}
-$\config{S}{e}$ comprising a store and an expression.  The \emph{error
-  configuration}, written $\error$, is a unique element added to the
-set of configurations, but $\config{\topS}{e}$ is equal to $\error$
-for all expressions $e$.  The metavariable $\conf$ ranges over
-configurations.
+\ref{f:lvars-lambdaLVar-semantics}, respectively.  Both the syntax and
+semantics are parameterized by the lattice $(D, \userleq, \bot,
+\top)$.  The reduction relation $\parstepsto$ is defined on
+\emph{configurations} $\config{S}{e}$ comprising a store and an
+expression.  The \emph{error configuration}, written $\error$, is a
+unique element added to the set of configurations, but
+$\config{\topS}{e}$ is equal to $\error$ for all expressions $e$.  The
+metavariable $\conf$ ranges over configurations.
 
 $\lambdaLVar$ uses a reduction semantics based on \emph{evaluation
   contexts}.  The {\sc E-Eval-Ctxt} rule is a standard context rule,

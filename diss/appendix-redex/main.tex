@@ -1,0 +1,52 @@
+\chapter{PLT Redex Models of $\lambdaLVar$ and $\lambdaLVish$}\label{app:plt-redex}
+
+\TODO{Edit this text.}
+
+We have developed a runnable version of the LVish
+calculus\footnote{Available at
+  \url{http://github.com/iu-parfunc/lvars}.} using the PLT Redex
+semantics engineering toolkit \cite{redex-book}.  In the Redex of
+today, it is not possible to directly parameterize a language
+definition by a lattice.\footnote{See discussion at
+  \url{http://lists.racket-lang.org/users/archive/2013-April/057075.html}.}
+Instead, taking advantage of Racket's syntactic abstraction
+capabilities, we define a Racket macro,
+\texttt{define-LVish-language}, that wraps a template implementing the
+lattice-agnostic semantics of Figure~\ref{f:lvish-semantics}, and
+takes the following arguments:
+\begin{itemize}
+\item a \emph{name}, which becomes the \emph{lang-name} passed to
+  Redex's \texttt{define-language} form;
+\item a \emph{``downset'' operation}, a Racket-level procedure that
+  takes a lattice element and returns the (finite) set of all lattice
+  elements that are below that element (this operation is used to
+  implement the semantics of $\FAW$, in particular, to determine when
+  the {\sc E-Freeze-Final} rule can fire);
+\item a \emph{lub operation}, a Racket-level procedure that takes two
+  lattice elements and returns a lattice element; and
+\item a (possibly infinite) set of \emph{lattice elements} represented
+  as Redex \emph{patterns}.
+\end{itemize}
+Given these arguments, \texttt{define-LVish-language} generates a
+Redex model specialized to the application-specific lattice in
+question. For instance, to instantiate a model called \texttt{nat},
+where the application-specific lattice is the natural numbers with
+\texttt{max} as the least upper bound, one writes:
+\[
+\texttt{(define-LVish-language nat downset-op max natural)}
+\]
+where \texttt{downset-op} is separately defined.  Here,
+\texttt{downset-op} and \texttt{max} are Racket procedures.
+\texttt{natural} is a Redex pattern that has no meaning to Racket
+proper, but because \texttt{define-LVish-language} is a macro,
+\texttt{natural} is not evaluated until it is in the context of
+Redex.\lk{This might be too much information, or a little confusing.
+  It's a nice illustration of the power of macros, though.  I'd
+  welcome suggestions for how to word it differently.}
+
+\TODO{Freshen up the Redex models of $\lambdaLVar$ and $\lambdaLVish$
+  and add them here.}
+
+
+
+
