@@ -2,10 +2,8 @@
 
 \newcommand{\FigLambdaLVishGrammar}[1][t]{
 \begin{figure}[#1]
-  \setlength{\arraycolsep}{1pt} % A hack to squeeze everything into a column
   Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$:
     \[
-    \begin{array}{@{}c@{}}
     \begin{array}{rlcl}
       \mbox{configurations} & \conf & \bnfdef & \config{S}{e} \sep \error \\
       \mbox{expressions} & e & \bnfdef & 
@@ -16,61 +14,39 @@
            \putexp{e}{e} \sep
            \NEW \sep
            \freeze{e} \\
-           & & | &
+           & & \sep &
            \freezeafter{e}{e}{e} \\
-           & & | &
+           & & \sep &
            \freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{e, \dots}}{H} \\
-
+      \mbox{values} & v & \bnfdef & \unit \sep d \sep p \sep l \sep P \sep Q \sep \lam{x}{e} \\
+      \mbox{threshold sets} & P & \bnfdef & \stateset{p_1,\,p_2,\,\dots} \\
+      \mbox{event sets} & Q & \bnfdef & \stateset{d_1,\,d_2,\,\dots} \\
+      \mbox{``handled'' sets} & H & \bnfdef & \setof{d_1,\,\dots, d_n} \\
+      %% N.B. In Redex we actually rule out store values being Top in
+      %% the grammar, and have a special StoreVal type for elements
+      %% other than Top.  Here we don't bother, and we just say that
+      %% stores contain bindings from locations l to pairs p.
       \mbox{stores} & S & \bnfdef &
         \store{\storebindingRaw{l_1}{p_1},\,\dots, \storebindingRaw{l_n}{p_n}} \sep \topS \\
-
-      \mbox{values} & v & \bnfdef & \unit \sep d \sep p \sep l \sep P \sep Q \sep \lam{x}{e} \\[0.3em]
-
-      \mbox{eval contexts} & E & \bnfdef &
+      \mbox{states} & p & \bnfdef & \state{d}{\status} \\
+      \mbox{status bits} & \status & \bnfdef & \frozentrue \sep \frozenfalse \\
+      \mbox{evaluation contexts} & E & \bnfdef &
            [~] \sep
            \app{E}{e} \sep
            \app{e}{E} \sep
            \getexp{E}{e} \sep
            \getexp{e}{E} \sep 
-           \putexp{E}{e} \\ \multicolumn{4}{@{}r@{}}{
-           \begin{array}{@{\sep\;}l@{}}
-             \putexp{e}{E} \sep
-             \freeze {E} \sep
-             \freezeafter{E}{e}{e}
-             \\
-             \freezeafter{e}{E}{e} \sep
-             \freezeafter{e}{e}{E}  \\
-             \freezeafterfull{v}{v}{v}{\setof{e\dots~E~e\dots}}{H}
-           \end{array}}
-
-    \end{array}\\ \\[-4pt]
-    \begin{array}{@{}c@{}}
-
-      % N.B. In Redex we actually rule out store values being Top in
-      % the grammar, and have a special StoreVal type for elements
-      % other than Top.  Here we don't bother, and we just say that
-      % stores contain bindings from locations l to pairs p.
-
-      \begin{array}{rlcl}
-
-        \mbox{``handled'' sets} & H & \bnfdef & \setof{d_1,\,\dots, d_n} \\
-
-        \mbox{threshold sets} & P & \bnfdef & \stateset{p_1,\,p_2,\,\dots} \\
-
-        \mbox{event sets} & Q & \bnfdef & \stateset{d_1,\,d_2,\,\dots} 
-
-      \end{array}\quad
-      \begin{array}{rlcl}
-
-        \mbox{states} & p & \bnfdef & \state{d}{\status} \\
-
-
-        \mbox{status bits} & \status & \bnfdef & \frozentrue \sep \frozenfalse 
-
-      \end{array}
-
-    \end{array}
-    \end{array}
+           \putexp{E}{e} \sep
+           \putexp{e}{E} \\
+           & & \sep &
+           \freeze {E} \sep
+           \freezeafter{E}{e}{e} \\
+           & & \sep &
+           \freezeafter{e}{E}{e} \sep
+           \freezeafter{e}{e}{E} \\
+           & & \sep &
+           \freezeafterfull{v}{v}{v}{\setof{e\dots~E~e\dots}}{H}
+    \end{array}           
     \]
   \caption{Syntax for $\lambdaLVish$.}
   \label{f:lambdaLVish-syntax}
