@@ -11,7 +11,13 @@ from a configuration $\conf$ terminate in configurations $\conf'$ and
 $\conf''$, then either $\conf'$ and $\conf''$ are the same
 configuration, or one of them is $\error$.  As with the determinism
 result for $\lambdaLVar$, quasi-determinism follows from a series of
-supporting lemmas which I first prove.}
+supporting lemmas which I first prove.  Unlike with the determinism
+proof for $\lambdaLVar$, though, for $\lambdaLVish$ I do not need to
+prove a Clash lemma (\eg, Lemma~\ref{lem:lvars-clash}) or an Error
+Preservation lemma (\eg, Lemma~\ref{lem:lvars-error-preservation}).
+These properties aren't necessary because quasi-determinism, with its
+``...or one of them is $\error$'', is a weaker property than
+determinism.
 
 \subsection{Monotonicity lemma}\label{subsection:quasi-monotonicity}
 
@@ -24,6 +30,36 @@ the $\leqstore{}{}$ ordering.
   By induction on the derivation of $\config{S}{e} \parstepsto
   \config{S'}{e'}$, by cases on the last rule in the derivation; see
   Section~\ref{section:monotonicity-proof}.
+\end{proof}
+
+\subsection{Independence lemma}\label{subsection:quasi-independence}
+
+Like the Independence lemma for $\lambdaLVar$
+(Lemma~\ref{lem:lvars-independence}), Lemma~\ref{lem:independence}
+establishes a ``frame property'' for $\lambdaLVish$ that captures the
+idea that independent effects commute with each other.  Just as with
+the $\lambdaLVar$ version of the Independence lemma,
+Lemma~\ref{lem:independence} requires as a precondidion that the store
+$S''$ must be \emph{non-conflicting}
+(Definition~\ref{def:lvars-non-conflicting}) with the original
+transition from $\config{S}{e}$ to $\config{S'}{e'}$, meaning that
+locations in $S''$ cannot share names with locations newly allocated
+during the transition, which rules out location name conflicts caused
+by allocation.
+
+In the context of $\lambdaLVish$, where freezing is possible, we have
+an additional precondition that the stores $\lubstore{S'}{S''}$ and
+$S$ are \emph{equal in status}---that, for all the locations shared
+between them, the status bits of those locations agree.  This
+assumption rules out interference from freezing.
+
+\DefEqualStatus
+
+\LemIndependence
+\begin{proof}
+   By induction on the derivation of $\config{S}{e} \parstepsto
+   \config{S'}{e'}$, by cases on the last rule in the derivation; see
+   Section~\ref{section:independence-proof}.
 \end{proof}
  
 \TODO{Fill in the rest of this section.}
