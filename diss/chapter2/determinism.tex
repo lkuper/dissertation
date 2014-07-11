@@ -36,7 +36,11 @@ the $\parstepsto$ relation, the store can only grow with respect to
 the $\leqstore{}{}$ ordering.
 
 \LVarsLemMonotonicity
-\input{chapter2/determinism-monotonicity-proof}
+\begin{proof}
+  By induction on the derivation of $\config{S}{e} \parstepsto
+  \config{S'}{e'}$, by cases on the last rule in the derivation; see
+  Section~\ref{section:lvars-monotonicity-proof}.
+\end{proof}
 
 \subsection{Independence lemma}\label{subsection:lvars-independence}
 
@@ -63,7 +67,11 @@ by allocation.
 \LVarsDefNonConflicting
 
 \LVarsLemIndependence
-\input{chapter2/determinism-independence-proof}
+\begin{proof}
+  By induction on the derivation of $\config{S}{e} \parstepsto
+  \config{S'}{e'}$, by cases on the last rule in the derivation; see
+  Section~\ref{section:lvars-independence-proof}.
+\end{proof}
 
 \subsection{Clash lemma}
 
@@ -78,7 +86,11 @@ $\config{\lubstore{S}{S''}}{e}$ steps to $\error$.
   need it here.}
 
 \LVarsLemClash
-\input{chapter2/determinism-clash-proof}
+\begin{proof}
+  By induction on the derivation of $\config{S}{e} \parstepsto
+  \config{S'}{e'}$, by cases on the last rule in the derivation; see
+  Section~\ref{section:lvars-clash-proof}.
+\end{proof}
 
 \subsection{Error Preservation lemma}
 
@@ -98,17 +110,27 @@ $\error$.
 \subsection{Diamond lemma}
 
 \LVarsLemDiamond
-\input{chapter2/determinism-diamond-proof}
+\begin{proof}
+  By induction on the derivation of $\conf \parstepsto \conf_a$, by
+  cases on the last rule in the derivation; see
+  Section~\ref{section:lvars-diamond-proof}.
+\end{proof}
 
 \subsection{Confluence lemmas}
 
 \LVarsLemStrongLocalConfluence
 
 \LVarsLemStrongOneSidedConfluence
-\input{chapter2/determinism-strong-one-sided-confluence-proof}
+\begin{proof}
+  By induction on $m$; see
+  Section~\ref{section:lvars-strong-one-sided-confluence-proof}.
+\end{proof}
 
 \LVarsLemStrongConfluence
-\input{chapter2/determinism-strong-confluence-proof}
+\begin{proof}
+  By induction on $n$; see
+  Section~\ref{section:lvars-strong-confluence-proof}.
+\end{proof}
 
 \LVarsLemConfluence
 
