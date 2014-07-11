@@ -61,5 +61,47 @@ assumption rules out interference from freezing.
    \config{S'}{e'}$, by cases on the last rule in the derivation; see
    Section~\ref{section:independence-proof}.
 \end{proof}
+
+\subsection{Quasi-confluence lemmas}\label{subsection:quasi-quasi-confluence}
+
+\lk{In the POPL paper and TR, there was a lemma called ``Strong Local
+  Quasi-Diamond'' and another, almost identical one called ``Strong
+  Local Quasi-Confluence'' that followed almost directly from Strong
+  Local Quasi-Diamond.  In the $\lambdaLVar$ determinism proof,
+  ``Strong Local Confluence'' followed directly from ``Diamond'', but
+  this was the case because ``Strong Local Confluence'' was a special
+  case of ``Diamond''.  Here, I actually think we should have any
+  property that we call ``diamond'', because to me that word connotes
+  ``exactly one step'', and we should instead just have a ``Strong
+  Local Quasi-Confluence'' that is $\lambdaLVish$'s counterpart to
+  ``Diamond'' and ``Strong Local Confluence'' taken together.}
+
+\TODO{Add some text here explaining the above.}
+
+\LemStrongLocalQuasiConfluence
+\begin{proof}
+  By induction on the derivation of $\conf \parstepsto \conf_a$, by
+  cases on the last rule in the derivation; see
+  Section~\ref{section:strong-local-quasi-confluence-proof}.
+  \TODO{Figure out if this is a correct summary.}
+\end{proof}
+
+\LemStrongOneSidedQuasiConfluence
+\begin{proof}
+  By induction on $m$; see
+  Section~\ref{section:strong-one-sided-quasi-confluence-proof}.
+  \TODO{Figure out if this is a correct summary.}
+\end{proof}
+
+\LemStrongQuasiConfluence
+\begin{proof}
+  By induction on $n$; see
+  Section~\ref{section:strong-quasi-confluence-proof}.
+  \TODO{Figure out if this is a correct summary.}
+\end{proof}
+
+\LemQuasiConfluence
  
-\TODO{Fill in the rest of this section.}
+\subsection{Quasi-determinism theorem}\label{subsection:quasi-quasi-determinism}
+
+\ThmQuasiDeterminism

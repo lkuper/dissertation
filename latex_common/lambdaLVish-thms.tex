@@ -39,29 +39,6 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
 \end{lem}
 }
 
-\newcommand{\LemDecompositionPreservation}{
-\begin{lem}[Decomposition Preservation]\label{lem:decomposition-preservation}
-Suppose $e = E_0[e_0]$ and $e = E_1[e_1]$, where $E_0$ and $E_1$ are
-distinct evaluation contexts and $e_0$ and $e_1$ are redexes. Then,
-for all $e'_0$, there exists an evaluation context $E'_1$ such that
-$E_0[e'_0] = E'_1[e_1]$.
-\end{lem}
-}
-
-\newcommand{\LemRenaming}{
-  \begin{lem}[Renaming]\label{lem:renaming}
-    If $\pi$ is a permutation and $\sigma \parstepsto \sigma'$, then 
-    $\pi(\sigma) \parstepsto \pi(\sigma')$.    
-  \end{lem}
-}
-
-\newcommand{\LemStabilityPreservation}{
-  \begin{lem}[Stability Preservation]\label{lem:stability-preservation}
-    If $\conf$ is stable and $\conf \parstepsto \conf'$, then $\conf'$ is stable.    
-  \end{lem}
-}
-
-
 \newcommand{\LemIndependence}{
 \begin{lem}[Independence]\label{lem:independence}
   If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
@@ -78,133 +55,106 @@ $E_0[e'_0] = E'_1[e_1]$.
 \end{lem}
 }
 
-\newcommand{\FrameRenaming}{
-\begin{lem}[Frame Renaming]\label{lem:frame-renaming}
-  If $\config{S}{e} \parstepsto \config{S'}{e'}$ and $\lubstore{S'}{S''}
-  \neq \topS$, then:
-
-  There is a permutation $\pi$ such that:
-  \begin{enumerate}
-  \item $\pi(S) = S$,
-  \item $\pi(S'')$ is non-conflicting with $\config{S}{e} \parstepsto \config{S'}{e'}$, and
-  \item $\lubstore{\pi(S'')}{S'} \neq \topS$.
-  \end{enumerate}
-\end{lem}
-}
-
-\newcommand{\LemReordering}{
-\begin{lem}[Reordering]\label{lem:reordering}
-If  $\config{S}{e_a} \parstepsto \config{S_a}{e'_a}$
-and $\config{S}{e_b} \parstepsto \config{S_b}{e'_b}$,
-then either 
-  \begin{itemize} 
-  \item There exists $S'$ and permutations $\pi_a$ and $\pi_b$ such that $\pi_a(S) = \pi_b(S) = S$ and 
-    \begin{enumerate}
-    \item $\config{\pi_b(S_b)}{e_a} \parstepsto \config{S'}{\pi_a(e'_a)}$ and
-    \item $\config{\pi_a(S_a)}{e_b} \parstepsto \config{S'}{\pi_b(e'_b)}$ and
-    \item $\pi_b(\pi_a(e'_a)) = \pi_a(e'_a)$ and $\pi_a(\pi_b(e'_b)) = \pi_b(e'_b)$,
-    \end{enumerate}
-    or
-  \item $\config{S_b}{e_a} \parstepsto \textup{\error}$ or
-    $\config{S_a}{e_b} \parstepsto \textup{\error}$.
-  \end{itemize}
-\end{lem}
-}
-
-\newcommand{\LemCtxExtension}{
-  \begin{lem}[Context Extension]\label{lem:ctx-extension}
-    If $\config{S}{e} \parstepsto \config{S'}{e'}$, then $\config{S}{E[e]} \parstepsto \config{S'}{E[e']}$. 
-  \end{lem}
-}
-
-\newcommand{\LemCtxReordering}{
-  \begin{lem}[Contextual Reordering]\label{lem:ctx-reordering}
-    If $\conf \equiv \config{S}{e} \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$ using the {\sc E-Eval-Ctxt} rules,
-    then either 
-    \begin{itemize}
-    \item there exists $\pi_a$ and $\pi_b$ such that $\pi_a(S) = \pi_b(S) = S$ and $\conf'$ such that $\pi_a(\conf_a) \parstepsto \conf'$ and $\pi_b(\conf_b) \parstepsto \conf'$, or 
-    \item $\conf_a \parstepsto \textup{\error}$ or $\conf_b \parstepsto \textup{\error}$.
-    \end{itemize}
-  \end{lem}
-}
-
-\newcommand{\LemStrongLocalQuasiDiamond}{
-\begin{lem}[Strong Local Quasi-Diamond]\label{lem:strong-local-quasi-diamond}
-  If $\conf \equiv \config{S}{e} \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$, then
-  either:
-  \begin{enumerate}
-  \item there exist $i,j, \pi_a$, $\pi_b$ and $\conf_c$ such that $\pi_a(S) = \pi_b(S) = S$ and  $\pi_a(\conf_a) \parstepsto^i
-    \conf_c$ and $\pi_b(\conf_b) \parstepsto^j \conf_c$  and $i \leq 1$ and $j \leq 1$, or
-  \item $\conf_a \parstepsto \textup{\error}$ or $\conf_b
-    \parstepsto \textup{\error}$.
-  \end{enumerate}
-\end{lem}
-}
-
-
 \newcommand{\LemStrongLocalQuasiConfluence}{
 \begin{lem}[Strong Local Quasi-Confluence]\label{lem:strong-local-quasi-confluence}
-  If $\conf \equiv \config{S}{e} \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$, then
-  either:
+ \TODO{Figure out if we need to mention permutations in the statement
+   of the proof.}  If $\conf \parstepsto \conf_a$ and $\conf
+ \parstepsto \conf_b$, then either:
   \begin{enumerate}
-  \item there exist $\pi, i,j$ and $\conf_c$ such that  $\conf_a \parstepsto^i
-    \conf_c$ and $\conf_b \parstepsto^j \pi(\conf_c)$  and $i \leq 1$ and $j \leq 1$, or
-  \item $\conf_a \parstepsto \textup{\error}$ or $\conf_b
-    \parstepsto \textup{\error}$.
+  \item there exist $i$, $j$ ,and $\conf_c$ such that $\conf_a
+    \parstepsto^i \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i
+    \leq 1$ and $j \leq 1$, or
+  \item $\conf_a \parstepsto \textup{\error}$ or $\conf_b \parstepsto
+    \textup{\error}$.
   \end{enumerate}
 \end{lem}
 }
 
 \newcommand{\LemStrongOneSidedQuasiConfluence}{
 \begin{lem}[Strong One-Sided Quasi-Confluence]\label{lem:strong-one-sided-quasi-confluence}
+  \TODO{If the statement of
+    Lemma~\ref{lem:strong-local-quasi-confluence} changes to mention
+    permutations, then figure out how the statement of this one has to
+    change as well.}
   If $\conf \parstepsto \conf'$ and $\conf \parstepsto^m \conf''$,
   where $1 \leq m$, then either:
   \begin{enumerate}
-    \item there exist $\pi, \conf_c, i, j$ such that  $\conf' \parstepsto^i
-      \conf_c$ and $\conf'' \parstepsto^j \pi(\conf_c)$ and $i \leq m$ and
+    \item there exist $\conf_c, i, j$ such that $\conf' \parstepsto^i
+      \conf_c$ and $\conf'' \parstepsto^j \conf_c$ and $i \leq m$ and
       $j \leq 1$, or
-    \item there exists $k \leq m$ such that $\conf'
-      \parstepsto^k \textup{\error}$, or there exists $k \leq 1$ such
-      that $\conf'' \parstepsto^k \textup{\error}$.
+    \item there exists $k \leq m$ such that $\conf' \parstepsto^k
+      \textup{\error}$, or there exists $k \leq 1$ such that $\conf''
+      \parstepsto^k \textup{\error}$.
   \end{enumerate}
 \end{lem}
 }
 
 \newcommand{\LemStrongQuasiConfluence}{
 \begin{lem}[Strong Quasi-Confluence]\label{lem:strong-quasi-confluence}
+  \TODO{If the statement of
+    Lemma~\ref{lem:strong-local-quasi-confluence} changes to mention
+    permutations, then figure out how the statement of this one has to
+    change as well.}
   If $\conf \parstepsto^n \conf'$ and $\conf \parstepsto^m
   \conf''$, where $1 \leq n$ and $1 \leq m$, then either:
   \begin{enumerate}
-    \item there exist $\pi, \conf_c, i, j$ such that $\conf' \parstepsto^i
-      \conf_c$ and $\conf'' \parstepsto^j \pi(\conf_c)$ and $i \leq m$ and
+    \item there exist $\conf_c, i, j$ such that $\conf' \parstepsto^i
+      \conf_c$ and $\conf'' \parstepsto^j \conf_c$ and $i \leq m$ and
       $j \leq n$, or
   \item there exists $k \leq m$ such that $\conf' \parstepsto^k
     \textup{\error}$, or there exists $k \leq n$ such that $\conf''
     \parstepsto^k \textup{\error}$.
   \end{enumerate}
+  \TODO{Figure out if we need to mention permutations in the statement
+    of the proof.}
 \end{lem}
 }
 
 \newcommand{\LemQuasiConfluence}{
 \begin{lem}[Quasi-Confluence]\label{lem:quasi-confluence}
+  \TODO{If the statement of
+    Lemma~\ref{lem:strong-local-quasi-confluence} changes to mention
+    permutations, then figure out how the statement of this one has to
+    change as well.}
   If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^*
   \conf''$, then either: 
   \begin{enumerate}
-  \item there exists $\pi, \conf_c$ such that $\conf' \parstepsto^*
-    \conf_c$ and $\conf'' \parstepsto^* \conf_c$ up to a location renaming $\pi$, or
+  \item there exists $\conf_c$ such that $\conf' \parstepsto^*
+    \conf_c$ and $\conf'' \parstepsto^* \conf_c$, or
   \item $\conf' = \textup{\error}$ or $\conf'' = \textup{\error}$.
   \end{enumerate}
 \end{lem}
+\begin{proof}
+  Strong Quasi-Confluence (Lemma~\ref{lem:strong-quasi-confluence})
+  implies Quasi-Confluence.
+\end{proof}
 }
 
 \newcommand{\ThmQuasiDeterminism}{
 \begin{thm}[Quasi-Determinism]\label{thm:quasi-determinism}
+  \TODO{If the statement of
+    Lemma~\ref{lem:strong-local-quasi-confluence} changes to mention
+    permutations, then figure out how the statement (and proof) of
+    this one has to change as well.}
   If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^* \conf''$,
   and neither $\conf'$ nor $\conf''$ can take a step,
   then either:
   \begin{enumerate}
-    \item $\conf' = \conf''$ up to a permutation on locations $\pi$, or
+    \item $\conf' = \conf''$, or
     \item $\conf' = \textup{\error}$ or $\conf'' = \textup{\error}$.
   \end{enumerate}
 \end{thm}
+\begin{proof}
+  By Lemma~\ref{lem:quasi-confluence}, one of the following two cases
+  applies:
+  \begin{enumerate}
+    \item There exists $\conf_c$ such that $\conf' \parstepsto^*
+      \conf_c$ and $\conf'' \parstepsto^* \conf_c$.  In this case,
+      since neither $\conf'$ nor $\conf''$ can step further, we must
+      have $\conf' = \conf_c$ and $\conf'' = \conf_c$, hence $\conf' =
+      \conf''$.
+    \item $\conf' = \error$ or $\conf'' = \error$, and so the result
+      is immediate.
+  \end{enumerate}
+\end{proof}
 }

@@ -1,0 +1,398 @@
+\begin{proof}
+  \TODO{Rewrite.}
+
+  By induction on the size of the derivation of $\conf \parstepsto \conf_a$, by
+  cases on syntax of the term $e$ in $\sigma = \config{S}{e}$. 
+
+  \begin{itemize}
+    \item {\sc E-Eval-Ctxt}: $\conf = \config{S}{\E{e}}$, and $\conf_a
+      = \config{S'}{\E{e'}}$.
+
+      Now, consider $\conf \parstepsto \sigma_b$. \\ 
+      If it steps by the {\sc E-Eval-Ctxt} rule, then we conclude with context reordering (Lemma~\ref{lem:ctx-reordering}), choosing $i = j = 1$. \\
+      If it steps by another rule, then $\E{e}$ is a reducible expression, and $\E{-} = [~]$. \\ 
+      Then the result follows by reordering (Lemma~\ref{lem:reordering}), choosing $i = j = 1$. 
+
+
+    \item {\sc E-Beta}: $\conf = \config{S}{\app{(\lam{x}{e})}{v}}$,
+      and $\conf_a = \config{S}{\subst{e}{x}{v}}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \config{S}{\subst{e}{x}{v}}$, and
+      \item $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\config{S}{\subst{e}{x}{v}} \parstepsto^i \conf_c$ and $\conf_b
+      \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b =
+      \config{S}{\subst{e}{x}{v}}$.
+
+      Choose $\conf_c = \config{S}{\subst{e}{x}{v}}$, $i = 0$ and $j =
+      0$.
+
+      Then $\config{S}{\subst{e}{x}{v}} = \conf_c$ and $\conf_b =
+      \conf_c$, as required.
+
+    \item {\sc E-New}: $\conf = \config{S}{\NEW}$, and $\conf_a =
+      \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\NEW} \parstepsto
+        \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$, and
+      \item $\config{S}{\NEW} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\config{\extS{S}{l}{\bot}{\frozenfalse}}{l} \parstepsto^i
+      \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and
+      $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b =
+      \config{\extS{S}{l'}{\bot}{\frozenfalse}}{l'}$.
+
+      From the side condition of {\sc E-New}, $l \notin S$.
+
+      Therefore, in $\config{\extS{S}{l'}{\bot}{\frozenfalse}}{l'}$,
+      we can $\alpha$-rename $l'$ to $l$, resulting in
+      $\config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
+
+      Choose $\conf_c = \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$,
+      $i = 0$ and $j = 0$.
+
+      Then $\config{S}{\subst{e}{x}{v}} = \conf_c$ and $\conf_b =
+      \conf_c$, as required.
+
+    \item {\sc E-Put}: $\conf = \config{S}{\putexp{l}{d_2}}$, and
+      $\conf_a = \config{\extSp{S}{l}{p_2}}{\unit}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\putexp{l}{d_2}} \parstepsto \config{\extSp{S}{l}{p_2}}{\unit}$, and
+      \item $\config{S}{\putexp{l}{d_2}} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\config{\extSp{S}{l}{p_2}}{\unit} \parstepsto^i \conf_c$ and
+      $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b =
+      \config{\extSp{S}{l}{p_2}}{\unit}$.
+
+      Choose $\conf_c = \config{\extSp{S}{l}{p_2}}{\unit}$, $i = 0$ and $j =
+      0$.
+
+      Then $\config{\extSp{S}{l}{p_2}}{\unit} = \conf_c$ and $\conf_b
+      = \conf_c$, as required.
+
+    \item {\sc E-Put-Err}: $\conf = \config{S}{\putexp{l}{d_2}}$, and
+      $\conf_a = \error$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\putexp{l}{d_2}} \parstepsto \error$, and
+      \item $\config{S}{\putexp{l}{d_2}} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\error \parstepsto^i \conf_c$ and $\conf_b \parstepsto^j
+      \conf_c$ and $i \leq 1$ and $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b = \error$.
+
+      Choose $\conf_c = \error$, $i = 0$ and $j = 0$.
+
+      Then $\error = \conf_c$ and $\conf_b = \conf_c$, as required.
+
+    \item {\sc E-Get}: $\conf = \config{S}{\getexp{l}{P}}$, and
+      $\conf_a = \config{S}{p_2}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\getexp{l}{P}} \parstepsto \config{S}{p_2}$, and
+      \item $\config{S}{\getexp{l}{P}} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\config{S}{p_2} \parstepsto^i \conf_c$ and $\conf_b
+      \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b =
+      \config{S}{p_2}$.
+
+      Choose $\conf_c = \config{S}{p_2}$, $i = 0$ and $j = 0$.
+
+      Then $\config{S}{p_2} = \conf_c$ and $\conf_b = \conf_c$, as
+      required.
+
+    \item {\sc E-Freeze-Init}: $\conf =
+      \config{S}{\freezeafter{l}{Q}{\lam{x}{e}}}$, and $\conf_a =
+      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto
+        \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$,
+        and
+      \item $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto
+        \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}
+      \parstepsto^i \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and
+      $i \leq 1$ and $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b =
+      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
+
+      Choose $\conf_c =
+      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$,
+      $i = 0$ and $j = 0$.
+
+      Then
+      $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}
+      = \conf_c$ and $\conf_b = \conf_c$, as required.
+
+    \item {\sc E-Spawn-Handler}: $\conf =
+      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+            \dots}}{H}}$, and 
+
+      $\conf_a =
+      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+            e, \dots}} {\{d_2\}\cup H}}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+            \dots}}{H}} \parstepsto \\
+        \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+              e, \dots}} {\{d_2\}\cup H}}$, and
+      \item $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+            \dots}}{H}} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+            e, \dots}} {\{d_2\}\cup H}} \parstepsto^i \conf_c$ and
+      $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+
+      \lk{This time, we could actually get different results on the
+        two sides of the diamond because we could choose a different
+        $d_2$, or we could run a different expression in $\setof{e,
+          \dots}$.}
+
+      By inspection of the operational semantics, one of the following
+      possibilities must hold:
+      \begin{itemize}
+      \item $\conf \parstepsto \conf_b$ by {\sc E-Spawn-Handler}:
+
+        Hence $\conf_b =
+        \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d'_2},
+              e, \dots}} {\{d'_2\}\cup H}}$.
+
+        Here, there are two subcases:
+        \begin{itemize}
+        \item $d'_2 \neq d_2$:
+
+          Choose: \\
+          $\conf_c =
+          \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                \subst{e_0}{x}{d'_2}, e, \dots}} {\{d_2, d'_2\}\cup
+              H}}$, \\
+          $i = 1$ and $j = 1$.
+
+          To show:
+          \begin{enumerate}
+          \item $\conf_a \parstepsto \conf_c$, where \\
+            $\conf_a = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                e, \dots}} {\{d_2\}\cup H}}$ and \\
+            $\conf_c = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                  \subst{e_0}{x}{d'_2}, e, \dots}} {\{d_2, d'_2\}\cup H}}$.
+
+            The proof is as follows:
+
+            From the premises of {\sc E-Spawn-Handler}, \\
+            $S(l) = \state{d_1}{\status_1}$ and
+            $d'_2 \userleq d_1$ and 
+            $d'_2 \notin H$ and
+            $d'_2 \in Q$.
+
+            Therefore, by {\sc E-Spawn-Handler}, \\
+            $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                e, \dots}} {\{d_2\}\cup H}} \parstepsto \\
+            \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d'_2}, \subst{e_0}{x}{d_2},
+                  e, \dots}} \setof{d'_2} \cup {\{d_2\}\cup H}}$, \\
+            which is equivalent to \\
+            $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                  \subst{e_0}{x}{d'_2}, e, \dots}} {\{d_2, d'_2\}\cup H}}$.
+
+            Hence $\conf_a \parstepsto \conf_c$.
+
+          \item $\conf_b \parstepsto \conf_c$, where \\
+            $\conf_b = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d'_2},
+                e, \dots}} {\{d'_2\}\cup H}}$, and \\
+            $\conf_c = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                  \subst{e_0}{x}{d'_2}, e, \dots}} {\{d_2, d'_2\}\cup H}}$.
+
+            The proof is as follows:
+
+            From the premises of {\sc E-Spawn-Handler}, \\
+            $S(l) = \state{d_1}{\status_1}$ and
+            $d_2 \userleq d_1$ and 
+            $d_2 \notin H$ and
+            $d_2 \in Q$.
+
+            Therefore, by {\sc E-Spawn-Handler}, \\
+            $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d'_2},
+                  e, \dots}} {\{d'_2\}\cup H}} \parstepsto \\
+            \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2}, \subst{e_0}{x}{d'_2},
+                  e, \dots}} \setof{d_2} \cup {\{d'_2\}\cup H}}$, \\
+            which is equivalent to \\
+            $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                  \subst{e_0}{x}{d'_2}, e, \dots}} {\{d_2, d'_2\}\cup H}}$.
+
+            Hence $\conf_b \parstepsto \conf_c$.
+          \end{enumerate}
+
+        \item $d'_2 = d_2$:
+
+          Choose:
+          $\conf_c = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                e, \dots}} {\{d_2\}\cup H}}$, \\
+          $i = 0$ and $j = 0$.
+
+          Then
+          $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                e, \dots}} {\{d_2\}\cup H}} = \conf_c$ and $\conf_b =
+          \conf_c$, as required.
+        \end{itemize}
+
+      \item $\conf \parstepsto \conf_b$ by {\sc E-Eval-Ctxt}:
+
+        Hence $\conf_b =
+        \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e',
+              \dots}}{H}}$.
+
+        \lk{Minor cheat here: the expression that could step could be
+          \emph{any} expression in the set $\setof{e, \dots}$, not
+          necessarily the first one.  I'm hoping it's enough to just
+          write out this case.}
+
+        Choose: \\
+        $\conf_c = \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+              e', \dots}} {\{d_2\}\cup H}}$, \\
+        $i = 1$ and $j = 1$.
+
+        To show:
+        \begin{enumerate}
+        \item $\conf_a \parstepsto \conf_c$, where \\
+          $\conf_a = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+              e, \dots}} {\{d_2\}\cup H}}$ and \\
+          $\conf_c = \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                e', \dots}} {\{d_2\}\cup H}}$.
+
+          The proof is as follows:
+
+          From the premise of {\sc E-Eval-Ctxt}, $\config{S}{e}
+          \parstepsto \config{S'}{e'}$.
+
+          From the definition of evaluation contexts, \\
+          $\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                [~], \dots}} {\{d_2\}\cup H}$ \\
+          is an evaluation context.
+
+          Hence, by {\sc E-Eval-Ctxt}, \\
+          $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+              e, \dots}} {\{d_2\}\cup H}} \parstepsto \\
+          \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+                e', \dots}} {\{d_2\}\cup H}}$.
+          
+          Hence $\conf_a \parstepsto \conf_c$.
+
+        \item $\conf_b \parstepsto \conf_c$, where \\
+          $\conf_b = \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e',
+              \dots}}{H}}$, and \\
+          $\conf_c = \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+              e', \dots}} {\{d_2\}\cup H}}$.
+
+          The proof is as follows:
+
+          From the premises of {\sc E-Spawn-Handler}, \\
+          $S(l) = \state{d_1}{\status_1}$ and
+          $d_2 \userleq d_1$ and 
+          $d_2 \notin H$ and
+          $d_2 \in Q$.
+
+          Hence, by {\sc E-Spawn-Handler}, \\
+          $\config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e',
+              \dots}}{H}} \parstepsto \\
+          \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2}, e',
+                \dots}}{\{d_2\}\cup H}}$.
+
+          Hence $\conf_b \parstepsto \conf_c$.
+        \end{enumerate}
+
+      \end{itemize}
+
+    \item {\sc E-Freeze-Final}: $\conf =
+      \config{S}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}$, and
+      $\conf_a = \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+        \parstepsto \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
+      \item $\config{S}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+
+      $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} \parstepsto^i
+      \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and
+      $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b =
+      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+
+      Choose $\conf_c = \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$,
+      $i = 0$ and $j = 0$.
+
+      Then $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} = \conf_c$ and
+      $\conf_b = \conf_c$, as required.
+
+    \item {\sc E-Freeze-Simple}: $\conf =
+      \config{S}{\freeze{l}}$, and $\conf_a =
+      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+
+      Given:
+      \begin{itemize}
+      \item $\config{S}{\freeze{l}} \parstepsto \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
+      \item $\config{S}{\freeze{l}} \parstepsto \conf_b$.
+      \end{itemize}
+
+      To show: There exist $\conf_c, i, j$ such that
+      $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} \parstepsto^i
+      \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and
+      $j \leq 1$.
+
+      By inspection of the operational semantics, $\conf_b =
+      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+
+      Choose $\conf_c = \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$,
+      $i = 0$ and $j = 0$.
+
+      Then $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} = \conf_c$ and
+      $\conf_b = \conf_c$, as required.
+  \end{itemize}
+\end{proof}
