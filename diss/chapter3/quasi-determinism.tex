@@ -1,0 +1,29 @@
+\section{Proof of quasi-determinism for $\lambdaLVish$}\label{s:quasi-quasi-determinism}
+
+In this section, I give a proof of quasi-determinism for
+$\lambdaLVish$ that formalizes the claim made earlier in this chapter:
+that, for a given program, although some executions may raise
+exceptions, all executions that produce a final result will produce
+the same final result.
+
+The quasi-determinism theorem says that if two executions starting
+from a configuration $\conf$ terminate in configurations $\conf'$ and
+$\conf''$, then either $\conf'$ and $\conf''$ are the same
+configuration, or one of them is $\error$.  As with the determinism
+result for $\lambdaLVar$, quasi-determinism follows from a series of
+supporting lemmas which I first prove.}
+
+\subsection{Monotonicity lemma}\label{subsection:quasi-monotonicity}
+
+The Monotonicity lemma says that, as evaluation proceeds according to
+the $\parstepsto$ relation, the store can only grow with respect to
+the $\leqstore{}{}$ ordering.
+
+\LemMonotonicity
+\begin{proof}
+  By induction on the derivation of $\config{S}{e} \parstepsto
+  \config{S'}{e'}$, by cases on the last rule in the derivation; see
+  Section~\ref{section:monotonicity-proof}.
+\end{proof}
+ 
+\TODO{Fill in the rest of this section.}
