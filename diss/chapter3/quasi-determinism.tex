@@ -64,19 +64,21 @@ assumption rules out interference from freezing.
 
 \subsection{Quasi-confluence lemmas}\label{subsection:quasi-quasi-confluence}
 
-\lk{In the POPL paper and TR, there was a lemma called ``Strong Local
-  Quasi-Diamond'' and another, almost identical one called ``Strong
-  Local Quasi-Confluence'' that followed almost directly from Strong
-  Local Quasi-Diamond.  In the $\lambdaLVar$ determinism proof,
-  ``Strong Local Confluence'' followed directly from ``Diamond'', but
-  this was the case because ``Strong Local Confluence'' was a special
-  case of ``Diamond''.  Here, I actually think we should have any
-  property that we call ``diamond'', because to me that word connotes
-  ``exactly one step'', and we should instead just have a ``Strong
-  Local Quasi-Confluence'' that is $\lambdaLVish$'s counterpart to
-  ``Diamond'' and ``Strong Local Confluence'' taken together.}
+\TODO{Add some explanatory text here.}
 
-\TODO{Add some text here explaining the above.}
+\lk{In the POPL paper and TR, there was a lemma called ``Strong Local
+  Quasi-Diamond'', and another, almost identical one called ``Strong
+  Local Quasi-Confluence'' that followed almost directly from Strong
+  Local Quasi-Diamond.  Here I combine them into a single lemma and
+  call it Strong Local Quasi-Confluence.  I don't want to use the word
+  "diamond", since to a lot of people that connotes "exactly one step
+  on each side of the diamond", which isn't true for this language
+  (that is, sometimes it's zero steps).  The only reason we were using
+  the word ``diamond'' was because it was an artifact of the
+  determinism proof in the original FHPC paper, which in turn was an
+  artifact of the CnC paper---see
+  Section~\ref{subsection:lvars-confluence} for more commentary on
+  that.}
 
 \LemStrongLocalQuasiConfluence
 \begin{proof}
@@ -103,5 +105,7 @@ assumption rules out interference from freezing.
 \LemQuasiConfluence
  
 \subsection{Quasi-determinism theorem}\label{subsection:quasi-quasi-determinism}
+
+\TODO{Add some explanatory text here.}
 
 \ThmQuasiDeterminism
