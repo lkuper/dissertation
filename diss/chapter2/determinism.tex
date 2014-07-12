@@ -12,16 +12,16 @@ supporting lemmas.  The structure of the proof is similar to that of
 the proof of determinism for Featherweight CnC given by Budimli\'c
 \etal~\cite{CnC}.  I reuse the naming conventions of Budimli\'c
 \etal~for Lemmas~\ref{lem:lvars-monotonicity}
-through~\ref{lem:lvars-diamond}, although the statements and proofs of
-those lemmas differ considerably in the setting of $\lambdaLVar$, due
-to the generality of LVars.
+through~\ref{lem:lvars-strong-local-confluence}, although the
+statements and proofs of those lemmas differ considerably in the
+setting of $\lambdaLVar$, due to the generality of LVars.
 
-However, Lemmas~\ref{lem:lvars-strong-local-confluence}
+However, Lemmas~\ref{lem:lvars-strong-one-sided-confluence}
 through~\ref{lem:lvars-confluence} are nearly identical to the
 corresponding lemmas in the Featherweight CnC determinism proof.  This
 is the case because, once Lemmas~\ref{lem:lvars-monotonicity} through
-\ref{lem:lvars-diamond} are established, the remainder of the
-determinism proof does not need to deal specifically with the
+\ref{lem:lvars-strong-local-confluence} are established, the remainder
+of the determinism proof does not need to deal specifically with the
 semantics of LVars, lattices, or the store, and instead deals only
 with execution steps at a high level.
 
@@ -107,18 +107,34 @@ $\error$.
 \LVarsLemErrorPreservation
 \input{chapter2/determinism-error-preservation-proof}
 
-\subsection{Diamond lemma}
+\subsection{Confluence lemmas}
 
-\LVarsLemDiamond
+Lemma~\ref{lem:lvars-strong-local-confluence}, the Strong Local
+Confluence lemma, says that if a configuration $\conf$ can step to
+configurations $\conf_a$ and $\conf_b$, then there exists an
+configuration $\conf_c$ that $\conf_a$ and $\conf_b$ can each reach in
+at most one step.  Lemmas~\ref{lem:lvars-strong-one-sided-confluence}
+and~\ref{lem:lvars-strong-confluence} then generalize that result to
+arbitrary numbers of steps.
+
+The structure of this part of the proof differs slightly from the
+Budimli\'c \etal~determinism proof for Featherweight CnC.  Budimli\'c
+\etal~prove a \emph{diamond} property, in which $\conf_a$ and
+$\conf_b$ each step to $\conf_c$ in \emph{exactly} one step.  They
+then get a property like Lemma~\ref{lem:lvars-strong-local-confluence}
+as an immediate consequence of the diamond property, by choosing $i =
+j = 1$.  But a true diamond property with exactly one step ``on each
+side of the diamond'' is stronger than we need here, and, in fact,
+does not hold for $\lambdaLVar$; so, instead, I prove the weaker ``at
+most one step'' property directly as
+Lemma~\ref{lem:lvars-strong-local-confluence}.
+
+\LVarsLemStrongLocalConfluence
 \begin{proof}
   By induction on the derivation of $\conf \parstepsto \conf_a$, by
   cases on the last rule in the derivation; see
-  Section~\ref{section:lvars-diamond-proof}.
+  Section~\ref{section:lvars-strong-local-confluence-proof}.
 \end{proof}
-
-\subsection{Confluence lemmas}
-
-\LVarsLemStrongLocalConfluence
 
 \LVarsLemStrongOneSidedConfluence
 \begin{proof}
@@ -135,6 +151,9 @@ $\error$.
 \LVarsLemConfluence
 
 \subsection{Determinism theorem}
+
+Finally, the determinism theorem, Theorem~\ref{thm:lvars-determinism},
+is a direct result of Lemma~\ref{lem:lvars-confluence}:
 
 \LVarsThmDeterminism
 
