@@ -85,27 +85,64 @@ assumption rules out interference from freezing.
   By induction on the derivation of $\conf \parstepsto \conf_a$, by
   cases on the last rule in the derivation; see
   Section~\ref{section:strong-local-quasi-confluence-proof}.
-  \TODO{Figure out if this is a correct summary.}
 \end{proof}
 
 \LemStrongOneSidedQuasiConfluence
 \begin{proof}
   By induction on $m$; see
   Section~\ref{section:strong-one-sided-quasi-confluence-proof}.
-  \TODO{Figure out if this is a correct summary.}
 \end{proof}
 
 \LemStrongQuasiConfluence
 \begin{proof}
   By induction on $n$; see
   Section~\ref{section:strong-quasi-confluence-proof}.
-  \TODO{Figure out if this is a correct summary.}
 \end{proof}
 
 \LemQuasiConfluence
  
 \subsection{Quasi-determinism theorem}\label{subsection:quasi-quasi-determinism}
 
-\TODO{Add some explanatory text here.}
+The Quasi-Determinism theorem, Theorem~\ref{thm:quasi-determinism}, is
+a straightforward result of Lemma~\ref{lem:quasi-confluence}.  It says
+that if two executions starting from a configuration $\conf$ terminate
+in configurations $\conf'$ and $\conf''$, then $\conf'$ and $\conf''$
+are the same configuration, or one of them is $\error$.
 
 \ThmQuasiDeterminism
+
+\subsection{Discussion: quasi-determinism in practice}
+
+\lk{I kinda threw this subsection in here on a whim.  Maybe it should
+  actually go somewhere in Chapter 4, or maybe it should be its own
+  section.}
+
+The quasi-determinism result for $\lambdaLVish$ shows that it is not
+possible to get multiple ``answers'' from the same program: every run
+will either produce the same answer or an error.  Importantly, this
+property is true not only for programs that use the freeze-after
+pattern expressed by the $\FAW$ primitive, but even those that freeze
+in arbitrary places using the simpler @freeze@ primitive.  This means
+that in practice, in a programming model based on LVars with freezing
+and handlers, even a program that fails to ensure quiescence
+(introducing the possiblility of a race between a @put@ and a
+@freeze@) cannot produce multiple non-$\error$ answers.
+
+Therefore the LVish programming model is fundamentally different from
+one in which the programmer must manually insert synchronization
+barriers to prevent data races.  In that kind of a model, a program
+with a misplaced synchronization barrier can be fully
+nondeterministic, producing multiple observable answers.  In the LVish
+model, the worst that can happen is that the program raises an error.
+Moreover, in the LVish model, an $\error$ result \emph{always} means
+that there is an undersynchronization bug in the program, and in
+principle the error message can even specify exactly which write
+operation happened after which freeze operation, making it easier to
+debug the problem.
+
+However, if we \emph{can} ensure that an LVar is only ever frozen
+\emph{after} all writes to that LVar have completed, then we can
+guarantee full determinism, because we will have ruled out races
+between write operations and freeze operations.  In the next chapter,
+I discuss how the LVish Haskell library enforces this ``freeze after
+writing'' property.
