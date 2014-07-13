@@ -22,7 +22,7 @@
   3.2. LVish, formally
   3.3. Proof of quasi-determinism for lambdaLVish
 
-4. The LVish Library: Implementation and Evaluation
+4. The LVish library: implementation and evaluation
   * the LVish implementation overview from the POPL paper
   * idea: combine evaluation sections from all our papers that have them
   * Benchmarks from the FHPC paper?  (Maybe not -- these are basically superseded by the POPL paper.)
@@ -30,11 +30,11 @@
   * k-CFA case study from the POPL paper
   * PhyBin case study from the PLDI paper
 
-5. Deterministic Threshold Reads of Distributed Data Structures
+5. Deterministic threshold reads of distributed data structures
   * loosely based on section 4 of my thesis proposal
   * basically exactly the DISC paper, minus the related work and the LVars background that's already covered earlier
 
-6. Related Work
+6. Related work
   * loosely based on section 5 of my thesis proposal
   * idea: combine related work sections from FHPC, POPL, DISC papers
   * related work from PLDI paper?  (Probably not -- it's not that related to the thesis)
@@ -42,3 +42,9 @@
 
 7. Conclusion
   * incorporate concluding points from FHPC, POPL, PLDI and DISC papers
+
+### Appendices
+
+A. Proofs
+
+B. PLT Redex Models of lambdaLVar and lambdaLVish
