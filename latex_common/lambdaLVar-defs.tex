@@ -21,6 +21,14 @@
 \end{definition}
 }
 
+\newcommand{\LVarsDefLeqStoreCnC}{
+\begin{definition}[store ordering, Featherweight CnC]\label{def:lvars-leqstore-cnc}
+  A store $S$ is \emph{less than or equal to} a store $S'$ (written
+  $\leqstore{S}{S'}$) iff $\dom{S} \subseteq \dom{S'}$ and for all $l
+  \in \dom{S}$, $S(l) = S'(l)$.
+\end{definition}
+}
+
 \newcommand{\LVarsDefLubStore}{
 \begin{definition}\label{def:lvars-lubstore}
 
@@ -47,11 +55,62 @@
 \end{definition}
 }
 
-\newcommand{\LVarsDefLeqStoreCnC}{
-\begin{definition}[store ordering, Featherweight CnC]\label{def:lvars-leqstore-cnc}
-  A store $S$ is \emph{less than or equal to} a store $S'$ (written
-  $\leqstore{S}{S'}$) iff $\dom{S} \subseteq \dom{S'}$ and for all $l
-  \in \dom{S}$, $S(l) = S'(l)$.
+\newcommand{\LVarsDefPermutation}{
+\begin{definition}\label{def:lvars-permutation}
+  A \emph{permutation} is a function $\pi : \Loc \rightarrow \Loc$
+  such that:
+  \begin{enumerate}
+    \item it is invertible, and
+    \item is is the identity on all but finitely many elements of
+      $Loc$.
+  \end{enumerate}
+\end{definition}
+}
+
+\newcommand{\LVarsDefPermutationExpression}{
+\begin{definition}\label{def:lvars-permutation-expression}
+  A permutation of an expression $e$ is a function $\pi$ defined as
+  follows:
+  \begin{displaymath}
+    \begin{array}{ll}
+      \pi(x) &= x \\
+      \pi(\unit) &= \unit \\
+      \pi(d) &= d \\
+      \pi(l) &= \pi(l) \\
+      \pi(T) &= T \\
+      \pi(\lam{x}{e}) &= \lam{x}{\pi(e)} \\
+      \pi(\app{e_1}{e_2}) &= \app{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\getexp{e_1}{e_2}) &= \getexp{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\putexp{e_1}{e_2}) &= \putexp{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\NEW) &= \NEW \\
+    \end{array}
+  \end{displaymath}
+  \lk{It's fine to just say that $\pi(\NEW)$ is $\NEW$; we only care
+    about renaming it if it has already been allocated!  If it's just
+    an unevaluated $\NEW$ expression, then there's nothing to do.}
+\end{definition}
+}
+
+\newcommand{\LVarsDefPermutationStore}{
+\begin{definition}\label{def:lvars-permutation-store}
+  A permutation of a store $S$ is a function $\pi$ defined as
+  follows:
+  \begin{displaymath}
+    \begin{array}{ll}
+      \pi(\topS) = \topS \\
+      \pi(\store{\storebindingRaw{l_1}{d_1}, \dots,
+        \storebindingRaw{l_2}{d_2}}) &=
+      \store{\storebindingRaw{\pi(l_1)}{d_1}, \dots,
+        \storebindingRaw{\pi(l_2)}{d_2}} \\
+    \end{array}
+  \end{displaymath}
+\end{definition}
+}
+
+\newcommand{\LVarsDefPermutationConfiguration}{
+\begin{definition}\label{def:lvars-permutation-configuration}
+  A permutation of a configuration $\config{S}{e}$ is a function $\pi$
+  defined as follows: $\pi(\config{S}{e}) = \config{\pi(S)}{\pi(e)}$.
 \end{definition}
 }
 
@@ -62,40 +121,3 @@
   \dom{S}) \cap \dom{S''} = \emptyset$.
 \end{definition}
 }
-
-%% \newcommand{\DefRenaming}{
-%% \begin{definition}\label{def:renaming}
-%%   A \emph{renaming} of a configuration $\config{S}{e}$ is the
-%%   substitution into $\config{S}{e}$ of location names $l'_1, \dots,
-%%   l'_n$ for some subset $l_1, \dots, l_n$ of $\dom{S}$.
-%% \end{definition}
-%% }
-
-%% \newcommand{\DefSafeRenaming}{
-%% \begin{definition}\label{def:safe-renaming}
-%%   A \emph{safe renaming of $\config{S'}{e'}$ with respect to
-%%     $\config{S}{e} \parstepsto \config{S'}{e'}$} is a renaming of
-%%   $\config{S'}{e'}$ in which the locations $l_1, \dots, l_n$ being
-%%   renamed are the members of the set $\dom{S'} - \dom{S}$, and the
-%%   names $l'_1, \dots, l'_n$ that are replacing $l_1, \dots, l_n$ do
-%%   not appear in $\dom{S'}$.
-%% \end{definition}
-%% }
-
-%% \newcommand{\DefRename}{
-%% \begin{definition}\label{def:rename}
-%%   The $\mathit{rename}$ metafunction is defined as follows:
-%%   \[
-%%   \begin{array}{lcl}
-%%     \renamelocs{\cdot}{\cdot}{\cdot} & : &\conf \times S \times S \rightarrow \conf \\
-%%     \renamelocs{\config{S'}{e}}{S''}{S} & \defeq & \subst{\config{S'}{e}}{l_1}{l'_1} \dots [l_n := l'_n]
-%%   \end{array}
-%%   \]
-%%   where:
-%%   \begin{itemize}
-%%   \item $\lbrace l_1, \dots, l_n \rbrace = \dom{S'} - \dom{S}$, and
-%%   \item $\lbrace l'_1, \dots, l'_n \rbrace $ is a set such that $l'_i
-%%     \notin (\dom{S'} \cup \dom{S''})$ for $i \in [1..n]$.
-%%   \end{itemize}
-%% \end{definition}
-%% }

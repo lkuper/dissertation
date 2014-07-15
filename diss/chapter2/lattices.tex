@@ -94,15 +94,15 @@ fact that no conflicting updates can occur to the LVar.
 
 During the evaluation of a $\lambdaLVar$ program, a \emph{store} $S$
 keeps track of the states of LVars.  Each LVar is represented by a
-binding from a location $l$, drawn from a set $\Loc$, to its state,
-which is some element $d \in D$.  Although each LVar in a program has
-its own state, the states of all the LVars are drawn from the same
-lattice $D$.  We can do this with no loss of generality because
-lattices corresponding to different types of LVars could always be
-unioned into a single lattice (with shared $\top$ and $\bot$
-elements).\footnote{Alternatively, in a typed formulation of
-  $\lambdaLVar$, the type of an LVar might determine the lattice of
-  its states.}
+\emph{binding} that maps from a location $l$, drawn from a countable
+set $\Loc$, to a \emph{state}, which is some element $d \in D$.
+Although each LVar in a program has its own state, the states of all
+the LVars are drawn from the same lattice $D$.  We can do this with no
+loss of generality because lattices corresponding to different types
+of LVars could always be unioned into a single lattice (with shared
+$\top$ and $\bot$ elements).\footnote{Alternatively, in a typed
+  formulation of $\lambdaLVar$, the type of an LVar might determine
+  the set of states it can take on.}
 
 \begin{definition}\label{def:lvars-store}
 A \emph{store} is either a finite partial mapping $S : \Loc \fmap
@@ -221,7 +221,7 @@ grow by updating existing bindings via repeated @put@s, so
 Definition~\ref{def:lvars-leqstore-cnc} would be too strong; for
 instance, if $\bot \userlt d_1 \userleq d_2$ for distinct $d_1, d_2
 \in D$, the relationship
-$\leqstore{\store{\storebinding{l}{d_1}}}{\store{\storebinding{l}{d_2}}}$
+$\leqstore{\store{\storebindingRaw{l}{d_1}}}{\store{\storebindingRaw{l}{d_2}}}$
 holds under Definition~\ref{def:lvars-leqstore}, but would not hold
 under Definition~\ref{def:lvars-leqstore-cnc}.  That is, in
 $\lambdaLVar$ an LVar could take on the state $d_1$ followed by $d_2$,

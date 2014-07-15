@@ -1,0 +1,31 @@
+\begin{proof}
+  Consider an arbitrary permutation $\pi$.  For
+  part~\ref{thm:permutable-reduction-transitions}, we have to show
+  that if $\conf \parstepsto \conf'$ then $\pi(\conf) \parstepsto
+  \pi(\conf')$, and that if $\pi(\conf) \parstepsto \pi(\conf')$ then
+  $\conf \parstepsto \conf'$.
+
+  For the forward direction, suppose $\conf \parstepsto \conf'$.  We
+  have to show that $\pi(\conf) \parstepsto \pi(\conf')$.  We proceed
+  by cases on the rule by which $\conf$ steps to $\conf'$.
+
+  \begin{itemize}
+    \item Case {\sc E-Beta}: $\conf =
+      \config{S}{\app{(\lam{x}{e})}{v}}$, and $\conf' =
+      \config{S}{\subst{e}{x}{v}}$.
+
+      Hence $\pi(\conf) =
+      \config{\pi(S)}{\app{\pi(\lam{x}{e})}{\pi(v)}}$, which is equal
+      to $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$.
+
+      By {\sc E-Beta},
+      $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$ steps to
+      $\config{\pi(S)}{\subst{\pi(e)}{x}{\pi(v)}}$.
+
+      \TODO{Finish case.}
+    \item \TODO{Case {\sc E-New}}
+    \item \TODO{Case {\sc E-Put}}
+    \item \TODO{Case {\sc E-Put-Err}}
+    \item \TODO{Case {\sc E-Get}}
+  \end{itemize}
+\end{proof}

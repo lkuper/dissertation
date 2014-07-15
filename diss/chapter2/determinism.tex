@@ -5,7 +5,9 @@ The main technical result of this chapter is a proof of determinism
 for the $\lambdaLVar$ language.  The determinism theorem says that if
 two executions starting from a given configuration $\conf$ terminate
 in configurations $\conf'$ and $\conf''$, then $\conf'$ and $\conf''$
-are the same configuration, up to a permutation on locations.
+are the same configuration, up to a permutation on locations.  (I
+discuss permutations in more detail below, in
+Section~\ref{subsection:lvars-permutations}.)
 
 In order to prove determinism for $\lambdaLVar$, I first prove several
 supporting lemmas.  The structure of the proof is similar to that of
@@ -29,7 +31,59 @@ with execution steps at a high level.
   generalized monotonic writes and generalized threshold reads, if in
   fact I'm going to do that.}
 
+\subsection{Permutations and permutability}\label{subsection:lvars-permutations}
+
+\TODO{This text is very similar to what's in Neel's Simple FRP
+  paper---revise it!}
+
+Before getting into the interesting part of the determinism proof, we
+need to deal with a technical issue.  The {\sc E-New} rule in the
+reduction semantics is non-deterministic; it allocates a fresh
+location $l \in \Loc$, with the only requirement on $l$ being that it
+is not yet in the domain of the store.  Therefore, multiple runs of
+the same program may differ in which locations they allocate.
+Intuitively, this is not a serious problem, since our allocator could
+always have chosen a different location to have allocated.  To
+formalize this intuition, I introduce the idea of \emph{permutations}
+and of the permutability of a transition.
+
+Recall from Section~\ref{subsection:lvars-stores} that we have a
+countable set of locations $\Loc$.  Then, a \emph{permutation} is
+defined as follows:
+
+\LVarsDefPermutation
+
+Condition (1) in Definition~\ref{def:lvars-permutation} ensures that
+we only consider location renamings that we can undo, and condition
+(2) ensures that we only consider renamings of a finite number of
+locations.
+
+We can straightforwardly lift Definition~\ref{def:lvars-permutation}
+to expressions and stores, and hence also to configurations.  To lift
+a permutation $\pi$ to expressions, we over the syntax of terms
+structurally and apply $\pi$ to any locations that occur in the term.
+To lift $\pi$ to stores, we apply $\pi$ to all locations in the domain
+of the store.  (We do not have to do any renaming in the codomain of
+the store, since locations cannot occur in elements of the
+application-specific lattice $D$.)
+
+\LVarsDefPermutationExpression
+
+\LVarsDefPermutationStore
+
+\LVarsDefPermutationConfiguration
+
+With these definitions in place, I can show that transitions are
+permutable:
+
+\LVarsLemPermutability
+\begin{proof}
+  See Section~\ref{section:lvars-permutability-proof}.
+\end{proof}
+
 \subsection{Monotonicity lemma}
+
+\TODO{Figure out where this comes in, and how it needs to change.}
 
 The Monotonicity lemma says that, as evaluation proceeds according to
 the $\parstepsto$ relation, the store can only grow with respect to
@@ -43,6 +97,8 @@ the $\leqstore{}{}$ ordering.
 \end{proof}
 
 \subsection{Independence lemma}\label{subsection:lvars-independence}
+
+\TODO{Figure out where this comes in, and how it needs to change.}
 
 The Independence lemma establishes a ``frame property'' for
 $\lambdaLVar$ that captures the idea that independent effects commute
@@ -105,7 +161,11 @@ $\error$.
   I think we actually do need it here.}
 
 \LVarsLemErrorPreservation
-\input{chapter2/determinism-error-preservation-proof}
+\begin{proof}
+  By induction on the derivation of $\config{S}{e} \parstepsto
+  \error$, by cases on the last rule in the derivation; see
+  Section~\ref{section:lvars-error-preservation-proof}.
+\end{proof}
 
 \subsection{Confluence lemmas}\label{subsection:lvars-confluence}
 
