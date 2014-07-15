@@ -5,27 +5,84 @@
   \pi(\conf')$, and that if $\pi(\conf) \parstepsto \pi(\conf')$ then
   $\conf \parstepsto \conf'$.
 
-  For the forward direction, suppose $\conf \parstepsto \conf'$.  We
-  have to show that $\pi(\conf) \parstepsto \pi(\conf')$.  We proceed
-  by cases on the rule by which $\conf$ steps to $\conf'$.
+  For the forward direction of
+  part~\ref{thm:permutable-reduction-transitions}, suppose $\conf
+  \parstepsto \conf'$.  We have to show that $\pi(\conf) \parstepsto
+  \pi(\conf')$.  We proceed by cases on the rule by which $\conf$
+  steps to $\conf'$.
 
   \begin{itemize}
     \item Case {\sc E-Beta}: $\conf =
       \config{S}{\app{(\lam{x}{e})}{v}}$, and $\conf' =
       \config{S}{\subst{e}{x}{v}}$.
 
-      Hence $\pi(\conf) =
-      \config{\pi(S)}{\app{\pi(\lam{x}{e})}{\pi(v)}}$, which is equal
-      to $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$.
+      To show: $\pi(\config{S}{\app{(\lam{x}{e})}{v}}) \parstepsto
+      \pi(\config{S}{\subst{e}{x}{v}})$.
+
+      By Definition~\ref{def:lvars-permutation-configuration},
+      $\pi(\conf) = \config{\pi(S)}{\app{\pi(\lam{x}{e})}{\pi(v)}}$,
+      which, by Definition~\ref{def:lvars-permutation-expression}, is
+      equal to $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$.
 
       By {\sc E-Beta},
       $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$ steps to
       $\config{\pi(S)}{\subst{\pi(e)}{x}{\pi(v)}}$.
 
-      \TODO{Finish case.}
+      By Definition~\ref{def:lvars-permutation-expression},
+      $\config{\pi(S)}{\subst{\pi(e)}{x}{\pi(v)}}$ is equal to
+      $\config{\pi(S)}{\pi(\subst{e}{x}{v})}$.
+
+      Hence $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$ steps
+      to $\config{\pi(S)}{\pi(\subst{e}{x}{v})}$, which is equal to
+      $\pi(\config{S}{\subst{e}{x}{v}})$ by
+      Definition~\ref{def:lvars-permutation-configuration}.  Hence the
+      case is satisfied.
+
     \item \TODO{Case {\sc E-New}}
     \item \TODO{Case {\sc E-Put}}
     \item \TODO{Case {\sc E-Put-Err}}
     \item \TODO{Case {\sc E-Get}}
   \end{itemize}
+
+  For the reverse direction of
+  part~\ref{thm:permutable-reduction-transitions}, suppose $\pi(\conf)
+  \parstepsto \pi(\conf')$.  We have to show that $\conf \parstepsto
+  \conf'$.  We have to show that .  We proceed by cases on the rule by
+  which $\pi(\conf)$ steps to $\pi(\conf')$.
+
+  \begin{itemize}
+    \item \TODO{Case {\sc E-Beta}}
+    \item \TODO{Case {\sc E-New}}
+    \item \TODO{Case {\sc E-Put}}
+    \item \TODO{Case {\sc E-Put-Err}}
+    \item \TODO{Case {\sc E-Get}}
+  \end{itemize}
+
+  For the forward direction of
+  part~\ref{thm:permutable-context-transitions}, suppose $\conf
+  \ctxstepsto \conf'$.  We have to show that $\pi(\conf) \ctxstepsto
+  \pi(conf')$.
+
+  From the premise of {\sc E-Eval-Ctxt}, we have that $\conf
+  \parstepsto \conf'$.  Hence from the forward direction of
+  part~\ref{thm:permutable-reduction-transitions}, we have that
+  $\pi(\conf) \parstepsto \pi(\conf')$.  Let $\conf = \config{S}{e}$
+  and $\conf' = \config{S'}{e'}$.  By
+  Definition~\ref{def:lvars-permutation-configuration}, we have that
+  $\pi(\config{S}{e}) = \config{\pi(S)}{\pi(e)}$ and
+  $\pi(\config{S'}{e'}) = \config{\pi(S')}{\pi(e')}$.  Hence
+  $\config{\pi(S)}{\pi(e)} \parstepsto \config{\pi(S')}{\pi(e')}$.
+
+  Therefore, by {\sc E-Eval-Ctxt}, we have that
+  $\config{\pi(S)}{\E{\pi(e)}} \ctxstepsto
+  \config{\pi(S')}{\E{\pi(e')}}$.
+
+  \TODO{Finish this direction.}
+
+  For the reverse direction of
+  part~\ref{thm:permutable-context-transitions}, suppose $\pi(\conf)
+  \ctxstepsto \pi(conf')$.  We have to show that $\conf \ctxstepsto
+  \conf'$.
+
+  \TODO{Finish this direction.}
 \end{proof}
