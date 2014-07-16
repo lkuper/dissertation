@@ -10,17 +10,19 @@ already had a taste of what it is like to program with the LVish
 programming model.  Indeed, Section~\ref{s:quasi-informal} even gives
 an example of an LVish Haskell program.  However, we haven't yet seen
 a complete picture of the LVish Haskell API.  In
-Section~\ref{s:lvish-api}, I describe the LVish API, and I discuss the
-parallel breadth-first traversal of Section~\ref{s:quasi-informal} in
-more detail.
+Section~\ref{s:lvish-api}, I discuss the high-level design goals of
+LVish and describe the LVish API, and I discuss the parallel
+breadth-first traversal of Section~\ref{s:quasi-informal} in more
+detail.
 
 In Section~\ref{s:lvish-internals}, I describe how the LVish library
-itself is implemented.
+itself is implemented. \TODO{More about this.}
 
-Finally, in Section~\ref{s:lvish-evaluation}, I illustrate how LVish
-is like through two case studies that involve parallelizing existing
-Haskell programs by porting them to LVish.  First, I describe using
-LVish to parallelize a control-flow analysis ($k$-CFA) algorithm.
-Second, I describe using LVish to parallelize \emph{PhyBin}, a
-bioinformatics application that relies heavily on a (parallelizable)
-tree-edit distance algorithm.
+Finally, in Sections~\ref{s:lvish-k-cfa} and~\ref{s:lvish-phybin}, I
+illustrate how LVish is like through two case studies that involve
+parallelizing existing Haskell programs by porting them to LVish.
+First, in Section~\ref{s:lvish-k-cfa}, I describe using LVish to
+parallelize a control-flow analysis ($k$-CFA) algorithm.  Second, in
+Section~\ref{s:lvish-phybin}, I describe using LVish to parallelize
+\emph{PhyBin}, a bioinformatics application that relies heavily on a
+(parallelizable) tree-edit distance algorithm.

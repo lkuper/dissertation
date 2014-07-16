@@ -2,43 +2,13 @@
 
 \TODO{Edit this section.}
 
-\subsection{The Big Picture}
+In this section, I describe the internals of the LVish library.
 
-We envision two parties interacting with our library.  First, there are data
-structure authors, who use the library directly to implement a specific
-monotonic data structure (\eg, a monotonically growing finite map).  Second,
-there are application writers, who are clients of these data structures.  Only
-the application writers receive a \mbox{(quasi-)determinism} guarantee; an author of a
-data structure is responsible for ensuring that the states their data structure can take on
-correspond to the elements of a lattice, and that the exposed interface to it corresponds to
-some use of @put@, @get@, @freeze@, and event handlers.
+\subsection{Two key ideas}
 
-Thus, our library is focused primarily on \emph{lattice-generic} infrastructure:
-the @Par@ monad itself, a thread scheduler, support for blocking and signaling
-threads, handler pools, and event handlers.  Since this infrastructure is unsafe
-(does not guarantee quasi-determinism), only data structure authors should
-import it, subsequently exporting a \emph{limited} interface specific to their
-data structure.  For finite maps, for instance, this interface might include key/value
-insertion, lookup, event handlers and pools, and freezing---along with
-higher-level abstractions built on top of these.
+Our implementation strategy relies on two semantic observations:
 
-For this approach to scale well with available parallel resources, it is
-essential that the data structures themselves support efficient parallel access;
-a finite map that was simply protected by a global lock would force all parallel
-threads to sequentialize their access.  Thus, we expect data structure authors
-to draw from the extensive literature on scalable parallel data structures,
-employing techniques like fine-grained locking and lock-free data
-structures~\cite{art}.  Data structures that fit into the LVish model have a
-special advantage: because all updates must commute, it may be possible to avoid
-the expensive synchronization which \emph{must} be used for non-commutative
-operations~\cite{lawsOfOrder}.  And in any case, monotonic data structures are usually
-much simpler to represent and implement than general ones.
-
-\subsection{Two Key Ideas}\label{subsection:atomic}
-
-%Our implementation strategy relies on two semantic observations:
-
-\paragraph{Leveraging atoms}
+\subsection{Leveraging atoms}
 
 Monotonic data structures acquire ``pieces of
 information'' over time.  In a lattice, the smallest such pieces are called the
@@ -67,7 +37,7 @@ Deltas provide a compact way to represent a change to the lattice, allowing us
 to easily and efficiently communicate such changes between @put@s and
 @gets@/handlers.
 
-\paragraph{Leveraging idempotence}
+\subsection{Leveraging idempotence}
 
 While we have emphasized the commutativity of least upper bounds, they also
 provide another important property: \emph{idempotence}, meaning that
@@ -85,7 +55,7 @@ also helps us deal with races between @put@ and @get@/@addHandler@, as we explai
 %% will must perform a traversal of the data structure; if that traversal is
 %% concurrent with a @put@, the added data may or may not be seen
 
-\subsection{Representation Choices}
+\subsection{Representation choices}
 Our library uses the following generic representation for LVars:
 \begin{lstlisting}
   data LVar a d = 
@@ -127,7 +97,7 @@ use to deregister from future events (useful for a @get@ whose threshold has
 been passed).  It is also given access to the CPU-local scheduler queue, which
 it can use to spawn threads.
 
-\subsection{The Core Implementation}
+\subsection{The core implementation}
 
 Internally, the @Par@ monad represents computations in continuation-passing
 style, in terms of their interpretation in the @IO@ monad:
@@ -205,7 +175,7 @@ freezeLV (LVar {status}) = mkPar $ \k q -> do
 %\vspace{-7mm}
 \end{figure}
 
-\paragraph{Threshold reading}
+\subsection{Threshold reading}
 
 The @getLV@ function assists data structure authors in writing operations with
 @get@ semantics.  In addition to an LVar, it takes two \emph{threshold
@@ -251,7 +221,7 @@ second version of @getLV@ that makes the alternative tradeoff, but as we will
 see below, idempotence plays an \emph{essential} role in the analogous situation
 for handlers.
 
-\paragraph{Putting and freezing}
+\subsection{Putting and freezing}
 
 On the other hand, we have the @putLV@ function, used to build operations with
 @put@ semantics.  It takes an LVar and an \emph{update function} @doPut@ that
@@ -306,7 +276,7 @@ computation.
 One final point: unlike @getLV@ and @putLV@, which are polymorphic in their
 determinism level, @freezeLV@ is statically @QuasiDet@.
 
-\paragraph{Handlers, pools and quiescence}
+\subsection{Handlers, pools and quiescence}
 
 Given the above infrastructure, the implementation of handlers is relatively straightforward.
 We represent handler pools as follows:
