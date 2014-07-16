@@ -81,6 +81,49 @@ permutable:
   See Section~\ref{section:lvars-permutability-proof}.
 \end{proof}
 
+\subsection{Internal determinism of the reduction semantics}
+
+My goal is to show that $\lambdaLVar$ is deterministic according to
+the definition of \emph{observable determinism} that I set forth in
+Chapter~\ref{ch:intro}---that is, that a $\lambdaLVar$ program always
+evaluates to the same value.  In the context of $\lambdaLVar$, a
+``program'' can be understood as a configuration of a store and an
+expression, and a ``value'' can be understood as a configuration that
+cannot step.  This definition of observable determinism does not
+require that a configuration takes the same sequence of steps on the
+way to reaching its value at the end of every run, and in fact, the
+$\lambdaLVar$ operational semantics does not have that property.
+
+I will use the term \emph{internally deterministic} to describe a
+program that does, in fact, takes the same sequence of steps on every
+run. \TODO{Get a citation for this.}  Although $\lambdaLVar$ is not
+internally deterministic, all of the internal nondeterminism of
+$\lambdaLVar$ is due to the {\sc E-Eval-Ctxt} rule!  This is the case
+because the {\sc E-Eval-Ctxt} rule is the only rule in the operational
+semantics by which a particular configuration may be able to step in
+multiple ways.  The multiple ways in which a configuration can step
+via {\sc E-Eval-Ctxt} correspond to the ways in which the expression
+in that configuration can be decomposed into a redex and an evaluation
+context.  In fact, it is exactly this property that makes it possible
+for multiple subexpressions of a $\lambdaLVar$ expression (a @let par@
+expression, for instance) to be evaluated in parallel.
+
+But, if we leave aside {\sc E-Eval-Ctxt} and focus on only the rules
+of the reduction semantics in
+Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}, we see that there
+is only one rule by which a given configuration can step, and only one
+configuration to which it can step.  The exception is the {\sc E-New}
+rule, which nondeterministically allocates locations and returns
+pointers to them---but we can account for this by saying that the
+reduction semantics is internally deterministic up to a permutation on
+locations.  Lemma~\ref{lem:lvars-internal-determinism} formalizes this
+claim.
+
+\LVarsLemInternalDeterminism
+\begin{proof}
+  See Section~\ref{section:lvars-internal-determinism-proof}.
+\end{proof}
+
 \subsection{Monotonicity lemma}
 
 \TODO{Figure out where this comes in, and how it needs to change.}

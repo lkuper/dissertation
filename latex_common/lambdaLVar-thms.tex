@@ -11,6 +11,13 @@
 \end{lem}
 }
 
+\newcommand{\LVarsLemInternalDeterminism}{
+\begin{lem}[Internal Determinism of the Reduction Semantics]\label{lem:lvars-internal-determinism}
+  If $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$, then
+  there is a permutation $\pi$ such that $\conf' = \pi(\conf'')$.
+\end{lem}
+}
+
 \newcommand{\LVarsLemMonotonicity}{
 \begin{lem}[Monotonicity]\label{lem:lvars-monotonicity}
   If $\config{S}{e} \parstepsto \config{S'}{e'}$,
