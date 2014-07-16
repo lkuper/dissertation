@@ -266,6 +266,10 @@ Chapter~\ref{ch:lvish}\lk{Refer to a specific section?}).
 
 \section{The LVish library}\label{s:intro-lvish}
 
+\lk{I'm not sure yet if this is a problem, but in this section I just
+  call the library ``LVish'', which may or may not be distinct enough
+  from ``the LVish programming model'' in Chapter~\ref{ch:quasi}.}
+
 To demonstrate the practicality of the LVars programming model, in
 Chapter~\ref{ch:lvish} I will describe
 \emph{LVish},\footnote{Available at
@@ -285,11 +289,11 @@ indexed by an \emph{effect level}, allowing fine-grained specification
 of the effects that a given computation is allowed to perform.  For
 instance, since @freeze@ introduces quasi-determinism, a computation
 indexed with a deterministic effect level is not allowed to use
-@freeze@.  Thus, the \emph{static type} of an LVish computation
-reflects its determinism or quasi-determinism guarantee.  Furthermore,
-if a @freeze@ is guaranteed to be the \emph{last} effect that occurs
-in a computation, then it is impossible for that @freeze@ to race with
-a @put@, ruling out the possibility of a run-time @put@-after-@freeze@
+@freeze@.  Thus, the \emph{type} of an LVish computation reflects its
+determinism or quasi-determinism guarantee.  Furthermore, if a
+@freeze@ is guaranteed to be the \emph{last} effect that occurs in a
+computation, then it is impossible for that @freeze@ to race with a
+@put@, ruling out the possibility of a run-time @put@-after-@freeze@
 exception.  LVish exposes a @runParThenFreeze@ operation that captures
 this ``freeze-last'' idiom and has a deterministic effect level.
 
@@ -301,6 +305,10 @@ and LVish provides tools to facilitate the definition of user-defined
 LVars.  I will describe the proof obligations for data structure
 implementors and give examples of applications that use user-defined
 LVars as well as those that the library provides.
+
+\TODO{Edit this part.  It's really just two case studies: k-CFA and
+  PhyBin.  I talk about the graph traversal thing earlier in the
+  chapter.}
 
 In addition to discussing the implementation of the LVish library and
 introducing the above features with examples, Chapter~\ref{ch:lvish}
@@ -402,7 +410,7 @@ The rest of this dissertation supports my thesis as follows:
   \item \emph{general}: In Chapter~\ref{ch:lvars}, I defend the
     generality of the LVars model by showing how previously existing
     deterministic parallel programming models can be expressed with
-    LVish.  This is possible because the definition of $\lambdaLVar$
+    LVars.  This is possible because the definition of $\lambdaLVar$
     is parameterized by the choice of lattice.  For example, a lattice
     of channel histories with a prefix ordering allows LVars to
     represent FIFO channels that implement a Kahn process network,

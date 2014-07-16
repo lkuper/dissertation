@@ -1,35 +1,13 @@
 \chapter{The LVish Library: Implementation and Evaluation\label{ch:lvish}} % 4
 
-\TODO{Revise this chapter.}
+\input{chapter4/intro}
 
-\lk{What follows is from the FHPC paper and needs to be edited or removed.}
+\input{chapter4/api}
+
+\input{chapter4/internals}
 
 \input{chapter4/evaluation}
 
-\lk{What follows is from the POPL paper and needs to be edited.}
+\TODO{Clean up the figures directory in this chapter.}
 
-Our library comes with a number of monotonic data structures,
-including sets, maps, counters, and single-assignment variables.
-Further, it can be extended with new data structures, all of which can
-be used compositionally within the same program.  Adding a new data
-structure typically involves porting an existing scalable (\eg, {\em
-  lock-free}) data structure to Haskell, then wrapping it to expose a
-(quasi-)deterministic LVar interface.  Our library exposes a monad
-that is \emph{indexed} by a determinism level: fully deterministic or
-quasi-deterministic.  Thus, the \emph{static type} of an LVish
-computation reflects its guarantee, and in particular the freeze-last
-idiom allows freezing
- 
-In Section~\ref{section:eval}, we evaluate our library with a case
-study: parallelizing control flow analysis.  The case study begins
-with an existing implementation of $k$-CFA~\cite{MightkCFABlog}
-written in a purely functional style.  We show how this code can
-easily and safely be parallelized by adapting it to the LVish
-model---an adaptation that yields promising parallel speedup, and also
-turns out to have benefits even in the sequential case.
-
-\input{chapter4/implementation}
-
-\input{chapter4/eval}
-
-\TODO{Add benchmarks and case study from PLDI paper.}
+\TODO{Clean up the results directory in this chapter.}
