@@ -52,26 +52,25 @@
       By {\sc E-New}, $\config{\pi(S)}{\NEW}$ steps to
       $\config{\extSRaw{(\pi(S))}{l'}{\bot}}{l'}$, where $l' \notin
       \dom{\pi(S)}$.
+      
+      It remains to show that
+      $\config{\extSRaw{(\pi(S))}{l'}{\bot}}{l'}$ is equal to
+      $\pi(\config{\extSRaw{S}{l}{\bot}}{l})$.
 
-      We know that $l$ does not occur in $\dom{S}$ because the side
-      condition on {\sc E-New} prevents it.  But $\pi$ could map a
-      location in $S$ to $l$.  If so, we $\alpha$-rename $l$ to some
-      fresh location name $l''$ that does not occur in $\dom{\pi(S)}$.
-      Then, $l$ does not occur in $\dom{\pi(S)}$, and therefore, in
-      $\config{\extSRaw{(\pi(S))}{l'}{\bot}}{l'}$, we can
-      $\alpha$-rename $l'$ to $l$, resulting in
-      $\config{\extSRaw{(\pi(S))}{l}{\bot}}{l}$.
-
-      \lk{I'm not sure what we do here.  Can we use the fact that
-        $\pi$ is invertible and hence a bijection?}
-
-      \TODO{Fill in middle.}
-
+      By Definition~\ref{def:lvars-permutation-configuration},
+      $\pi(\config{\extSRaw{S}{l}{\bot}}{l})$ is equal to
       $\config{\pi(\extSRaw{S}{l}{\bot})}{\pi(l)}$, which is equal to
-      $\pi(\config{\extSRaw{S}{l}{\bot}}{l})$.  Hence the case is
-      satisfied.
+      $\config{\extSRaw{(\pi(S))}{\pi(l)}{\bot}}{\pi(l)}$.
 
-    \item \TODO{Case {\sc E-New}}
+      So, we have to show that
+      $\config{\extSRaw{(\pi(S))}{l'}{\bot}}{l'}$ is equal to
+      $\config{\extSRaw{(\pi(S))}{\pi(l)}{\bot}}{\pi(l)}$.  Since we
+      know (from the side condition of {\sc E-New}) that $l \notin
+      \dom{S}$, it follows that $\pi(l) \notin \pi(\dom{S})$.
+      Therefore, in $\config{\extSRaw{(\pi(S))}{l'}{\bot}}{l'}$, we
+      can $\alpha$-rename $l'$ to $\pi(l)$, and so the two
+      configurations are equal and the case is satisfied.
+
     \item \TODO{Case {\sc E-Put}}
     \item \TODO{Case {\sc E-Put-Err}}
     \item \TODO{Case {\sc E-Get}}
