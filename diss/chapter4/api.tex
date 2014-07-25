@@ -1,110 +1,65 @@
-\section{The LVish library API}\label{s:lvish-api}
+\section{The API}\label{s:lvish-api}
 
-\TODO{Edit this section.  It needs to cover effect levels, not just
-  determinism levels.  Also, add examples from the lvar-examples
-  repo.}
+In this section I explain the LVish library API. \TODO{More
+  explanatory text here.}
 
-\TODO{Things I want to make sure and discuss here include ``why
-  Haskell?''}
+\subsection{The \lstinline|s| and \lstinline|e| type parameters}
 
-We have constructed a prototype implementation of LVish as a monadic library in
-Haskell, which is available at 
-\begin{center}
-\url{http://hackage.haskell.org/package/lvish}
-\end{center}
-\ajt{Or would we rather link to github?}%
-Our library adopts the basic approach
-of the @Par@ monad~\cite{monad-par}, enabling us to employ our own notion of
-lightweight, library-level threads with a custom scheduler.  It supports the
-programming model laid out in Section~\ref{section:lvish-informal} in full,
-including explicit handler pools.  It differs from our formal model in following
-Haskell's by-need evaluation strategy, which also means that concurrency in the
-library is \emph{explicitly marked}, either through uses of a @fork@ function or
-through asynchronous callbacks, which run in their own lightweight thread.
+In order to support both determinism and quasi-determinism guarantees
+in the LVish library, we need to be able to guarantee that only
+certain LVar effects can occur within a given @Par@ computation.  In a
+deterministic computation, only @put@ and @get@ should be allowed; in
+a quasi-deterministic computation, @freeze@ operations should be
+allowed as well.  Yet other combinations may be desirable: for
+instance, we may want a computation to perform \emph{only} writes, and
+not reads.  Furthermore, we might want to specifically allow or
+disallow \emph{non-idempotent} writes, as discussed in
+Section~\label{s:lvars-generalizing}.
 
-Implementing LVish as a Haskell library makes it possible to provide
-compile-time guarantees about determinism and quasi-determinism,
-because programs written using our library run in our @Par@ monad and
-can therefore only perform LVish-sanctioned side effects.
-We take advantage of
-this fact by indexing @Par@ computations with a phantom type
-that indicates their \emph{determinism level}:
-\begin{lstlisting}
-  data Determinism = Det | QuasiDet
-\end{lstlisting}
-%% while the second is the standard phantom type used by the @ST@ monad, which is
-%% used to ensure that LVars themselves cannot escape from uses of our @Par@ monad.
-The @Par@ type constructor has the following kind:\footnote{We are here using
-  the {\tt DataKinds} extension to Haskell to treat {\tt Determinism} as a
-  kind.  In the full implementation, we include a second phantom type parameter to ensure that LVars
-  cannot be used in multiple runs of the {\tt Par} monad, in a manner analogous to how the {\tt ST} monad prevents an {\tt STRef} from being returned from {\tt runST}.}
-\begin{lstlisting}
-  Par :: Determinism -> * -> *
-\end{lstlisting}
-together with the following suite of @run@ functions:
-\begin{lstlisting}
-  runPar   :: Par Det a -> a
-  runParIO :: Par lvl a -> IO a
-  runParThenFreeze :: DeepFrz a => Par Det a -> FrzType a
-\end{lstlisting}
-The public library API ensures that if code uses @freeze@, it is marked as
-@QuasiDet@; thus, code that types as @Det@ is guaranteed to be fully
-deterministic.  While LVish code with an arbitrary determinism level @lvl@ can be
-executed in the @IO@ monad using @runParIO@, only @Det@ code can be executed as if it were pure,
-since it is guaranteed to be free of visible side effects of nondeterminism.  In
-the common case that @freeze@ is only needed at the end of an
-otherwise-deterministic computation, @runParThenFreeze@ runs the computation to
-completion, and then freezes the returned LVar, returning its exact value---and
-is guaranteed to be deterministic.\footnote{The {\tt DeepFrz} typeclass is used
-  to perform freezing of nested LVars, producing values of frozen type (as given
-  by the {\tt FrzType} type function).}
+In order to capture these constraints and make them explicit in the
+types of LVar computations, we index @Par@ computations with a
+\emph{phantom type} @e@ that indicates their \emph{effect level}.  The
+@Par@ type becomes, instead, @Par e@, where @e@ is a type-level
+encoding of booleans indicating which operations, such as writes,
+reads, or freeze operations, are allowed to occur inside it.
 
-%% The type @s@ (short for ``session'') that
-%% appears in the @run@ functions also appears as a phantom type of LVars
-%% themselves; the universal quantification forces each LVar to be tied to a single
-%% session, \ie, a single use of a @run@ function~\cite{?}.  Readers unfamiliar with this
-%% trick from the @ST@ monad can safely ignore the type parameter altogether.
+Since we do not know in advance which effects this
+``switch-on-and-off'' capability will need to support, we follow the
+precedent of Kiselyov \etal~on extensible effects in
+Haskell~\cite{oleg-amr-haskell-2013}: we abstract away the specific
+structure of @e@ into \emph{type class constraints}, which allow a
+@Par@ computation to be annotated with the \emph{interface} that its
+@e@ type parameter is expected to satisfy.  This static effect
+tracking mechanism allows us to define ``effect shorthands'' and use
+them as Haskell type class constraints.  For example, a @Par@
+computation annotated with the effect level constraint @HasPut@ can
+perform @put@s.  We will see several examples of effect level
+constraints in @Par@ computations shortly.
 
-\ajt{We don't actually prove that freeze-free code is deterministic, but it
-  should follow pretty easily from the proof of quasi-determinism.  Perhaps we
-  should claim it in the proof section?}
-\lk{Well, to do this ``right'' we would have to not just prove that
-  freeze-free code is deterministic, but we'd have to prove that
-  freeze-happens-last code is deterministic...}
+Our @Par@ type constructor also has a second type parameter, @s@,
+making @Par e s a@ the complete type of a @Par@ computation that
+returns a result of type @a@.  The @s@ parameter ensures that, when a
+computation in the Par monad is run using the provided @runPar@
+operation (or using a variant of @runPar@, which I will discuss
+below), it is not possible to return an LVar from @runPar@ and reuse
+it in another call to @runPar@.  The @s@ type parameter also appears
+in the types of LVars themselves, and the universal quantification of
+@s@ in @runPar@ and its variants forces each LVar to be tied to a
+single ``session'', \ie, a single use of a @run@ function, in the same
+way that the @ST@ monad in Haskell prevents an @STRef@ from escaping
+@runST@.  Doing so allows the Lvish implementation to assume that
+LVars are created and used within the same session.\footnote{The
+  addition of the \lstinline|s| type parameter to \lstinline|Par| in
+  the LVish library does not have to do with LVars as such. In the
+  monad-par library there is no \lstinline|s| parameter on
+  \lstinline|Par| computations and therefore nothing to prevent a
+  programmer from reusing an IVar from one \lstinline|Par| computation
+  to another.  As Simon Marlow notes in \emph{Parallel and Concurrent
+    Programming in Haskell}~\cite{marlow-book}, ``This is a Very Bad
+  Idea; don't do it.''}
 
-\subsection{The big picture}
+\lk{I feel like this section would be easier to understand if I
+  included the types of \lstinline|runPar| and friends, but they're so
+  ugly with the effect switchboards that I don't want to put them in
+  here. :(}
 
-We envision two parties interacting with the LVish library.  First,
-there are data structure authors, who use the library directly to
-implement a specific monotonic data structure (\eg, a monotonically
-growing finite map).  Second, there are application writers, who are
-clients of these data structures.  Only the application writers
-receive a \mbox{(quasi-)determinism} guarantee; an author of a data
-structure is responsible for ensuring that the states their data
-structure can take on correspond to the elements of a lattice, and
-that the exposed interface to it corresponds to some use of @put@,
-@get@, @freeze@, and event handlers.
-
-Thus, our library is focused primarily on \emph{lattice-generic}
-infrastructure: the @Par@ monad itself, a thread scheduler, support
-for blocking and signaling threads, handler pools, and event handlers.
-Since this infrastructure is unsafe (does not guarantee
-quasi-determinism), only data structure authors should import it,
-subsequently exporting a \emph{limited} interface specific to their
-data structure.  For finite maps, for instance, this interface might
-include key/value insertion, lookup, event handlers and pools, and
-freezing---along with higher-level abstractions built on top of these.
-
-For this approach to scale well with available parallel resources, it
-is essential that the data structures themselves support efficient
-parallel access; a finite map that was simply protected by a global
-lock would force all parallel threads to sequentialize their access.
-Thus, we expect data structure authors to draw from the extensive
-literature on scalable parallel data structures, employing techniques
-like fine-grained locking and lock-free data structures~\cite{art}.
-Data structures that fit into the LVish model have a special
-advantage: because all updates must commute, it may be possible to
-avoid the expensive synchronization which \emph{must} be used for
-non-commutative operations~\cite{lawsOfOrder}.  And in any case,
-monotonic data structures are usually much simpler to represent and
-implement than general ones.

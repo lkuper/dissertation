@@ -1,59 +1,63 @@
-\section{The LVish library implementation}\label{s:lvish-internals}
+\section{The library implementation}\label{s:lvish-internals}
 
-\TODO{Edit this section.}
-
-In this section, I describe the internals of the LVish library.
+In this section, I describe the internals of the LVish
+library. \TODO{More descriptive text here.}
 
 \subsection{Two key ideas}
 
-Our implementation strategy relies on two semantic observations:
+Our implementation strategy for LVish relies on two semantic
+observations: first, the \emph{atomicity} of most lattices used by
+LVish programs, and second, the idempotence of the least upper bound
+operation.
 
-\subsection{Leveraging atoms}
+\subsubsection{Leveraging atoms}
 
-Monotonic data structures acquire ``pieces of
-information'' over time.  In a lattice, the smallest such pieces are called the
-\emph{atoms} of the lattice: they are elements not equal to $\bot$, but for
-which the only smaller element is $\bot$.  Lattices for which every element is
-the lub of some set of atoms are called \emph{atomistic}, and in practice most
-application-specific lattices used by LVish programs 
+Monotonic data structures acquire ``pieces of information'' over time.
+In a lattice, the smallest such pieces are called the \emph{atoms} of
+the lattice: they are elements not equal to $\bot$, but for which the
+only smaller element is $\bot$.  Lattices for which every element is
+the lub of some set of atoms are called \emph{atomistic}, and in
+practice most application-specific lattices used by LVish programs
 have this property---especially those whose elements represent
 collections.
 
-In general, the LVish primitives allow arbitrarily large queries and updates
-to an LVar.  But for an atomistic lattice, the corresponding data structure
-usually exposes operations that work at the atom level, semantically limiting
-@put@s to atoms, @get@s to threshold sets of atoms, and event sets to sets of
-atoms.  For example, the lattice of finite maps is atomistic, with atoms
-consisting of all singleton maps (\ie, all key/value pairs).  The interface to a
-finite map usually works at the atom level, allowing addition of a new
-key/value pair, querying of a single key, or traversals (which we model as
-handlers) that walk over one key/value pair at a time.
+In general, the LVish primitives allow arbitrarily large queries and
+updates to an LVar.  But for an atomistic lattice, the corresponding
+data structure usually exposes operations that work at the atom level,
+semantically limiting @put@s to atoms, @get@s to threshold sets of
+atoms, and event sets to sets of atoms.  For example, the lattice of
+finite maps is atomistic, with atoms consisting of all singleton maps
+(\ie, all key/value pairs).  The interface to a finite map usually
+works at the atom level, allowing addition of a new key/value pair,
+querying of a single key, or traversals (which we model as handlers)
+that walk over one key/value pair at a time.
 
-Our implementation is designed to facilitate good performance for atomistic
-lattices by associating LVars with a set of \emph{deltas} (changes), as well as
-a lattice.  For atomistic lattices, the deltas are essentially just the
-atoms---for a set lattice, a delta is an element; for a map, a key/value pair.
-Deltas provide a compact way to represent a change to the lattice, allowing us
-to easily and efficiently communicate such changes between @put@s and
+Our implementation is designed to facilitate good performance for
+atomistic lattices by associating LVars with a set of \emph{deltas}
+(changes), as well as a lattice.  For atomistic lattices, the deltas
+are essentially just the atoms---for a set lattice, a delta is an
+element; for a map, a key/value pair.  Deltas provide a compact way to
+represent a change to the lattice, allowing us to easily and
+efficiently communicate such changes between @put@s and
 @gets@/handlers.
+nbn
 
-\subsection{Leveraging idempotence}
+\subsubsection{Leveraging idempotence}
 
-While we have emphasized the commutativity of least upper bounds, they also
-provide another important property: \emph{idempotence}, meaning that
-$\userlub{d}{d} = d$ for any element $d$.  In LVish terms, repeated @put@s or @freeze@s
-have no effect, and since these are the only way to modify the store, the
-result is that $e; e$ behaves the same as $e$ for any LVish expression $e$.  
-Idempotence has already been recognized as a useful property for work-stealing
-scheduling~\cite{idempotent}: if the scheduler is allowed to occasionally duplicate work, it is
-possible to substantially save on synchronization costs.  Since LVish
-computations are guaranteed to be idempotent, we could use such a scheduler
-(for now we use the standard Chase-Lev deque~\cite{ChaseLev}).  But idempotence
-also helps us deal with races between @put@ and @get@/@addHandler@, as we explain below.
-%%   Since
-%% @addHandler@ must launch callbacks for any events that have already occurred, it
-%% will must perform a traversal of the data structure; if that traversal is
-%% concurrent with a @put@, the added data may or may not be seen
+While we have emphasized the commutativity of least upper bounds, they
+also provide another important property: \emph{idempotence}, meaning
+that $\userlub{d}{d} = d$ for any element $d$.  In LVish terms,
+repeated @put@s or @freeze@s have no effect, and since these are the
+only way to modify the store, the result is that $e; e$ behaves the
+same as $e$ for any LVish expression $e$.  Idempotence has already
+been recognized as a useful property for work-stealing
+scheduling~\cite{idempotent}: if the scheduler is allowed to
+occasionally duplicate work, it is possible to substantially save on
+synchronization costs.  Since LVish computations are guaranteed to be
+idempotent, we could use such a scheduler (the existing implementation
+uses the standard Chase-Lev deque~\cite{ChaseLev}).  But idempotence
+also helps us deal with races between @put@ and @get@/@addHandler@, as
+I explain below.
 
 \subsection{Representation choices}
 Our library uses the following generic representation for LVars:

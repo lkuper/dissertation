@@ -1,58 +1,57 @@
 We want the programming model of Chapters~\ref{ch:lvars}
 and~\ref{ch:quasi} to be realizable in practice.  If the determinism
 guarantee offered by LVars is to do us any good, however, we need to
-add LVars to a parallel programming environment that is already known
-to be deterministic.
+add LVars to a programming environment that is already deterministic.
 
 The \emph{monad-par} Haskell library~\cite{monad-par}, which provides
-the @Par@ monad, is one such known-deterministic parallel programming
-environment.  The existing @Par@ monad is an appealing starting point
-for a practical implementation of LVars because the inter-task
-communication that it allows is through IVars, which, as we have seen,
-are a special case of LVars.  Implementing the basic LVars model is
-therefore a matter of generalizing the existing @Par@ monad
-implementation.
+the @Par@ monad, is one such deterministic parallel programming
+environment.  Haskell is in general an appealing substrate for
+implementing guaranteed-deterministic parallel programming models
+because it is pure by default, and its type system enforces separation
+of pure and effectful code via monads.  In order for the determinism
+guarantee of any parallel programming model to hold, the only side
+effects allowed must be those sanctioned by the programming
+model.\footnote{Haskell is often advertised as a purely functional
+programming language, that is, one without side effects, but it is
+perhaps more useful to think of it as a language that gets other
+effects out of the way so that one can add one's own effects!}  In the
+case of the basic LVars model, those effects are @put@ and @get@
+operations on LVars. \lk{Should we say that both \lstinline|put|
+and \lstinline|get| are effects, or just \lstinline|put|?}
+Implementing the LVars model as a Haskell library makes it possible to
+provide compile-time guarantees about determinism and
+quasi-determinism, because programs written using the library run in a
+particular monad and can therefore only perform the side effects that
+we choose to sanction.
 
-The @Par@ monad approach is also appealing because it is implemented
-entirely as a library in Haskell, with a library-level scheduler.
-This modularity makes it possible to make changes to the @Par@
-scheduling strategy (which we will need to do in order to support
-LVars) without having to make any modifications to GHC or its run-time
-system.
-
-Finally, Haskell is in general an appealing substrate for implementing
-the LVars programming model because it is pure by default, and its
-type system enforces separation of pure and effectful code.  For the
-determinism guarantee of the LVars model (or the quasi-determinism
-guarantee of the extended model) to hold, the only side effects
-allowed must be @put@ and @get@ operations on LVars. \lk{Should we say
-that both \lstinline|put| and \lstinline|get| are effects, or
-just \lstinline|put|?}  Implementing the LVars model as a Haskell
-library makes it possible to provide compile-time guarantees about
-determinism and quasi-determinism, because programs written using the
-library run in the @Par@ monad and can therefore only perform the side
-effects that we sanction.\footnote{Haskell is often advertised as a
-purely functional programming language, that is, one without side
-effects, but it is perhaps more useful to think of it as a language
-that gets other effects out of the way so that one can add one's own
-effects!}
+Another reason why the existing @Par@ monad is an appealing starting
+point for a practical implementation of LVars is that it allows
+inter-task communication through IVars, which, as we have seen, are a
+special case of LVars.  Implementing the basic LVars model then
+becomes a matter of generalizing the existing @Par@ monad
+implementation.  Finally, the @Par@ monad approach is appealing
+because it is implemented entirely as a library in Haskell, with a
+library-level scheduler.  This modularity makes it possible to make
+changes to the @Par@ scheduling strategy (which we will need to do in
+order to support LVars) without having to make any modifications to
+GHC or its run-time system.
 
 In this chapter, I describe the \emph{LVish} library, a Haskell
 library for practical deterministic and quasi-deterministic parallel
 programming with LVars.  We have already had a taste of what it is
-like to use the LVish library---Section~\ref{s:quasi-informal} even
-gives an example of an LVish Haskell program---but we have not yet had
-a systematic introduction to the LVish Haskell library API.  In
-Section~\ref{s:lvish-api}, I discuss the high-level design goals of
-LVish and describe the LVish API, and I discuss the parallel
-breadth-first traversal of Section~\ref{s:quasi-informal} in more
-detail.  Next, in Section~\ref{s:lvish-internals}, I describe how the
-LVish library itself is implemented.  Finally, in
-Sections~\ref{s:lvish-k-cfa} and~\ref{s:lvish-phybin}, I present two
-case studies of parallelizing existing Haskell programs by porting
-them to LVish.  First, in Section~\ref{s:lvish-k-cfa}, I describe
-using LVish to parallelize a control-flow analysis ($k$-CFA)
-algorithm.  Second, in Section~\ref{s:lvish-phybin}, I describe using
-LVish to parallelize
+like to use the LVish library; Section~\ref{s:quasi-informal} gave an
+example of an LVish Haskell program.  In this chapter I go on to give
+a systematic introduction to the LVish library.  First, in
+Section~\ref{s:lvish-big-picture}, I discuss the library at a high
+level.  Then, in Section~\ref{s:lvish-api}, I describe the LVish API,
+and I discuss the parallel breadth-first traversal of
+Section~\ref{s:quasi-informal} in more detail.  In
+Section~\ref{s:lvish-internals}, I describe how the library itself is
+implemented.  Finally, in Sections~\ref{s:lvish-k-cfa}
+and~\ref{s:lvish-phybin}, I present two case studies of parallelizing
+existing Haskell programs by porting them to LVish.  First, in
+Section~\ref{s:lvish-k-cfa}, I describe using LVish to parallelize a
+control-flow analysis ($k$-CFA) algorithm.  Second, in
+Section~\ref{s:lvish-phybin}, I describe using LVish to parallelize
 \emph{PhyBin}, a bioinformatics application that relies heavily on a
 (parallelizable) tree-edit distance algorithm.
