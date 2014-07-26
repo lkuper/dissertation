@@ -201,5 +201,14 @@
   \ctxstepsto \pi(\conf')$.  We have to show that $\conf \ctxstepsto
   \conf'$.
 
-  \TODO{Finish this direction.}
+  We know from the forward direction of the proof that for all
+  configurations $\conf$ and $\conf'$ and permutations $\pi$, if
+  $\conf \ctxstepsto \conf'$ then $\pi(\conf) \ctxstepsto
+  \pi(\conf')$.  Hence since $\pi(\conf) \ctxstepsto \pi(\conf')$, and
+  since $\piinv$ is also a permutation, we have that
+  $\piinv(\pi(\conf)) \ctxstepsto \piinv(\pi(\conf'))$.  Since
+  $\piinv(\pi(l)) = l$ for every $l \in \Loc$, and that property lifts
+  to configurations as well, we have that $\conf \ctxstepsto \conf'$.
+
+  \lk{Is the above enough of a proof?}
 \end{proof}
