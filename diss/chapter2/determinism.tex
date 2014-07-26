@@ -102,21 +102,28 @@ Chapter~\ref{ch:intro}---that is, that a $\lambdaLVar$ program always
 evaluates to the same value.  In the context of $\lambdaLVar$, a
 ``program'' can be understood as a configuration of a store and an
 expression, and a ``value'' can be understood as a configuration that
-cannot step.  This definition of observable determinism does not
-require that a configuration takes the same sequence of steps on the
-way to reaching its value at the end of every run, and in fact, the
-$\lambdaLVar$ operational semantics does not have that property.
+cannot step.  A configuration that cannot step might be one in which
+the expression is a value, or it might be a ``stuck'' configuration
+that cannot step because no rule of the operational semantics applies,
+even if the expression in that configuration is not a value.  (This
+could happen if, for instance, we have a blocking @get@ expression and
+there are no other evaluating expressions that could cause it to
+unblock.)
 
-I will use the term \emph{internally deterministic} to describe a
-program that does, in fact, takes the same sequence of steps on every
-run. \TODO{Get a citation for this.}  Although $\lambdaLVar$ is not
-internally deterministic, all of the internal nondeterminism of
-$\lambdaLVar$ is due to the {\sc E-Eval-Ctxt} rule!  This is the case
-because the {\sc E-Eval-Ctxt} rule is the only rule in the operational
-semantics by which a particular configuration may be able to step in
-multiple ways.  The multiple ways in which a configuration can step
-via {\sc E-Eval-Ctxt} correspond to the ways in which the expression
-in that configuration can be decomposed into a redex and an evaluation
+This definition of observable determinism does not require that a
+configuration takes the same sequence of steps on the way to reaching
+its value at the end of every run, and in fact, the $\lambdaLVar$
+operational semantics does not have that property.  I will use the
+term \emph{internally deterministic} to describe a program that does,
+in fact, takes the same sequence of steps on every run. \TODO{Get a
+  citation for this.}  Although $\lambdaLVar$ is not internally
+deterministic, all of the internal nondeterminism of $\lambdaLVar$ is
+due to the {\sc E-Eval-Ctxt} rule!  This is the case because the {\sc
+  E-Eval-Ctxt} rule is the only rule in the operational semantics by
+which a particular configuration may be able to step in multiple ways.
+The multiple ways in which a configuration can step via {\sc
+  E-Eval-Ctxt} correspond to the ways in which the expression in that
+configuration can be decomposed into a redex and an evaluation
 context.  In fact, it is exactly this property that makes it possible
 for multiple subexpressions of a $\lambdaLVar$ expression (a @let par@
 expression, for instance) to be evaluated in parallel.
