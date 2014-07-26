@@ -33,30 +33,26 @@ with execution steps at a high level.
 
 \subsection{Permutations and permutability}\label{subsection:lvars-permutations}
 
-\TODO{This text is very similar to what's in Neel's Simple FRP
-  paper---revise it!}
-
-Before getting into the interesting part of the determinism proof, we
-need to deal with a technical issue.  The {\sc E-New} rule in the
-reduction semantics is non-deterministic; it allocates a fresh
-location $l \in \Loc$, with the only requirement on $l$ being that it
-is not yet in the domain of the store.  Therefore, multiple runs of
-the same program may differ in which locations they allocate.
-Intuitively, this is not a serious problem, since our allocator could
-always have chosen a different location to have allocated.  To
-formalize this intuition, I introduce the idea of \emph{permutations}
-and of the permutability of a transition.
+The {\sc E-New} rule allocates a fresh location $l \in \Loc$ in the
+store, with the only requirement on $l$ being that it is not (yet) in
+the domain of the store.  Therefore, multiple runs of the same program
+may differ in what locations they allocate, and therefore the
+reduction semantics is nondeterministic with respect to allocation.
+However, this is not a kind of nondeterminism that we care about, so
+we work modulo an arbitrary \emph{permutation} on locations.
 
 Recall from Section~\ref{subsection:lvars-stores} that we have a
-countable set of locations $\Loc$.  Then, a \emph{permutation} is
-defined as follows:
+countable set of locations $\Loc$.  Then, a permutation is defined as
+follows:
 
 \LVarsDefPermutation
 
 Condition (1) in Definition~\ref{def:lvars-permutation} ensures that
-we only consider location renamings that we can ``undo'', and condition
-(2) ensures that we only consider renamings of a finite number of
-locations.
+we only consider location renamings that we can ``undo'', and
+condition (2) ensures that we only consider renamings of a finite
+number of locations.  Equivalently, we can say that $\pi$ is a
+bijection from $\Loc$ to $\Loc$ such that it is the identity on all
+but finitely many elements.
 
 We can straightforwardly lift Definition~\ref{def:lvars-permutation}
 to expressions and stores, and hence also to configurations.  To lift
@@ -68,11 +64,10 @@ We can also lift $\pi$ to evaluation contexts, structurally: $\pi([~])
 To lift $\pi$ to stores, we apply $\pi$ to all locations in the domain
 of the store.  (We do not have to do any renaming in the codomain of
 the store, since locations cannot occur in elements of the
-application-specific lattice $D$.)  Because $\pi$ is invertible, it is
-a bijection, and from that fact it follows that if some location $l$
-is not in the domain of some store $S$, then $\pi(l) \notin
-\dom{(\pi(S)}$,\lk{Do I need to spell out why this is true?} a fact
-that will be useful to us shortly.
+application-specific lattice $D$.)  Since $\pi$ is a bijection, it
+follows that if some location $l$ is not in the domain of some store
+$S$, then $\pi(l) \notin \dom{(\pi(S)}$,\lk{Do I need to spell out why
+  this is true?} a fact that will be useful to us shortly.
 
 \LVarsDefPermutationExpression
 
