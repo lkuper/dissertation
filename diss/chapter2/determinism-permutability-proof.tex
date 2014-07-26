@@ -142,16 +142,16 @@
   For the reverse direction of
   part~\ref{thm:permutable-reduction-transitions}, suppose $\pi(\conf)
   \parstepsto \pi(\conf')$.  We have to show that $\conf \parstepsto
-  \conf'$.  We proceed by cases on the rule by which $\pi(\conf)$
-  steps to $\pi(\conf')$.
+  \conf'$.
 
-  \begin{itemize}
-    \item \TODO{Case {\sc E-Beta}}
-    \item \TODO{Case {\sc E-New}}
-    \item \TODO{Case {\sc E-Put}}
-    \item \TODO{Case {\sc E-Put-Err}}
-    \item \TODO{Case {\sc E-Get}}
-  \end{itemize}
+  We know from the forward direction of the proof that for all
+  configurations $\conf$ and $\conf'$ and permutations $\pi$, if
+  $\conf \parstepsto \conf'$ then $\pi(\conf) \parstepsto
+  \pi(\conf')$.  Hence since $\pi(\conf) \parstepsto \pi(\conf')$, and
+  since $\piinv$ is also a permutation, we have that
+  $\piinv(\pi(\conf)) \parstepsto \piinv(\pi(\conf'))$.  Since
+  $\piinv(\pi(l)) = l$ for every $l \in \Loc$, and that property lifts
+  to configurations as well, we have that $\conf \parstepsto \conf'$.
 
   For the forward direction of
   part~\ref{thm:permutable-context-transitions}, suppose $\conf

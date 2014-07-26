@@ -60,8 +60,10 @@
   A \emph{permutation} is a function $\pi : \Loc \rightarrow \Loc$
   such that:
   \begin{enumerate}
-    \item it is invertible, and
-    \item is is the identity on all but finitely many elements of
+  \item it is invertible, that is, there is an inverse function
+    $\piinv : \Loc \rightarrow \Loc$ with the property that $\pi(l) =
+    l'$ iff $\piinv(l') = l$; and
+    \item it is the identity on all but finitely many elements of
       $Loc$.
   \end{enumerate}
 \end{definition}
@@ -91,17 +93,41 @@
 \end{definition}
 }
 
-\newcommand{\LVarsDefPermutationStore}{
-\begin{definition}\label{def:lvars-permutation-store}
-  A permutation of a store $S$ is a function $\pi$ defined as
+\newcommand{\LVarsDefPermutationExpression}{
+\begin{definition}\label{def:lvars-permutation-expression}
+  A permutation of an expression $e$ is a function $\pi$ defined as
   follows:
   \begin{displaymath}
     \begin{array}{ll}
-      \pi(\topS) = \topS \\
+      \pi(x) &= x \\
+      \pi(\unit) &= \unit \\
+      \pi(d) &= d \\
+      \pi(l) &= \pi(l) \\
+      \pi(T) &= T \\
+      \pi(\lam{x}{e}) &= \lam{x}{\pi(e)} \\
+      \pi(\app{e_1}{e_2}) &= \app{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\getexp{e_1}{e_2}) &= \getexp{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\putexp{e_1}{e_2}) &= \putexp{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\NEW) &= \NEW \\
+    \end{array}
+  \end{displaymath}
+  \lk{It's fine to just say that $\pi(\NEW)$ is $\NEW$; we only care
+    about renaming it if it has already been allocated!  If it's just
+    an unevaluated $\NEW$ expression, then there's nothing to do.}
+\end{definition}
+}
+
+\newcommand{\LVarsDefPermutationStore}{
+\begin{definition}\label{def:lvars-permutation-store}
+  A permutation of an evaluation $S$ is a function $\pi$ defined as
+  follows:
+  \begin{displaymath}
+    \begin{array}{ll}
+      \pi(\topS) &= \topS \\
       \pi(\store{\storebindingRaw{l_1}{d_1}, \dots,
-        \storebindingRaw{l_2}{d_2}}) &=
+        \storebindingRaw{l_n}{d_n}}) &=
       \store{\storebindingRaw{\pi(l_1)}{d_1}, \dots,
-        \storebindingRaw{\pi(l_2)}{d_2}} \\
+        \storebindingRaw{\pi(l_n)}{d_n}} \\
     \end{array}
   \end{displaymath}
 \end{definition}

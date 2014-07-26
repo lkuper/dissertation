@@ -62,6 +62,9 @@ We can straightforwardly lift Definition~\ref{def:lvars-permutation}
 to expressions and stores, and hence also to configurations.  To lift
 a permutation $\pi$ to expressions, we over the syntax of terms
 structurally and apply $\pi$ to any locations that occur in the term.
+We can also lift $\pi$ to evaluation contexts, structurally: $\pi([~])
+= [~]$, $\pi(\app{E}{e} = $\app{\pi(E)}{\pi(e)}$, and so on.
+
 To lift $\pi$ to stores, we apply $\pi$ to all locations in the domain
 of the store.  (We do not have to do any renaming in the codomain of
 the store, since locations cannot occur in elements of the
@@ -82,12 +85,12 @@ permutable:
 
 \LVarsLemPermutability
 \begin{proof}
-  See Section~\ref{section:lvars-permutability-proof}.
-  Part~\ref{thm:permutable-reduction-transitions} is by cases on the
-  rule in the reduction semantics by which $\conf$ steps to $\conf'$;
-  the only interesting case is the {\sc E-New} case, in which we make
-  use of the fact that if $l \notin \dom{S}$, then $\pi(l) \notin
-  \dom{\pi(S)}$. \TODO{Say something about
+  See Section~\ref{section:lvars-permutability-proof}.  The forward
+  direction of part~\ref{thm:permutable-reduction-transitions} is by
+  cases on the rule in the reduction semantics by which $\conf$ steps
+  to $\conf'$; the only interesting case is the {\sc E-New} case, in
+  which we make use of the fact that if $l \notin \dom{S}$, then
+  $\pi(l) \notin \dom{\pi(S)}$. \TODO{Say something about
     Part~\ref{thm:permutable-context-transitions}.}
 \end{proof}
 
