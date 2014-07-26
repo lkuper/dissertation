@@ -31,8 +31,14 @@
 
 %%% Evaluation / operational semantics
 \newcommand*{\longhookrightarrow}{\ensuremath{\lhook\joinrel\relbar\joinrel\rightarrow}}
+
+%%% Reduction semantics evaluation relation
 \newcommand{\parstepsto}{\ensuremath{\longhookrightarrow}}
 \newcommand{\parstepstoeq}{\ensuremath{\longhookrightarrow^{?}}}
+
+%%% Context semantics evaluation relation
+\newcommand{\ctxstepsto}{\ensuremath{\longmapsto}}
+
 \newcommand{\evalctxt}[2]{\ensuremath{#1\hspace{-1mm}\left[#2\right]}}
 \newcommand{\E}[1]{\ensuremath{\evalctxt{E}{#1}}}
 

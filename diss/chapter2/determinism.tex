@@ -5,7 +5,9 @@ The main technical result of this chapter is a proof of determinism
 for the $\lambdaLVar$ language.  The determinism theorem says that if
 two executions starting from a given configuration $\conf$ terminate
 in configurations $\conf'$ and $\conf''$, then $\conf'$ and $\conf''$
-are the same configuration, up to a permutation on locations.
+are the same configuration, up to a permutation on locations.  (I
+discuss permutations in more detail below, in
+Section~\ref{subsection:lvars-permutations}.)
 
 In order to prove determinism for $\lambdaLVar$, I first prove several
 supporting lemmas.  The structure of the proof is similar to that of
@@ -29,7 +31,112 @@ with execution steps at a high level.
   generalized monotonic writes and generalized threshold reads, if in
   fact I'm going to do that.}
 
+\subsection{Permutations and permutability}\label{subsection:lvars-permutations}
+
+\TODO{This text is very similar to what's in Neel's Simple FRP
+  paper---revise it!}
+
+Before getting into the interesting part of the determinism proof, we
+need to deal with a technical issue.  The {\sc E-New} rule in the
+reduction semantics is non-deterministic; it allocates a fresh
+location $l \in \Loc$, with the only requirement on $l$ being that it
+is not yet in the domain of the store.  Therefore, multiple runs of
+the same program may differ in which locations they allocate.
+Intuitively, this is not a serious problem, since our allocator could
+always have chosen a different location to have allocated.  To
+formalize this intuition, I introduce the idea of \emph{permutations}
+and of the permutability of a transition.
+
+Recall from Section~\ref{subsection:lvars-stores} that we have a
+countable set of locations $\Loc$.  Then, a \emph{permutation} is
+defined as follows:
+
+\LVarsDefPermutation
+
+Condition (1) in Definition~\ref{def:lvars-permutation} ensures that
+we only consider location renamings that we can ``undo'', and condition
+(2) ensures that we only consider renamings of a finite number of
+locations.
+
+We can straightforwardly lift Definition~\ref{def:lvars-permutation}
+to expressions and stores, and hence also to configurations.  To lift
+a permutation $\pi$ to expressions, we over the syntax of terms
+structurally and apply $\pi$ to any locations that occur in the term.
+To lift $\pi$ to stores, we apply $\pi$ to all locations in the domain
+of the store.  (We do not have to do any renaming in the codomain of
+the store, since locations cannot occur in elements of the
+application-specific lattice $D$.)  Because $\pi$ is invertible, it is
+a bijection, and from that fact it follows that if some location $l$
+is not in the domain of some store $S$, then $\pi(l) \notin
+\dom{(\pi(S)}$,\lk{Do I need to spell out why this is true?} a fact
+that will be useful to us shortly.
+
+\LVarsDefPermutationExpression
+
+\LVarsDefPermutationStore
+
+\LVarsDefPermutationConfiguration
+
+With these definitions in place, I can show that transitions are
+permutable:
+
+\LVarsLemPermutability
+\begin{proof}
+  See Section~\ref{section:lvars-permutability-proof}.
+  Part~\ref{thm:permutable-reduction-transitions} is by cases on the
+  rule in the reduction semantics by which $\conf$ steps to $\conf'$;
+  the only interesting case is the {\sc E-New} case, in which we make
+  use of the fact that if $l \notin \dom{S}$, then $\pi(l) \notin
+  \dom{\pi(S)}$. \TODO{Say something about
+    Part~\ref{thm:permutable-context-transitions}.}
+\end{proof}
+
+\subsection{Internal determinism of the reduction semantics}
+
+My goal is to show that $\lambdaLVar$ is deterministic according to
+the definition of \emph{observable determinism} that I set forth in
+Chapter~\ref{ch:intro}---that is, that a $\lambdaLVar$ program always
+evaluates to the same value.  In the context of $\lambdaLVar$, a
+``program'' can be understood as a configuration of a store and an
+expression, and a ``value'' can be understood as a configuration that
+cannot step.  This definition of observable determinism does not
+require that a configuration takes the same sequence of steps on the
+way to reaching its value at the end of every run, and in fact, the
+$\lambdaLVar$ operational semantics does not have that property.
+
+I will use the term \emph{internally deterministic} to describe a
+program that does, in fact, takes the same sequence of steps on every
+run. \TODO{Get a citation for this.}  Although $\lambdaLVar$ is not
+internally deterministic, all of the internal nondeterminism of
+$\lambdaLVar$ is due to the {\sc E-Eval-Ctxt} rule!  This is the case
+because the {\sc E-Eval-Ctxt} rule is the only rule in the operational
+semantics by which a particular configuration may be able to step in
+multiple ways.  The multiple ways in which a configuration can step
+via {\sc E-Eval-Ctxt} correspond to the ways in which the expression
+in that configuration can be decomposed into a redex and an evaluation
+context.  In fact, it is exactly this property that makes it possible
+for multiple subexpressions of a $\lambdaLVar$ expression (a @let par@
+expression, for instance) to be evaluated in parallel.
+
+But, if we leave aside {\sc E-Eval-Ctxt} and focus on only the rules
+of the reduction semantics in
+Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}, we see that there
+is only one rule by which a given configuration can step, and only one
+configuration to which it can step.  The exception is the {\sc E-New}
+rule, which nondeterministically allocates locations and returns
+pointers to them---but we can account for this by saying that the
+reduction semantics is internally deterministic up to a permutation on
+locations.  Lemma~\ref{lem:lvars-internal-determinism} formalizes this
+claim.
+
+\LVarsLemInternalDeterminism
+\begin{proof}
+  See Section~\ref{section:lvars-internal-determinism-proof}.
+\end{proof}
+
 \subsection{Monotonicity lemma}
+
+\TODO{Figure out where this comes in, and how it needs to change.}
 
 The Monotonicity lemma says that, as evaluation proceeds according to
 the $\parstepsto$ relation, the store can only grow with respect to
@@ -43,6 +150,8 @@ the $\leqstore{}{}$ ordering.
 \end{proof}
 
 \subsection{Independence lemma}\label{subsection:lvars-independence}
+
+\TODO{Figure out where this comes in, and how it needs to change.}
 
 The Independence lemma establishes a ``frame property'' for
 $\lambdaLVar$ that captures the idea that independent effects commute
@@ -105,7 +214,11 @@ $\error$.
   I think we actually do need it here.}
 
 \LVarsLemErrorPreservation
-\input{chapter2/determinism-error-preservation-proof}
+\begin{proof}
+  By induction on the derivation of $\config{S}{e} \parstepsto
+  \error$, by cases on the last rule in the derivation; see
+  Section~\ref{section:lvars-error-preservation-proof}.
+\end{proof}
 
 \subsection{Confluence lemmas}\label{subsection:lvars-confluence}
 

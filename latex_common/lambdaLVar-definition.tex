@@ -42,7 +42,7 @@
 \end{figure}
 }
 
-\newcommand{\FigLambdaLVarSemantics}[1][t]{
+\newcommand{\FigLambdaLVarReductionSemantics}[1][t]{
 \begin{figure*}[#1]
   Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$:
   \bigskip
@@ -50,10 +50,6 @@
     = \top)}$\hfill \fbox{$\conf \parstepsto \conf'$}
   \bigskip
   \begin{mathpar}
-    \inferrule*[lab=E-Eval-Ctxt]
-        {\config{S}{e} \parstepsto \config{S'}{e'}}
-        {\config{S}{\E{e}} \parstepsto \config{S'}{\E{e'}}}
-
     \inferrule*[lab=E-Beta]
         {~}
         {\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \config{S}{\subst{e}{x}{v}}}
@@ -76,7 +72,20 @@
         {S(l) = d_1 \\ \incomp{T} \\ d_2 \in T \\ d_2 \userleq d_1}
         {\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}}
   \end{mathpar}
-  \caption{An operational semantics for $\lambdaLVar$.}
-  \label{f:lvars-lambdaLVar-semantics}
+  \caption{Reduction semantics for $\lambdaLVar$.}
+  \label{f:lvars-lambdaLVar-reduction-semantics}
+\end{figure*}
+}
+
+\newcommand{\FigLambdaLVarContextSemantics}[1][t]{
+\begin{figure*}[#1]
+  \hfill \fbox{$\conf \ctxstepsto \conf'$}
+  \begin{mathpar}
+    \inferrule*[lab=E-Eval-Ctxt]
+        {\config{S}{e} \parstepsto \config{S'}{e'}}
+        {\config{S}{\E{e}} \ctxstepsto \config{S'}{\E{e'}}}
+  \end{mathpar}
+  \caption{Context semantics for $\lambdaLVar$.}
+  \label{f:lvars-lambdaLVar-context-semantics}
 \end{figure*}
 }

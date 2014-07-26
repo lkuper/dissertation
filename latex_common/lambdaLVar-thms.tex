@@ -1,3 +1,23 @@
+\newcommand{\LVarsLemPermutability}{
+\begin{lem}[Permutability]\label{lem:lvars-permutability}
+  For any finite permutation $\pi$,
+  \begin{enumerate}
+  \item \label{thm:permutable-reduction-transitions} $\conf
+    \parstepsto \conf'$ if and only if $\pi(\conf) \parstepsto
+    \pi(\conf')$.
+  \item \label{thm:permutable-context-transitions} $\conf \ctxstepsto
+    \conf'$ if and only if $\pi(\conf) \ctxstepsto \pi(\conf')$.
+  \end{enumerate}
+\end{lem}
+}
+
+\newcommand{\LVarsLemInternalDeterminism}{
+\begin{lem}[Internal Determinism of the Reduction Semantics]\label{lem:lvars-internal-determinism}
+  If $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$, then
+  there is a permutation $\pi$ such that $\conf' = \pi(\conf'')$.
+\end{lem}
+}
+
 \newcommand{\LVarsLemMonotonicity}{
 \begin{lem}[Monotonicity]\label{lem:lvars-monotonicity}
   If $\config{S}{e} \parstepsto \config{S'}{e'}$,

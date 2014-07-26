@@ -2,21 +2,28 @@
 
 \FigLambdaLVarGrammar
 
-\FigLambdaLVarSemantics
+\FigLambdaLVarReductionSemantics
+
+\FigLambdaLVarContextSemantics
 
 \lk{Maybe this should be explained more slowly---that is, maybe I
   should individually go through each thing in the grammar and say
   what it is.  I wouldn't do that in a conference paper, but...this
   isn't a conference paper.}
 
-The syntax and operational semantics of $\lambdaLVar$ appear in
-Figures~\ref{f:lvars-lambdaLVar-syntax} and
-\ref{f:lvars-lambdaLVar-semantics}, respectively.  Both the syntax and
-semantics are parameterized by the lattice $(D, \userleq, \bot,
-\top)$.  The reduction relation $\parstepsto$ is defined on
-\emph{configurations} $\config{S}{e}$ comprising a store and an
-expression.  The \emph{error configuration}, written $\error$, is a
-unique element added to the set of configurations, but
+The syntax of $\lambdaLVar$ appears in
+Figure~\ref{f:lvars-lambdaLVar-syntax}, and
+Figures~\ref{f:lvars-lambdaLVar-reduction-semantics},
+and~\ref{f:lvars-lambdaLVar-context-semantics} together give the
+operational semantics.
+
+\TODO{Revise this to explain the split semantics.}
+
+Both the syntax and semantics are parameterized by the lattice $(D,
+\userleq, \bot, \top)$.  The reduction relation $\parstepsto$ is
+defined on \emph{configurations} $\config{S}{e}$ comprising a store
+and an expression.  The \emph{error configuration}, written $\error$,
+is a unique element added to the set of configurations, but
 $\config{\topS}{e}$ is equal to $\error$ for all expressions $e$.  The
 metavariable $\conf$ ranges over configurations.
 
