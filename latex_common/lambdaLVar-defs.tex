@@ -93,30 +93,6 @@
 \end{definition}
 }
 
-\newcommand{\LVarsDefPermutationExpression}{
-\begin{definition}\label{def:lvars-permutation-expression}
-  A permutation of an expression $e$ is a function $\pi$ defined as
-  follows:
-  \begin{displaymath}
-    \begin{array}{ll}
-      \pi(x) &= x \\
-      \pi(\unit) &= \unit \\
-      \pi(d) &= d \\
-      \pi(l) &= \pi(l) \\
-      \pi(T) &= T \\
-      \pi(\lam{x}{e}) &= \lam{x}{\pi(e)} \\
-      \pi(\app{e_1}{e_2}) &= \app{\pi(e_1)}{\pi(e_2)} \\
-      \pi(\getexp{e_1}{e_2}) &= \getexp{\pi(e_1)}{\pi(e_2)} \\
-      \pi(\putexp{e_1}{e_2}) &= \putexp{\pi(e_1)}{\pi(e_2)} \\
-      \pi(\NEW) &= \NEW \\
-    \end{array}
-  \end{displaymath}
-  \lk{It's fine to just say that $\pi(\NEW)$ is $\NEW$; we only care
-    about renaming it if it has already been allocated!  If it's just
-    an unevaluated $\NEW$ expression, then there's nothing to do.}
-\end{definition}
-}
-
 \newcommand{\LVarsDefPermutationStore}{
 \begin{definition}\label{def:lvars-permutation-store}
   A permutation of an evaluation $S$ is a function $\pi$ defined as
