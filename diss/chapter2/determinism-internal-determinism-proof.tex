@@ -45,10 +45,43 @@
       To show: There exists a $\pi$ such that
       $\config{S}{\putexp{l}{d_2}} = \pi(\conf'')$.
 
-      \TODO{finish case}
+      By inspection of the operational semantics, and since
+      $\userlub{d_1}{d_2} \neq \top$ (from the premise of {\sc
+      E-Put}), the only reduction rule by which
+      $\config{S}{\putexp{l}{d_2}}$ can step is {\sc E-Put}.  Hence
+      $\conf'' = \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$,
+      and the case is satisfied by choosing $\pi$ to be the identity
+      function.
 
-      \item Case {\sc E-Put-Err}: \TODO{}
-      \item Case {\sc E-Get}: \TODO{}
+      \item Case {\sc E-Put-Err}:
+
+      Given: $\config{S}{\putexp{l}{d_2}} \parstepsto \error$, and
+      $\config{S}{\putexp{l}{d_2}} \parstepsto \conf''$.
+
+      To show: There exists a $\pi$ such that
+      $\config{S}{\putexp{l}{d_2}} = \pi(\conf'')$.
+
+      By inspection of the operational semantics, and since
+      $\userlub{d_1}{d_2} = \top$ (from the premise of {\sc
+      E-Put-Err}), the only reduction rule by which
+      $\config{S}{\putexp{l}{d_2}}$ can step is {\sc E-Put-Err}.
+      Hence $\conf'' = \error$, and the case is satisfied by choosing
+      $\pi$ to be the identity function.
+
+      \item Case {\sc E-Get}:
+
+      Given: $\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}$,
+      and $\config{S}{\getexp{l}{T}} \parstepsto \conf''$.
+
+      To show: There exists a $\pi$ such that
+      $\config{S}{\gettexp{l}{T}} = \pi(\conf'')$.
+
+      By inspection of the operational semantics, the only reduction
+      rule by which $\config{S}{\putexp{l}{d_2}}$ can step is {\sc
+      E-Get}.  Hence $\conf'' = \config{S}{d_2}$, and the case is
+      satisfied by choosing $\pi$ to be the identity
+      function.
+
   \end{itemize}
 \end{proof}
 
