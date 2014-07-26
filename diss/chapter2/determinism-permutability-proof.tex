@@ -153,26 +153,48 @@
   $\piinv(\pi(l)) = l$ for every $l \in \Loc$, and that property lifts
   to configurations as well, we have that $\conf \parstepsto \conf'$.
 
+  \lk{Is the above enough of a proof?}
+
   For the forward direction of
   part~\ref{thm:permutable-context-transitions}, suppose $\conf
   \ctxstepsto \conf'$.  We have to show that $\pi(\conf) \ctxstepsto
   \pi(\conf')$.
 
-  From the premise of {\sc E-Eval-Ctxt}, we have that $\conf
-  \parstepsto \conf'$.  Hence from the forward direction of
-  part~\ref{thm:permutable-reduction-transitions}, we have that
-  $\pi(\conf) \parstepsto \pi(\conf')$.  Let $\conf = \config{S}{e}$
-  and $\conf' = \config{S'}{e'}$.  By
-  Definition~\ref{def:lvars-permutation-configuration}, we have that
-  $\pi(\config{S}{e}) = \config{\pi(S)}{\pi(e)}$ and
-  $\pi(\config{S'}{e'}) = \config{\pi(S')}{\pi(e')}$.  Hence
-  $\config{\pi(S)}{\pi(e)} \parstepsto \config{\pi(S')}{\pi(e')}$.
+  By inspection of the operational semantics, $\conf$ must be of the
+  form $\config{S}{\E{e}}$, and $\conf'$ must be of the form
+  $\config{S'}{\E{e'}}$.  Hence we have to show that
+  $\pi(\config{S}{\E{e}}) \ctxstepsto \pi(\config{S'}{\E{e'}})$.
 
-  Therefore, by {\sc E-Eval-Ctxt}, we have that
+  By Definition~\ref{def:lvars-permutation-configuration},
+  $\pi(\config{S}{\E{e}})$ is equal to $\config{\pi(S)}{\pi(\E{e})}$,
+  and $\pi(\config{S'}{\E{e'}})$ is equal to
+  $\config{\pi(S')}{\pi(\E{e'})}$.  Furthermore,
+  $\config{\pi(S)}{\pi(\E{e})}$ is equal to
+  $\config{\pi(S)}{\evalctxt{(\pi(E))}{\pi(e)}}$ and
+  $\config{\pi(S')}{\pi(\E{e'})}$ is equal to
+  $\config{\pi(S')}{\evalctxt{(\pi(E))}{\pi(e')}}$.
+
+  So we have to show that
+  $\config{\pi(S)}{\evalctxt{(\pi(E))}{\pi(e)}} \ctxstepsto
+  \config{\pi(S')}{\evalctxt{(\pi(E))}{\pi(e')}}$.
+
+  From the premise of {\sc E-Eval-Ctxt}, $\config{S}{e} \parstepsto
+  \config{S'}{e'}$.  Hence, by
+  part~\ref{thm:permutable-reduction-transitions}, $\pi(\config{S}{e})
+  \parstepsto \pi(\config{S'}{e'})$.  By
+  Definition~\ref{def:lvars-permutation-configuration},
+  $\pi(\config{S}{e})$ is equal to $\config{\pi(S)}{\pi(e)}$ and
+  $\pi(\config{S'}{e'})$ is equal to $\config{\pi(S')}{\pi(e')}$.
+
+  Hence $\config{\pi(S)}{\pi(e)} \parstepsto
+  \config{\pi(S')}{\pi(e')}$.  Therefore, by {\sc E-Eval-Ctxt},
   $\config{\pi(S)}{\E{\pi(e)}} \ctxstepsto
-  \config{\pi(S')}{\E{\pi(e')}}$.
+  \config{\pi(S')}{\E{\pi(e')}}$ for all evaluation contexts $E$.
 
-  \TODO{Finish this direction.}
+  In particular, it is true that
+  $\config{\pi(S)}{\evalctxt{(\pi(E))}{\pi(e)}} \ctxstepsto
+  \config{\pi(S')}{\evalctxt{(\pi(E))}{\pi(e')}}$, as we were required
+  to show.
 
   For the reverse direction of
   part~\ref{thm:permutable-context-transitions}, suppose $\pi(\conf)
