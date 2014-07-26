@@ -82,11 +82,13 @@ permutable:
 
 \LVarsLemPermutability
 \begin{proof}
-  See Section~\ref{section:lvars-permutability-proof}.  Part (1) is by
-  cases on the rule in the reduction semantics by which $\conf$ steps
-  to $\conf'$; the only interesting case is the {\sc E-New} case, in
-  which we make use of the fact that if $l \notin \dom{S}$, then
-  $\pi(l) \notin \dom{\pi(S)}$. \TODO{Say something about part (2).}
+  See Section~\ref{section:lvars-permutability-proof}.
+  Part~\ref{thm:permutable-reduction-transitions} is by cases on the
+  rule in the reduction semantics by which $\conf$ steps to $\conf'$;
+  the only interesting case is the {\sc E-New} case, in which we make
+  use of the fact that if $l \notin \dom{S}$, then $\pi(l) \notin
+  \dom{\pi(S)}$. \TODO{Say something about
+    Part~\ref{thm:permutable-context-transitions}.}
 \end{proof}
 
 \subsection{Internal determinism of the reduction semantics}

@@ -71,9 +71,51 @@
       can $\alpha$-rename $l'$ to $\pi(l)$, and so the two
       configurations are equal and the case is satisfied.
 
-    \item \TODO{Case {\sc E-Put}}
-    \item \TODO{Case {\sc E-Put-Err}}
-    \item \TODO{Case {\sc E-Get}}
+    \item Case {\sc E-Put}: $\conf = \config{S}{\putexp{l}{d_2}}$, and
+      $\conf' = \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$.
+
+      To show: $\pi(\config{S}{\putexp{l}{d_2}}) \parstepsto
+      \pi(\config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit})$.
+
+      By Definition~\ref{def:lvars-permutation-configuration},
+      $\pi(\conf) = \config{\pi(S)}{\putexp{\pi(l)}{\pi(d_2)}}$,
+      which, by Definition~\ref{def:lvars-permutation-expression}, is
+      equal to $\config{\pi(S)}{\putexp{\pi(l)}{d_2}}$.
+
+      By {\sc E-Put}, $\config{\pi(S)}{\putexp{\pi(l)}{d_2}}$ steps to
+      $\config{\extSRaw{(\pi(S))}{\pi(l)}{\userlub{d_1}{d_2}}}{\unit}$,
+      since $S(l) = (\pi(S))(\pi(l)) = d_1$.
+
+      It remains to show that
+      $\config{\extSRaw{(\pi(S))}{\pi(l)}{\userlub{d_1}{d_2}}}{\unit}$
+      is equal to
+      $\pi(\config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit})$.
+
+      By Definition~\ref{def:lvars-permutation-configuration},
+      $\pi(\config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit})$ is
+      equal to
+      $\config{\extSRaw{(\pi(S))}{\pi(l)}{\pi(\userlub{d_1}{d_2})}}{\pi(\unit)}$,
+      which, by Definition~\ref{def:lvars-permutation-expression}, is
+      equal to
+      $\config{\extSRaw{(\pi(S))}{\pi(l)}{\userlub{d_1}{d_2}}}{\unit}$,
+      and so the two configurations are equal and the case is
+      satisfied.
+
+    \item Case {\sc E-Put-Err}: $\conf = \config{S}{\putexp{l}{d_2}}$,
+      and $\conf' = \error$.
+
+      To show: $\pi(\config{S}{\putexp{l}{d_2}}) \parstepsto
+      \pi(\error)$.
+
+      \TODO{finish case.}
+
+    \item Case {\sc E-Get}: $\conf = \config{S}{\getexp{l}{T}}$, and
+      $\conf' = \config{S}{d_2}$.
+
+      To show: $\pi(\config{S}{\getexp{l}{T}}) \parstepsto
+      \pi(\config{S}{d_2})$.
+
+      \TODO{finish case.}
   \end{itemize}
 
   For the reverse direction of
@@ -93,7 +135,7 @@
   For the forward direction of
   part~\ref{thm:permutable-context-transitions}, suppose $\conf
   \ctxstepsto \conf'$.  We have to show that $\pi(\conf) \ctxstepsto
-  \pi(conf')$.
+  \pi(\conf')$.
 
   From the premise of {\sc E-Eval-Ctxt}, we have that $\conf
   \parstepsto \conf'$.  Hence from the forward direction of
@@ -113,7 +155,7 @@
 
   For the reverse direction of
   part~\ref{thm:permutable-context-transitions}, suppose $\pi(\conf)
-  \ctxstepsto \pi(conf')$.  We have to show that $\conf \ctxstepsto
+  \ctxstepsto \pi(\conf')$.  We have to show that $\conf \ctxstepsto
   \conf'$.
 
   \TODO{Finish this direction.}

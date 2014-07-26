@@ -110,7 +110,9 @@
 \newcommand{\LVarsDefPermutationConfiguration}{
 \begin{definition}\label{def:lvars-permutation-configuration}
   A permutation of a configuration $\config{S}{e}$ is a function $\pi$
-  defined as follows: $\pi(\config{S}{e}) = \config{\pi(S)}{\pi(e)}$.
+  defined as follows: if $\config{S}{e} = \error$, then
+  $\pi(\config{S}{e}) = \error$; otherwise, $\pi(\config{S}{e}) =
+  \config{\pi(S)}{\pi(e)}$.
 \end{definition}
 }
 
