@@ -66,12 +66,10 @@
 
 \newcommand{\LVarsLemStrongLocalConfluence}{
 \begin{lem}[Strong Local Confluence]\label{lem:lvars-strong-local-confluence}
-  If $\conf \parstepsto \conf_a$ and $\conf \parstepsto \conf_b$, then
-  there exist $\conf_c, i, j$ such that $\conf_a \parstepsto^i
-  \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and $j
-  \leq 1$.
-  \TODO{Figure out if we need to mention permutations in the statement
-    of the proof.}
+  If $\conf \ctxstepsto \conf_a$ and $\conf \ctxstepsto \conf_b$, then
+  there exist $\conf_c, i, j, \pi$ such that $\conf_a \ctxstepsto^i
+  \conf_c$ and $\pi(\conf_b) \ctxstepsto^j \conf_c$ and $i \leq 1$ and
+  $j \leq 1$.
 \end{lem}
 }
 

@@ -1,12 +1,18 @@
 \begin{proof}
-  By induction on the derivation of $\conf \parstepsto \conf_a$, by
-  cases on the last rule in the derivation.
+  Consider arbitrary $\conf, \conf_a, \conf_b, \pi$ such that $\conf
+  \ctxstepsto \conf_a$ and $\conf \ctxstepsto \conf_b$.  By inspection
+  of the context semantics, {\sc E-Eval-Ctxt} is the only rule, and
+  hence the only rule by which $\conf$ can step to $\conf_a$.
+  Therefore $\conf$ is equal to $\config{S}{\E{e}}$ and $\conf_a$ is
+  equal to $\config{S'}{\E{e'}}$ for some evaluation context $E$.
+
+  From the premise of {\sc E-Eval-Ctxt}, we have that $\config{S}{e}
+  \parstepsto \config{S'}{e'}$.  We proceed by cases on the last rule
+  in the derivation of $\config{S}{e} \parstepsto \config{S'}{e'}$.
+
+  \TODO{I think this all needs to be rewritten.}
 
   \begin{itemize}
-    \item {\sc E-Eval-Ctxt}: \TODO{Figure out what to do here.  This
-      is the only interesting case.  Could we just go case-by-case on
-      evaluation contexts?}
-
     \item {\sc E-Beta}: $\conf = \config{S}{\app{(\lam{x}{e})}{v}}$,
       and $\conf_a = \config{S}{\subst{e}{x}{v}}$.
 
