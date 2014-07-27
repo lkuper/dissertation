@@ -10,7 +10,10 @@
   \parstepsto \config{S'}{e'}$.  We proceed by cases on the last rule
   in the derivation of $\config{S}{e} \parstepsto \config{S'}{e'}$.
 
-  \TODO{I think this all needs to be rewritten.}
+  \TODO{I think this all needs to be rewritten.  I think what we're
+    going to have to do is go case-by-case on pairs of eval contexts.
+    $[~]$/$[~]$ is the base case and should follow from internal
+    determinism of the reduction semantics, or something like that.}
 
   \begin{itemize}
     \item {\sc E-Beta}: $\conf = \config{S}{\app{(\lam{x}{e})}{v}}$,
