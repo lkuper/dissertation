@@ -6,32 +6,32 @@ state between parallel tasks, usually either by disallowing sharing
 entirely or by restricting it to one type of data structure, such as
 single-assignment locations.
 
-I show that \emph{lattice-based} data structures, or \emph{LVars}, are the
+I show that lattice-based data structures, or LVars, are the
 foundation for a guaranteed-deterministic parallel programming model
 that allows a more general form of sharing.  LVars allow multiple
 assignments that are inflationary with respect to an
 application-specific lattice.  They ensure determinism by allowing
-only inflationary writes and ``threshold'' reads that block until a
+only inflationary writes and "threshold" reads that block until a
 lower bound is reached.  After presenting the basic LVars model, I
-extend it to support \emph{event handlers}, which enable an event-driven
-programming style, and non-blocking ``freezing'' reads, resulting in a
-\emph{quasi-deterministic} model in which programs behave deterministically
+extend it to support event handlers, which enable an event-driven
+programming style, and non-blocking "freezing" reads, resulting in a
+quasi-deterministic model in which programs behave deterministically
 modulo exceptions.
 
-I demonstrate the viability of the LVars model with \emph{LVish}, a Haskell
+I demonstrate the viability of the LVars model with LVish, a Haskell
 library that provides a collection of lattice-based data structures, a
 work-stealing scheduler, and a monad in which LVar computations run.
 LVish leverages Haskell's type system to index such computations with
-\emph{effect levels} to ensure that only certain LVar effects can occur,
+effect levels to ensure that only certain LVar effects can occur,
 hence statically enforcing determinism or quasi-determinism. I present
 two case studies of parallelizing existing programs using LVish: a
-$k$-CFA control flow analysis, and a bioinformatics application for
+k-CFA control flow analysis, and a bioinformatics application for
 comparing phylogenetic trees.
 
 Finally, I show how LVar-style threshold reads apply to the setting of
-\emph{convergent replicated data types} (CvRDTs), which specify the behavior
-of \emph{eventually consistent} replicated objects in a distributed system.
+convergent replicated data types (CvRDTs), which specify the behavior
+of eventually consistent replicated objects in a distributed system.
 I extend the CvRDT model to support deterministic, strongly consistent
-\emph{threshold queries}.  The technique generalizes to any lattice, and
+threshold queries.  The technique generalizes to any lattice, and
 hence any CvRDT, and allows deterministic observations to be made of
 replicated objects before the replicas' states converge.
