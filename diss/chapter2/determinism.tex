@@ -85,8 +85,11 @@ permutable:
   cases on the rule in the reduction semantics by which $\conf$ steps
   to $\conf'$; the only interesting case is the {\sc E-New} case, in
   which we make use of the fact that if $l \notin \dom{S}$, then
-  $\pi(l) \notin \dom{\pi(S)}$. \TODO{Say something about
-    Part~\ref{thm:permutable-context-transitions}.}
+  $\pi(l) \notin \dom{\pi(S)}$. The reverse direction of
+  part~\ref{thm:permutable-reduction-transitions} relies on the fact
+  that if $\pi$ is a permutation, then $\piinv$ is also a permutation.
+  Part~\ref{thm:permutable-context-transitions} of the proof builds on
+  part~\ref{thm:permutable-reduction-transitions}.}
 \end{proof}
 
 \subsection{Internal determinism of the reduction semantics}
