@@ -181,7 +181,7 @@ the metavariable $E$ ranges over has grown to accommodate @freeze@ and
 $\FAW$.  The {\sc E-Beta} rule is also identical to its counterpart in
 $\lambdaLVar$.
 
-\subsection{Semantics of \lstinline|new|, \lstinline|put|, and \lstinline|get|}\label{subsection:newputget}
+\subsection{Semantics of \lstinline|new|, \lstinline|put|, and \lstinline|get|}\label{subsection:quasi-semantics-of-new-put-and-get}
 
 Because of the addition of status bits, the {\sc E-New}, {\sc E-Put},
 {\sc E-Put-Err}, {\sc E-Get} rules have changed slightly from their
@@ -220,7 +220,7 @@ counterparts in $\lambdaLVar$:
       Chapter~\ref{ch:lvish}.}}
 \end{itemize}
 
-\subsection{Freezing and the $\FAW$ primitive}\label{subsection:language-freezing}
+\subsection{Freezing and the $\FAW$ primitive}\label{subsection:quasi-freezing}
 
 The {\sc E-Freeze-Init}, {\sc E-Spawn-Handler}, {\sc E-Freeze-Final},
 and {\sc E-Freeze-Simple} rules are all new additions to
