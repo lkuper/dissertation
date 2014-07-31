@@ -1,131 +1,77 @@
-\section{Introduction}\label{s:intro}
-
-\lk{Got rid of ``reusedtext'' markings for reused text from the WoDet
-  paper, because we're not worried about those.}
-
 Distributed systems typically involve \emph{replication} of data
 objects across a number of physical locations.  Replication is of
-fundamental importance in such systems: it makes them more
-robust to data loss and allows for good data locality.
-But the well-known \emph{CAP
-  theorem}~\cite{gilbert-lynch-cap,BrewerCAPBlog} of distributed
-computing imposes a trade-off between \emph{consistency}, in which
-every replica sees the same data, and \emph{availability}, in
+fundamental importance in such systems: it makes them more robust to
+data loss and allows for good data locality.  But the well-known
+\emph{CAP theorem}~\cite{gilbert-lynch-cap, BrewerCAPBlog} of
+distributed computing imposes a trade-off between \emph{consistency},
+in which every replica sees the same data, and \emph{availability}, in
 which all data is available for both reading and writing by all
-replicas.
-\emph{Highly available} distributed systems, such as
+replicas.  \emph{Highly available} distributed systems, such as
 Amazon's Dynamo key-value store~\cite{dynamo}, relax strong
 consistency in favor of \emph{eventual consistency}~\cite{vogels-ec},
-in which replicas
-need not agree at all times.  Instead, updates execute at a particular
-replica and are sent to other replicas later. All updates eventually
-reach all replicas, albeit possibly in different orders.  Informally
-speaking, eventual consistency says that
-if updates stop
-arriving, all replicas will \emph{eventually} come to agree.
-\rn{Crystal clear so far, but I am now thinking in terms of sending
-  sets of updates rather than sending state snapshots.  Is this where
-  you want me to be at?}
-\lk{The CRDT people would say that sending sets of updates is the
-  ``op-based'' style and sending state snapshots is the
-  ``state-based'' style.  They would also say it doesn't really
-  matter, since the two are equivalent.  In this paper we're talking
-  about the state-based style, so maybe we should revise this
-  part. ...However, even in the state-based style, the ``causal
-  history'' is the sets of operations that have taken place on the
-  replicas, \emph{not} the sets of the states they've been in!
-  (Although in the concrete implementation, these sets of operations
-  never get sent.)}
+in which replicas need not agree at all times.  Instead, updates
+execute at a particular replica and are sent to other replicas
+later. All updates eventually reach all replicas, albeit possibly in
+different orders.  Informally speaking, eventual consistency says that
+if updates stop arriving, all replicas will \emph{eventually} come to
+agree.
 
 Although giving up on strong consistency makes it possible for a
 distributed system to offer high availability, even an eventually
-consistent system must have some way of resolving
-conflicts between replicas that differ.  One approach is to
-try to determine which replica
-was written most recently, then declare that replica the
-winner.  But, even in the presence of a 
-way to reliably synchronize clocks between replicas and hence
-reliably determine which replica was written most recently, having the
-last write win might not make sense from a \emph{semantic} point of
-view.
-For instance, if a replicated object represents a set, then, depending
-on the application, the appropriate way to resolve a conflict between
-two replicas could be to take the set union of the replicas' contents.
-Such a conflict resolution policy might be more appropriate than a ``last
-write wins'' policy for, say, a object representing the contents of
-customer shopping carts for an online store~\cite{dynamo}.
+consistent system must have some way of resolving conflicts between
+replicas that differ.  One approach is to try to determine which
+replica was written most recently, then declare that replica the
+winner.  But, even in the presence of a way to reliably synchronize
+clocks between replicas and hence reliably determine which replica was
+written most recently, having the last write win might not make sense
+from a \emph{semantic} point of view.  For instance, if a replicated
+object represents a set, then, depending on the application, the
+appropriate way to resolve a conflict between two replicas could be to
+take the set union of the replicas' contents.  Such a conflict
+resolution policy might be more appropriate than a ``last write wins''
+policy for, say, a object representing the contents of customer
+shopping carts for an online store~\cite{dynamo}.
 
-\subsection{Convergent replicated data types and eventual consistency}
+Implementing application-specific conflict resolution policies in an
+ad-hoc way for every application is tedious and
+error-prone.\footnote{Indeed, as the developers of Dynamo have
+  noted~\cite{dynamo}, Amazon's shopping cart presents an anomaly
+  whereby removed items may re-appear in the cart!}  Fortunately, we
+need not implement them in an ad-hoc way. Shapiro~\etal's
+\emph{convergent replicated data types} (CvRDTs)~\cite{crdts,crdts-tr}
+provide a simple mathematical framework for reasoning about and
+enforcing the eventual consistency of replicated objects, based on
+viewing replica states as elements of a lattice and replica conflict
+resolution as the lattice's join operation.
 
-Implementing application-specific conflict resolution policies in an ad-hoc way for
-every application is tedious and error-prone.\footnote{Indeed, as the
-  developers of Dynamo have noted~\cite{dynamo}, Amazon's shopping
-  cart presents an anomaly whereby removed items may
-  re-appear in the cart!}  Fortunately, we need not implement them in an ad-hoc
-way. Shapiro~\etal's \emph{convergent replicated data types}
-(CvRDTs)~\cite{crdts,crdts-tr} provide a simple mathematical
-framework for reasoning about and enforcing the eventual consistency
-of replicated objects, based on viewing replica states as elements of
-a lattice and replica conflict resolution as the lattice's join
-operation.
+Like LVars, CvRDTs are data structures whose states are elements of an
+application-specific lattice, and whose contents can only grow with
+respect to the given lattice.  Although LVars and CvRDTs were
+developed independently, both models leverage the mathematical
+properties of join-semilattices to ensure that a property of the model
+holds---determinism in the case of LVars; eventual consistency in the
+case of CvRDTs.  
 
-In a CvRDT, the contents of a replica can only grow over time---that
-is, updates must be \emph{inflationary} with respect to the given
-lattice---and replicas merge with remote replicas by taking the join
-of the remote state and the local state.
 CvRDTs offer a simple and theoretically-sound approach to eventual
-consistency.  Still, even with CvRDTs, it is always possible to
-observe inconsistent \emph{intermediate} states of replicated shared
-objects, and high availability requires that reads return a value
-immediately, even if that value is stale.
-
-\rn{The ``grow'' description is appealing and intuitive.  Probably
-  good to leave it there for this paper.  But it's
-  good to keep in mind that in some lattices it may require fewer bits
-  to represent higher states of the lattice rather than lower ones.
-  For example, in a series of fork-join diamonds attached vertically,
-  if a higher diamond has a smaller number of branches than a lower
-  one.  However, these are also the same kinds of lattices where you
-  can't do the threshold queries that you want.  (Because you lose
-  pairwise incompatibility for the sibling elements of the lower diamonds/fork-joins.)}
-\lk{Hmmm...we can say something about how we only mean ``grow'' in a
-  ``semantic'' sense, not in the sense of actual number of bits it
-  takes to represent a state.}
-\rn{Very low priority issue though.  More a note for our benefit.}
-
-%% points to make in the next two sections:
-
-%% -- increasingly, practical systems let you do both eventually
-%% consistent queries and strongly consistent queries
-
-%% -- CvRDTs as they are only let you do eventually consistent queries
-
-%% -- with CvRDTs you could in fact wait until all replicas agree and get
-%% strong consistency that way, but you don't have to
-
-%% -- you can take advantage of CvRDTs' lattice structure to do threshold
-%% queries instead
-
-\subsection{Strong consistency at the query level}
+consistency.  However, with CvRDTs (and unlike with LVars), it is
+still possible to observe inconsistent \emph{intermediate} states of
+replicated shared objects, and high availability requires that reads
+return a value immediately, even if that value is stale.
 
 In practice, applications call for both strong consistency and high
-availability at different times~\cite{pileus}, and increasingly, 
-they support consistency choices at
-the granularity of individual queries, not that of the entire system.
-For example, the Amazon SimpleDB database service gives customers the
-choice between eventually consistent and strongly consistent read
-operations on a per-read basis~\cite{simpledb-vogels-article}.
+availability at different times~\cite{pileus}, and increasingly, they
+support consistency choices at the granularity of individual queries,
+not that of the entire system.  For example, the Amazon SimpleDB
+database service gives customers the choice between eventually
+consistent and strongly consistent read operations on a per-read
+basis~\cite{simpledb-vogels-article}.
 
-% What does it mean to talk about a ``strongly consistent query''?
-% Normally, strongly consistent means that all replicas see the same
-% data.  Does it mean that, every time you do the query, you see the
-% same thing?
-
-Ordinarily, strong consistency is a global property: all replicas agree on the
-data.  When we make consistency choices at a \emph{per-query} granularity,
-though, a global strong consistency property need not hold.  We define a
-\emph{strongly consistent query} to be one that, if it returns a result
-$x$ when executed at a replica $i$:
+Ordinarily, strong consistency is a global property: all replicas
+agree on the data.  When we make consistency choices at a
+\emph{per-query} granularity, though, a global strong consistency
+property need not hold.  I define a \emph{strongly consistent query}
+to be one that, if it returns a result $x$ when executed at a replica
+$i$:
 \begin{itemize}
   \item will always return $x$ on subsequent executions at $i$, and
   \item will \emph{eventually} return $x$ when executed at \emph{any}
@@ -137,118 +83,24 @@ function of all updates to the data structure in the entire
 distributed execution, regardless of when the query executes or which
 replica it occurs on.
 
-%% Eventual consistency guarantees that, if updates stop
-%% arriving, replicas will eventually reach a consistent state---but in
-%% practice, updates may never stop, making such a guarantee meaningless.
-%% This situation motivates the need to be able to make strongly
-%% consistent queries of CvRDTs, as well as eventually consistent ones.
-
-\subsection{Our contribution: bringing threshold queries to CvRDTs}
-
-As they are today, CvRDTs only support eventually consistent queries.
-We could get strong consistency by waiting until all replicas agree
+Traditional CvRDTs only support eventually consistent queries.  We
+could get strong consistency by waiting until all replicas agree
 before allowing a query to return---but in practice, such agreement
-may never happen.  In this paper, we offer an alternative approach to
-supporting strongly consistent queries that takes advantage of the
-existing lattice structure of CvRDTs and does not require waiting for
-all replicas to agree.
-
-To do so we take inspiration from
-our previous work \cite{LVars-paper,Freeze-paper,effectzoo} on \emph{LVars}, or
-lattice-based data structures for shared-memory deterministic parallelism.  
-Like CvRDTs, LVars are data structures whose states are elements of an
-application-specific lattice, and whose contents can only grow with
-respect to the given lattice.
-Unlike CvRDTs, though, LVars make it impossible to observe the
-\emph{order} of updates to their state.  This is because LVar read
-operations are \emph{threshold} reads: an attempt to read will block
-until the data structure's contents reach or surpass a particular
-``threshold'' (which we explain in more detail in Section~\ref{s:threshold-reads}), 
-and then return a deterministic result.
-The combination of inflationary writes and threshold reads
-allow LVars to serve as the basis for a
-\emph{deterministic-by-construction} shared-memory parallel
-programming model: concurrent programs in which all
-shared data structures are LVars are guaranteed to produce a
-deterministic outcome on every run, regardless of parallel execution
-and schedule nondeterminism.\lk{``Concurrent programs'', but
-  ``parallel execution''---seems reasonable to me; will it make sense
-  to other people?} \rn{Sounds perfect to me.  Readers for whom these
-  are near synonyms will not blink, and readers who make the
-  distinction should be happy too.}
-
-Although LVars and CvRDTs were developed independently, both models
-leverage the mathematical properties of join-semilattices to ensure
-that a property of the model holds---determinism in the case of LVars;
-eventual consistency in the case of CvRDTs.  
-Our contribution in this paper is to bring LVar-style \emph{threshold
-queries} to CvRDTs and show that threshold queries of CvRDTs are
-strongly consistent queries, according to the criteria given above.
-After reviewing the fundamentals of
-threshold queries (Section~\ref{s:threshold-reads}) and CvRDTs
-(Section~\ref{s:cvrdts}), we introduce CvRDTs extended with threshold
-queries (Section~\ref{s:model}) and prove that threshold queries
-in our extended model are strongly consistent queries (Section~\ref{s:results}).
-That is, we show
-that a threshold query that returns an answer when executed on a
+may never happen.  In this chapter, I present an alternative approach
+to supporting strongly consistent queries of CvRDTs that takes
+advantage of their existing lattice structure and does \emph{not}
+require waiting for all replicas to agree.  To do so, I take
+inspiration from LVar-style threshold reads.  I show how to extend
+CvRDTs to support deterministic, strongly consistent queries, which I
+call \emph{threshold queries}.  After reviewing the fundamentals of
+CvRDTs in Section~\ref{s:distributed-cvrdts}, I introduce CvRDTs
+extended with threshold queries (Section~\ref{s:distributed-model})
+and prove that threshold queries in our extended model are strongly
+consistent queries (Section~\ref{s:distributed-results}).  That is, I
+show that a threshold query that returns an answer when executed on a
 replica will return the same answer every subsequent time that it is
 executed on that replica, and that executing that threshold query on a
 different replica will eventually return the same answer, and will
-block until it does so.  
-\rn{This is pretty identically repeating what was in the definition in
-sec 1.2 less than one page earlier, no?}
-\lk{yep, just reiterating it -- it might be too much.}
-It is therefore impossible to observe
+block until it does so.  It is therefore impossible to observe
 different results from the same threshold query, whether at different
-times on the same replica, or whether on different replicas.
-
-A preliminary version of some of the material in this
-paper appeared in a non-archival workshop~\cite{wodet-crdts}.
-\lk{Things we do in this paper that we didn't do in the WoDet paper:
-  we define what a strongly consistent query actually is; 
-  we define threshold queries in a more general way; we take into account
-  the effect of potentially non-terminating threshold queries; we
-  state and prove Theorem 2.  Should we list out those things?}
-
-\rn{Because wodet allows republication I do not think it is necessary
-  at all to mention this workshop pub.  Better to just focus on
-  trumpeting the contributions here.}
-\lk{I dunno, I'd feel better mentioning it if we're reusing text from
-  it, even though that's allowed.}
-
-%% {Viewed another way, threshold queries are operations for which
-%% eventual and strong consistency are {\em indistinguishable}.}
-
-\rn{I had mix feelings about them ``enforcing'' strong
-  consistency... because they don't change the way writes and merges
-  happen.  (And if regular reads are still allowed...).  What do you
-  think of the above way of casting it?}  \lk{Yeah, that was badly
-  stated.  This has been basically overhauled now; we're not talking
-  about proving properties of the whole system, we're talking about
-  proving properties of threshold queries.}
-
-% In the present work, we port LVar-style threshold queries to the 
-% setting of CvRDTs and show that they enforce strong consistency.
-
-\lk{I commented out an old footnote about determinism vs. consistency
-  because it's kind of out of date now.  Determinism of a system and
-  consistency of a system are different things, but in this paper
-  we're distinguishing between consistency of a *system* and
-  consistency of a *query*, and we're saying that a strongly
-  consistent query is a deterministic query is a threshold query.  We
-  aren't talking about determinism of the whole system.}
-%% ``It should be noted
-%%   that, even though we are borrowing a determinism-enforcing notion
-%%   from LVars and using it to enforce consistency in CvRDTs,
-%%   determinism and consistency are orthogonal concepts: determinism
-%%   refers to whether the observable final state of the system is the
-%%   same on every run, whereas consistency refers to whether all
-%%   replicas have equivalent state.  A system might, on every run, reach
-%%   a state in which replicas always disagree in a particular way; such
-%%   a system would be deterministic but inconsistent.  On the other
-%%   hand, a system might reach a different convergent state on every
-%%   run, and be consistent but nondeterministic.  In any case, in this
-%%   paper, determinism is not the goal; indeed, in the model we present,
-%%   processes may run infinitely, and hence the notion of ``final state
-%%   of the system'' may not even apply.''
-
+times on the same replica or whether on different replicas.

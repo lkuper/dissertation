@@ -1,14 +1,12 @@
-\section{Adding threshold queries to CvRDTs}\label{s:model}
+\section{Adding threshold queries to CvRDTs}\label{s:distributed-model}
 
-In Shapiro \etal's CvRDT model,
-the query operation $q$ reads the
+In Shapiro \etal's CvRDT model, the query operation $q$ reads the
 exact contents of its local replica, and therefore different replicas
 may see different states at the same time, if not all updates have
 been propagated yet.  That is, it is possible to observe intermediate
 states of a CvRDT replica.  Such intermediate observations are not
-possible with
-threshold queries. In this section, we show how to extend the CvRDT
-model to accommodate threshold queries.
+possible with threshold queries. In this section, we show how to
+extend the CvRDT model to accommodate threshold queries.
 
 \subsection{Objects with threshold queries}
 
@@ -26,17 +24,19 @@ a threshold query method $t$:
 \end{definition}
 
 In order to give a semantics to the threshold query method $t$, we
-need to formally define the notion of a threshold set described in
-Section~\ref{s:threshold-reads}:
+need to formally define the notion of a threshold set.  The notion of
+``threshold set'' that I use here is the generalized formulation of
+threshold sets, based on \emph{activation sets}, that I described
+previously in
+Section~\ref{subsection:lvars-a-more-general-formulation-of-threshold-sets}.
 
 \begin{definition}[threshold set]
   \label{def:threshold-set}
   A \emph{threshold set with respect to a lattice $(S, \leq)$} is a
-  set $\mathcal{S} = \{ S_a, S_b, \dots \}$ of one or more sets
-  of \emph{activation states}, where each set of activation states is a subset of $S$,
-  the set of
-  lattice elements, and where the following \emph{pairwise
-    incompatibility} property holds:
+  set $\mathcal{S} = \{ S_a, S_b, \dots \}$ of one or more sets of
+  \emph{activation states}, where each set of activation states is a
+  subset of $S$, the set of lattice elements, and where the following
+  \emph{pairwise incompatibility} property holds:
 
   For all $S_a, S_b \in \mathcal{S}$, if $S_a \neq S_b$, then for all
   activation states $s_a \in S_a$ and for all activation states $s_b \in
@@ -44,32 +44,31 @@ Section~\ref{s:threshold-reads}:
   induced by $\leq$ and $\top$ is the greatest element of $(S, \leq)$.
 \end{definition}
 
-In our model, we assume a finite set of $n$ processes $p_1, \dots, p_n$, and
-consider a single replicated object with one replica at each process,
-with replica $i$ at process $p_i$.  Processes may crash silently; we
-say that a non-crashed process is \emph{correct}.
+In our model, we assume a finite set of $n$ processes $p_1, \dots,
+p_n$, and consider a single replicated object with one replica at each
+process, with replica $i$ at process $p_i$.  Processes may crash
+silently; we say that a non-crashed process is \emph{correct}.
 
 Every replica has initial state $s^0$.  Methods execute at individual
 replicas, possibly updating that replica's state.  The $k$th method
-execution at replica $i$ is written $f^{k}_{i}(a)$, where $k$ is $\geq 1$ and $f$ is
-either $q$, $t$, $u$, or $m$, and $a$ is the arguments to $f$, if any.
-Methods execute sequentially at each replica.
-The state of replica $i$ after the $k$th method execution at $i$ is
+execution at replica $i$ is written $f^{k}_{i}(a)$, where $k$ is $\geq
+1$ and $f$ is either $q$, $t$, $u$, or $m$, and $a$ is the arguments
+to $f$, if any.  Methods execute sequentially at each replica.  The
+state of replica $i$ after the $k$th method execution at $i$ is
 $s^{k}_{i}$.  We say that states $s$ and $s'$ are equivalent, written
 $s \equiv s'$, if $q(s) = q(s')$.
 
 \subsection{Causal histories}
 
 An object's \emph{causal history} is a record of all the updates that
- have happened at all replicas.  The causal history does
-not track the order in which updates happened, merely that
-they did happen.  The \emph{causal history at replica $i$ after
-  execution $k$} is the set of all updates that have
-happened at replica $i$ after execution $k$.
-Definition~\ref{def:causal-history} updates Shapiro
-\etal's definition of causal history for a state-based object
-to account for $t$ (a trivial change, since execution of $t$
-does not change a replica's causal history):
+have happened at all replicas.  The causal history does not track the
+order in which updates happened, merely that they did happen.  The
+\emph{causal history at replica $i$ after execution $k$} is the set of
+all updates that have happened at replica $i$ after execution $k$.
+Definition~\ref{def:causal-history} updates Shapiro \etal's definition
+of causal history for a state-based object to account for $t$ (a
+trivial change, since execution of $t$ does not change a replica's
+causal history):
 \begin{definition}[causal history]
   \label{def:causal-history}
   A \emph{causal history} is a sequence $[c_1, \dots, c_n]$, where
@@ -91,15 +90,10 @@ does not change a replica's causal history):
 We say that an update is \emph{delivered at replica $i$} if it is in
 the causal history at replica $i$.
 
-\subsection{Threshold CvRDTs and the semantics of blocking}\label{ss:blocking}
+\subsection{Threshold CvRDTs and the semantics of blocking}\label{subsection:distributed-blocking}
 
-With the previous definitions in place, we
-can give the definition of a CvRDT that supports threshold queries:
-
-\lk{OK, it's a little confusing to use the letter $t$ for the
-  threshold query method, because op-based CRDTs use $t$ for the
-  ``prepare-update'' method. But, since this paper doesn't have
-  op-based CRDTs, there's no ambiguity...I'm stealing it.}
+With the previous definitions in place, we can give the definition of
+a CvRDT that supports threshold queries:
 
 \begin{definition}[CvRDT with threshold queries]
   \label{def:cvrdt-with-threshold-queries}
@@ -123,11 +117,6 @@ can give the definition of a CvRDT that supports threshold queries:
       distinguished value $\block$.
     \item The update method $u$ takes a state as argument and updates
       the local state to it.
-\rn{Wait updates the local state to it?  Or to the LUB of the input
-  state and it?  And if it's the latter, then do we need the next
-  bullet, or is the inflationary property a consequence of this bullet?}
-\lk{It actually doesn't do a lub, it just does an inflationary update
-  of any kind.  the only lub that happens is with the merge method.}
     \item State is \emph{inflationary} across updates: if $u$ updates
       a state $s$ to $s'$, then $s \leq s'$.
     \item The merge method $m$ takes a remote state as its argument,
@@ -158,69 +147,21 @@ executions at the replica, including updates and merges.  The polling
 layer itself need not do any computation other than checking to see
 whether $t$ returns $\block$ or something else; in particular, the
 polling layer does not need to compare activation states to replica
-states, since that comparison is done by $t$ itself.  
-% Indeed, a
-% polling mechanism like this is how threshold reads for LVars are
-% implemented in practice~\cite{Freeze-paper}.
-\rn{I'm afraid the prev sentence about polling/lvish gives the wrong
-  impression, and a more nuanced one would take more space.  So how
-  about we nix it?  The problem is that LVish is of course event
-  driven.  It doesn't sit around polling gets waiting for puts to
-  happen.  It only does anything when the put happens.  And yet, the
-  mapping of puts onto exact callbacks is not always perfectly
-  precise.  With an IVar it would be, but with an ``IMap'', the
-  there's a callback registered on a particular key, and yet it might
-  be polled every time a write is made to ANY key.  That's just a
-  limitation of the implementation currently -- it can't do finer
-  grain lists of guarded callbacks.  More generally, some lvars
-  really do *need* polling, yet they only need to poll when a write
-  occurs.}
+states, since that comparison is done by $t$ itself.
 
 The set of activation states $S_a$ that a call to $t$ returns when it
 unblocks is unique because of the pairwise incompatibility property
-described in Definition~\ref{def:threshold-set}.  The intuition behind
-pairwise incompatibility is that described in
-Section~\ref{subsec:pairwise-incompatibility}: without it, different
-orderings of updates could allow the same threshold query to unblock
-in different ways, introducing nondeterminism that would be observable
-beyond the polling layer.
+required of threshold sets: without it, different orderings of updates
+could allow the same threshold query to unblock in different ways,
+introducing nondeterminism that would be observable beyond the polling
+layer.
 
 \subsection{Threshold CvRDTs are strongly eventually consistent}
-
-\lk{Hmmm.  We don't have to do all this blathering about termination
-  anymore, because now threshold queries actually do always return
-  immediately!}
 
 We can define eventual consistency and strong eventual consistency
 exactly as Shapiro \etal~do in their model.  In the following
 definitions, a \emph{correct replica} is a replica at a correct
 process, and the  symbol $\eventually$ means ``eventually'':
-
-%% Since Shapiro~\etal's CvRDTs are strongly eventually
-%% consistent~\cite{crdts}, do we have the same guarantee for threshold
-%% CvRDTs?
-%% The addition of threshold queries to the model introduces a wrinkle
-%% with regard to termination.  Recall from Section~\ref{s:cvrdts} that
-%% Shapiro~\etal's definition of eventual consistency (and therefore also
-%% their definition of strong eventual consistency) includes a
-%% \emph{termination} property that says that all method executions
-%% terminate.  But a threshold query could block forever, if no update
-%% arrives to unblock it.  The determinism of threshold queries does \emph{not} rule out
-%% queries that block forever.  Rather, it says that if a threshold query blocks
-%% forever on one execution, then it will do so on \emph{every}
-%% execution, regardless of scheduling.
-%% For that to be the case, we need to ensure that
-%% blocking threshold queries do not race with merges that could unblock
-%% them.  We accomplish this by modeling each process as two
-%% \emph{threads}, the \emph{main thread} and the \emph{merge thread}.
-%% Updates ($u$), ordinary queries ($q$), and threshold queries ($t$) take place on the
-%% main thread; merges ($m$) take place on the merge thread and are interleaved
-%% with operations on the main thread.  Hence a merge operation cannot be
-%% blocked behind a threshold query.
-
-%% We update Shapiro \etal's definitions of eventual
-%% consistency and strong eventual consistency to account for threshold
-%% queries not necessarily terminating:
 
 \begin{definition}[eventual consistency (EC)]
   \label{def:eventual-consistency}
@@ -256,12 +197,10 @@ query returns $\block$ every time it is called during a complete run
 of the system, it will do so on \emph{every} run of the system,
 regardless of scheduling.  That is, it is not possible for a query to
 cause the polling layer to block forever on some runs, but not on
-others.\lk{I changed the wording here from ``execution'' to ``complete
-  run of the system'' to lessen confusion with individual method
-  executions.}
+others.
 
-Finally, we can directly leverage Shapiro 
-\etal's SEC result for CvRDTs to show that a threshold CvRDT is SEC:
+Finally, we can directly leverage Shapiro \etal's SEC result for
+CvRDTs to show that a threshold CvRDT is SEC:
 \begin{thm}[Strong Eventual Consistency of Threshold CvRDTs]
   \label{thm:strong-eventual-consistency-of-threshold-cvrdts}
   Assuming eventual delivery and termination, an object that meets
@@ -279,9 +218,3 @@ Definition~\ref{def:causal-history}, threshold queries do not affect
 causal history, we can leverage Shapiro \etal's result to say that a
 threshold CvRDT is also SEC.
 \end{proof}
-
-\rn{Do we not need to grapple with the blocking forever behavior here
-  with respect to reusing this result off the shelf?}
-\lk{right, we don't, because we aren't proving anything about the
-  polling layer, just the inner CvRDT layer.}
-
