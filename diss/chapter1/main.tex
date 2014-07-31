@@ -411,13 +411,7 @@ The rest of this dissertation supports my thesis as follows:
     generality of the LVars model by showing how previously existing
     deterministic parallel programming models can be expressed with
     LVars.  This is possible because the definition of $\lambdaLVar$
-    is parameterized by the choice of lattice.  For example, a lattice
-    of channel histories with a prefix ordering allows LVars to
-    represent FIFO channels that implement a Kahn process network,
-    whereas instantiating $\lambdaLVar$ with a lattice with one
-    ``empty'' state and multiple ``full'' states (where $\forall{i}.\;
-    \mathit{empty} < \mathit{full_i}$) results in a parallel
-    single-assignment language.  Hence $\lambdaLVar$ is actually a
+    is parameterized by the choice of lattice.  Hence $\lambdaLVar$ is actually a
     \emph{family} of calculi, varying by choice of lattice.
     \TODO{Something about Section~\ref{s:lvars-generalizing} should go
       here as well.}
@@ -445,7 +439,8 @@ The rest of this dissertation supports my thesis as follows:
     Chapter~\ref{ch:distributed}, I defend the claim that the LVars
     programming model is applicable to distributed programming by
     showing how to extend distributed replicated data structures with
-    LVar-style threshold reads.
+    LVar-style threshold reads. \TODO{Say a little bit more about what
+      the new contribution is wrt mixing consistency levels.}
 \end{itemize}
 
 \section{Previously published work}
