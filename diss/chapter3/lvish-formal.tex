@@ -220,17 +220,6 @@ counterparts in $\lambdaLVar$:
       Chapter~\ref{ch:lvish}.}}
 \end{itemize}
 
-Is the @get@ operation deterministic?  Consider two lattice elements
-$p_1$ and $p_2$ that have no ordering and have $\topp$ as their lub,
-and suppose that @put@s of $p_1$ and $p_2$ and a @get@ with
-$\setof{p_1, p_2}$ as its threshold set all race for access to an LVar
-$lv$.  Eventually, the program is guaranteed to fault, raising
-$\error$ by way of the {\sc E-Put-Err} rule, because $\lubp{p_1}{p_2}
-= \topp$.  Before that happens, though, $\getexp{lv}{\setof{p_1,
-    p_2}}$ could return either $p_1$ or $p_2$.  Therefore, @get@
-\emph{can} behave nondeterministically---but this behavior is not
-observable in the final outcome of the program.
-
 \subsection{Freezing and the $\FAW$ primitive}\label{subsection:language-freezing}
 
 The {\sc E-Freeze-Init}, {\sc E-Spawn-Handler}, {\sc E-Freeze-Final},

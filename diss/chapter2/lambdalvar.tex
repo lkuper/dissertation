@@ -55,6 +55,21 @@ argument to @get@ is enforced in the {\sc E-Get} rule by the
 $\incomp{T}$ premise, which requires that the least upper bound of any
 two distinct elements in $T$ must be $\top$.
 
+\subsection{Errors and observable determinism}\label{subsection:lvars-errors-and-observable-determinism}
+
+Is the @get@ operation deterministic?  Consider two lattice elements
+$d_1$ and $d_2$ that have no ordering and have $\top$ as their lub,
+and suppose that @put@s of $d_1$ and $d_2$ and a @get@ with
+$\setof{d_1, d_2}$ as its threshold set all race for access to an LVar
+$lv$.  Eventually, the program is guaranteed to raise $\error$ by way
+of the {\sc E-Put-Err} rule, because $\userlub{d_1}{d_2} = \top$.  Before
+that happens, though, $\getexp{lv}{\setof{d_1, d_2}}$ could return
+either $d_1$ or $d_2$.  Therefore, @get@ \emph{can} behave
+nondeterministically---but this behavior is not observable in the
+final outcome of the program, and under our definition of observable
+determinism, only the final outcome of a program counts as what is
+observable.
+
 \subsection{Fork-join parallelism}\label{subsection:fork-join}
 
 $\lambdaLVar$ has a call-by-value semantics: arguments must be fully
