@@ -18,30 +18,32 @@
   2.6. Generalizing the `put` and `get` operations
 
 3. Quasi-deterministic and event-driven programming with LVars
-  3.1. LVish, informally
-  3.2. LVish, formally
+  3.1. lambdaLVish, informally
+  3.2. lambdaLVish, formally
   3.3. Proof of quasi-determinism for lambdaLVish
 
-4. The LVish library: implementation and evaluation
-  * the LVish implementation overview from the POPL paper
-  * idea: combine evaluation sections from all our papers that have them
-  * Benchmarks from the FHPC paper?  (Maybe not -- these are basically superseded by the POPL paper.)
-  * MIS and BFS benchmarks from the POPL TR
-  * k-CFA case study from the POPL paper
-  * PhyBin case study from the PLDI paper
+4. The LVish library: interface, implementation, and evaluation
+  4.1. The big picture
+  4.2. The LVish library interface
+  4.3. The LVish library implementation
+  4.4. Case study: parallelizing k-CFA with LVish
+  4.5. Case study: parallelizing PhyBin with LVish
 
 5. Deterministic threshold reads of distributed data structures
-  * loosely based on section 4 of my thesis proposal
-  * basically exactly the DISC paper, minus the related work and the LVars background that's already covered earlier
+  5.1. Background: CvRDTs and eventual consistency
+  5.2. Adding threshold queries to CvRDTs
+  5.3. Determinism of threshold queries
+  (5.4. Joining forces: LVars and CvRDTs <-- maybe?)
 
 6. Related work
-  * loosely based on section 5 of my thesis proposal
-  * idea: combine related work sections from FHPC, POPL, DISC papers
-  * related work from PLDI paper?  (Probably not -- it's not that related to the thesis)
-  * Point to Praveen's graph algorithms stuff? (maybe this should go in the Evaluation chapter?)
+  6.1. Deterministic Parallel Java
+  6.2. FlowPools
+  6.3. Concurrent Revisions
+  6.4. Conflict-free replicated data types
+  6.5. Bloom and Bloom^L
+  (6.6. Related work in separation logic <-- maybe?)
 
 7. Conclusion
-  * incorporate concluding points from FHPC, POPL, PLDI and DISC papers
 
 ### Appendices
 
