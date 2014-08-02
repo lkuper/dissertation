@@ -74,8 +74,11 @@ $S$, then $\pi(l) \notin \dom{(\pi(S)}$,\lk{Do I need to spell out why
 
 \LVarsDefPermutationConfiguration
 
-With these definitions in place, I can show that transitions are
-permutable:
+With these definitions in place, I can prove a lemma that says that
+the names of locations in a configuration do not affect whether or not
+it can take a step. Lemma~\ref{lem:lvars-permutability} says that a
+configuration $\conf$ can step to $\conf$ exactly when $\pi(\conf)$
+can step to $\pi(\conf)$.
 
 \LVarsLemPermutability
 \begin{proof}
@@ -94,31 +97,38 @@ permutable:
 \subsection{Internal determinism of the reduction semantics}
 
 My goal is to show that $\lambdaLVar$ is deterministic according to
-the definition of \emph{observable determinism} that I set forth in
+the definition of \emph{observable determinism} that I gave in
 Chapter~\ref{ch:intro}---that is, that a $\lambdaLVar$ program always
 evaluates to the same value.  In the context of $\lambdaLVar$, a
-``program'' can be understood as a configuration of a store and an
-expression, and a ``value'' can be understood as a configuration that
-cannot step.  A configuration that cannot step might be one in which
-the expression is a value, or it might be a ``stuck'' configuration
-that cannot step because no rule of the operational semantics applies,
-even if the expression in that configuration is not a value.  (This
-could happen if, for instance, we have a blocking @get@ expression and
-there are no other evaluating expressions that could cause it to
-unblock.)
+``program'' can be understood as a configuration, and a ``value'' can
+be understood as a configuration that cannot step, either because the
+expression in that configuration is actually a value, or because it is
+a ``stuck'' configuration that cannot step because no rule of the
+operational semantics applies.  In $\lambdaLVar$, the latter situation
+could occur if, for instance, a configuration contains a blocking
+@get@ expression and there are no other expressions left to evaluate
+that might cause it to unblock.
 
-This definition of observable determinism does not require that a
-configuration takes the same sequence of steps on the way to reaching
-its value at the end of every run, and in fact, the $\lambdaLVar$
-operational semantics does not have that property.  I will use the
-term \emph{internally deterministic} to describe a program that does,
-in fact, takes the same sequence of steps on every run. \TODO{Get a
-  citation for this.}  Although $\lambdaLVar$ is not internally
-deterministic, all of the internal nondeterminism of $\lambdaLVar$ is
-due to the {\sc E-Eval-Ctxt} rule!  This is the case because the {\sc
-  E-Eval-Ctxt} rule is the only rule in the operational semantics by
-which a particular configuration may be able to step in multiple ways.
-The multiple ways in which a configuration can step via {\sc
+This definition of observable determinism does \emph{not} require that
+a configuration takes the same sequence of steps on the way to
+reaching its value at the end of every run, and in fact, the
+$\lambdaLVar$ operational semantics does not have that property.
+Borrowing terminology from
+Blelloch~\etal~\cite{blelloch-internally-deterministic}, I will use
+the term \emph{internally deterministic} to describe a program that
+does, in fact, take the same sequence of steps on every
+run.\footnote{I am actually using ``internally deterministic'' in a
+  more specific way than Blelloch~\etal: they define an internally
+  deterministic program to be one for which the \emph{trace} of the
+  program is the same on every run, where a trace is a directed
+  acyclic graph of operations executed by the program and the control
+  dependencies among them.  The point is that internal determinism is
+  a stronger property than observable determinism.}  Although
+$\lambdaLVar$ is not internally deterministic, all of its internal
+nondeterminism is due to the {\sc E-Eval-Ctxt} rule!  This is the case
+because the {\sc E-Eval-Ctxt} rule is the only rule in the operational
+semantics by which a particular configuration can step in multiple
+ways.  The multiple ways in which a configuration can step via {\sc
   E-Eval-Ctxt} correspond to the ways in which the expression in that
 configuration can be decomposed into a redex and an evaluation
 context.  In fact, it is exactly this property that makes it possible
