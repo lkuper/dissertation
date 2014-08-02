@@ -2,15 +2,85 @@
 
 \TODO{Revise this chapter.}
 
-\lk{THe following text is from the FHPC paper conclusion.}
+\lk{The following text is from the FHPC paper conclusion.}
 
 As single-assignment languages and Kahn process networks demonstrate,
 monotonicity serves as the foundation of deterministic parallelism.
-Taking monotonicity as a starting point, the LVars model generalizes
-single assignment to monotonic multiple assignment parameterized by an
-application-specific lattice.  Combining monotonic writes with
-threshold reads yields a provably deterministic shared-state parallel
-programming model that generalizes and unifies a class of languages
-suitable for asynchronous parallel applications.
+Taking monotonicity as a starting point, our work generalizes single
+assignment to monotonic multiple assignment parameterized by a
+user-specified lattice.  By combining monotonic writes with threshold
+reads, we get a shared-state parallel programming model that
+generalizes and unifies an entire class of monotonic languages
+suitable for asynchronous, data-driven applications.  Our model is
+provably deterministic, and further provides a foundation for
+exploration of limited nondeterminism.  Future work will improve upon
+our prototype implementation, formally establish the relationship between
+LVars and other deterministic parallel models,
+investigate consistent termination %for $\lambdapar$,
+and prove the
+limited nondeterminism property of %$\lambdapar$ extended with $\CONSUME$.
 
-\TODO{Dump in conclusion material from other papers.}
+\lk{The following text is the conclusion cut from the POPL paper.}
+
+We have presented LVish, an extension to the LVars programming model
+that provides, first, the ability to \emph{freeze} an LVar and observe
+its exact contents, and second, the ability to attach event handlers
+to an LVar that respond to state changes.  We have shown that the
+resulting extended programming model is \emph{quasi-deterministic}, in
+which programs always either evaluate to the same answer or raise an
+exception.  Finally, we have provided an implementation of LVish as a
+Haskell library, and our $k$-CFA case study demonstrates how our
+library enables an expressive and useful style of programming that
+yields promising parallel speedup.
+
+\lk{The following text is from the POPL related work section.}
+
+Future work will further explore the relationship between LVars and
+CRDTs: in one direction, we will investigate LVar-based data
+structures inspired by CRDTs that support non-monotonic operations; in
+the other direction, we will investigate the feasibility and
+usefulness of LVar threshold reads in a distributed setting.
+
+\lk{The following text is from the PLDI paper conclusion.}
+
+We present an extended version of the LVish library for deterministic
+ parallelism, augmented with the ability to manage a wide variety of
+ effects previously not seen in combination in any
+ guaranteed-deterministic parallel programming system.
+ Our extended library offers the
+well-known benefits of language-level enforcement of determinism, but
+without being limited to a single shared data structure or a single
+programming paradigm as previous deterministic-by-construction
+programming models have been.  
+Furthermore, our case study and empirical results demonstrate that
+deterministic parallelism can be effective, while also
+retaining the ease of use that is the
+hallmark of deterministic parallel models.
+
+\lk{The following text is from the OPODIS paper conclusion.}
+
+In this paper we show how to extend CvRDTs with support for
+deterministic queries.  Borrowing from our previous work on LVars for
+deterministic parallel programming, we propose \emph{threshold
+  queries}, which, rather than returning the exact contents of a
+CvRDT, only reveal whether the contents have crossed a given
+``threshold'' in the CvRDT's lattice, blocking until the threshold is
+reached and then returning a deterministic result.  We prove that a
+threshold query that returns a given result is guaranteed to return
+that result on subsequent queries of the same replica, regardless of
+the replica's state.  Moreover, executions of the same query on other
+replicas are guaranteed to eventually return the same answer, and to
+block until they do so.  The technique generalizes to any lattice, and
+hence any CvRDT, allowing CvRDTs to support both eventually consistent
+and strongly consistent queries without waiting for all replicas to
+agree.
+
+Since real applications call for a combination of strongly consistent
+and eventually consistent queries, threshold queries offer a way to
+support a mix of consistency choices within a single, lattice-based
+reasoning framework.  Furthermore, since threshold queries behave
+deterministically regardless of whether all replicas agree, they
+suggest a way to save on synchronization costs: existing operations
+that require all replicas to agree could be done with threshold
+queries instead, and retain behavior that is \emph{observably}
+strongly consistent while avoiding unnecessary synchronization.
