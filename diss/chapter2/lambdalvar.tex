@@ -49,7 +49,7 @@ threshold set argument to @get@ is enforced in the {\sc E-Get} rule by
 the $\incomp{T}$ premise, which requires that the least upper bound of
 any two distinct elements in $T$ must be $\top$.
 
-The context reduction relation $\ctxstepsto$ has only one rule, {\sc
+The context relation $\ctxstepsto$ has only one rule, {\sc
   E-Eval-Ctxt}, which is a standard context rule, allowing reductions
 to apply within a context.  The choice of context determines where
 evaluation can occur; in $\lambdaLVar$, the order of evaluation is
@@ -58,8 +58,8 @@ more than one way), and so it is generally \emph{not} the case that an
 expression has a unique decomposition into redex and
 context.\footnote{In fact, my motivation for splitting the operational
   semantics into a reduction semantics and a context relation is to
-  isolate the nondeterminism of the context reduction relation and
-  make it easier to reason about in the determinism proof of
+  isolate the nondeterminism of the context relation and make it
+  easier to reason about in the determinism proof of
   Section~\ref{s:lvars-proof}.} For example, in an application
 $\app{e_1}{e_2}$, either $e_1$ or $e_2$ might reduce first.  The
 nondeterminism in choice of evaluation context reflects the
