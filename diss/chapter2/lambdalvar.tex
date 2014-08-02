@@ -6,54 +6,66 @@
 
 \FigLambdaLVarContextSemantics
 
-\lk{Maybe this should be explained more slowly---that is, maybe I
-  should individually go through each thing in the grammar and say
-  what it is.  I wouldn't do that in a conference paper, but...this
-  isn't a conference paper.}
-
 The syntax of $\lambdaLVar$ appears in
 Figure~\ref{f:lvars-lambdaLVar-syntax}, and
 Figures~\ref{f:lvars-lambdaLVar-reduction-semantics},
 and~\ref{f:lvars-lambdaLVar-context-semantics} together give the
-operational semantics.
+operational semantics.  Both the syntax and semantics are
+parameterized by the lattice $(D, \userleq, \bot, \top)$.
 
-\TODO{Revise this to explain the split semantics.}
-
-Both the syntax and semantics are parameterized by the lattice $(D,
-\userleq, \bot, \top)$.  The reduction relation $\parstepsto$ is
-defined on \emph{configurations} $\config{S}{e}$ comprising a store
-and an expression.  The \emph{error configuration}, written $\error$,
-is a unique element added to the set of configurations, but
+A \emph{configuration} $\config{S}{e}$ comprises a store and an
+expression.  The \emph{error configuration}, written $\error$, is a
+unique element added to the set of configurations, but
 $\config{\topS}{e}$ is equal to $\error$ for all expressions $e$.  The
 metavariable $\conf$ ranges over configurations.
 
-$\lambdaLVar$ uses a reduction semantics based on \emph{evaluation
-  contexts}.  The {\sc E-Eval-Ctxt} rule is a standard context rule,
-allowing reductions to apply within a context.  The choice of context
-determines where evaluation can occur; in $\lambdaLVar$, the order of
-evaluation is nondeterministic (that is, a given expression can
-generally reduce in more than one way), and so it is generally
-\emph{not} the case that an expression has a unique decomposition into
-redex and context.  For example, in an application $\app{e_1}{e_2}$,
-either $e_1$ or $e_2$ might reduce first.  The nondeterminism in
-choice of evaluation context reflects the nondeterminism of scheduling
-between concurrent threads, and in $\lambdaLVar$, the arguments to
-@get@, @put@, and application expressions are \emph{implicitly}
-evaluated concurrently.
+Stores are as described in Section~\ref{subsection:lvars-stores}, and
+expressions may be variables, values, function applications, @get@
+expressions, @put@ expressions, or @new@.  The value forms include the
+unit value $\unit$, elements $d$ of the specified lattice, store
+locations $l$, threshold sets $T$, or $\lambda$-expressions
+$\lam{x}{e}$.  A threshold set is a set $\setof{d_1, d_2, \dots}$ of
+one or more elements of the specified lattice.
 
-The rules {\sc E-New}, {\sc E-Put}/{\sc E-Put-Err}, and {\sc E-Get}
-respectively express the semantics of the @new@, @put@, and @get@
-operations described in
-Section~\ref{subsection:lvars-communication-primitives}.  The {\sc
-  E-New} rule creates a new binding in the store and returns a pointer
-to it; the side condition $l \notin \dom{S}$ ensures that $l$ is a
-fresh location.  The {\sc E-Put} rule updates the store and returns
-$\unit$, the unit value.  The {\sc E-Put-Err} rule applies when a
-@put@ to a location would take its state to $\top$; in that case, the
-semantics steps to $\error$.  The incompatibility of the threshold set
-argument to @get@ is enforced in the {\sc E-Get} rule by the
-$\incomp{T}$ premise, which requires that the least upper bound of any
-two distinct elements in $T$ must be $\top$.
+The operational semantics is split into two parts, a \emph{reduction
+  semantics}, shown in
+Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}, and a
+\emph{context semantics}, shown in
+Figure~\ref{f:lvars-lambdaLVar-context-semantics}.
+
+The reduction relation $\parstepsto$ is defined on
+configurations. There are five rules in the reduction semantics: the
+{\sc E-Beta} rule is standard $\beta$-reduction, and the rules {\sc
+  E-New}, {\sc E-Put}/{\sc E-Put-Err}, and {\sc E-Get} respectively
+express the semantics of the @new@, @put@, and @get@ operations
+described in Section~\ref{subsection:lvars-communication-primitives}.
+The {\sc E-New} rule creates a new binding in the store and returns a
+pointer to it; the side condition $l \notin \dom{S}$ ensures that $l$
+is a fresh location.  The {\sc E-Put} rule updates the store and
+returns $\unit$, the unit value.  The {\sc E-Put-Err} rule applies
+when a @put@ to a location would take its state to $\top$; in that
+case, the semantics steps to $\error$.  The incompatibility of the
+threshold set argument to @get@ is enforced in the {\sc E-Get} rule by
+the $\incomp{T}$ premise, which requires that the least upper bound of
+any two distinct elements in $T$ must be $\top$.
+
+The context reduction relation $\ctxstepsto$ has only one rule, {\sc
+  E-Eval-Ctxt}, which is a standard context rule, allowing reductions
+to apply within a context.  The choice of context determines where
+evaluation can occur; in $\lambdaLVar$, the order of evaluation is
+nondeterministic (that is, a given expression can generally reduce in
+more than one way), and so it is generally \emph{not} the case that an
+expression has a unique decomposition into redex and
+context.\footnote{In fact, my motivation for splitting the operational
+  semantics into a reduction semantics and a context relation is to
+  isolate the nondeterminism of the context reduction relation and
+  make it easier to reason about in the determinism proof of
+  Section~\ref{s:lvars-proof}.} For example, in an application
+$\app{e_1}{e_2}$, either $e_1$ or $e_2$ might reduce first.  The
+nondeterminism in choice of evaluation context reflects the
+nondeterminism of scheduling between concurrent threads, and in
+$\lambdaLVar$, the arguments to @get@, @put@, and application
+expressions are \emph{implicitly} evaluated concurrently.
 
 \subsection{Errors and observable determinism}\label{subsection:lvars-errors-and-observable-determinism}
 
@@ -73,8 +85,8 @@ observable.
 \subsection{Fork-join parallelism}\label{subsection:fork-join}
 
 $\lambdaLVar$ has a call-by-value semantics: arguments must be fully
-evaluated before function application ($\beta$-reduction, modeled by
-the {\sc E-Beta} rule) can occur.  I exploit this property to define a
+evaluated before function application ($\beta$-reduction, via the {\sc
+  E-Beta} rule) can occur.  I exploit this property to define a
 syntactic sugar @let par@ for \emph{parallel composition}, which
 computes two subexpressions $e_1$ and $e_2$ in parallel before
 computing $e_3$:
@@ -131,9 +143,10 @@ the ability to construct arbitrary non-series-parallel dependency
 graphs, just as with \emph{first-class
   futures}~\cite{beyond-nested-workstealing}.
 
-Because the $\lambdaLVar$ semantics does not reduce under
-$\lambda$-terms, we can sequentially compose $e_1$ before $e_2$ by
-writing $\letexp{\_}{e_1}{e_2}$, which desugars to
-$\app{(\lam{\_}{e_2})}{e_1}$.  Sequential composition is useful for,
-for instance, allocating a new LVar before beginning a sequence of
-side-effecting @put@ and @get@ operations on it.
+Because we do not reduce under $\lambda$-terms, we can sequentially
+compose $e_1$ before $e_2$ by writing $\letexp{\_}{e_1}{e_2}$, which
+desugars to $\app{(\lam{\_}{e_2})}{e_1}$.  Sequential composition is
+useful for situations when expressions must run in a particular order,
+\ie, if we want to first allocate a new LVar with @new@ and then call
+@put@ on it.
+
