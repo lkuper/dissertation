@@ -18,6 +18,22 @@
 \end{lem}
 }
 
+\newcommand{\LVarsLemLocality}{
+\begin{lem}[Locality]\label{lem:lvars-locality}
+  If $\config{S}{\evalctxt{E_1}{e_1}} \ctxstepsto
+  \config{S_1}{\evalctxt{E_1}{e'_1}}$ and
+  $\config{S}{\evalctxt{E_2}{e_2}} \ctxstepsto
+  \config{S_2}{\evalctxt{E_2}{e'_2}}$ and $\evalctxt{E_1}{e_1} =
+  \evalctxt{E_2}{e_2}$, then there exist evaluation contexts $E'_1$
+  and $E'_2$ such that:
+  \begin{itemize}
+  \item $\evalctxt{E'_1}{e_1} = \evalctxt{E_2}{e'_2}$, and
+  \item $\evalctxt{E'_2}{e_2} = \evalctxt{E_1}{e'_1}$, and
+  \item $\evalctxt{E'_1}{e'_1} = \evalctxt{E'_2}{e'_2}$.
+  \end{itemize}
+\end{lem}
+}
+
 \newcommand{\LVarsLemMonotonicity}{
 \begin{lem}[Monotonicity]\label{lem:lvars-monotonicity}
   If $\config{S}{e} \parstepsto \config{S'}{e'}$,

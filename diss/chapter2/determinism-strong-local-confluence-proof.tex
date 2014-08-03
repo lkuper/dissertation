@@ -4,38 +4,45 @@
   By inspection of the operational semantics, it must be the case that
   $\conf$ steps to $\conf_a$ by the {\sc E-Eval-Ctxt} rule.  Let
   $\conf = \config{S}{\evalctxt{E_a}{e_{a_1}}}$ and let $\conf_a =
-  \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$.  Then, from the premise of
-         {\sc E-Eval-Ctxt}, we have that $\config{S}{e_{a_1}}
-         \parstepsto \config{S_a}{e_{a_2}}$.
+  \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$.
 
   Likewise, it must be the case that $\conf$ steps to $\conf_b$ by the
   {\sc E-Eval-Ctxt} rule.  Let $\conf =
   \config{S}{\evalctxt{E_b}{e_{b_1}}}$ and let $\conf_b =
-  \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$.  
-  Then, from the premise of {\sc E-Eval-Ctxt}, we have that
-  $\config{S}{e_{b_1}} \parstepsto \config{S_b}{e_{b_2}}$.  Note that
-  $\conf = \config{S}{\evalctxt{E_a}{e_{a_1}}} =
-  \config{S}{\evalctxt{E_b}{e_{b_1}}}$, where $E_a$ and $E_b$ may
-  differ and $e_{a_1}$ and $e_{b_1}$ may differ.
+  \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$.
+
+  Note that $\conf = \config{S}{\evalctxt{E_a}{e_{a_1}}} =
+  \config{S}{\evalctxt{E_b}{e_{b_1}}}$, and so
+  $\evalctxt{E_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_1}}$, but $E_a$ and
+  $E_b$ may differ and $e_{a_1}$ and $e_{b_1}$ may differ.
 
   We have to show that there exist $\conf_c, i, j, \pi$ such that
   $\conf_a \ctxstepsto^i \conf_c$ and $\pi(\conf_b) \ctxstepsto^j
   \conf_c$ and $i \leq 1$ and $j \leq 1$.
 
-  Let $\conf_c = \config{S_c}{\evalctxt{E_c}{e_c}}$.  We then have to
-  show that $\config{S_a}{\evalctxt{E_a}{e_{a_2}}} \ctxstepsto^i
-  \config{S_c}{\evalctxt{E_c}{e_c}}$, where $i \leq 1$, and that
-  $\pi(\config{S_b}{\evalctxt{E_b}{e_{b_2}}}) \ctxstepsto^j
-  \config{S_c}{\evalctxt{E_c}{e_c}}$ for some $\pi$, where $j \leq 1$.
+  Since $\config{S}{\evalctxt{E_a}{e_{a_1}}} \ctxstepsto
+  \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$ and
+  $\config{S}{\evalctxt{E_b}{e_{b_1}}} \ctxstepsto
+  \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$ and $\evalctxt{E_a}{e_{a_1}}
+  = \evalctxt{E_b}{e_{b_1}}$, we have from
+  Lemma~\ref{lem:lvars-locality} that there exist evaluation contexts
+  $E'_a$ and $E'_b$ such that:
 
-  \TODO{Figure out how to finish this proof.}
+  \begin{itemize}
+  \item $\evalctxt{E'_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_2}}$, and
+  \item $\evalctxt{E'_b}{e_{b_1}} = \evalctxt{E_a}{e_{a_2}}$, and
+  \item $\evalctxt{E'_a}{e_{a_2}} = \evalctxt{E'_b}{e_{b_2}}$.
+  \end{itemize}
 
-  \lk{If we can show that $\config{S_a}{e_{a_2}} \parstepsto \config{S_c}{e_{a_3}}$, \\
-  where $\evalctxt{E_a}{e_{a_3}} = \evalctxt{E_c}{e_c}$, \\
-  and that $\config{\pi(S_b)}{\pi(e_{b_2})} \parstepsto \config{S_c}{e_{b_3}}$, \\
-  where $\evalctxt{\pi(E_b)}{e_{b_3}} = \evalctxt{E_c}{e_c}$, \\
-  then we'll have it: $i = 1$, $j = 1$, $\pi = \pi$, $\conf_c = \config{S_c}{\evalctxt{E_c}{e_c}}$. \\
-  But how do we show that? :(}
+  Therefore we have that $\conf_a =
+  \config{S_a}{\evalctxt{E_a}{e_{a_2}}} =
+  \config{S_a}{\evalctxt{E'_b}{e_{b_1}}}$, and $\conf_b =
+  \config{S_b}{\evalctxt{E_b}{e_{b_2}}} =
+  \config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$.  We'll complete the proof
+  by showing that $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}}$ and
+  $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ step to the same
+  configuration.
 
+  \TODO{Finish this proof.}
 
 \end{proof}

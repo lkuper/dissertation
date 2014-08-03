@@ -121,21 +121,22 @@ run.\footnote{I am actually using ``internally deterministic'' in a
   more specific way than Blelloch~\etal: they define an internally
   deterministic program to be one for which the \emph{trace} of the
   program is the same on every run, where a trace is a directed
-  acyclic graph of operations executed by the program and the control
-  dependencies among them.  The point is that internal determinism is
-  a stronger property than observable determinism.}  Although
-$\lambdaLVar$ is not internally deterministic, all of its internal
-nondeterminism is due to the {\sc E-Eval-Ctxt} rule!  This is the case
-because the {\sc E-Eval-Ctxt} rule is the only rule in the operational
-semantics by which a particular configuration can step in multiple
-ways.  The multiple ways in which a configuration can step via {\sc
-  E-Eval-Ctxt} correspond to the ways in which the expression in that
-configuration can be decomposed into a redex and an evaluation
+  acyclic graph of the operations executed by the program and the
+  control dependencies among them.  The point is that internal
+  determinism is a stronger property than observable determinism.}
+Although $\lambdaLVar$ is not internally deterministic, all of its
+internal nondeterminism is due to the {\sc E-Eval-Ctxt} rule!  This is
+the case because the {\sc E-Eval-Ctxt} rule is the only rule in the
+operational semantics by which a particular configuration can step in
+multiple ways.  The multiple ways in which a configuration can step
+via {\sc E-Eval-Ctxt} correspond to the ways in which the expression
+in that configuration can be decomposed into a redex and an evaluation
 context.  In fact, it is exactly this property that makes it possible
 for multiple subexpressions of a $\lambdaLVar$ expression (a @let par@
 expression, for instance) to be evaluated in parallel.
 
-But, if we leave aside {\sc E-Eval-Ctxt} and focus on only the rules
+But, if we leave aside evaluation contexts for the moment (we'll
+return to them in the following section) and focus on only the rules
 of the reduction semantics in
 Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}, we see that there
 is only one rule by which a given configuration can step, and only one
@@ -148,9 +149,36 @@ claim.
 
 \LVarsLemInternalDeterminism
 \begin{proof}
-  Straightforward by cases on the rule by which $\conf$ steps to
-  $\conf'$; the only interesting case is for the {\sc E-New} rule.
-  See Section~\ref{section:lvars-internal-determinism-proof}.
+  Straightforward by cases on the rule of the reduction semantics by
+  which $\conf$ steps to $\conf'$; the only interesting case is for
+  the {\sc E-New} rule.  See
+  Section~\ref{section:lvars-internal-determinism-proof}.
+\end{proof}
+
+\subsection{Locality lemma}
+
+In order to prove determinism for $\lambdaLVar$ we will have to
+consider situations in which we have an expression that decomposes
+into redex and context in multiple ways.  Suppose that we have an
+expression $e$ such that $e = \evalctxt{E_1}{e_1} =
+\evalctxt{E_2}{e_2}$.  The configuration $\config{S}{e}$ can then step
+in two different ways by the {\sc E-Eval-Ctxt} rule:
+$\config{S}{\evalctxt{E_1}{e_1}} \ctxstepsto
+\config{S_1}{\evalctxt{E_1}{e'_1}}$, and
+$\config{S}{\evalctxt{E_2}{e_2}} \ctxstepsto
+\config{S_2}{\evalctxt{E_2}{e'_2}}$.
+
+The key observation we can make here is that the $\ctxstepsto$
+relation acts ``locally''.  That is, when $e_1$ steps to $e'_1$ within
+its context, the expression $e_2$ will be left alone, because it
+belongs to the context.  Likewise, when $e_2$ steps to $e'_2$ within
+its context, the expression $e_1$ will be left alone.
+Lemma~\ref{lem:lvars-locality} formalizes this claim.
+
+\LVarsLemLocality
+\begin{proof}
+  \TODO{Add short description here.} See
+  Section~\ref{section:lvars-locality-proof}.
 \end{proof}
 
 \subsection{Monotonicity lemma}
