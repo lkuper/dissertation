@@ -117,12 +117,16 @@ Borrowing terminology from
 Blelloch~\etal~\cite{blelloch-internally-deterministic}, I will use
 the term \emph{internally deterministic} to describe a program that
 does, in fact, take the same sequence of steps on every
-run.\footnote{I am actually using ``internally deterministic'' in a
-  more specific way than Blelloch~\etal: they define an internally
+run.\footnote{I am using ``internally deterministic'' in a more
+  specific way than Blelloch~\etal: they define an internally
   deterministic program to be one for which the \emph{trace} of the
   program is the same on every run, where a trace is a directed
   acyclic graph of the operations executed by the program and the
-  control dependencies among them.  The point is that internal
+  control dependencies among them.  This definition, in turn, depends
+  on the definition of ``operation'', which might be defined in a
+  fine-grained way or a coarse-grained, abstract way, depending on
+  which aspects of program execution one wants the notion of internal
+  determinism to capture.  The important point is that internal
   determinism is a stronger property than observable determinism.}
 Although $\lambdaLVar$ is not internally deterministic, all of its
 internal nondeterminism is due to the {\sc E-Eval-Ctxt} rule!  This is
