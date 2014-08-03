@@ -1,5 +1,8 @@
 \begin{proof}
-  Suppose $\conf \ctxstepsto \conf_a$ and $\conf \ctxstepsto \conf_b$.
+  Suppose $\conf \ctxstepsto \conf_a$ and $\conf \ctxstepsto \conf_b$.  
+  We have to show that there exist $\conf_c, i, j, \pi$ such that
+  $\conf_a \ctxstepsto^i \conf_c$ and $\pi(\conf_b) \ctxstepsto^j
+  \conf_c$ and $i \leq 1$ and $j \leq 1$.
 
   By inspection of the operational semantics, it must be the case that
   $\conf$ steps to $\conf_a$ by the {\sc E-Eval-Ctxt} rule.  Let
@@ -16,10 +19,6 @@
   $\evalctxt{E_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_1}}$, but $E_a$ and
   $E_b$ may differ and $e_{a_1}$ and $e_{b_1}$ may differ.
 
-  We have to show that there exist $\conf_c, i, j, \pi$ such that
-  $\conf_a \ctxstepsto^i \conf_c$ and $\pi(\conf_b) \ctxstepsto^j
-  \conf_c$ and $i \leq 1$ and $j \leq 1$.
-
   Since $\config{S}{\evalctxt{E_a}{e_{a_1}}} \ctxstepsto
   \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$ and
   $\config{S}{\evalctxt{E_b}{e_{b_1}}} \ctxstepsto
@@ -31,18 +30,60 @@
   \begin{itemize}
   \item $\evalctxt{E'_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_2}}$, and
   \item $\evalctxt{E'_b}{e_{b_1}} = \evalctxt{E_a}{e_{a_2}}$, and
-  \item $\evalctxt{E'_a}{e_{a_2}} = \evalctxt{E'_b}{e_{b_2}}$.
+  \item $\evalctxt{E'_a}{e_{a_2}} =
+  \evalctxt{E'_b}{e_{b_2}}$.
   \end{itemize}
 
-  Therefore we have that $\conf_a =
-  \config{S_a}{\evalctxt{E_a}{e_{a_2}}} =
-  \config{S_a}{\evalctxt{E'_b}{e_{b_1}}}$, and $\conf_b =
-  \config{S_b}{\evalctxt{E_b}{e_{b_2}}} =
-  \config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$.  We'll complete the proof
-  by showing that $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}}$ and
-  $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ step to the same
-  configuration.
+  Also, let $S'_a$ and $S'_b$ be stores such that $S_a =
+  \lubstore{S}{S'_a}$ and $S_b = \lubstore{S}{S'_b}$.
 
-  \TODO{Finish this proof.}
+  Then, choose:
+  \begin{itemize}
+  \item $\conf_c =
+    \config{\lubstore{S}{\lubstore{S'_b}{S'_a}}}{\evalctxt{E'_a}{e_{a_2}}}$,
+  \item $i = 1$,
+  \item $j= 1$, and
+  \item $\pi$ such that $\dom{\pi(S_b)} - \dom{\pi(S)} \cap \dom{S'_a}
+    = \emptyset$.
+  \end{itemize}
 
+  To show:
+  \begin{itemize}
+  \item $\config{S_a}{\evalctxt{E_a}{e_{a_2}}} \ctxstepsto
+    \config{\lubstore{S}{\lubstore{S'_b}{S'_a}}}{\evalctxt{E'_a}{e_{a_2}}}$,
+    and
+  \item $\pi(\config{S_b}{\evalctxt{E_b}{e_{b_2}}}) \ctxstepsto
+    \config{\lubstore{S}{\lubstore{S'_b}{S'_a}}}{\evalctxt{E'_a}{e_{a_2}}}$.
+  \end{itemize}
+
+  Since 
+  $\evalctxt{E'_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_2}}$, and
+  $\evalctxt{E'_b}{e_{b_1}} = \evalctxt{E_a}{e_{a_2}}$, and
+  $\evalctxt{E'_a}{e_{a_2}} =
+  \evalctxt{E'_b}{e_{b_2}}$, it suffices to show that:
+
+  \begin{itemize}
+  \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+    \config{\lubstore{S}{\lubstore{S'_b}{S'_a}}}{\evalctxt{E'_b}{e_{b_2}}}$,
+    and
+  \item $\pi(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}) \ctxstepsto
+    \config{\lubstore{S}{\lubstore{S'_b}{S'_a}}}{\evalctxt{E'_a}{e_{a_2}}}$.
+  \end{itemize}
+
+  Furthermore, since $S_a = \lubstore{S}{S'_a}$ and $S_b =
+  \lubstore{S}{S'_b}$, it suffices to show that:
+
+  \begin{itemize}
+  \item $\config{\lubstore{S}{S'_a}}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+    \config{\lubstore{S_b}{S'_a}}{\evalctxt{E'_b}{e_{b_2}}}$,
+    and
+  \item $\pi(\config{\lubstore{S}{S'_b}}{\evalctxt{E'_a}{e_{a_1}}})
+    \ctxstepsto
+    \config{\lubstore{S_a}{S'_b}}{\evalctxt{E'_a}{e_{a_2}}}$.
+  \end{itemize}
+
+
+  \TODO{finish proof}
+
+  
 \end{proof}
