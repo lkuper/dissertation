@@ -180,14 +180,14 @@ A threshold read corresponding to this so-called threshold set will
 unblock and return $\{ \textrm{\il{(F,Bot)}, \il{(Bot,F)}} \}$ as soon
 as a state containing an \il{F} is reached, and $\{
 \textrm{\il{(T,Bot)}, \il{(Bot,T)}} \}$ as soon as a state containing
-a \il{T} is reached.  If, for instance, the left input writes \il{(F,
-  Bot)} and the right input writes \il{(Bot, T)}, and these writes
+a \il{T} is reached.  If, for instance, the left input writes
+\il{(F,Bot)} and the right input writes \il{(Bot,T)}, and these writes
 occur in arbitrary order, the threshold read will return a
 nondeterministic result, depending on the order of the two writes.
 But, with the properly pairwise-incompatible threshold set above, the
-threshold read will block until the write of \il{(F, Bot)} arrives,
-and then will deterministically return the ``false'' activation set,
-regardless of whether the write of \il{(Bot, T)} has arrived yet.
+threshold read will block until the write of \il{(F,Bot)} arrives, and
+then will deterministically return the ``false'' activation set,
+regardless of whether the write of \il{(Bot,T)} has arrived yet.
 Hence ``short-circuit'' evaluation is possible.
 
 \lk{It'd be nice to have better terminology for these than just
