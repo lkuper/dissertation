@@ -86,16 +86,15 @@ Unlike the usual @forEach@ function found in functional programming
 languages, this function sets up a \emph{permanent}, asynchronous flow
 of data from $\mathit{lv}$ into the callback $f$.  Functions like
 @forEach@ can be used to set up complex, cyclic data-flow networks, as
-we will see in Section~\ref{section:eval}.
+we will see in Chapter~\ref{ch:lvish}.
 
 In writing @forEach@, we consider only the singleton sets to be events
 of interest, which means that if the value of $\mathit{lv}$ is some
 set like $\setof{2, 3, 5}$ then $f$ will be executed once for each
 singleton subset ($\setof{2}$, $\setof{3}$, $\setof{5}$)---that is,
-once for each element.  In Section~\ref{subsection:atomic}, we will
-see that this kind of event set can be specified in a lattice-generic
-way, and in Section~\ref{section:implementation} we will see that it
-corresponds closely to our implementation strategy.
+once for each element.  In Chapter~\ref{ch:lvish}, we will see that
+this kind of event set can be specified in a lattice-generic way, and
+that it corresponds closely to our implementation strategy.
 
 \subsection{Quiescence through handler pools}\label{subsection:quasi-quiescence}
 
@@ -172,7 +171,7 @@ In this pattern, an event handler is registered for an LVar,
 subsequently quiesced, and then the LVar is frozen and its exact value
 is returned.
 
-\subsection{A parallel graph traversal using handlers, quiescence, and freezing}
+\subsection{A parallel graph traversal using handlers, quiescence, and freezing}\label{subsection:quasi-parallel-graph-traversal}
 
 We can use the new features in LVish to write a parallel graph
 traversal in the following simple fashion:
