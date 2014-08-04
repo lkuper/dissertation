@@ -1,20 +1,16 @@
 \section{The LVish library implementation}\label{s:lvish-internals}
 
-In this section, I describe the internals of the LVish
-library. \TODO{More descriptive text here.}
+\TODO{Revise this section.}
 
-\subsection{Two key ideas}
+In this section, I describe the internals of the LVish library. First,
+I discuss two semantic observations that our implementation strategy
+for LVish relies on: first, in the \emph{atomicity} of most lattices
+used by LVish programs
+(Section~\ref{subsection:lvish-leveraging-atoms}), and second, the
+idempotence of the least upper bound operation
+(Section~\ref{subsection:lvish-leveraging-idempotence}).
 
-Our implementation strategy for LVish relies on two semantic
-observations: first, the \emph{atomicity} of most lattices used by
-LVish programs, and second, the idempotence of the least upper bound
-operation.
-
-\lk{I don't go to the subsubsection level (or the paragraph level)
-  anywhere else.  Can I avoid doing it here?  Should I be doing it
-  elsewhere?}
-
-\subsubsection{Leveraging atoms}
+\subsection{Leveraging atoms}\label{subsection:lvish-leveraging-atoms}
 
 Monotonic data structures acquire ``pieces of information'' over time.
 In a lattice, the smallest such pieces are called the \emph{atoms} of
@@ -46,7 +42,7 @@ efficiently communicate such changes between @put@s and
 @gets@/handlers.
 nbn
 
-\subsubsection{Leveraging idempotence}
+\subsection{Leveraging idempotence}\label{subsection:lvish-leveraging-idempotence}
 
 While we have emphasized the commutativity of least upper bounds, they
 also provide another important property: \emph{idempotence}, meaning
@@ -107,6 +103,8 @@ it can use to spawn threads.
 
 \subsection{The core implementation}
 
+\TODO{This section needs a better title.}
+
 Internally, the @Par@ monad represents computations in continuation-passing
 style, in terms of their interpretation in the @IO@ monad:
 \begin{lstlisting}
@@ -122,6 +120,8 @@ intended result to its continuation---yielding a @ClosedPar@ computation.
 
 Figure~\ref{fig:implementation} gives the implementation for three core
 lattice-generic functions: @getLV@, @putLV@, and @freezeLV@, which we explain next.
+
+\TODO{Figure out how to format this code listing so it first on a page!}
 
 \begin{figure}
 \lstset{basicstyle=\footnotesize\ttfamily}
@@ -180,7 +180,6 @@ freezeLV (LVar {status}) = mkPar $ \k q -> do
   k () q
 \end{lstlisting}
 \caption{Implementation of key lattice-generic functions.}\label{fig:implementation}
-%\vspace{-7mm}
 \end{figure}
 
 \subsection{Threshold reading}
@@ -352,18 +351,3 @@ since they can only arise when a handler is added concurrently with updates to
 an LVar.\footnote{That said, it is possible to avoid all duplication by adding
   further synchronization, and in ongoing research, we are exploring various
   locking and timestamp schemes to do just that.}
-
-%%  would require maintaining an explicit shared set of handled keys---as
-%% expensive as maintaining the map in the first place!  That said, data structure
-%% authors can implement such synchronization between their threshold functions
-%% if desired.
-
-%% \subsection{High-level Programming Patterns}
-
-%% High-level patterns on top (forEach, continuous maps between LVars)
-
-%% \subsection{Atomic Operations in Haskell}\label{subsection:atomics}
-%% \rn{TODO}
-%% \ajt{I don't think we'll have room for this in the submission.}
-
-
