@@ -57,15 +57,14 @@ nondeterministic (that is, a given expression can generally reduce in
 more than one way), and so it is generally \emph{not} the case that an
 expression has a unique decomposition into redex and
 context.\footnote{In fact, my motivation for splitting the operational
-  semantics into a reduction semantics and a context relation is to
-  isolate the nondeterminism of the context relation and make it
-  easier to reason about in the determinism proof of
-  Section~\ref{s:lvars-proof}.} For example, in an application
-$\app{e_1}{e_2}$, either $e_1$ or $e_2$ might reduce first.  The
-nondeterminism in choice of evaluation context reflects the
-nondeterminism of scheduling between concurrent threads, and in
-$\lambdaLVar$, the arguments to @get@, @put@, and application
-expressions are \emph{implicitly} evaluated concurrently.
+  semantics into a reduction semantics and a context semantics is to
+  isolate the nondeterminism of the context semantics, which
+  simplifies the determinism proof of Section~\ref{s:lvars-proof}.}
+For example, in an application $\app{e_1}{e_2}$, either $e_1$ or $e_2$
+might reduce first.  The nondeterminism in choice of evaluation
+context reflects the nondeterminism of scheduling between concurrent
+threads, and in $\lambdaLVar$, the arguments to @get@, @put@, and
+application expressions are \emph{implicitly} evaluated concurrently.
 
 \subsection{Errors and observable determinism}\label{subsection:lvars-errors-and-observable-determinism}
 
