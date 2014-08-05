@@ -1,9 +1,8 @@
 \begin{proof}
   Suppose $\conf \ctxstepsto \conf_a$ and $\conf \ctxstepsto \conf_b$.
-  We have to show that there exist $\conf_c, i, j, \pi_a, \pi_b$ such
-  that $\pi_a(\conf) = \pi_b(\conf) = \conf$ and $\pi_a(\conf_a)
-  \ctxstepsto^i \conf_c$ and $\pi_b(\conf_b) \ctxstepsto^j \conf_c$
-  and $i \leq 1$ and $j \leq 1$.
+  We have to show that there exist $\conf_c, i, j, \pi$ such that
+  $\conf_a \ctxstepsto^i \conf_c$ and $\pi(\conf_b) \ctxstepsto^j
+  \pi(\conf_c)$ and $i \leq 1$ and $j \leq 1$.
 
   By inspection of the operational semantics, it must be the case that
   $\conf$ steps to $\conf_a$ by the {\sc E-Eval-Ctxt} rule.  Let
@@ -35,177 +34,158 @@
   \evalctxt{E'_b}{e_{b_2}}$.
   \end{itemize}
 
-  Let $\Delta_a = \dom{S_a} - \dom{S}$, and let $\Delta_b = \dom{S_b}
-  - \dom{S}$.
-
-  Suppose $\Delta_a = \setof{l_1, \dots, l_n}$.  Let $L = \setof{l'_1,
-    \dots, l'_n}$ such that $l'_i \notin (\dom{S_a} \cup \dom{S_b})$.
-
-  Suppose $\Delta_b = \setof{m_1, \dots, m_k}$.  Let $M = \setof{m'_1,
-    \dots, m'_k}$ such that $m'_i \notin (\dom{S_a} \cup \dom{S_b}
-  \cup L)$.
-
-  Let $\pi_a = \setof{(l_1, l'_1), \dots, (l_n, l'_n)}$.
-
-  Let $\pi_b = \setof{(m_1, m'_1), \dots, (m_k, m'_k)}$.
-
-  Since $\Delta_a \cap \dom{S} = \emptyset$, we know that $\pi_a(S) = S$.
-
-  Since $\Delta_b \cap \dom{S} = \emptyset$, we know that $\pi_b(S) = S$.
-
-  Since the only locations occurring in $\evalctxt{E_a}{e_{a_1}}$ are
-  in $\dom{S}$, $\pi_a(e_{a_1}) = e_{a_1}$, and likewise, since the
-  only locations occurring in $\evalctxt{E_b}{e_{b_1}}$ are in
-  $\dom{S}$, $\pi_b(e_{b_1}) = e_{b_1}$. Hence $\pi_a(\conf) =
-  \pi_b(\conf) = \conf$.
-
-  \lk{Not yet sure how to use all this -- I'm just writing down all
-    the facts we know.}
-
-  We have that $\config{S}{\evalctxt{E_a}{e_{a_1}}} \ctxstepsto
-  \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$.  Hence, from the premise of
-  {\sc E-Eval-Ctxt}, we have that $\config{S}{e_{a_1}}
-  \parstepsto \config{S_a}{e_{a_2}}$.
-
-  Hence, by Lemma~\ref{lem:lvars-permutability} (Permutability),
-  $\pi_a(\config{S}{e_{a_1}}) \parstepsto
-  \pi_a(\config{S_a}{e_{a_2}})$.
-
-  Since $\pi_a(S) = S$ and $\pi_a(e_{a_1}) = e_{a_1}$,
-  $\config{S}{e_{a_1}} \parstepsto \pi_a(\config{S_a}{e_{a_2}})$.  By
-  Definition~\ref{def:lvars-permutation-configuration},
-  $\pi_a(\config{S_a}{e_{a_2}}) =
-  \config{\pi_a(S_a)}{\pi_a(e_{a_2})}$, so we have that
-  $\config{S}{e_{a_1}} \parstepsto
-  \config{\pi_a(S_a)}{\pi_a(e_{a_2})}$.
-
-  We have that $\config{S}{\evalctxt{E_b}{e_{b_1}}} \ctxstepsto
-  \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$.  Hence, from the premise of
-  {\sc E-Eval-Ctxt}, we have that $\config{S}{e_{b_1}}
-  \parstepsto \config{S_b}{e_{b_2}}$.
-
-  Hence, by Lemma~\ref{lem:lvars-permutability} (Permutability),
-  $\pi_b(\config{S}{e_{b_1}}) \parstepsto
-  \pi_b(\config{S_b}{e_{b_2}})$.
-
-  Since $\pi_b(S) = S$ and $\pi_b(e_{b_1}) = e_{b_1}$,
-  $\config{S}{e_{b_1}} \parstepsto \pi_b(\config{S_b}{e_{b_2}})$.  By
-  Definition~\ref{def:lvars-permutation-configuration},
-  $\pi_b(\config{S_b}{e_{b_2}}) =
-  \config{\pi_b(S_b)}{\pi_b(e_{b_2})}$, so we have that
-  $\config{S}{e_{b_1}} \parstepsto
-  \config{\pi_b(S_b)}{\pi_b(e_{b_2})}$.
-
-  \lk{More facts:}
-
-  Furthermore, we know that $\pi_a(S_a)$ is non-conflicting with
-  $\config{S}{e_{b_1}} \parstepsto
-  \config{\pi_b(S_b)}{\pi_b(e_{b_2})}$.  To see why, assume that there
-  exists an $l \in (\dom{\pi_b(S_b)}) - \dom{S}) \cup
-  \dom{\pi_a(S_a)}$.  Then $l \in (\dom{\pi_b(S_b)} - \dom{S})$ and $l
-  \in \dom{\pi_a(S_a)}$.  Hence $l = l'_i$ for some $l'_i \in L$,
-  since $l \in \dom{\pi_a(S_a)}$.  But since $l \in (\dom{\pi_b(S_b)}
-  - \dom{S})$, we know that $l \in M$, which is a contradiction since
-  it implies that $l \notin L$.
-
-  Symmetrically, we know that $\pi_b(S_b)$ is non-conflicting with
-  $\config{S}{e_{a_1}} \parstepsto
-  \config{\pi_a(S_a)}{\pi_a(e_{a_2})}$.  To see why, assume that there
-  exists an $l \in (\dom{\pi_a(S_a)}) - \dom{S}) \cup
-  \dom{\pi_b(S_b)}$.  Then $l \in (\dom{\pi_a(S_a)} - \dom{S})$ and $l
-  \in \dom{\pi_b(S_b)}$.  Hence $l = l'_i$ for some $l'_i \in L$,
-  since $l \in (\dom{\pi_a(S_a)} - \dom{S})$.  But since $l \in
-  \dom{\pi_b(S_b)}$, we know that $l \in M$, which is a contradiction
-  since it implies that $l \notin L$.
-
-
-  Now, consider whether $\lubstore{\pi_a(S_a)}{\pi_b(S_b)} = \topS$.
-
+  Our approach will be to show that there exist $S', i, j, \pi$ such
+  that:
   \begin{itemize}
-  \item Case $\lubstore{\pi_a(S_a)}{\pi_b(S_b)} \neq \topS$:
-
-    Since $\pi_a(S_a)$ is non-conflicting with $\config{S}{e_{b_1}}
-    \parstepsto \config{\pi_b(S_b)}{\pi_b(e_{b_2})}$ and
-    $\lubstore{\pi_a(S_a)}{\pi_b(S_b)} \neq \topS$, we have by
-    Lemma~\ref{lem:lvars-independence} (Independence) that:
-
-    $\config{\lubstore{S}{\pi_a(S_a)}}{e_{b_1}} \parstepsto
-    \config{\lubstore{\pi_b(S_b)}{\pi_a(S_a)}}{\pi_b(e_{b_2})}$.
-
-    Hence by {\sc E-Eval-Ctxt}, using the context $\pi_b(E'_b)$, we have that:
-
-    $\config{\lubstore{S}{\pi_a(S_a)}}{\evalctxt{(\pi_b(E'_b))}{e_{b_1}}}
-    \ctxstepsto
-    \config{\lubstore{\pi_b(S_b)}{\pi_a(S_a)}}{\evalctxt{(\pi_b(E'_b))}{\pi_b(e_{b_2})}}$.
-
-    Since $e_{b_1} = \pi_b(e_{b_1})$ and $S = \pi_a(S)$ and
-    $\lubstore{S}{S_a} = S_a$, we have that:
-
-    $\config{\pi_a(S_a)}{\pi_b(\evalctxt{E'_b}{e_{b_1}})} \ctxstepsto
-    \config{\lubstore{\pi_b(S_b)}{\pi_a(S_a)}}{\pi_b(\evalctxt{E'_b}{e_{b_2}})}$.
-
-    \lk{Again, this is slightly different from what we need. :( And I'm
-      not sure if it's wrong to have a permutation on the context...}
-
-    Since $\pi_b(S_b)$ is non-conflicting with $\config{S}{e_{a_1}}
-    \parstepsto \config{\pi_a(S_a)}{\pi_a(e_{a_2})}$ and
-    $\lubstore{\pi_a(S_a)}{\pi_b(S_b)} \neq \topS$, we have by
-    Lemma~\ref{lem:lvars-independence} (Independence) that:
-
-    $\config{\lubstore{S}{\pi_b(S_b)}}{e_{a_1}} \parstepsto
-    \config{\lubstore{\pi_a(S_a)}{\pi_b(S_b)}}{\pi_a(e_{a_2})}$.
-
-    Hence by {\sc E-Eval-Ctxt}, using the context $\pi_a(E'_a)$, we
-    have that:
-
-    $\config{\lubstore{S}{\pi_b(S_b)}}{\evalctxt{(\pi_a(E'_a))}{e_{a_1}}}
-    \ctxstepsto
-    \config{\lubstore{\pi_a(S_a)}{\pi_b(S_b)}}{\evalctxt{(\pi_a(E'_a))}{\pi_a(e_{a_2})}}$.
-
-    Since $e_{b_1} = \pi_b(e_{b_1})$ and $S = \pi_b(S)$ and
-    $\lubstore{S}{S_b} = S_b$, we have that:
-
-    $\config{\pi_b(S_b)}{\pi_a(\evalctxt{E'_a}{e_{a_1}})} \ctxstepsto
-    \config{\lubstore{\pi_a(S_a)}{\pi_b(S_b)}}{\pi_a(\evalctxt{E'_a}{e_{a_2}})}$.
-
-    \lk{Again, this is slightly different from what we need. :( And
-      I'm not sure if it's wrong to have a permutation on the
-      context...}
-
-    \lk{OK, finally ready to pick a $\conf_c$.  But not sure if it
-      should be $\evalctxt{E'_a}{e_{a_2}}$ or something like
-      $\pi_a(\pi_b(\evalctxt{E'_a}{e_{a_2}}))$ or what.}
-
-    Then, choose $\conf_c =
-    \config{\lubstore{\pi_a(S_a)}{\pi_b(S_b)}}{\evalctxt{E'_a}{e_{a_2}}}$,
-    $i = 1$, and $j = 1$.
-
-    To show:
-    \begin{itemize}
-    \item $\pi_a(\config{S_a}{\evalctxt{E_a}{e_{a_2}}}) \ctxstepsto
-      \config{\lubstore{\pi_a(S_a)}{\pi_b(S_b)}}{\evalctxt{E'_a}{e_{a_2}}}$,
-      and
-    \item $\pi_b(\config{S_b}{\evalctxt{E_b}{e_{b_2}}}) \ctxstepsto
-      \config{\lubstore{\pi_a(S_a)}{\pi_b(S_b)}}{\evalctxt{E'_a}{e_{a_2}}}$.
-    \end{itemize}
-
-    Since 
-    $\evalctxt{E'_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_2}}$, and
-    $\evalctxt{E'_b}{e_{b_1}} = \evalctxt{E_a}{e_{a_2}}$, and
-    $\evalctxt{E'_a}{e_{a_2}} =
-    \evalctxt{E'_b}{e_{b_2}}$, it suffices to show that:
-
-    \begin{itemize}
-    \item $\pi_a(\config{S_a}{\evalctxt{E'_b}{e_{b_1}}}) \ctxstepsto
-      \config{\lubstore{\pi_a(S_a)}{\pi_b(S_b)}}{\evalctxt{E'_b}{e_{b_2}}}$,
-      and
-    \item $\pi_b(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}) \ctxstepsto
-      \config{\lubstore{\pi_a(S_a)}{\pi_b(S_b)}}{\evalctxt{E'_a}{e_{a_2}}}$.
-    \end{itemize}
-
-  \item Case $\lubstore{\pi_a(S_a)}{\pi_b(S_b)} = \topS$: \TODO{finish
-    case.}
+  \item $\config{S_a}{\evalctxt{E_a}{e_{a_2}}} \ctxstepsto^i
+    \config{S'}{\evalctxt{E'_a}{e_{a_2}}}$, and
+  \item $\pi(\config{S_b}{\evalctxt{E_b}{e_{b_2}}}) \ctxstepsto^j
+    \pi(\config{S'}{\evalctxt{E'_a}{e_{a_2}}})$.
   \end{itemize}
+  Since $\evalctxt{E'_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_2}}$,
+  $\evalctxt{E'_b}{e_{b_1}} = \evalctxt{E_a}{e_{a_2}}$, and
+  $\evalctxt{E'_a}{e_{a_2}} = \evalctxt{E'_b}{e_{b_2}}$, it suffices
+  to show that:
+  \begin{itemize}
+  \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto^i
+    \config{S'}{\evalctxt{E'_b}{e_{b_2}}}$, and
+  \item $\pi(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}) \ctxstepsto^j
+    \pi(\config{S'}{\evalctxt{E'_a}{e_{a_2}}})$.
+  \end{itemize}
+
+  From the premise of {\sc E-Eval-Ctxt}, we have that
+  $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$ and
+  $\config{S}{e_{b_1}} \parstepsto \config{S_b}{e_{b_2}}$.  We proceed
+  by case analysis on the rule by which $\config{S}{e_{a_1}}$ steps to
+  $\config{S_a}{e_{a_2}}$.
+
+  \begin{enumerate}
+  \item Case {\sc E-Beta}:
+
+    We have:
+    \begin{itemize}
+      \item $e_{a_1} = \app{\lam{x}{e'_a}}{v_a}$,
+      \item $e_{a_2} = \subst{e'_a}{x}{v_a}$, and
+      \item $S_a = S$.
+    \end{itemize}
+
+    Now, we proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item Case {\sc E-Beta}:
+
+      We have:
+      \begin{itemize}
+      \item $e_{b_1} = \app{\lam{x}{e'_b}}{v_b}$,
+      \item $e_{b_2} = \subst{e'_b}{x}{v_b}$, and
+      \item $S_b = S$.
+      \end{itemize}
+
+      Choose $S' = S$, $i = 1$, $j = 1$, and $\pi = \id$.
+
+      We have to show that:
+
+      \begin{itemize}
+      \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{S}{\evalctxt{E'_b}{e_{b_2}}}$, and
+      \item $\config{S}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+        \config{S}{\evalctxt{E'_a}{e_{a_2}}}$, 
+      \end{itemize}
+
+      both of which follow immediately from $\config{S}{e_{a_1}}
+      \parstepsto \config{S_a}{e_{a_2}}$ and $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.
+
+    \item Case {\sc E-New}:
+
+      We have:
+      \begin{itemize}
+      \item $e_{b_1} = \NEW$,
+      \item $e_{b_2} = l$, and
+      \item $S_b = \extSRaw{S}{l}{\bot}$.
+      \end{itemize}
+
+      Choose $S' = S_b$, $i = 1$, $j = 1$, and $\pi = \id$.
+
+      We have to show that:
+
+      \begin{itemize}
+      \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$, and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$.
+      \end{itemize}
+
+      The first of these follows immediately from $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
+      the second, consider that $S_b = \extSRaw{S}{l}{\bot} =
+      \lubstore{S}{\store{\storebindingRaw{l}{\bot}}}$.  Furthermore, we
+      know from the side condition of {\sc E-New} that $l \notin
+      \dom{S}$, so $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting
+      with the transition $\config{S}{e_{a_1}} \parstepsto
+      \config{S_a}{e_{a_2}}$, and we know that
+      $\lubstore{S_a}{\store{\storebindingRaw{l}{\bot}}} \neq \topS$
+      since $S_a$ is just $S$.  Therefore, by
+      Lemma~\ref{lem:lvars-independence} (Independence), we have that
+      $\config{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{e_{a_1}}
+      \parstepsto
+      \config{\lubstore{S_a}{\store{\storebindingRaw{l}{\bot}}}}{e_{a_2}}$.
+      Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
+      By {\sc E-Eval-Ctxt}, it follows that
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
+      show.
+
+    \item Case {\sc E-Put}: \TODO{}
+    \item Case {\sc E-Put-Err}: \TODO{}
+    \item Case {\sc E-Get}:\TODO{}
+    \end{enumerate}
+  \item Case {\sc E-New}:
+
+    Now, we proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item Case {\sc E-Beta}: \TODO{}
+    \item Case {\sc E-New}: \TODO{}
+    \item Case {\sc E-Put}: \TODO{}
+    \item Case {\sc E-Put-Err}: \TODO{}
+    \item Case {\sc E-Get}: \TODO{}
+    \end{enumerate}
+  \item Case {\sc E-Put}:
+
+    Now, we proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item Case {\sc E-Beta}: \TODO{}
+    \item Case {\sc E-New}: \TODO{}
+    \item Case {\sc E-Put}: \TODO{}
+    \item Case {\sc E-Put-Err}: \TODO{}
+    \item Case {\sc E-Get}: \TODO{}
+    \end{enumerate}
+  \item Case {\sc E-Put-Err}:
+
+    Now, we proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item Case {\sc E-Beta}: \TODO{}
+    \item Case {\sc E-New}: \TODO{}
+    \item Case {\sc E-Put}: \TODO{}
+    \item Case {\sc E-Put-Err}: \TODO{}
+    \item Case {\sc E-Get}: \TODO{}
+    \end{enumerate}
+  \item Case {\sc E-Get}:
+
+    Now, we proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item Case {\sc E-Beta}: \TODO{}
+    \item Case {\sc E-New}: \TODO{}
+    \item Case {\sc E-Put}: \TODO{}
+    \item Case {\sc E-Put-Err}: \TODO{}
+    \item Case {\sc E-Get}: \TODO{}
+    \end{enumerate}
+  \end{enumerate}
 
   \lk{I think we also still have to separately deal with cases where
     $\conf_a = \error$ or $\conf_b = \error$.}
