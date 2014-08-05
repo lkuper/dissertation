@@ -60,55 +60,34 @@
   $\config{S_a}{e_{a_2}}$.
 
   \begin{enumerate}
-  \item Case {\sc E-Beta}:
+  \item Case {\sc E-Beta}: We have $S_a = S$.
 
-    We have:
-    \begin{itemize}
-      \item $e_{a_1} = \app{\lam{x}{e'_a}}{v_a}$,
-      \item $e_{a_2} = \subst{e'_a}{x}{v_a}$, and
-      \item $S_a = S$.
-    \end{itemize}
-
-    Now, we proceed by case analysis on the rule by which
+    We proceed by case analysis on the rule by which
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
     \begin{enumerate}
-    \item Case {\sc E-Beta}:
+    \item \label{lvars-slc-beta-beta}Case {\sc E-Beta}: We have $S_b =
+      S$.
 
-      We have:
-      \begin{itemize}
-      \item $e_{b_1} = \app{\lam{x}{e'_b}}{v_b}$,
-      \item $e_{b_2} = \subst{e'_b}{x}{v_b}$, and
-      \item $S_b = S$.
-      \end{itemize}
-
-      Choose $S' = S$, $i = 1$, $j = 1$, and $\pi = \id$.
+      Choose $S' = S = S_a = S_b$, $i = 1$, $j = 1$, and $\pi = \id$.
 
       We have to show that:
-
       \begin{itemize}
       \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-        \config{S}{\evalctxt{E'_b}{e_{b_2}}}$, and
+        \config{S_a}{\evalctxt{E'_b}{e_{b_2}}}$, and
       \item $\config{S}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-        \config{S}{\evalctxt{E'_a}{e_{a_2}}}$, 
+        \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, 
       \end{itemize}
 
       both of which follow immediately from $\config{S}{e_{a_1}}
       \parstepsto \config{S_a}{e_{a_2}}$ and $\config{S}{e_{b_1}}
       \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.
 
-    \item Case {\sc E-New}:
-
-      We have:
-      \begin{itemize}
-      \item $e_{b_1} = \NEW$,
-      \item $e_{b_2} = l$, and
-      \item $S_b = \extSRaw{S}{l}{\bot}$.
-      \end{itemize}
+    \item \label{lvars-slc-beta-new}Case {\sc E-New}: We have $S_b =
+      \extSRaw{S}{l}{\bot}$.
 
       Choose $S' = S_b$, $i = 1$, $j = 1$, and $\pi = \id$.
 
       We have to show that:
-
       \begin{itemize}
       \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
         \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$, and
@@ -120,14 +99,16 @@
       The first of these follows immediately from $\config{S}{e_{b_1}}
       \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
       the second, consider that $S_b = \extSRaw{S}{l}{\bot} =
-      \lubstore{S}{\store{\storebindingRaw{l}{\bot}}}$.  Furthermore, we
-      know from the side condition of {\sc E-New} that $l \notin
-      \dom{S}$, so $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting
-      with the transition $\config{S}{e_{a_1}} \parstepsto
-      \config{S_a}{e_{a_2}}$, and we know that
+      \lubstore{S}{\store{\storebindingRaw{l}{\bot}}}$.  Furthermore,
+      since the store did not change during the transition
+      $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$, we know
+      that $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting with
+      it, and we know that
       $\lubstore{S_a}{\store{\storebindingRaw{l}{\bot}}} \neq \topS$
-      since $S_a$ is just $S$.  Therefore, by
-      Lemma~\ref{lem:lvars-independence} (Independence), we have that
+      since $S_a$ is just $S$ and
+      $\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}$ cannot be
+      $\topS$.  Therefore, by Lemma~\ref{lem:lvars-independence}
+      (Independence), we have that
       $\config{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{e_{a_1}}
       \parstepsto
       \config{\lubstore{S_a}{\store{\storebindingRaw{l}{\bot}}}}{e_{a_2}}$.
@@ -137,16 +118,77 @@
       \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
       show.
 
-    \item Case {\sc E-Put}: \TODO{}
-    \item Case {\sc E-Put-Err}: \TODO{}
-    \item Case {\sc E-Get}:\TODO{}
+    \item \label{lvars-slc-beta-put}Case {\sc E-Put}: We have $S_b =
+      \extSRaw{S}{l}{\userlub{d_1}{d_2}}$.
+
+      Choose $S' = S_b$, $i = 1$, $j = 1$, and $\pi = \id$.
+
+      We have to show that:
+      \begin{itemize}
+      \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$, and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$.
+      \end{itemize}
+
+      The first of these follows immediately from $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
+      the second, consider that $S_b =
+      \extSRaw{S}{l}{\userlub{d_1}{d_2}} =
+      \lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}$.
+      Furthermore, since the store did not change during the
+      transition $\config{S}{e_{a_1}} \parstepsto
+      \config{S_a}{e_{a_2}}$, we know that
+      $\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}$ is
+      non-conflicting with it, and we know that
+      $\lubstore{S_a}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+      \neq \topS$ since $S_a$ is just $S$ and
+      $\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}$
+      cannot be $\topS$, since we know from the premise of {\sc E-Put}
+      that $\userlub{d_1}{d_2} \neq \top$.  Therefore, by
+      Lemma~\ref{lem:lvars-independence} (Independence), we have that
+      $\config{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{e_{a_1}}
+      \parstepsto
+      \config{\lubstore{S_a}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{e_{a_2}}$.
+      Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
+      By {\sc E-Eval-Ctxt}, it follows that
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
+      show.
+
+    \item \label{lvars-slc-beta-put-err}Case {\sc E-Put-Err}:
+
+      Here $\config{S_b}{e_{b_2}} = \error$, and so we choose $\conf_c
+      = \error$, $i = 1$, $j = 0$, and $\pi = \id$.  We have to show that:
+      \begin{itemize}
+      \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto \error$,
+        and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} = \error$.
+      \end{itemize}
+
+      The second of these is immediately true because since
+      $\config{S_b}{e_{b_2}} = \error$, $S_b = \topS$, and so
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ is $\error$ as well.
+      For the first, observe that $\config{S}{e_{b_1}} \parstepsto
+      \config{S_b}{e_{b_2}}$, hence by {\sc E-Eval-Ctxt},
+      $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$.  But $S_b = \topS$, so
+      $\config{S_b}{\evalctxt{E'_b}{e_{b_2}}} = \error$, and so
+      $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto \error$, as
+      required.
+
+    \item \label{lvars-slc-beta-get}Case {\sc E-Get}: Similar to
+      case~\ref{lvars-slc-beta-beta}, since $S_b = S$.
+
     \end{enumerate}
   \item Case {\sc E-New}:
 
-    Now, we proceed by case analysis on the rule by which
+    We proceed by case analysis on the rule by which
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
     \begin{enumerate}
-    \item Case {\sc E-Beta}: \TODO{}
+    \item Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-new}.
     \item Case {\sc E-New}: \TODO{}
     \item Case {\sc E-Put}: \TODO{}
     \item Case {\sc E-Put-Err}: \TODO{}
@@ -154,10 +196,10 @@
     \end{enumerate}
   \item Case {\sc E-Put}:
 
-    Now, we proceed by case analysis on the rule by which
+    We proceed by case analysis on the rule by which
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
     \begin{enumerate}
-    \item Case {\sc E-Beta}: \TODO{}
+    \item Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-put}.
     \item Case {\sc E-New}: \TODO{}
     \item Case {\sc E-Put}: \TODO{}
     \item Case {\sc E-Put-Err}: \TODO{}
@@ -165,10 +207,10 @@
     \end{enumerate}
   \item Case {\sc E-Put-Err}:
 
-    Now, we proceed by case analysis on the rule by which
+    We proceed by case analysis on the rule by which
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
     \begin{enumerate}
-    \item Case {\sc E-Beta}: \TODO{}
+    \item Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-put-err}.
     \item Case {\sc E-New}: \TODO{}
     \item Case {\sc E-Put}: \TODO{}
     \item Case {\sc E-Put-Err}: \TODO{}
@@ -176,17 +218,14 @@
     \end{enumerate}
   \item Case {\sc E-Get}:
 
-    Now, we proceed by case analysis on the rule by which
+    We proceed by case analysis on the rule by which
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
     \begin{enumerate}
-    \item Case {\sc E-Beta}: \TODO{}
+    \item Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-get}.
     \item Case {\sc E-New}: \TODO{}
     \item Case {\sc E-Put}: \TODO{}
     \item Case {\sc E-Put-Err}: \TODO{}
     \item Case {\sc E-Get}: \TODO{}
     \end{enumerate}
   \end{enumerate}
-
-  \lk{I think we also still have to separately deal with cases where
-    $\conf_a = \error$ or $\conf_b = \error$.}
 \end{proof}
