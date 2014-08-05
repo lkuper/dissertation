@@ -1,9 +1,78 @@
 \section{Case study: parallelizing PhyBin with LVish}\label{s:lvish-phybin}
 
-\TODO{Edit this section.}
+For our second case study, we used the LVish library to parallelize
+\emph{PhyBin}, a bioinformatics application for comparing phylogenetic
+trees.  A \emph{phylogenetic tree} represents a possible genealogical
+ancestry for a set of $N$ species.  Leaf nodes in the tree are labeled
+with species' names, and the structure of the tree represents a
+hypothesis about common ancestors. For a variety of reasons,
+biologists often end up with many alternative trees, whose
+relationships they need to then analyze.
+
+PhyBin~\cite{PhyBin} is a medium-sized (3500-line) bioinformatics
+program implemented in Haskell\footnote{Available at
+  \url{http://hackage.haskell.org/package/phybin}.} for this purpose,
+initially released in 2010.  The primary output of the software is a
+hierarchical clustering of the input tree set (that is, a tree of
+trees), but most of its computational effort is spent computing an $N
+\times N$ distance matrix that records the \emph{edit distance}
+between each pair of input trees.  It is this distance computation
+that we parallelize in our case study.
+
+\subsection{Computing all-to-all tree edit distance}
+
+The distance metric itself is called \emph{Robinson-Foulds} (RF)
+distance, and the fastest algorithm for all-to-all RF distance
+computation is Sul and Williams' \emph{HashRF}
+algorithm~\cite{hashrf}, introduced by a software package of the same
+name.\footnote{Available at \url{https://code.google.com/p/hashrf/}.}
+The HashRF software package is written in C++ and is about 2-3$\times$
+as fast as PhyBin.  Both packages are dozens or hundreds of times
+faster than the more widely-used software that computes RF distance
+matrices, such as Phylip\footnote{Available at
+  \url{http://evolution.genetics.washington.edu/phylip.html}.}~\cite{phylip}
+and DendroPy\footnote{Available at
+  \url{http://pythonhosted.org/DendroPy/}.}~\cite{dendropy}.  These
+slower packages use $\frac{N^2-N}{2}$ full applications of the
+distance metric, which has poor locality in that it reads all trees in
+from memory $\frac{N^2-N}{2}$ times.
+
+To see how the HashRF algorithm improves on this, consider that each
+intermediate node of a tree can be seen as partitioning the the tree's
+leaves into two disjoint sets: those below the node, and those above
+it.  For example, if a tree has leaves $\setof{a, b, c, d, e}$, one
+bipartition would be $\setof{\setof{a, b}, \setof{c, d, e}}$, while
+another would be $\setof{\setof{a, b, c}, \setof{d, e}}$.  A tree can
+therefore be encoded as a set of bipartitions of its nodes.
+Furthermore, once trees are encoded as sets of bipartitions, we can
+compute the edit distance between trees (that is, the number of
+operations required to transform one tree into the other) by computing
+the \emph{symmetric set difference} between sets of bipartitions, and
+we can do so using standard set data structures.
+
+The HashRF algorithm makes use of this fact and adds a clever trick
+that greatly improves locality.  Before computing the actual distances
+between trees, it populates a table mapping each observed bipartition
+to the set of trees that contain it.  In the original PhyBin source
+code, the type of this table is:
+
+\begin{lstlisting}
+  type BipTable = Map DenseLabelSet (Set TreeID)
+\end{lstlisting}
+
+Above, a @DenseLabelSet@ encodes an individual bipartition as a bit
+vector.  PhyBin uses purely functional data structures for the @Map@
+and @Set@ types, whereas HashRF uses a mutable hash table.  Yet in
+both cases, these structures grow monotonically during execution,
+making PhyBin a good candidate for parallelization.
+
+The full algorithm for computing the distance matrix is shown in
+Figure~\ref{f:hashrf-alg}.  The second phase of the algorithm is still
+$O(N^2)$, but it only needs to read from the much smaller @trset@
+during this phase.  All loops in Figure~\ref{f:hashrf-alg} are
+potentially parallel.
 
 \begin{figure}
-  \centering
 \begin{lstlisting}
   global: biptable, distmat
   (1) for t `member` alltrees:
@@ -15,92 +84,35 @@
             if t1 `member` trset `xor` t2 `member` trset
             then increment(distmat[t1,t2])
 \end{lstlisting}  
-  \caption{Pseudocode of the HashRF algorithm for computing a tree-edit-distance matrix.}
+  \caption{Pseudocode of the HashRF algorithm for computing a tree
+    edit distance matrix.}
   \label{f:hashrf-alg}
 \end{figure}
 
+\subsection{Parallelizing the HashRF algorithm with LVish}
 
-A {\em phylogenetic tree} represents a possible ancestry for a set of $N$ species.
-% which form the leaf nodes of the tree. 
-Leaf nodes in the tree are labeled with species' names, and the structure of the
-tree represents a hypothesis about common ancestors. For a variety of reasons, biologists often end up
-with many alternative trees, whose relationships they need to then analyze.
-PhyBin\footnote{\url{http://hackage.haskell.org/package/phybin}} is a medium-sized (3500-line)
-bioinformatics program for this purpose, initially released in 2010.
-%
-The primary output of the 
-software is a hierarchical clustering of the input tree set (a tree
-of trees), but most of its computational effort is spent computing an
-$N{\times}N$ 
-distance matrix, which records the pairwise 
-{\em edit distance} between trees.
-It is this distance computation that we parallelize in our case study.
+\TODO{More text about what the monotonic data structures here are.
+  Look at Ryan's talk?}
 
-The distance metric itself is called {\em Robinson-Foulds} (RF) distance, and
-the fastest algorithm for all-to-all RF distance computation is the {\em HashRF}
-algorithm~\cite{hashrf}, introduced by a software package of the same name.\footnote{\url{https://code.google.com/p/hashrf/}}  HashRF is about
-2-3$\times$ as fast as PhyBin.  Both packages are dozens or hundreds of times faster
-than the more widely-used software that computes RF distance matrices (\eg{}, Phylip\footnote{\url{http://evolution.genetics.washington.edu/phylip.html}}, DendroPy\footnote{\url{http://pythonhosted.org/DendroPy/}}).  These
-slower packages use $\frac{N^2-N}{2}$ full applications of the distance metric, which has poor
-locality in that it reads all trees in from memory $\frac{N^2-N}{2}$ times.
-%
-
-Before describing how the HashRF algorithm improves on this, we must observe that {edit
-  distance} between trees (number of modifications to transform one to the
-other) can be reduced to symmetric set difference between sets of bipartitions.
-That is, each intermediate node of a tree can be seen as partitioning the set of
-leaves into those below and above the node, respectively.  For example, with
-leaves $A$, $B$, $C$, $D$, and $E$, one bipartition would be {\tt ``AB|CDE''},
-while another would be {\tt ``ABC|DE''}.  Identical trees, of course, convert to the
-same set of bipartitions.  Furthermore, after converting trees to sets of
-bipartitions, set difference may be computed using standard set data structures.
-% the size of the symmetric set difference is exactly the Robinson Foulds distance.
-
-The HashRF algorithm makes use of this fact and adds a clever trick that greatly improves
-locality.  Before computing the actual distances between trees, it populates a
-table mapping each observed bipartition to the set of trees that contain it.  In
-the original PhyBin source:
-%
-\begin{lstlisting}
-  type BipTable = Map DenseLabelSet (Set TreeID)
-\end{lstlisting}
-% 
-Above, a @DenseLabelSet@ encodes an individual bipartition as a bit
-vector.  PhyBin uses purely functional data structures for the @Map@
-and @Set@ types, whereas HashRF uses a mutable hash table.  Yet in
-both cases, these structures {\em grow monotonically} during
-execution.  The full algorithm for computing the distance matrix is 
-shown in Figure~\ref{f:hashrf-alg}.
-The second phase of the algorithm is still $O(N^2)$, but it only needs
-to read from the much smaller @trset@ during this phase.  All loops
-in Figure~\ref{f:hashrf-alg} are potentially parallel.
-
-
-\paragraph{Parallelization}
-The LVish methodology applies directly to this application: 
+The LVish approach applies directly to this application: 
 \begin{itemize}
 \item The @biptable@ in the first phase is a map of sets, which are
   directly replaced by their LVar counterparts.
 \item The @distmat@ in the second phase is a vector of monotonic
       @bump@ counters.
 \end{itemize}
-In fact, the parallel port of PhyBin using LVish was so straightforward that, after reading the code,
-parallelizing the first phase took only 29 minutes.\footnote{Git commit range: \url{https://github.com/rrnewton/PhyBin/compare/5cbf7d26c07a...6a05cfab490a7a}}  Once the second
-phase was ported, the distance computation sped up by a factor of $3.35\times$ on 
-8 cores (Table~\ref{t:phybin-bench}).
-% 
-% This is a heavily data-stucture intensive and allocation intensive
-% program, the sort that is unlikely to see perfect scaling.  Nevertheless, 
+
+In fact, the parallel port of PhyBin using LVish was so
+straightforward that, after reading the code, parallelizing the first
+phase took only 29 minutes.\footnote{Git commit range:
+  \url{https://github.com/rrnewton/PhyBin/compare/5cbf7d26c07a...6a05cfab490a7a}.}
+Once the second phase was ported, the distance computation sped up by
+a factor of $3.35\times$ on 8 cores (Table~\ref{t:phybin-bench}).
+
 This is exactly where we would like to use LVish---to achieve modest
 speedups for modest effort, in programs with complicated data
-structures (and high allocation rates), and {\em without} changing the
+structures (and high allocation rates), and without changing the
 determinism guarantee of the original functional code.
-
-  %% Performance vs. HashRF, DendroPy, PAUP
-  %% Parallel Speedup.
-% \begin{center}
-%   \includegraphics[width=2.5in]{figures/vs_phylip_dendropy.pdf}
-% \end{center}
 
 \begin{table}
 \begin{tabular}{| l | l | l | l | l | l | l |}
@@ -114,39 +126,3 @@ Trees     & Species    & \multicolumn{3}{|l|}{PhyBin} & DendroPy & Phylip \\ \hl
   times in seconds.}
 \label{t:phybin-bench}
 \end{table}
-%% FINISH TABLE
-%% \begin{verbatim}
-%%           phybin  dendro phylip
-%% 100  150  0.269   22.1   12.8  
-
-%%           phybin-1,2,4,8  hashrf
-%% 1000 150  4.7 3 1.9 1.4     1.7
-%% \end{verbatim}
-
-
-
-%% PhyBin was selected as an interesting target because the {\em HashRF} algorithm
-%% on which it is based is monotonic.  
-%% %
-%% In fact, even the HashRF software of
-%% the same name, which is a C++ implementation of the algorithm, spends all of its%% time doing monotonic additions to a table.
-
-
-%% \begin{figure}
-%% -----------------------------\\
-%% (PLACEHOLDER)  \\
-%% Show the first phase -- monotonically filling a growing Map-of-Sets \\
-%% And the second phase -- bumping cells in a distance matrix of integers.\\
-%% -----------------------------\\
-%%   \caption{The core algorithms in PhyBin.}  
-%% \end{figure}
-
-%% -----------------------
-%% As an example of an application dependent on $\BUMP$, we introduce the first of
-%% our case studies: the bioinformatics application {\em PhyBin}.  PhyBin's core
-%% algorithms are pictured in Figure \ref{f:phybin-arch}.  PhyBin was initially
-%% released in 2010, and we attempted to modify and parallelize it in 2013 using
-%% LVish.
-
-
-
