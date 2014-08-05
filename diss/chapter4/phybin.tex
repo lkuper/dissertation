@@ -113,11 +113,13 @@ execution, making PhyBin a good candidate for parallelization with
 LVish.  The splits map created in the first phase is a map of sets,
 which are directly replaced by their LVar counterparts, and the
 distance matrix created in the second phase is a vector of
-monotonically increasing counters.
-
-Furthermore, the second phase of the algorithm can be pipelined with
-the first, because as soon as one of the rows of the splits map is
-complete, the second phase can start working on that row.
+monotonically increasing counters.  Furthermore, the second phase of
+the algorithm can be pipelined with the first, because as soon as one
+of the rows of the splits map is complete, the second phase can start
+working on that row.
+\lk{Question for Ryan: is that last bit actually true?  if so, why is
+  this pipelining possible -- don't we have to freeze the splits map
+  before we can read from it?}
 
 In fact, the parallel port of PhyBin using LVish was so
 straightforward that, after reading the code, parallelizing the first
@@ -156,3 +158,4 @@ exactly the sort of situation in which we would like to use LVish---to
 achieve modest speedups for modest effort, in programs with
 complicated data structures (and high allocation rates), and without
 changing the determinism guarantee of the original functional code.
+
