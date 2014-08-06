@@ -100,7 +100,7 @@
       \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
       the second, consider that $S_b = \extSRaw{S}{l}{\bot} =
       \lubstore{S}{\store{\storebindingRaw{l}{\bot}}}$.  Furthermore,
-      since no locations were allocated during the transition
+      since no locations are allocated during the transition
       $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$, we know
       that $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting with
       it, and we know that
@@ -137,9 +137,10 @@
       the second, consider that $S_b =
       \extSRaw{S}{l}{\userlub{d_1}{d_2}} =
       \lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}$.
-      Furthermore, since no locations were allocated during the transition
-      $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$, we know
-      that $\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}$ is
+      Furthermore, since no locations are allocated during the
+      transition $\config{S}{e_{a_1}} \parstepsto
+      \config{S_a}{e_{a_2}}$, we know that
+      $\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}$ is
       non-conflicting with it, and we know that
       $\lubstore{S_a}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
       \neq \topS$ since $S_a$ is just $S$ and
@@ -217,7 +218,7 @@
           \lubstore{\extSRaw{S}{l'}{\bot}}{\store{\storebindingRaw{l}{\bot}}}$.
           Furthermore, since the only location allocated during the
           transition $\config{S}{e_{b_1}} \parstepsto
-          \config{S_b}{e_{b_2}}$ was $l'$, we know that
+          \config{S_b}{e_{b_2}}$ is $l'$, we know that
           $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting with
           it (since $l \neq l'$ in this case).  We also know that
           $\lubstore{\extSRaw{S}{l'}{\bot}}{\store{\storebindingRaw{l}{\bot}}}
@@ -235,11 +236,16 @@
           $\config{\extSRaw{S}{l}{\bot}}{\evalctxt{E'_b}{e_{b_1}}}
           \parstepsto
           \config{\extSRaw{S_b}{l}{\bot}}{\evalctxt{E'_b}{e_{b_2}}}$,
-          which since $S_b = \extSRaw{S}{l'}{\bot}$, is what we were
+          which, since $S_b = \extSRaw{S}{l'}{\bot}$, is what we were
           required to show.  The argument for the second is
           symmetrical.
 
         \item If $l = l'$:
+
+          \lk{This is the interesting case of the proof, and I think
+            there's something funny going on here---I now think we
+            don't need to mention $\pi$ in the statement of the lemma
+            after all.}
 
           Let $l''$ be a location such that $l'' \notin S$ and $l''
           \neq l$ (and hence $l'' \neq l'$, as well).  Then choose $S'
@@ -273,15 +279,79 @@
           $\config{S}{e_{b_1}} \parstepsto
           \config{\extSRaw{S}{l''}{\bot}}{l''}$.
 
-          \TODO{}
-          
+          Since the only location allocated during the transition
+          $\config{S}{e_{b_1}} \parstepsto
+          \config{\extSRaw{S}{l''}{\bot}}{l''}$ is $l''$, we know that
+          $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting with
+          it.  We also know that
+          $\lubstore{\extSRaw{S}{l''}{\bot}}{\store{\storebindingRaw{l}{\bot}}}
+          \neq \topS$, since $S \neq \topS$ and new bindings of
+          $\storebindingRaw{l''}{\bot}$ and
+          $\storebindingRaw{l}{\bot}$ cannot cause it to become
+          $\topS$.  Therefore, by Lemma~\ref{lem:lvars-independence}
+          (Independence), we have that
+          $\config{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{e_{b_1}}
+          \parstepsto
+          \config{\lubstore{\extSRaw{S}{l''}{\bot}}{\store{\storebindingRaw{l}{\bot}}}}{e_{b_2}}$.
+          Hence $\config{\extSRaw{S}{l}{\bot}}{e_{b_1}} \parstepsto
+          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{e_{b_2}}$.
+          By {\sc E-Eval-Ctxt} it follows that
+          $\config{\extSRaw{S}{l}{\bot}}{\evalctxt{E'_b}{e_{b_1}}}
+          \parstepsto
+          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          which, since $\extSRaw{S}{l}{\bot} = S_a$, is what we were
+          required to show.
+
+          For the second, by Lemma~\ref{lem:lvars-permutability}
+          (Permutability) it suffices to show that
+          $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_a}{e_{a_2}}}$,
+          which we can prove by an argument symmetrical with the
+          first:
+
+          Since $\config{S}{e_{a_1}} \parstepsto
+          \config{S_a}{e_{a_2}}$, we have by
+          Lemma~\ref{lem:lvars-permutability} (Permutability) that
+          $\pi(\config{S}{e_{a_1}}) \parstepsto
+          \pi(\config{S_a}{e_{a_2}})$.  Since $\pi = \setof{(l,
+            l'')}$, but $l \notin S$ (from the side condition on {\sc
+            E-New}), we have that $\pi(\config{S}{e_{a_1}}) =
+          \config{S}{e_{a_1}}$. Since $\config{S_a}{e_{a_2}} =
+          \config{\extSRaw{S}{l}{\bot}}{l}$, we have that
+          $\pi(\config{S_a}{e_{a_2}}) =
+          \config{\extSRaw{S}{l''}{\bot}}{l''}$.  (We know that
+          $e_{a_2} = l$ since $\config{S}{e_{a_1}} \parstepsto
+          \config{S_a}{e_{a_2}}$ by the {\sc E-New} rule.)  Hence
+          $\config{S}{e_{a_1}} \parstepsto
+          \config{\extSRaw{S}{l''}{\bot}}{l''}$.
+
+          Since the only location allocated during the transition
+          $\config{S}{e_{a_1}} \parstepsto
+          \config{\extSRaw{S}{l''}{\bot}}{l''}$ is $l''$, we know that
+          $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting with
+          it.  We also know that
+          $\lubstore{\extSRaw{S}{l''}{\bot}}{\store{\storebindingRaw{l}{\bot}}}
+          \neq \topS$, since $S \neq \topS$ and new bindings of
+          $\storebindingRaw{l''}{\bot}$ and
+          $\storebindingRaw{l}{\bot}$ cannot cause it to become
+          $\topS$.  Therefore, by Lemma~\ref{lem:lvars-independence}
+          (Independence), we have that
+          $\config{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{e_{a_1}}
+          \parstepsto
+          \config{\lubstore{\extSRaw{S}{l''}{\bot}}{\store{\storebindingRaw{l}{\bot}}}}{e_{a_2}}$.
+          Hence $\config{\extSRaw{S}{l}{\bot}}{e_{a_1}} \parstepsto
+          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{e_{a_2}}$.
+          By {\sc E-Eval-Ctxt} it follows that
+          $\config{\extSRaw{S}{l}{\bot}}{\evalctxt{E'_a}{e_{a_1}}}
+          \parstepsto
+          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_a}{e_{a_2}}}$,
+          which, since $\extSRaw{S}{l}{\bot} = \extSRaw{S}{l'}{\bot} =
+          S_b$, is what we were required to show.
+
       \end{itemize}
-
-
 
     \item \label{lvars-slc-new-put}Case {\sc E-Put}: We have $S_b =
       \extSRaw{S}{l'}{\userlub{d_1}{d_2}}$.
-
 
       We have to show that:
       \begin{itemize}
@@ -298,7 +368,7 @@
       \lubstore{S}{\store{\storebindingRaw{l}{\bot}}}$, and that
       $\extSRaw{S_b}{l}{\bot} =
       \lubstore{S_b}{\store{\storebindingRaw{l}{\bot}}}$.
-      Furthermore, since no locations were allocated during the
+      Furthermore, since no locations are allocated during the
       transition $\config{S}{e_{b_1}} \parstepsto
       \config{S_b}{e_{b_2}}$, we know that
       $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting with it.
@@ -328,7 +398,7 @@
       \lubstore{S_a}{\store{\storebindingRaw{l'}{\userlub{d_1}{d_2}}}}$.
       Furthermore, since the only location allocated during the
       transition $\config{S}{e_{a_1}} \parstepsto
-      \config{S_a}{e_{a_2}}$ was $l$, we know that
+      \config{S_a}{e_{a_2}}$ is $l$, we know that
       $\store{\storebindingRaw{l'}{\userlub{d_1}{d_2}}}$ is
       non-conflicting with it.  (We know that $l \neq l'$ because we
       have from the premise of {\sc E-Put} that $l' \in \dom{S}$, but
