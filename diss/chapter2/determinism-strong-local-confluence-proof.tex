@@ -100,7 +100,7 @@
       \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
       the second, consider that $S_b = \extSRaw{S}{l}{\bot} =
       \lubstore{S}{\store{\storebindingRaw{l}{\bot}}}$.  Furthermore,
-      since the store did not change during the transition
+      since no locations were allocated during the transition
       $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$, we know
       that $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting with
       it, and we know that
@@ -137,10 +137,9 @@
       the second, consider that $S_b =
       \extSRaw{S}{l}{\userlub{d_1}{d_2}} =
       \lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}$.
-      Furthermore, since the store did not change during the
-      transition $\config{S}{e_{a_1}} \parstepsto
-      \config{S_a}{e_{a_2}}$, we know that
-      $\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}$ is
+      Furthermore, since no locations were allocated during the transition
+      $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$, we know
+      that $\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}$ is
       non-conflicting with it, and we know that
       $\lubstore{S_a}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
       \neq \topS$ since $S_a$ is just $S$ and
@@ -170,29 +169,133 @@
 
       The second of these is immediately true because since
       $\config{S_b}{e_{b_2}} = \error$, $S_b = \topS$, and so
-      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ is $\error$ as well.
-      For the first, observe that $\config{S}{e_{b_1}} \parstepsto
-      \config{S_b}{e_{b_2}}$, hence by {\sc E-Eval-Ctxt},
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ is equal to $\error$ as
+      well.  For the first, observe that $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$, hence by {\sc E-Eval-Ctxt},
       $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
       \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$.  But $S_b = \topS$, so
-      $\config{S_b}{\evalctxt{E'_b}{e_{b_2}}} = \error$, and so
-      $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto \error$, as
-      required.
+      $\config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$ is equal to $\error$,
+      and so $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \error$, as required.
 
     \item \label{lvars-slc-beta-get}Case {\sc E-Get}: Similar to
       case~\ref{lvars-slc-beta-beta}, since $S_b = S$.
 
     \end{enumerate}
-  \item Case {\sc E-New}:
+  \item Case {\sc E-New}: We have $S_a = \extSRaw{S}{l}{\bot}$.
 
     We proceed by case analysis on the rule by which
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
     \begin{enumerate}
-    \item Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-new}.
-    \item Case {\sc E-New}: \TODO{}
-    \item Case {\sc E-Put}: \TODO{}
-    \item Case {\sc E-Put-Err}: \TODO{}
-    \item Case {\sc E-Get}: \TODO{}
+    \item \label{lvars-slc-new-beta}Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-new}.
+    \item Case {\sc E-New}: We have $S_b = \extSRaw{S}{l'}{\bot}$. 
+
+      \TODO{}
+
+    \item Case {\sc E-Put}: We have $S_b =
+      \extSRaw{S}{l'}{\userlub{d_1}{d_2}}$.
+
+      Choose $S' =
+      \extSRaw{S_b}{l}{\bot}$, $i =
+      1$, $j = 1$, and $\pi = \id$.
+
+      We have to show that:
+      \begin{itemize}
+      \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{\extSRaw{S_b}{l}{\bot}}{\evalctxt{E'_b}{e_{b_2}}}$,
+        and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+        \config{\extSRaw{S_b}{l}{\bot}}{\evalctxt{E'_a}{e_{a_2}}}$.
+      \end{itemize}
+
+      For the first of these, consider that $S_a =
+      \extSRaw{S}{l}{\bot} =
+      \lubstore{S}{\store{\storebindingRaw{l}{\bot}}}$, and that
+      $\extSRaw{S_b}{l}{\bot} =
+      \lubstore{S_b}{\store{\storebindingRaw{l}{\bot}}}$.
+      Furthermore, since no locations were allocated during the
+      transition $\config{S}{e_{b_1}} \parstepsto
+      \config{S_b}{e_{b_2}}$, we know that
+      $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting with it.
+      We also know that
+      $\lubstore{S_b}{\store{\storebindingRaw{l}{\bot}}} \neq \topS$,
+      since $S_b = \extSRaw{S}{l'}{\userlub{d_1}{d_2}}$ and we know
+      from the premise of {\sc E-Put} that $\userlub{d_1}{d_2} \neq
+      \top$.  Therefore, by Lemma~\ref{lem:lvars-independence}
+      (Independence), we have that
+      $\config{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{e_{b_1}}
+      \parstepsto
+      \config{\lubstore{S_b}{\store{\storebindingRaw{l}{\bot}}}}{e_{b_2}}$.
+      Hence $\config{\extSRaw{S}{l}{\bot}}{e_{b_1}} \parstepsto
+      \config{\extSRaw{S_b}{l}{\bot}}{e_{b_2}}$.  By {\sc
+        E-Eval-Ctxt}, it follows that
+      $\config{\extSRaw{S}{l}{\bot}}{\evalctxt{E'_b}{e_{b_1}}}
+      \ctxstepsto
+      \config{\extSRaw{S_b}{l}{\bot}}{\evalctxt{E'_b}{e_{b_2}}}$,
+      which, since $S_a = \extSRaw{S}{l}{\bot}$, is what we were
+      required to show.
+
+      For the second, consider that $S_b =
+      \lubstore{S}{\store{\storebindingRaw{l'}{\userlub{d_1}{d_2}}}}$
+      and $\extSRaw{S_b}{l}{\bot} =
+      \lubstore{\extSRaw{S}{l}{\bot}}{\store{\storebindingRaw{l'}{\userlub{d_1}{d_2}}}}
+      =
+      \lubstore{S_a}{\store{\storebindingRaw{l'}{\userlub{d_1}{d_2}}}}$.
+      Furthermore, since the only location allocated during the
+      transition $\config{S}{e_{a_1}} \parstepsto
+      \config{S_a}{e_{a_2}}$ was $l$, we know that
+      $\store{\storebindingRaw{l'}{\userlub{d_1}{d_2}}}$ is
+      non-conflicting with it.  (We know that $l \neq l'$ because we
+      have from the premise of {\sc E-Put} that $l' \in \dom{S}$, but
+      we have from the side condition of {\sc E-New} that $l \notin
+      \dom{S}$.)  We also know that
+      $\lubstore{\extSRaw{S}{l}{\bot}}{\store{\storebindingRaw{l'}{\userlub{d_1}{d_2}}}}
+      \neq \topS$, since we know from the premise of {\sc E-Put} that
+      $\userlub{d_1}{d_2} \neq \top$.  Therefore, by
+      Lemma~\ref{lem:lvars-independence} (Independence), we have that
+      $\config{\lubstore{S}{\store{\storebindingRaw{l'}{\userlub{d_1}{d_2}}}}}{e_{a_1}}
+      \parstepsto
+      \config{\lubstore{S_a}{\store{\storebindingRaw{l'}{\userlub{d_1}{d_2}}}}}{e_{a_2}}$.
+      Hence $\config{S_b}{e_{a_1}} \parstepsto
+      \config{\extSRaw{S_b}{l}{\bot}}{e_{a_2}}$.  By {\sc
+        E-Eval-Ctxt}, it follows that
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{\extSRaw{S_b}{l}{\bot}}{\evalctxt{E'_a}{e_{a_2}}}$, as
+      we were required to show.
+
+    \item Case {\sc E-Put-Err}:
+
+      Here $\config{S_b}{e_{b_2}} = \error$, and so we choose $\conf_c
+      = \error$, $i = 1$, $j = 0$, and $\pi = \id$.  We have to show
+      that:
+      \begin{itemize}
+      \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \error$, and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} = \error$.
+      \end{itemize}
+
+      The second of these is immediately true because since
+      $\config{S_b}{e_{b_2}} = \error$, $S_b = \topS$, and so
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ is equal to $\error$ as
+      well.  For the first, observe that since $\config{S}{e_{a_1}}
+      \parstepsto \config{S_a}{e_{a_2}}$, we have by
+      Lemma~\ref{lem:lvars-monotonicity} (Monotonicity) that $S
+      \leqstore S_a$.  Therefore, since $\config{S}{e_{b_1}}
+      \parstepsto \error$, we have by
+      Lemma~\ref{lem:lvars-error-preservation} (Error Preservation)
+      that $\config{S_a}{e_{b_1}} \parstepsto \error$.  Since $\error
+      = \config{\topS}{e}$ for any $e$, $\config{S_a}{e_{b_1}}
+      \parstepsto \config{\topS}{e}$.  Therefore, by {\sc
+        E-Eval-Ctxt}, $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}}
+      \ctxstepsto \config{\topS}{\evalctxt{E'_b}{e}}$ for any $e$.
+      Since $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal to $\error$,
+      we have that $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \error$, as we were required to show.
+
+    \item Case {\sc E-Get}: Similar to case~\ref{lvars-slc-new-beta},
+      since $S_b = S$.
     \end{enumerate}
   \item Case {\sc E-Put}:
 
