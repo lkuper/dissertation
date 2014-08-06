@@ -195,8 +195,9 @@ the $\leqstore{}{}$ ordering.
 
 \LVarsLemMonotonicity
 \begin{proof}
-  By induction on the derivation of $\config{S}{e} \parstepsto
-  \config{S'}{e'}$, by cases on the last rule in the derivation; see
+  Straightforward by cases on the rule of the reduction semantics by
+  which $\config{S}{e}$ steps to $\config{S'}{e'}$. The interesting
+  cases are for the {\sc E-New} and {\sc E-Put} rules.  See
   Section~\ref{section:lvars-monotonicity-proof}.
 \end{proof}
 

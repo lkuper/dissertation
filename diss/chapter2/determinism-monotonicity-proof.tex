@@ -1,20 +1,9 @@
 \begin{proof}
-  By induction on the derivation of $\config{S}{e} \parstepsto
-  \config{S'}{e'}$, by cases on the last rule in the derivation.
+  Suppose $\config{S}{e} \parstepsto \config{S'}{e'}$.  We are
+  required to show that $\leqstore{S}{S'}$.  The proof is by cases on
+  the rule by which $\config{S}{e}$ steps to $\config{S'}{e'}$.
 
   \begin{itemize}
-
-    \item Case {\sc E-Eval-Ctxt}:
-
-      Given: $\config{S}{\E{e}} \parstepsto \config{S'}{\E{e'}}$.
-
-      To show: $\leqstore{S}{S'}$.
-
-      From the premise of {\sc E-Eval-Ctxt}, $\config{S}{e}
-      \parstepsto \config{S'}{e'}$.
-
-      Hence by IH, $\leqstore{S}{S'}$, as we were required to show.
-
     \item Case {\sc E-Beta}:
 
       Immediate by the definition of $\leqstore{}{}$, since $S$ does
@@ -83,8 +72,8 @@
 
       Given: $\config{S}{\putexp{l}{d_2}} \parstepsto \error$.
 
-      By the definition of $\error$, $\error = \config{\topS}{e}$ for
-      any $e$.
+      By the definition of $\error$, $\error$ is equal to
+      $\config{\topS}{e}$ for all $e$.
 
       To show: $\leqstore{S}{\topS}$.
 
