@@ -188,16 +188,100 @@
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
     \begin{enumerate}
     \item \label{lvars-slc-new-beta}Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-new}.
-    \item \label{lvars-slc-new-new}Case {\sc E-New}: We have $S_b = \extSRaw{S}{l'}{\bot}$. 
+    \item \label{lvars-slc-new-new}Case {\sc E-New}: We have $S_b = \extSRaw{S}{l'}{\bot}$.
 
-      \TODO{}
+      Now consider whether $l = l'$:
+      \begin{itemize}
+        \item If $l \neq l'$:
+
+          Choose $S' = \extSRaw{\extSRaw{S}{l'}{\bot}}{l}{\bot}$, $i =
+          1$, $j = 1$, and $\pi = \id$.
+
+          We have to show that:
+          \begin{itemize}
+          \item
+            $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}}
+            \ctxstepsto
+            \config{\extSRaw{\extSRaw{S}{l'}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{e_{b_2}}}$,
+            and
+          \item
+            $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}
+            \ctxstepsto
+            \config{\extSRaw{\extSRaw{S}{l'}{\bot}}{l}{\bot}}{\evalctxt{E'_a}{e_{a_2}}}$.
+          \end{itemize}
+
+          For the first of these, consider that $S_a =
+          \extSRaw{S}{l}{\bot} =
+          \lubstore{S}{\store{\storebindingRaw{l}{\bot}}}$, and that
+          $\extSRaw{\extSRaw{S}{l'}{\bot}}{l}{\bot} =
+          \lubstore{\extSRaw{S}{l'}{\bot}}{\store{\storebindingRaw{l}{\bot}}}$.
+          Furthermore, since the only location allocated during the
+          transition $\config{S}{e_{b_1}} \parstepsto
+          \config{S_b}{e_{b_2}}$ was $l'$, we know that
+          $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting with
+          it (since $l \neq l'$ in this case).  We also know that
+          $\lubstore{\extSRaw{S}{l'}{\bot}}{\store{\storebindingRaw{l}{\bot}}}
+          \neq \topS$, since $S \neq \topS$ and new bindings of
+          $\storebindingRaw{l}{\bot}$ and $\storebindingRaw{l'}{\bot}$
+          cannot cause it to become $\topS$.  Therefore, by
+          Lemma~\ref{lem:lvars-independence} (Independence), we have
+          that
+          $\config{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{e_{b_1}}
+          \parstepsto
+          \config{\lubstore{S_b}{\store{\storebindingRaw{l}{\bot}}}}{e_{b_2}}$.
+          Hence $\config{\extSRaw{S}{l}{\bot}}{e_{b_1}} \parstepsto
+          \config{\extSRaw{S_b}{l}{\bot}}{e_{b_2}}$.  By {\sc
+            E-Eval-Ctxt} it follows that
+          $\config{\extSRaw{S}{l}{\bot}}{\evalctxt{E'_b}{e_{b_1}}}
+          \parstepsto
+          \config{\extSRaw{S_b}{l}{\bot}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          which since $S_b = \extSRaw{S}{l'}{\bot}$, is what we were
+          required to show.  The argument for the second is
+          symmetrical.
+
+        \item If $l = l'$:
+
+          Let $l''$ be a location such that $l'' \notin S$ and $l''
+          \neq l$ (and hence $l'' \neq l'$, as well).  Then choose $S'
+          = \extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}$, $i = 1$, $j =
+          1$, and $\pi = \setof{(l, l'')}$.
+
+          We have to show that:
+          \begin{itemize}
+          \item
+            $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+            \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{e_{b_2}}}$,
+            and
+          \item
+            $\pi(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}) \ctxstepsto
+            \pi(\config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_a}{e_{a_2}}})$.
+          \end{itemize}
+
+          For the first of these, since $\config{S}{e_{b_1}}
+          \parstepsto \config{S_b}{e_{b_2}}$, we have by
+          Lemma~\ref{lem:lvars-permutability} (Permutability) that
+          $\pi(\config{S}{e_{b_1}}) \parstepsto
+          \pi(\config{S_b}{e_{b_2}})$.  Since $\pi = \setof{(l,
+            l'')}$, but $l \notin S$ (from the side condition on {\sc
+            E-New}), we have that $\pi(\config{S}{e_{b_1}}) =
+          \config{S}{e_{b_1}}$. Since $\config{S_b}{e_{b_2}} =
+          \config{\extSRaw{S}{l'}{\bot}}{l'}$, and $l = l'$, we have
+          that $\pi(\config{S_b}{e_{b_2}}) =
+          \config{\extSRaw{S}{l''}{\bot}}{l''}$.  (We know that
+          $e_{b_2} = l'$ since $\config{S}{e_{b_1}} \parstepsto
+          \config{S_b}{e_{b_2}}$ by the {\sc E-New} rule.)  Hence
+          $\config{S}{e_{b_1}} \parstepsto
+          \config{\extSRaw{S}{l''}{\bot}}{l''}$.
+
+          \TODO{}
+          
+      \end{itemize}
+
+
 
     \item \label{lvars-slc-new-put}Case {\sc E-Put}: We have $S_b =
       \extSRaw{S}{l'}{\userlub{d_1}{d_2}}$.
 
-      Choose $S' =
-      \extSRaw{S_b}{l}{\bot}$, $i =
-      1$, $j = 1$, and $\pi = \id$.
 
       We have to show that:
       \begin{itemize}
