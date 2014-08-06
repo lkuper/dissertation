@@ -188,11 +188,11 @@
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
     \begin{enumerate}
     \item \label{lvars-slc-new-beta}Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-new}.
-    \item Case {\sc E-New}: We have $S_b = \extSRaw{S}{l'}{\bot}$. 
+    \item \label{lvars-slc-new-new}Case {\sc E-New}: We have $S_b = \extSRaw{S}{l'}{\bot}$. 
 
       \TODO{}
 
-    \item Case {\sc E-Put}: We have $S_b =
+    \item \label{lvars-slc-new-put}Case {\sc E-Put}: We have $S_b =
       \extSRaw{S}{l'}{\userlub{d_1}{d_2}}$.
 
       Choose $S' =
@@ -264,7 +264,7 @@
       \config{\extSRaw{S_b}{l}{\bot}}{\evalctxt{E'_a}{e_{a_2}}}$, as
       we were required to show.
 
-    \item Case {\sc E-Put-Err}:
+    \item \label{lvars-slc-new-put-err}Case {\sc E-Put-Err}:
 
       Here $\config{S_b}{e_{b_2}} = \error$, and so we choose $\conf_c
       = \error$, $i = 1$, $j = 0$, and $\pi = \id$.  We have to show
@@ -281,54 +281,58 @@
       $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ is equal to $\error$ as
       well.  For the first, observe that since $\config{S}{e_{a_1}}
       \parstepsto \config{S_a}{e_{a_2}}$, we have by
-      Lemma~\ref{lem:lvars-monotonicity} (Monotonicity) that $S
-      \leqstore S_a$.  Therefore, since $\config{S}{e_{b_1}}
+      Lemma~\ref{lem:lvars-monotonicity} (Monotonicity) that
+      $\leqstore{S}{S_a}$.  Therefore, since $\config{S}{e_{b_1}}
       \parstepsto \error$, we have by
       Lemma~\ref{lem:lvars-error-preservation} (Error Preservation)
-      that $\config{S_a}{e_{b_1}} \parstepsto \error$.  Since $\error
-      = \config{\topS}{e}$ for any $e$, $\config{S_a}{e_{b_1}}
-      \parstepsto \config{\topS}{e}$.  Therefore, by {\sc
-        E-Eval-Ctxt}, $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}}
-      \ctxstepsto \config{\topS}{\evalctxt{E'_b}{e}}$ for any $e$.
-      Since $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal to $\error$,
-      we have that $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      that $\config{S_a}{e_{b_1}} \parstepsto \error$.  Since $\error$
+      is equal to $\config{\topS}{e}$ for all expressions $e$,
+      $\config{S_a}{e_{b_1}} \parstepsto \config{\topS}{e}$ for all
+      $e$.  Therefore, by {\sc E-Eval-Ctxt},
+      $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \config{\topS}{\evalctxt{E'_b}{e}}$ for all $e$.  Since
+      $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal to $\error$, we
+      have that $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
       \error$, as we were required to show.
 
-    \item Case {\sc E-Get}: Similar to case~\ref{lvars-slc-new-beta},
-      since $S_b = S$.
+    \item \label{lvars-slc-new-get}Case {\sc E-Get}: Similar to
+      case~\ref{lvars-slc-new-beta}, since $S_b = S$.
     \end{enumerate}
   \item Case {\sc E-Put}:
 
     We proceed by case analysis on the rule by which
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
     \begin{enumerate}
-    \item Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-put}.
-    \item Case {\sc E-New}: \TODO{}
-    \item Case {\sc E-Put}: \TODO{}
-    \item Case {\sc E-Put-Err}: \TODO{}
-    \item Case {\sc E-Get}: \TODO{}
+    \item \label{lvars-slc-put-beta}Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-put}.
+    \item \label{lvars-slc-put-new}Case {\sc E-New}: By symmetry with case~\ref{lvars-slc-new-put}.
+    \item \label{lvars-slc-put-put}Case {\sc E-Put}: \TODO{}
+    \item \label{lvars-slc-put-put-err}Case {\sc E-Put-Err}: \TODO{}
+    \item \label{lvars-slc-put-get}Case {\sc E-Get}: Similar to
+      case~\ref{lvars-slc-put-beta}, since $S_b = S$.
     \end{enumerate}
   \item Case {\sc E-Put-Err}:
 
     We proceed by case analysis on the rule by which
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
     \begin{enumerate}
-    \item Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-put-err}.
-    \item Case {\sc E-New}: \TODO{}
-    \item Case {\sc E-Put}: \TODO{}
-    \item Case {\sc E-Put-Err}: \TODO{}
-    \item Case {\sc E-Get}: \TODO{}
+    \item \label{lvars-slc-put-err-beta}Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-put-err}.
+    \item \label{lvars-slc-put-err-new}Case {\sc E-New}: By symmetry with case~\ref{lvars-slc-new-put-err}.
+    \item \label{lvars-slc-put-err-put}Case {\sc E-Put}: By symmetry with case~\ref{lvars-slc-put-put-err}.
+    \item \label{lvars-slc-put-err-put-err}Case {\sc E-Put-Err}: \TODO{}
+    \item \label{lvars-slc-put-err-get}Case {\sc E-Get}: Similar to
+      case~\ref{lvars-slc-put-err-beta}, since $S_b = S$.
     \end{enumerate}
   \item Case {\sc E-Get}:
 
     We proceed by case analysis on the rule by which
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
     \begin{enumerate}
-    \item Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-get}.
-    \item Case {\sc E-New}: \TODO{}
-    \item Case {\sc E-Put}: \TODO{}
-    \item Case {\sc E-Put-Err}: \TODO{}
-    \item Case {\sc E-Get}: \TODO{}
+    \item \label{lvars-slc-get-beta}Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-get}.
+    \item \label{lvars-slc-get-new}Case {\sc E-New}: By symmetry with case~\ref{lvars-slc-new-get}.
+    \item \label{lvars-slc-get-put}Case {\sc E-Put}: By symmetry with case~\ref{lvars-slc-put-get}.
+    \item \label{lvars-slc-get-put-err}Case {\sc E-Put-Err}: By symmetry with case~\ref{lvars-slc-put-err-get}.
+    \item \label{lvars-slc-get-get}Case {\sc E-Get}: Similar to
+      case~\ref{lvars-slc-get-beta}, since $S_b = S$.
     \end{enumerate}
   \end{enumerate}
 \end{proof}
