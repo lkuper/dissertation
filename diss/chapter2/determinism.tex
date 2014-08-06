@@ -259,16 +259,20 @@ that if a configuration $\config{S}{e}$ steps to $\error$, then
 evaluating $e$ in the context of some larger store will also result in
 $\error$.
 
-\lk{We didn't need the Error Preservation lemma for the
-  quasi-determinism proof, but I'm pretty sure the only reason we
-  didn't need it was because quasi-determinism is ``...or $\error$''.
-  I think we actually do need it here.}
-
 \LVarsLemErrorPreservation
 \begin{proof}
-  By induction on the derivation of $\config{S}{e} \parstepsto
-  \error$, by cases on the last rule in the derivation; see
-  Section~\ref{section:lvars-error-preservation-proof}.
+  Suppose $\config{S}{e} \parstepsto \error$ and
+  $\leqstore{S}{S'}$. We are required to show that $\config{S'}{e}
+  \parstepsto \textup{\error}$.
+
+  By inspection of the operational semantics, the only rule by which
+  $\config{S}{e}$ can step to $\error$ is {\sc E-Put-Err}.  Hence $e =
+  \putexp{l}{d_2}$.  From the premises of {\sc E-Put-Err}, we have
+  that $S(l) = d_1$.  Since $\leqstore{S}{S'}$, it must be the case
+  that $S'(l) = d'_1$, where $d_1 \userleq d'_1$.  Since
+  $\userlub{d_1}{d_2} = \top$, we have that $\userlub{d'_1}{d_2} =
+  \top$.  Hence, by {\sc E-Put-Err}, $\config{S'}{\putexp{l}{d_2}}
+  \parstepsto \error$, as we were required to show.
 \end{proof}
 
 \subsection{Confluence lemmas}\label{subsection:lvars-confluence}
