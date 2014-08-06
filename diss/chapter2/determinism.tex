@@ -229,22 +229,23 @@ by allocation.
 
 \LVarsLemIndependence
 \begin{proof}
-  By induction on the derivation of $\config{S}{e} \parstepsto
-  \config{S'}{e'}$, by cases on the last rule in the derivation; see
+  By cases on the rule of the reduction semantics by which
+  $\config{S}{e}$ steps to $\config{S'}{e'}$. The interesting cases
+  are for the {\sc E-New} and {\sc E-Put} rules.  Since
+  $\config{S'}{e'} \neq \error$, we do not need to consider the {\sc
+    E-Put-Err} rule.  See
   Section~\ref{section:lvars-independence-proof}.
 \end{proof}
 
 \subsection{Clash lemma}
 
+\lk{It's not clear that we actually need this.  If not, get rid of
+  it.}
+
 The Clash lemma, Lemma~\ref{lem:lvars-clash}, is similar to the
 Independence lemma, but handles the case where $\lubstore{S'}{S''} =
 \topS$.  It establishes that, in that case,
 $\config{\lubstore{S}{S''}}{e}$ steps to $\error$.
-
-\lk{We didn't need the Clash lemma for the quasi-determinism proof,
-  but I'm pretty sure the only reason we didn't need it was because
-  quasi-determinism is ``...or $\error$''.  I think we actually do
-  need it here.}
 
 \LVarsLemClash
 \begin{proof}
@@ -282,8 +283,9 @@ Lemma~\ref{lem:lvars-strong-local-confluence}, the Strong Local
 Confluence lemma, says that if a configuration $\conf$ can step to
 configurations $\conf_a$ and $\conf_b$, then there exists an
 configuration $\conf_c$ that $\conf_a$ and $\conf_b$ can each reach in
-at most one step, modulo a permutation on the locations in $\conf_b$.
-Lemmas~\ref{lem:lvars-strong-one-sided-confluence}
+at most one step, modulo a permutation on the locations in
+$\conf_b$. \lk{We might not need that ``modulo a permutation'' bit,
+  actually.}  Lemmas~\ref{lem:lvars-strong-one-sided-confluence}
 and~\ref{lem:lvars-strong-confluence} then generalize that result to
 arbitrary numbers of steps.
 
@@ -300,11 +302,25 @@ most one step'' property directly.
 
 \LVarsLemStrongLocalConfluence
 \begin{proof}
-  By induction on the derivation of $\conf \parstepsto \conf_a$, by
-  cases on the last rule in the derivation; see
-  Section~\ref{section:lvars-strong-local-confluence-proof}. \TODO{Update
-    this description, and mention where it makes use of the
-    previously-proved properties.}
+  Since the original configuration $\conf$ can step in two different
+  ways, its expression decomposes into redex and context in two
+  different ways: $\conf = \config{S}{\evalctxt{E_a}{e_{a_1}}} =
+  \config{S}{\evalctxt{E_b}{e_{b_1}}}$, where $\evalctxt{E_a}{e_{a_1}}
+  = \evalctxt{E_b}{e_{b_1}}$, but $E_a$ and $E_b$ may differ and
+  $e_{a_1}$ and $e_{b_1}$ may differ.  We can then apply the
+  Lemma~\ref{lem:lvars-locality} (Locality) lemma; at a high level, it
+  shows that $e_{a_1}$ and $e_{b_1}$ can step independently within
+  their contexts.
+
+  The proof is then by a double case analysis on the rule of the
+  reduction semantics by which $e_{a_1}$ steps and by which $e_{b_1}$
+  steps.  In order to combine the results of the two steps, the proof
+  makes use of Lemma~\ref{lem:lvars-independence} (Independence).  The
+  most interesting case is that in which both expressions step by the
+  {\sc E-New} rule and they allocate locations with the same name.  In
+  that case, we can use Lemma~\ref{lem:lvars-permutability}
+  (Permutability) to rename locations so as not to conflict.  See
+  Section~\ref{section:lvars-strong-local-confluence-proof}.
 \end{proof}
 
 \LVarsLemStrongOneSidedConfluence
