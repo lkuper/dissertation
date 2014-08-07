@@ -2,7 +2,7 @@
   Suppose $\conf \ctxstepsto \conf_a$ and $\conf \ctxstepsto \conf_b$.
   We have to show that there exist $\conf_c, i, j, \pi$ such that
   $\conf_a \ctxstepsto^i \conf_c$ and $\pi(\conf_b) \ctxstepsto^j
-  \pi(\conf_c)$ and $i \leq 1$ and $j \leq 1$.
+  \conf_c$ and $i \leq 1$ and $j \leq 1$.
 
   By inspection of the operational semantics, it must be the case that
   $\conf$ steps to $\conf_a$ by the {\sc E-Eval-Ctxt} rule.  Let
@@ -41,7 +41,7 @@
   \item $\config{S_a}{\evalctxt{E_a}{e_{a_2}}} \ctxstepsto^i
     \config{S'}{\evalctxt{E'_a}{e_{a_2}}}$, and
   \item $\pi(\config{S_b}{\evalctxt{E_b}{e_{b_2}}}) \ctxstepsto^j
-    \pi(\config{S'}{\evalctxt{E'_a}{e_{a_2}}})$.
+    \config{S'}{\evalctxt{E'_a}{e_{a_2}}}$.
   \end{itemize}
   Since $\evalctxt{E'_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_2}}$,
   $\evalctxt{E'_b}{e_{b_1}} = \evalctxt{E_a}{e_{a_2}}$, and
@@ -51,7 +51,7 @@
   \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto^i
     \config{S'}{\evalctxt{E'_b}{e_{b_2}}}$, and
   \item $\pi(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}) \ctxstepsto^j
-    \pi(\config{S'}{\evalctxt{E'_a}{e_{a_2}}})$.
+    \config{S'}{\evalctxt{E'_a}{e_{a_2}}}$.
   \end{itemize}
 
   From the premise of {\sc E-Eval-Ctxt}, we have that
@@ -243,11 +243,6 @@
 
         \item If $l = l'$:
 
-          \lk{This is the interesting case of the proof, and I think
-            there's something funny going on here---I now think we
-            don't need to mention $\pi$ in the statement of the lemma
-            after all.}
-
           In this case, observe that we do \emph{not} want the
           expression in the final configuration to be
           $\evalctxt{E'_a}{e_{a_2}}$ (nor its equivalent,
@@ -277,7 +272,7 @@
             and
           \item
             $\pi(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}) \ctxstepsto
-            \pi(\config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{\pi(e_{b_2})}})$.
+            \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
           \end{itemize}
 
           For the first of these, since $\config{S}{e_{b_1}}
