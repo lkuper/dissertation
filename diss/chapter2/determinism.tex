@@ -9,18 +9,31 @@ discuss permutations in more detail below, in
 Section~\ref{subsection:lvars-permutations}.)
 
 In order to prove determinism for $\lambdaLVar$, I first prove several
-supporting lemmas.  The structure of the proof is similar to that of
-the proof of determinism for Featherweight CnC given by Budimli\'c
-\etal~\cite{CnC}.  I reuse the naming conventions of Budimli\'c
-\etal~for Lemmas~\ref{lem:lvars-monotonicity}
-through~\ref{lem:lvars-strong-local-confluence}, although the
-statements and proofs of those lemmas differ considerably in the
-setting of $\lambdaLVar$, due to the generality of LVars.
+supporting lemmas.
 
-However, Lemmas~\ref{lem:lvars-strong-one-sided-confluence}
-through~\ref{lem:lvars-confluence} are nearly identical to the
-corresponding lemmas in the Featherweight CnC determinism proof.  This
-is the case because, once Lemmas~\ref{lem:lvars-monotonicity} through
+Lemma~\ref{lem:lvars-permutability} (Permutability) deals with
+location names, and Lemma~\ref{lem:lvars-locality} (Locality)
+establishes a useful property for dealing with expressions that
+decompose into redex and context in multiple ways.
+
+After that point, the structure of the proof is similar to that of the
+proof of determinism for Featherweight CnC given by Budimli\'c
+\etal~\cite{CnC}.  I reuse the naming conventions of Budimli\'c
+\etal~for Lemmas~\ref{lem:lvars-monotonicity} (Monotonicity),
+\ref{lem:lvars-independence} (Independence), \ref{lem:lvars-clash}
+(Clash), \ref{lem:lvars-error-preservation} (Error Preservation), and
+\ref{lem:lvars-strong-local-confluence} (Strong Local
+Confluence). However, the statements and proofs of those lemmas differ
+considerably in the setting of $\lambdaLVar$, due to the generality of
+LVars and other differences between the $\lambdaLVar$ language and
+Featherweight CnC.
+
+However, Lemmas~\ref{lem:lvars-strong-one-sided-confluence} (Strong
+One-Sided Confluence), \ref{lem:lvars-strong-confluence} (Strong
+Confluence), and \ref{lem:confluence} (Confluence) are nearly
+identical to the corresponding lemmas in the Featherweight CnC
+determinism proof.  This is the case because, once
+Lemmas~\ref{lem:lvars-monotonicity} through
 \ref{lem:lvars-strong-local-confluence} are established, the remainder
 of the determinism proof does not need to deal specifically with the
 semantics of LVars, lattices, or the store, and instead deals only
@@ -151,6 +164,10 @@ reduction semantics is internally deterministic up to a permutation on
 locations.  Lemma~\ref{lem:lvars-internal-determinism} formalizes this
 claim.
 
+\lk{We don't actually use this fact anywhere!  Could I have used it to
+  simplify the proof of Lemma~\ref{lem:lvars-strong-local-confluence}}
+or something?}
+
 \LVarsLemInternalDeterminism
 \begin{proof}
   Straightforward by cases on the rule of the reduction semantics by
@@ -181,13 +198,11 @@ Lemma~\ref{lem:lvars-locality} formalizes this claim.
 
 \LVarsLemLocality
 \begin{proof}
-  \TODO{Add short description here.} See
+  \TODO{Add short description here once the proof is done.} See
   Section~\ref{section:lvars-locality-proof}.
 \end{proof}
 
 \subsection{Monotonicity lemma}
-
-\TODO{Figure out where this comes in, and how it needs to change.}
 
 The Monotonicity lemma says that, as evaluation proceeds according to
 the $\parstepsto$ relation, the store can only grow with respect to
@@ -202,8 +217,6 @@ the $\leqstore{}{}$ ordering.
 \end{proof}
 
 \subsection{Independence lemma}\label{subsection:lvars-independence}
-
-\TODO{Figure out where this comes in, and how it needs to change.}
 
 The Independence lemma establishes a ``frame property'' for
 $\lambdaLVar$ that captures the idea that independent effects commute
