@@ -146,6 +146,6 @@ Because we do not reduce under $\lambda$-terms, we can sequentially
 compose $e_1$ before $e_2$ by writing $\letexp{\_}{e_1}{e_2}$, which
 desugars to $\app{(\lam{\_}{e_2})}{e_1}$.  Sequential composition is
 useful for situations when expressions must run in a particular order,
-\ie, if we want to first allocate a new LVar with @new@ and then call
+\eg, if we want to first allocate a new LVar with @new@ and then call
 @put@ on it.
 
