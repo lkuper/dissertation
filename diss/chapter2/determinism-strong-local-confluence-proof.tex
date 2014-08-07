@@ -247,20 +247,36 @@
             don't need to mention $\pi$ in the statement of the lemma
             after all.}
 
+          In this case, observe that we do \emph{not} want the
+          expression in the final configuration to be
+          $\evalctxt{E'_a}{e_{a_2}}$ (nor its equivalent,
+          $\evalctxt{E'_b}{e_{b_2}}$).  The reason for this is that
+          $\evalctxt{E'_a}{e_{a_2}}$ contains both occurrences of $l$.
+          Rather, we want both configurations to step to a
+          configuration in which exactly one occurrence of $l$ has
+          been renamed to a fresh location $l''$.
+
           Let $l''$ be a location such that $l'' \notin S$ and $l''
           \neq l$ (and hence $l'' \neq l'$, as well).  Then choose $S'
           = \extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}$, $i = 1$, $j =
           1$, and $\pi = \setof{(l, l'')}$.
 
+          Either
+          $\config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_a}{\pi(e_{a_2})}}$
+          or
+          $\config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$
+          would work as a final configuration; we choose
+          $\config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
+
           We have to show that:
           \begin{itemize}
           \item
             $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-            \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{e_{b_2}}}$,
+            \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$,
             and
           \item
             $\pi(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}) \ctxstepsto
-            \pi(\config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_a}{e_{a_2}}})$.
+            \pi(\config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{\pi(e_{b_2})}})$.
           \end{itemize}
 
           For the first of these, since $\config{S}{e_{b_1}}
@@ -273,17 +289,15 @@
           \config{S}{e_{b_1}}$. Since $\config{S_b}{e_{b_2}} =
           \config{\extSRaw{S}{l'}{\bot}}{l'}$, and $l = l'$, we have
           that $\pi(\config{S_b}{e_{b_2}}) =
-          \config{\extSRaw{S}{l''}{\bot}}{l''}$.  (We know that
-          $e_{b_2} = l'$ since $\config{S}{e_{b_1}} \parstepsto
-          \config{S_b}{e_{b_2}}$ by the {\sc E-New} rule.)  Hence
+          \config{\extSRaw{S}{l''}{\bot}}{\pi(e_{b_2})}$.  Hence
           $\config{S}{e_{b_1}} \parstepsto
-          \config{\extSRaw{S}{l''}{\bot}}{l''}$.
+          \config{\extSRaw{S}{l''}{\bot}}{\pi(e_{b_2})}$.
 
           Since the only location allocated during the transition
           $\config{S}{e_{b_1}} \parstepsto
-          \config{\extSRaw{S}{l''}{\bot}}{l''}$ is $l''$, we know that
-          $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting with
-          it.  We also know that
+          \config{\extSRaw{S}{l''}{\bot}}{\pi(e_{b_2})}$ is $l''$, we
+          know that $\store{\storebindingRaw{l}{\bot}}$ is
+          non-conflicting with it.  We also know that
           $\lubstore{\extSRaw{S}{l''}{\bot}}{\store{\storebindingRaw{l}{\bot}}}
           \neq \topS$, since $S \neq \topS$ and new bindings of
           $\storebindingRaw{l''}{\bot}$ and
@@ -292,61 +306,24 @@
           (Independence), we have that
           $\config{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{e_{b_1}}
           \parstepsto
-          \config{\lubstore{\extSRaw{S}{l''}{\bot}}{\store{\storebindingRaw{l}{\bot}}}}{e_{b_2}}$.
+          \config{\lubstore{\extSRaw{S}{l''}{\bot}}{\store{\storebindingRaw{l}{\bot}}}}{\pi(e_{b_2})}$.
           Hence $\config{\extSRaw{S}{l}{\bot}}{e_{b_1}} \parstepsto
-          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{e_{b_2}}$.
+          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\pi(e_{b_2})}$.
           By {\sc E-Eval-Ctxt} it follows that
           $\config{\extSRaw{S}{l}{\bot}}{\evalctxt{E'_b}{e_{b_1}}}
           \parstepsto
-          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$,
           which, since $\extSRaw{S}{l}{\bot} = S_a$, is what we were
           required to show.
 
-          For the second, by Lemma~\ref{lem:lvars-permutability}
-          (Permutability) it suffices to show that
-          $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_a}{e_{a_2}}}$,
-          which we can prove by an argument symmetrical with the
-          first:
+          For the second, \TODO{finish this case}
 
-          Since $\config{S}{e_{a_1}} \parstepsto
-          \config{S_a}{e_{a_2}}$, we have by
-          Lemma~\ref{lem:lvars-permutability} (Permutability) that
-          $\pi(\config{S}{e_{a_1}}) \parstepsto
-          \pi(\config{S_a}{e_{a_2}})$.  Since $\pi = \setof{(l,
-            l'')}$, but $l \notin S$ (from the side condition on {\sc
-            E-New}), we have that $\pi(\config{S}{e_{a_1}}) =
-          \config{S}{e_{a_1}}$. Since $\config{S_a}{e_{a_2}} =
-          \config{\extSRaw{S}{l}{\bot}}{l}$, we have that
-          $\pi(\config{S_a}{e_{a_2}}) =
-          \config{\extSRaw{S}{l''}{\bot}}{l''}$.  (We know that
-          $e_{a_2} = l$ since $\config{S}{e_{a_1}} \parstepsto
-          \config{S_a}{e_{a_2}}$ by the {\sc E-New} rule.)  Hence
-          $\config{S}{e_{a_1}} \parstepsto
-          \config{\extSRaw{S}{l''}{\bot}}{l''}$.
-
-          Since the only location allocated during the transition
-          $\config{S}{e_{a_1}} \parstepsto
-          \config{\extSRaw{S}{l''}{\bot}}{l''}$ is $l''$, we know that
-          $\store{\storebindingRaw{l}{\bot}}$ is non-conflicting with
-          it.  We also know that
-          $\lubstore{\extSRaw{S}{l''}{\bot}}{\store{\storebindingRaw{l}{\bot}}}
-          \neq \topS$, since $S \neq \topS$ and new bindings of
-          $\storebindingRaw{l''}{\bot}$ and
-          $\storebindingRaw{l}{\bot}$ cannot cause it to become
-          $\topS$.  Therefore, by Lemma~\ref{lem:lvars-independence}
-          (Independence), we have that
-          $\config{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{e_{a_1}}
-          \parstepsto
-          \config{\lubstore{\extSRaw{S}{l''}{\bot}}{\store{\storebindingRaw{l}{\bot}}}}{e_{a_2}}$.
-          Hence $\config{\extSRaw{S}{l}{\bot}}{e_{a_1}} \parstepsto
-          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{e_{a_2}}$.
-          By {\sc E-Eval-Ctxt} it follows that
-          $\config{\extSRaw{S}{l}{\bot}}{\evalctxt{E'_a}{e_{a_1}}}
-          \parstepsto
-          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_a}{e_{a_2}}}$,
-          which, since $\extSRaw{S}{l}{\bot} = \extSRaw{S}{l'}{\bot} =
-          S_b$, is what we were required to show.
+          \lk{OK.  It turns out that, if what we meant to show really
+            was $\pi(\conf_b) \ctxstepsto \conf_c$, and not
+            $\pi(\conf_b) \ctxstepsto \pi(\conf_c)$, and also, if it
+            is the case that $\evalctxt{(\pi(E'_a))}{e_{a_2}} =
+            \evalctxt{E'_b}{\pi(e_{b_2})}$, then I know how to do this
+            part.  Waiting to hear from Neel about this...}
 
       \end{itemize}
 
