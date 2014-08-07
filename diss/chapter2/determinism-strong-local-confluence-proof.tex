@@ -312,14 +312,42 @@
           which, since $\extSRaw{S}{l}{\bot} = S_a$, is what we were
           required to show.
 
-          For the second, \TODO{finish this case}
+          For the second, observe that since $S_b =
+          \extSRaw{S}{l}{\bot}$, we have that $\pi(S_b) =
+          \extSRaw{S}{l''}{\bot}$.  Also, since $l$ does not occur in
+          $e_{a_1}$, we have that $\pi(\evalctxt{E'_a}{e_{a_1}}) =
+          \evalctxt{(\pi(E'_a))}{e_{a_1}}$.  Hence we have to show that
 
-          \lk{OK.  It turns out that, if what we meant to show really
-            was $\pi(\conf_b) \ctxstepsto \conf_c$, and not
-            $\pi(\conf_b) \ctxstepsto \pi(\conf_c)$, and also, if it
-            is the case that $\evalctxt{(\pi(E'_a))}{e_{a_2}} =
-            \evalctxt{E'_b}{\pi(e_{b_2})}$, then I know how to do this
-            part.  Waiting to hear from Neel about this...}
+          $\config{\extSRaw{S}{l''}{\bot}}{\evalctxt{(\pi(E'_a))}{e_{a_1}}}
+          \ctxstepsto
+          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
+
+          Since the only location allocated during the transition
+          $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$ is
+          $l$, we know that $\store{\storebindingRaw{l''}{\bot}}$ is
+          non-conflicting with it.  We also know that
+          $\lubstore{S_a}{\store{\storebindingRaw{l''}{\bot}}} \neq
+          \topS$, since $S_a = \extSRaw{S}{l}{\bot}$ and $S \neq
+          \topS$ and new bindings of $\storebindingRaw{l''}{\bot}$ and
+          $\storebindingRaw{l}{\bot}$ cannot cause it to become
+          $\topS$.  Therefore, by Lemma~\ref{lem:lvars-independence}
+          (Independence), we have that
+          $\config{\lubstore{S}{\store{\storebindingRaw{l''}{\bot}}}}{e_{a_1}}
+          \parstepsto
+          \config{\lubstore{S_a}{\store{\storebindingRaw{l''}{\bot}}}}{e_{a_2}}$.
+          Hence $\config{\extSRaw{S}{l''}{\bot}}{e_{a_1}} \parstepsto
+          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{e_{a_2}}$.
+          By {\sc E-Eval-Ctxt} it follows that
+          $\config{\extSRaw{S}{l''}{\bot}}{\evalctxt{(\pi(E'_a))}{e_{a_1}}}
+          \ctxstepsto
+          \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{(\pi(E'_a))}{e_{a_2}}}$,
+          which completes the case since
+          $\evalctxt{E'_b}{\pi(e_{b_2})} =
+          \evalctxt{(\pi(E'_a))}{e_{a_2}}$.
+
+          \lk{This is really sketchy -- I should really explain why
+            $\evalctxt{E'_b}{\pi(e_{b_2})} =
+            \evalctxt{(\pi(E'_a))}{e_{a_2}}$.}
 
       \end{itemize}
 
