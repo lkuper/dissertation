@@ -237,22 +237,22 @@ by allocation.
   Section~\ref{section:lvars-independence-proof}.
 \end{proof}
 
-\lk{I removed the Clash lemma, because it's not clear that we need it.
-  Should figure this out for sure, though.}
+\subsection{Clash lemma}
 
-%% \subsection{Clash lemma}
+The Clash lemma, Lemma~\ref{lem:lvars-clash}, is similar to the
+Independence lemma, but handles the case where $\lubstore{S'}{S''} =
+\topS$.  It establishes that, in that case,
+$\config{\lubstore{S}{S''}}{e}$ steps to $\error$.
 
-%% The Clash lemma, Lemma~\ref{lem:lvars-clash}, is similar to the
-%% Independence lemma, but handles the case where $\lubstore{S'}{S''} =
-%% \topS$.  It establishes that, in that case,
-%% $\config{\lubstore{S}{S''}}{e}$ steps to $\error$.
-
-%% \LVarsLemClash
-%% \begin{proof}
-%%   By induction on the derivation of $\config{S}{e} \parstepsto
-%%   \config{S'}{e'}$, by cases on the last rule in the derivation; see
-%%   Section~\ref{section:lvars-clash-proof}.
-%% \end{proof}
+\LVarsLemClash
+\begin{proof}
+  By cases on the rule of the reduction semantics by which
+  $\config{S}{e}$ steps to $\config{S'}{e'}$. As with
+  Lemma~\ref{lem:lvars-independence}, the interesting cases are for
+  the {\sc E-New} and {\sc E-Put} rules, and since $\config{S'}{e'}
+  \neq \error$, we do not need to consider the {\sc E-Put-Err} rule.
+  See Section~\ref{section:lvars-clash-proof}.
+\end{proof}
 
 \subsection{Error Preservation lemma}
 

@@ -429,7 +429,8 @@
     \item \label{lvars-slc-new-get}Case {\sc E-Get}: Similar to
       case~\ref{lvars-slc-new-beta}, since $S_b = S$.
     \end{enumerate}
-  \item Case {\sc E-Put}:
+  \item Case {\sc E-Put}: We have $S_a =
+    \extSRaw{S}{l}{\userlub{d_1}{d_2}}$.
 
     We proceed by case analysis on the rule by which
     $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
@@ -437,13 +438,101 @@
     \item \label{lvars-slc-put-beta}Case {\sc E-Beta}: By symmetry with case~\ref{lvars-slc-beta-put}.
     \item \label{lvars-slc-put-new}Case {\sc E-New}: By symmetry with case~\ref{lvars-slc-new-put}.
     \item \label{lvars-slc-put-put}Case {\sc E-Put}: We have $S_b =
-      \extSRaw{S}{l'}{\userlub{d_1}{d_2}}$.
+      \extSRaw{S}{l'}{\userlub{d'_1}{d'_2}}$, where $d'_1 = S(l')$.
 
-      Now consider whether $l = l'$:
+      Consider whether
+      $\lubstore{S_b}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+      = \topS$:
+
       \begin{itemize}
-        \item If $l \neq l'$: \TODO{Finish this case.}
-        \item If $l = l'$: \TODO{Finish this case.}
+      \item
+        $\lubstore{S_b}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+        \neq \topS$:
+
+        Choose $S' = \lubstore{S_a}{S_b}$, $i = 1$, $j = 1$, and $\pi =
+        \id$.
+
+        We have to show that:
+        \begin{itemize}
+        \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+          \config{\lubstore{S_a}{S_b}}{\evalctxt{E'_b}{e_{b_2}}}$, and
+        \item $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+          \config{\lubstore{S_a}{S_b}}{\evalctxt{E'_a}{e_{a_2}}}$.
+        \end{itemize}
+
+        For the first of these, since no locations are allocated
+        during the transition $\config{S}{e_{b_1}} \parstepsto
+        \config{S_b}{e_{b_2}}$, we know that
+        $\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}$ is
+        non-conflicting with it, and in this subcase, we know that
+        $\lubstore{S_b}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+        \neq \topS$.  Therefore, by Lemma~\ref{lem:lvars-independence}
+        (Independence), we have that
+        $\config{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{e_{b_1}}
+        \parstepsto
+        \config{\lubstore{S_b}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{e_{b_2}}$.
+        By {\sc E-Eval-Ctxt}, it follows that
+        $\config{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{\evalctxt{E'_b}{e_{b_1}}}
+        \ctxstepsto
+        \config{\lubstore{S_b}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{\evalctxt{E'_b}{e_{b_2}}}$.
+        Since
+        $\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+        = \extSRaw{S}{l}{\\userlub{d_1}{d_2}} = S_a$, we have that
+
+        $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{\lubstore{S_b}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{\evalctxt{E'_b}{e_{b_2}}}$.
+        Furthermore, since $\config{S}{e_{b_1}} \parstepsto
+        \config{S_b}{e_{b_2}}$, by Lemma~\ref{lem:lvars-monotonicity}
+        (Monotonicity), we have that $\leqstore{S}{S_b}$, so
+        $\lubstore{S_b}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+        =
+        \lubstore{S_b}{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}
+        = \lubstore{S_b}{S_a} = \lubstore{S_a}{S_b}$.  So we have that
+        $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{\lubstore{S_a}{S_b}}{\evalctxt{E'_b}{e_{b_2}}}$, as we
+        were required to show.
+
+        For the second, \TODO{}
+
+      \item
+        $\lubstore{S_b}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+        = \topS$:
+
+        Here we choose $\conf_c = \error$, $i = 1$, $j = 1$, and $\pi
+        = \id$.  We have to show that:
+        \begin{itemize}
+        \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+          \error$, and
+        \item
+          $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto \error$.
+        \end{itemize}
+
+        For the first of these, since no locations are allocated
+        during the transition $\config{S}{e_{b_1}} \parstepsto
+        \config{S_b}{e_{b_2}}$, we know that
+        $\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}$ is
+        non-conflicting with it, and in this subcase, we know that
+        $\lubstore{S_b}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+        = \topS$.  Therefore, by Lemma~\ref{lem:lvars-clash} (Clash),
+        we have that
+        $\config{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{e_{b_1}}
+        \parstepsto \error$.  Since $\error$ is equal to
+        $\config{\topS}{e}$ for all expressions $e$,
+        $\config{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{e_{b_1}}
+        \parstepsto \config{\topS}{e}$ for all $e$.  Therefore, by
+        {\sc E-Eval-Ctxt}, it follows that
+        $\config{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{\evalctxt{E'_b}{e_{b_1}}}
+        \ctxstepsto \config{\topS}{\evalctxt{E'_b}{e}}$ for all $e$.
+        Since $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal to
+        $\error$, and since
+        $\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+        = \extSRaw{S}{l}{\userlub{d_1}{d_2}} = S_a$, we have that
+        $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto \error$.
+
+        For the second, \TODO{}
+
       \end{itemize}
+
 
     \item \label{lvars-slc-put-put-err}Case {\sc E-Put-Err}: \TODO{Finish this case.}
     \item \label{lvars-slc-put-get}Case {\sc E-Get}: Similar to

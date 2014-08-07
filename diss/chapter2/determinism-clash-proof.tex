@@ -5,67 +5,11 @@
 
   To show: $\config{\lubstore{S}{S''}}{e} \parstepsto \error$.
 
-  The proof is by induction on the derivation of $\config{S}{e}
-  \parstepsto \config{S'}{e'}$, by cases on the last rule in the
-  derivation.  In every case we may assume that $\config{S'}{e'} \neq
-  \error$.  Since $\config{S'}{e'} \neq \error$, we do not need to
-  consider the {\sc E-Put-Err} rule.
-
+  The proof is by cases on the rule of the reduction semantics by
+  which $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since
+  $\config{S'}{e'} \neq \error$, we do not need to consider the {\sc
+    E-Put-Err} rule.
   \begin{itemize}
-
-    \item Case {\sc E-Eval-Ctxt}:
-
-      Given: $\config{S}{\E{e}} \parstepsto \config{S'}{\E{e'}}$.
-
-      To show: $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto^i
-      \error$, where $i \leq 1$.
-
-      From the premise of {\sc E-Eval-Ctxt}, we have that
-      $\config{S}{e} \parstepsto \config{S'}{e'}$.
-
-      Therefore, by IH, we have that $\config{\lubstore{S}{S''}}{e}
-      \parstepsto^{i'} \error$, where $i' \leq 1$.
-
-      We proceed by cases on $i'$:
-
-      \begin{itemize}
-        \item $i' = 0$:
-
-          In this case, $\config{\lubstore{S}{S''}}{e} = \error$.
-
-          Hence, by the definition of $\error$, $\lubstore{S}{S''} =
-          \topS$.
-
-          Hence $\config{\lubstore{S}{S''}}{\E{e}} = \error$.
-
-          Hence $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto^i
-          \error$, with $i = 0$.
-
-        \item $i' = 1$:
-
-          In this case, $\config{\lubstore{S}{S''}}{e} \parstepsto
-          \error$.
-
-          By the definition of $\error$, $\error =
-          \config{\topS}{e''}$ for any $e''$.
-
-          Hence $\config{\lubstore{S}{S''}}{e} \parstepsto
-          \config{\topS}{e''}$.
-
-          Hence, by {\sc E-Eval-Ctxt},
-          $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto
-          \config{\topS}{\E{e''}}$.
-
-          By the definition of $\error$, $\config{\topS}{\E{e''}} =
-          \error$.
-
-          Hence $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto
-          \error$.
-
-          Hence $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto^i
-          \error$, with $i = 1$.
-
-      \end{itemize}
 
     \item Case {\sc E-Beta}:
 
