@@ -497,13 +497,13 @@
         $\lubstore{S_b}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
         = \topS$:
 
-        Here we choose $\conf_c = \error$, $i = 1$, $j = 1$, and $\pi
-        = \id$.  We have to show that:
+        Here we choose $\conf_c = \error$ and $\pi = \id$.  We have to
+        show that there exist $i \leq 1$ and $j \leq 1$ such that:
         \begin{itemize}
-        \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto^i
           \error$, and
         \item
-          $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto \error$.
+          $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto^j \error$.
         \end{itemize}
 
         For the first of these, since no locations are allocated
@@ -515,18 +515,35 @@
         = \topS$.  Therefore, by Lemma~\ref{lem:lvars-clash} (Clash),
         we have that
         $\config{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{e_{b_1}}
-        \parstepsto \error$.  Since $\error$ is equal to
-        $\config{\topS}{e}$ for all expressions $e$,
+        \parstepsto^{i'} \error$, where $i' \leq 1$.  Since $\error$ is
+        equal to $\config{\topS}{e}$ for all expressions $e$,
         $\config{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{e_{b_1}}
-        \parstepsto \config{\topS}{e}$ for all $e$.  Therefore, by
-        {\sc E-Eval-Ctxt}, it follows that
-        $\config{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{\evalctxt{E'_b}{e_{b_1}}}
-        \ctxstepsto \config{\topS}{\evalctxt{E'_b}{e}}$ for all $e$.
-        Since $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal to
-        $\error$, and since
-        $\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
-        = \extSRaw{S}{l}{\userlub{d_1}{d_2}} = S_a$, we have that
-        $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto \error$.
+        \parstepsto^{i'} \config{\topS}{e}$ for all $e$.
+
+        Now consider whether $i' = 1$ or $i' = 0$:
+        \begin{itemize}
+          \item If $i' = 1$, by {\sc E-Eval-Ctxt}, it follows that
+            $\config{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{\evalctxt{E'_b}{e_{b_1}}}
+            \ctxstepsto \config{\topS}{\evalctxt{E'_b}{e}}$ for all
+            $e$.  Since $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal
+            to $\error$, and since
+            $\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+            = \extSRaw{S}{l}{\userlub{d_1}{d_2}} = S_a$, we choose $i
+            = 1$ and we have that
+            $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+            \error$, as required.
+
+          \item If $i' = 0$, we have that
+            $\config{\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}}{e_{b_1}}
+            = \error$.  Hence
+            $\lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+            = \topS$.  So, we choose $i = 0$, and since $S_a =
+            \extSRaw{S}{l}{\userlub{d_1}{d_2}} =
+            \lubstore{S}{\store{\storebindingRaw{l}{\userlub{d_1}{d_2}}}}
+            = \topS$, we have that
+            $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} = \error$, as
+            desired.
+        \end{itemize}
 
         The argument for the second is symmetrical, with
         $\store{\storebindingRaw{l'}{\userlub{d'_1}{d'_2}}}$ being the
