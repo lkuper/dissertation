@@ -11,258 +11,99 @@ behavior while retaining the determinism of the original semantics.
 
 \subsection{Generalizing from least-upper-bound writes to inflationary, commutative writes} 
 
-\lk{This will be about generalized inflationary+commutative writes,
-  rather than least-upper-bound writes (lub is a special case of
-  this).}
-
-\TODO{Say something about how the lattice in
-  Figure~\ref{f:lvars-example-lattices}(c) has different semantics if
-  we have least-upper-bound writes or incremental writes, and how
-  incremental writes may in fact be what is desired.  Possibly cite
-  the CRDTs work and forward-reference Chapter~\ref{ch:distributed}.}
-
-\lk{Following stuff is from the WoDet paper.}
-
-As we have seen, CvRDTs support inflationary updates---that is,
-updates that are nondecreasing with respect to the lattice in
-question---that are not necessarily join operations.  Indeed, the
-\emph{only} requirement on a CvRDT update is that it be inflationary.
-With LVars, on the other hand, all updates are joins.  In this section
-we propose adding inflationary non-join updates to the LVars model.
-
-As a canonical example of an LVar update that cannot be directly
-modeled as a join, consider an atomically incremented counter that
-occupies one memory location.  Atomic increments to such a counter are
-efficient, commutative, and ultimately fit well inside the LVar
-framework.  Atomic increment is a useful primitive---an example use
-case is
-\emph{PhyBin}\footnote{\url{http://hackage.haskell.org/package/phybin}},
-a bioinformatics application that we parallelized with
-LVish~\cite{effectzoo}.  PhyBin uses atomic increment operations to
-gradually build a distance matrix, concurrently incrementing the
-distance in each cell of the matrix.
-
-More generally, for an LVar with lattice $(D,\leq,\bot, \top)$, a data
-structure author may define a set of {\em bump} operations $\BUMP_i :
-D \rightarrow D$, which must meet the following two conditions:
-\begin{itemize}
-\item $\forall a, i.     \;\; a \leq \BUMP_i(a) $
-\item $\forall a, i, j.  \;\; \BUMP_i(\BUMP_j(a)) = \BUMP_j(\BUMP_i(a)) $
-\end{itemize}
-When extending LVish to include @bump@, we must keep in mind that
-@bump@ and @put@ operations on the same LVar do not necessarily mix.
-For example, consider a set of @bump@ operations $\{\BUMP_{(+1)},
-\BUMP_{(+2)}, \dots \}$ for atomically incrementing a counter
-represented by a natural number LVar, with a lattice ordered by the
-usual $\leq$ on natural numbers.  A @put@ of $4$ and a $\BUMP_{(+1)}$
-do not commute!  If we start with an initial state of $0$ and the
-@put@ occurs first, then the state of the LVar changes to $4$ since
-$\max(0, 4) = 4$, and the subsequent $\BUMP_{(+1)}$ updates it to $5$.
-But if the $\BUMP_{(+1)}$ happens first, then the final state of the
-LVar will be $\max(1, 4) = 4$.  Furthermore, multiple distinct
-families of @bump@ functions only commute among themselves and cannot
-be combined.  In fact, @put@ operations themselves, with their
-underlying join operations on the single state replica, meet the above
-two conditions for @bump@, and therefore can be viewed as a special
-case of @bump@ that, in addition to being inflationary, also happens
-to compute a join.
-
-Fortunately, in the LVish library, the author of a particular LVar
-data structure can choose what operations that data structure should
-provide, and the Haskell type system will statically rule out programs
-that attempt to use other, incompatible @bump@ operations on the same
-LVar.  Moreover, it is safe to \emph{compose} LVars that support
-different families of @bump@ operations.  For example, if we defined a
-@Counter@ LVar type with a @bump@ operation, an LVar of type \il{Set
-  Counter} could contain a monotonically growing set of @bump@-able
-counters that each monotonically increase.  What remains is to
-formally define the operational semantics of @bump@ and update the
-determinism proofs for LVar calculi~\cite{LVars-paper, Freeze-paper}
-to account for it; we expect this to be a straightforward change to
-the existing proofs.
-
-\lk{Following stuff is from the PLDI paper.}
-
-In the original LVars model~\cite{LVars-paper,Freeze-paper}, the only
-way for the state of an LVar to evolve over time is through a series
-of least-upper-bound (lub) updates resulting from calls to @put@
-operations.
-
+In the LVars model as presented in this chapter so far, the only way
+for the state of an LVar to evolve over time is through a series of
+least-upper-bound updates resulting from @put@ operations.
 Unfortunately, this way of updating an LVar provides no efficient way
-to model an atomically incremented counter that occupies one memory
-location.  Yet, atomic increments to such a counter are efficient,
-commutative, and ultimately fit well inside the LVish framework.
-Hence the most basic extension we make to LVish is to (optionally)
-relax its reliance on idempotence of operations.  Thereafter we can
-safely add a restricted set of atomic read-modify-write operations
-that are inflationary with respect to a lattice, but do not compute a
-lub.  \lk{we introduce the term ``inflationary'' earlier, don't need
-  to italicize it here} We will see one example of an application that
-critically requires this functionality in Section~\ref{s:phybin}.
+to model, for instance, an atomically incremented counter that
+occupies one memory location.  Consider an LVar based on the lattice
+of Figure~\ref{f:lvars-example-lattices}(c).  Under the
+least-upper-bound semantics of @put@, if two independent writes each
+take the LVar's contents from, say, $1$ to $2$, then after both
+writes, its contents will be $2$, because @put@ takes the maximum of
+the previous value and the current value.  Although this semantics is
+deterministic, it is not the desired semantics for every application.
+Instead, we might want each write to \emph{increment} the contents of
+the LVar by one, resulting in $3$.
 
-We consider a new family of LVar update operations that are required
-to commute and be inflationary with respect to the lattice in
-question, but are not limited to the lub semantics of @put@.
-Specifically, for a lattice $(D,\userleq,\bot, \top)$, a data
-structure author may define a set of {\em bump} operations $\BUMP_i :
-D \rightarrow D$, which must meet the following two conditions:
+To support this alternative semantics in the LVars model, we
+generalize the model as follows.  For an LVar with lattice $(D,
+\userleq, \bot, \top)$, we can define a set of @update@ operations
+$\UPDATE_i : D \rightarrow D$, which must meet the following two
+conditions:
 \begin{itemize}
-\item $\forall a, i.     \;\; a \userleq \BUMP_i(a) $
-\item $\forall a, i, j.  \;\; \BUMP_i(\BUMP_j(a)) = \BUMP_j(\BUMP_i(a)) $
+\item $\forall d, i.     \;\; d \userleq \UPDATE_i(d) $
+\item $\forall d, i, j.  \;\; \UPDATE_i(\UPDATE_j(d)) = \UPDATE_j(\UPDATE_i(d)) $
 \end{itemize}
-As a simple example, consider an LVar whose states are natural
-numbers, with $0$ as the least element and with the usual $\leq$
-operation on natural numbers as the ordering on states.  The ordering
-induces a lub operation equivalent to the $\max$ operation on natural
-numbers.  We can implement a family of @bump@ operations that
-increment the LVar by various amounts: $\{ (+1), (+2), (+3), \dots
-\}$.
+The first of these conditions says that an @update@ operation is
+inflationary with respect to $\userleq$.  The second condition says
+that @update@ operations commute with each other.  In fact, the @put@
+operation meets the above two conditions, and therefore can be viewed
+as a special case of @update@ that, in addition to being inflationary
+and commutative, also happens to compute a least upper bound.
 
-A critical point to note, however, is that it is not safe to update
-the same LVar with {\em both} @put@ and @bump@.  For example, a @put@
-of $4$ and a $\BUMP_{(+1)}$ do not commute!  If we start with an
-initial state of $0$ and the @put@ occurs first, then the state of the
-LVar changes to $4$ since $\max(0, 4) = 4$, and the subsequent
-$\BUMP_{(+1)}$ updates it to $5$.  But if the $\BUMP_{(+1)}$ happens
-first, then the final state of the LVar will be $\max(1, 4) = 4$.
-{Furthermore, multiple distinct families of @bump@ functions only
-  commute among themselves and cannot be combined.}  In practice, this
-distinction is enforced by the type system. For example, the
-LVish-provided set data structure @Data.LVar.Set@ supports only @put@,
-whereas @Data.LVar.Counter@ supports only @bump@.
+However, when generalizing LVars to support @update@, we must keep in
+mind that least-upper-bound @put@ operations do not necessarily mix
+with arbitrary @update@ operations on the same LVar.  For example,
+consider a set of @update@ operations $\{\UPDATE_{(+1)},
+\UPDATE_{(+2)}, \dots \}$ for atomically incrementing a counter
+represented by a natural number LVar, with a lattice ordered by the
+usual $\leq$ on natural numbers.  The $\UPDATE_{(+1)}$ operation
+increments the counter by one, $\UPDATE_{(+2)}$ increments it by two,
+and so on.  It is easy to see that these operations commute.  However,
+a @put@ of $4$ and a $\UPDATE_{(+1)}$ do not commute: if we start with
+an initial state of $0$ and the @put@ occurs first, then the state of
+the LVar changes to $4$ since $\max(0, 4) = 4$, and the subsequent
+$\UPDATE_{(+1)}$ updates it to $5$.  But if the $\UPDATE_{(+1)}$
+happens first, then the final state of the LVar will be $\max(1, 4) =
+4$.  Furthermore, multiple distinct families of @update@ functions
+only commute among themselves and cannot be combined.
 
-{\em Composing} these data structures, however, is fine.  For example,
-an LVar could represent a monotonically growing collection (which
-supports @put@) of counter LVars, where each counter is itself
-monotonically increasing and supports only @bump@.  Indeed, the PhyBin
-application described in Section~\ref{s:phybin} uses just such a
-collection of counters.
+In practice, the author of a particular LVar data structure must
+choose which @update@ operations that data structure should provide,
+and it is the data structure author's responsibiity to ensure that
+they commute.  For example, the LVish Haskell library (which I discuss
+in Chapter~\ref{ch:lvish}) provides a set data structure,
+@Data.LVar.Set@, that supports only @put@, whereas the counter data
+structure @Data.LVar.Counter@ supports only @update@; an attempt to
+call @put@ on a @Counter@ would be ruled out by the type system.
+However, \emph{composing} LVars that support different families of
+@update@ operations is fine.  For example, an LVar could represent a
+monotonically growing collection (which supports @put@) of counter
+LVars, where each counter is itself monotonically increasing and
+supports only @update@.  Indeed, the PhyBin case study described in
+Section~\ref{s:lvish-phybin} uses just such a collection of counters.
 
-\paragraph{Determinism guarantee}
-
-The determinism of LVish \cite{LVars-paper} relies on the fact that
-the states of all LVars evolve monotonically with respect to their
-lattices, and that the lub operation is commutative and therefore the
+The determinism of $\lambdaLVar$ relies on the fact that the states of
+all LVars evolve monotonically with respect to their lattices, and
+that the least upper bound operation is commutative and therefore the
 order in which @put@s occur does not matter.  Together, these
 properties suffice to ensure that the threshold reads made by @get@
-operations are deterministic. The rest of an LVish program is purely
-functional, and its behavior is, in fact, a pure function of these
-@get@ observations.  Since @bump@ operations are also commutative and
-inflationary with respect to the lattice of the LVar they operate on,
-we see that they preserve determinism, as long as programs do not use
-@bump@ and @put@ on the same LVar.  \lk{I don't want to cite the CRDT
-  proof here.  They say that state-based CRDTs (put) can be simulated
-  with op-based CRDTs (bump) and vice versa.  But they do \emph{not}
-  say that lattice monotonicity is preserved.  With op-based CRDTs
-  there is no notion of a lattice to be preserved.}
+operations are deterministic. The rest of a $\lambdaLVar$ program is
+purely functional, and its behavior is, in fact, a pure function of
+these @get@ observations.  Since a given family of @update@ operations
+is also commutative and inflationary with respect to the lattice of
+the LVar they operate on, they preserve determinism.
 
-We can go further and generalize this argument, and in fact will need
-to for the other extensions described in this paper.  Consider LVish
-with @put@, @bump@, and @get@ effects.  By commutativity, we can
-reduce the effects in a program execution to three {unordered sets}:
-$(P,B,G)$.  By slicing the system at this interface, we can decompose
-determinism proof obligations into two parts:
-\label{s:multiagent}
-\begin{itemize}
-\item The LVish (Haskell) code must guarantee that it implements a
-  monotone function $\mathcal P(G) \rightarrow \mathcal P(P) \times
-  \mathcal P(B)$.  That is, adding more @get@ results on the left
-  results only in {\em more} @put@/@bump@ effects on the right (as
-  more @get@s unblock and run, more @put@ and @bump@ operations can
-  run); furthermore, those effects are a function of nothing {\em
-    other} than @get@.
-\item The mutable (but monotonically growing) heap of LVars must
-  likewise guarantee that the set of @get@ results is a pure function
-  of the set of @put@s and @bump@s.  This is straightforward to show,
-  given the lattice-based semantics of @put@ and @bump@.
-\end{itemize}
-This {\em communicating agents} formulation of determinism for LVish
-puts us in a position to replace the monotonically growing heap with
-other deterministic agents that fulfill the same contract, as we will
-see in Section~\ref{s:parST}.
-%
-At that point, we will also discuss \emph{temporal contracts} on the order of
-operations, going beyond the simple case of completely unordered sets at the
-interfaces.
-\lk{Not gonna lie---I find this part about ``communicating agents''
-  fuzzy and unconvincing.}
+In Chapter~\ref{ch:quasi}, in addition to extending the LVars model to
+support the new features of \emph{freezing} and \emph{event handlers},
+I generalize the @put@ operation to @update@.  The resulting
+generalized language definition is therefore parameterized not only by
+an application-specific lattice, but also by an application-specific
+family of commutative and inflationary @update@ operations.
 
-\paragraph{Deleveraging idempotency}\label{s:dedup}
-
-Since lub is an idempotent operation, the previously existing LVish
-implementation assumed idempotence of all writes, which in turn
-enabled the scheduler to relax synchronization requirements at the
-cost of low-probability duplication of
-work~\cite{Freeze-paper}. Adding support for operations like @bump@
-makes this assumption untenable.  Therefore, we re-engineered the
-LVish runtime system to (optionally) include additional
-synchronization.\footnote{Space constraints preclude full description
-  here, but the key challenge is resolving a race between \il{put}s
-  and attempts to register new handlers (callbacks) on an LVar.  Our
-  solution is a specialized variant of a reader-writer lock that
-  requires zero writes to shared addresses if no handlers are
-  currently being registered.}
-
-\paragraph{Fine-grained effect tracking}
-
-\lk{How's this?  It avoids having to explain freeze.}
-Naturally, it is best to pay the aforementioned synchronization
-overhead only when required.  This requires static information about
-whether a given program uses @bump@.  With that as one of our goals, 
-we extend LVish
-to allow for \emph{static fine-grained effect tracking}.  The idea is
-to guarantee that only certain LVar effects can occur within a given
-@Par@ computation.  In Haskell, we can do so at the type level
-by indexing @Par@ computations with a \emph{phantom type} @e@ that
-indicates their \emph{effect level}.  That is, the @Par@ type
- becomes, instead, @Par e@, where @e@ 
-is a type-level encoding of booleans indicating whether or not writes,
-reads, non-idempotent (@bump@), or non-deterministic (@IO@) operations
-are allowed to run inside it.
-
-Moreover, in real LVish programs, the @Par@ type constructor has a
-second type parameter, @s@, making @Par e s a@ the complete type of a
-computation that returns a result of type @a@.\footnote{To be precise,
-  in the earlier 1.x releases of LVish, the \il{e} type parameter for
-  effect level was instead \il{d}, for ``determinism level'', and was
-  a simple type-level boolean switch distinguishing deterministic from
-  {\em quasi-deterministic} \il{Par} computations~\cite{Freeze-paper}.
-  The effect signatures in this paper generalize determinism levels
-  and correspond to the newer LVish 2.x API.}  The @s@ parameter
-ensures that it is not possible to reuse an LVar from one @runPar@
-session to the next, just as the @ST@ monad in Haskell prevents an
-@STRef@ from escaping @runST@; likewise the types of individual LVars
-must be parameterized by @s@ as well.  For simplicity of presentation,
-we elided the @e@ and @s@ type parameters in
-Section~\ref{s:refresher}, instead following the simpler @Par a@
-format of the earlier \emph{monad-par} library~\cite{monad-par}, but
-we include them from this point onward.
-
-To enable future additions of effect ``switches'' \new{encoded in
-  \il{e}}, we follow the precedent of recent work by Kiselyov \etal~on
-extensible effects in Haskell~\cite{oleg-amr-haskell-2013}: we
-abstract away the specific structure of @e@ into \emph{type class
-  constraints}, which allow a @Par@ computation to be annotated with
-the \emph{interface} that its @e@ type parameter is expected to
-satisfy.  For example, a @Par@ computation annotated with the effect
-level constraint @HasPut@ can perform @put@s.  Thus the signature for
-the @put@ operation on IVars becomes:
-
-\begin{lstlisting}
-   put :: HasPut e => IVar s a -> a -> Par e s ()
-\end{lstlisting}
-while the signature for an @incrCounter@ operation uses the
-@HasBump@ constraint:
-\begin{lstlisting}
-   incrCounter :: HasBump e => Counter s -> Par s e ()
-\end{lstlisting}
-These constraints can also be \emph{negative}.  For example, the
-@runPar@ function for executing @Par@ computations in a purely
-functional context requires the absence of explicit freeze or IO
-operations:
-\begin{lstlisting}[mathescape=true]
-runPar :: (NoFreeze e, NoIO e) => (forall s $.$ Par e s a) ->  a 
-\end{lstlisting}
+\lk{The Chapter~\ref{ch:quasi} $\lambdaLVish$ result is
+  quasi-determinism, not determinism.  So, if I really wanted to be
+  serious about showing that \il{update} is deterministic and not
+  merely quasi-deterministic, I would do this more modularly: I would
+  actually present another version of the $\lambdaLVar$ language here,
+  with \il{put} replaced with \il{update}, and then re-do the
+  determinism proof for it, instead of just lumping it into the
+  quasi-determinism result in the next chapter.  If I did that,
+  though, then this section would be big enough to justify being its
+  own chapter.  I'm going to just appeal to people's common sense that
+  the quasi-determinism in $\lambdaLVish$ comes from freezing, not
+  from \il{update}.  I hope that this is OK!}
 
 \subsection{A more general formulation of threshold sets}\label{subsection:lvars-a-more-general-formulation-of-threshold-sets}
 

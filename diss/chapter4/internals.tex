@@ -351,3 +351,82 @@ since they can only arise when a handler is added concurrently with updates to
 an LVar.\footnote{That said, it is possible to avoid all duplication by adding
   further synchronization, and in ongoing research, we are exploring various
   locking and timestamp schemes to do just that.}
+
+\subsection{Discussion: deleveraging idempotency}
+
+\paragraph{Deleveraging idempotency}\label{s:dedup}
+
+Since lub is an idempotent operation, the previously existing LVish
+implementation assumed idempotence of all writes, which in turn
+enabled the scheduler to relax synchronization requirements at the
+cost of low-probability duplication of
+work~\cite{Freeze-paper}. Adding support for operations like @update@
+makes this assumption untenable.  Therefore, we re-engineered the
+LVish runtime system to (optionally) include additional
+synchronization.\footnote{Space constraints preclude full description
+  here, but the key challenge is resolving a race between \il{put}s
+  and attempts to register new handlers (callbacks) on an LVar.  Our
+  solution is a specialized variant of a reader-writer lock that
+  requires zero writes to shared addresses if no handlers are
+  currently being registered.}
+
+\paragraph{Fine-grained effect tracking}
+
+\lk{How's this?  It avoids having to explain freeze.}
+Naturally, it is best to pay the aforementioned synchronization
+overhead only when required.  This requires static information about
+whether a given program uses @update@.  With that as one of our goals, 
+we extend LVish
+to allow for \emph{static fine-grained effect tracking}.  The idea is
+to guarantee that only certain LVar effects can occur within a given
+@Par@ computation.  In Haskell, we can do so at the type level
+by indexing @Par@ computations with a \emph{phantom type} @e@ that
+indicates their \emph{effect level}.  That is, the @Par@ type
+ becomes, instead, @Par e@, where @e@ 
+is a type-level encoding of booleans indicating whether or not writes,
+reads, non-idempotent (@update@), or non-deterministic (@IO@) operations
+are allowed to run inside it.
+
+Moreover, in real LVish programs, the @Par@ type constructor has a
+second type parameter, @s@, making @Par e s a@ the complete type of a
+computation that returns a result of type @a@.\footnote{To be precise,
+  in the earlier 1.x releases of LVish, the \il{e} type parameter for
+  effect level was instead \il{d}, for ``determinism level'', and was
+  a simple type-level boolean switch distinguishing deterministic from
+  {\em quasi-deterministic} \il{Par} computations~\cite{Freeze-paper}.
+  The effect signatures in this paper generalize determinism levels
+  and correspond to the newer LVish 2.x API.}  The @s@ parameter
+ensures that it is not possible to reuse an LVar from one @runPar@
+session to the next, just as the @ST@ monad in Haskell prevents an
+@STRef@ from escaping @runST@; likewise the types of individual LVars
+must be parameterized by @s@ as well.  For simplicity of presentation,
+we elided the @e@ and @s@ type parameters in
+Section~\ref{s:refresher}, instead following the simpler @Par a@
+format of the earlier \emph{monad-par} library~\cite{monad-par}, but
+we include them from this point onward.
+
+To enable future additions of effect ``switches'' \new{encoded in
+  \il{e}}, we follow the precedent of recent work by Kiselyov \etal~on
+extensible effects in Haskell~\cite{oleg-amr-haskell-2013}: we
+abstract away the specific structure of @e@ into \emph{type class
+  constraints}, which allow a @Par@ computation to be annotated with
+the \emph{interface} that its @e@ type parameter is expected to
+satisfy.  For example, a @Par@ computation annotated with the effect
+level constraint @HasPut@ can perform @put@s.  Thus the signature for
+the @put@ operation on IVars becomes:
+
+\begin{lstlisting}
+   put :: HasPut e => IVar s a -> a -> Par e s ()
+\end{lstlisting}
+while the signature for an @incrCounter@ operation uses the
+@HasBump@ constraint:
+\begin{lstlisting}
+   incrCounter :: HasBump e => Counter s -> Par s e ()
+\end{lstlisting}
+These constraints can also be \emph{negative}.  For example, the
+@runPar@ function for executing @Par@ computations in a purely
+functional context requires the absence of explicit freeze or IO
+operations:
+\begin{lstlisting}[mathescape=true]
+runPar :: (NoFreeze e, NoIO e) => (forall s $.$ Par e s a) ->  a 
+\end{lstlisting}
