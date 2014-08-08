@@ -1,13 +1,13 @@
 \section{Generalizing the \il{put} and \il{get} operations}\label{s:lvars-generalizing}
 
-The determinism result for $\lambdaLVar$ shows that adding a store of
-LVars, and the accompanying interface of @new@/@put@/@get@ operations,
-to an existing deterministic parallel language (the
-$\lambda$-calculus) preserves determinism.  But it is not the case
-that the @put@ and @get@ operations are \emph{the most general}
-interface that preserves determinism.  In this section, I consider
-some alternative semantics for @put@ and @get@ that generalize their
-behavior while retaining the determinism of the original semantics.
+The determinism result for $\lambdaLVar$ shows that adding LVars (with
+their accompanying @new@/@put@/@get@ operations) to an existing
+deterministic parallel language (the $\lambda$-calculus) preserves
+determinism.  But it is not the case that the @put@ and @get@
+operations are \emph{the most general} determinism-preserving
+operations on LVars.  In this section, I consider some alternative
+semantics for @put@ and @get@ that generalize their behavior while
+retaining the determinism of the model.
 
 \subsection{Generalizing from least-upper-bound writes to inflationary, commutative writes}\label{subsection:lvars-generalizing-from-least-upper-bound-writes}
 
@@ -337,7 +337,7 @@ style of threshold sets, and the activation-set-based style:
   function that has $d$ as its threshold point and returns $Q$ for all
   inputs at or above that point.
 \end{itemize}
-In both cases, inputs for which the threshold function is undefined
+In both cases, inputs for which the threshold functions are undefined
 correspond to situations in which the threshold read blocks.
 
 Seen from this point of view, it becomes clear that the key insight in

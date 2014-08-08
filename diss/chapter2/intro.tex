@@ -89,7 +89,15 @@ with a greatest element $\top$, in which every two elements have a
 least upper bound but not necessarily a greatest lower bound; see
 Section~\ref{subsection:lvars-lattices}.  For brevity, I use the term
 ``lattice'' in place of ``bounded join-semilattice with a designated
-greatest element'' throughout this dissertation.}
+greatest element'' throughout this dissertation.}  This
+application-specific lattice determines the semantics of the @put@ and
+@get@ operations that comprise the interface to LVars (which I will
+explain in detail in the sections that follow): the @put@ operation
+takes the least upper bound of the current state and the new state
+with respect to the lattice, and the @get@ operation performs
+a \emph{threshold read} that blocks until a lower bound in the lattice
+is reached.
+
 Section~\ref{s:lvars-examples} introduces the concept of LVars through
 a series of examples.  Then, in Sections~\ref{s:lvars-lattices}
 and~\ref{s:lvars-lambdalvar} I formally define $\lambdaLVar$, a
@@ -122,7 +130,12 @@ $\userlub{d'}{d_F}$.  The Independence lemma captures the commutative
 effects of LVar computations.  Interestingly, such a property
 would \emph{not} hold in a typical language with shared mutable state,
 but holds in the setting of $\lambdaLVar$ because of the monotonic
-semantics of LVars.
+semantics of LVars and their @put@/@get@ interface.
 
-Finally, in Section~\ref{s:lvars-generalizing}, \TODO{Say something
-about \ref{s:lvars-generalizing} here.}
+Finally, in Section~\ref{s:lvars-generalizing}, I consider some
+alternative semantics for the @put@ and @get@ operations that
+generalize their behavior while retaining the determinism of the
+original semantics: I generalize the @put@ operation from
+least-upper-bound writes to inflationary, commutative writes, and I
+generalize the @get@ operation to allow a more general form of
+threshold reads.
