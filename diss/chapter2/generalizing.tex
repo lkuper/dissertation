@@ -276,12 +276,14 @@ and then will deterministically return the ``false'' activation set,
 regardless of whether the write of $\andlv{Bot}{T}$ has arrived yet.
 Hence ``short-circuit'' evaluation is possible.
 
-Finally, we can mechanically translate old-style threshold sets into
-activation-set-based threshold sets and retain the old semantics.  In
-the translation, every member of the old-style threshold set simply
-becomes a singleton activation set. So, if we wanted a
-non-short-circuiting threshold read under the activation-set
-semantics, our threshold set would simply be
+Finally, we can mechanically translate the old way of specifying
+threshold sets into activation-set-based threshold sets and retain the
+old semantics (and therefore the new way of specifying threshold sets
+generalizes the old way).  In the translation, every member of the old
+threshold set simply becomes a singleton activation set.  For example,
+if we wanted a \emph{non}-short-circuiting threshold read of our
+$\mathrm{AndLV}$ under the activation-set-based semantics, our
+threshold set would simply be
 \[
 \setof{
   \setof{ \andlv{T}{T} },
@@ -291,14 +293,16 @@ semantics, our threshold set would simply be
 },
 \]
 which is a legal threshold set under the activation-set-based
-semantics, and has the same behavior as the old-style,
-non-short-circuiting version.
+semantics, but has the same behavior as the old, non-short-circuiting
+version.
 
-I use this subsection's activation-set-based formulation of threshold
-sets in Chapter~\ref{ch:distributed}, where I bring threshold reads to
-the setting of replicated, distributed data structures.  In that
-chapter, I prove that activation-set-based threshold queries of
-distributed data structures behave deterministically.
+I use the activation-set-based formulation of threshold sets in
+Chapter~\ref{ch:distributed}, where I bring threshold reads to the
+setting of replicated, distributed data structures.  I prove that
+activation-set-based threshold queries of distributed data structures
+behave deterministically (according to a definition of determinism
+that is particular to the distributed setting; see
+Chapter~\ref{ch:distributed} for more details).
 
 \lk{There's nothing about activation-set-based threshold sets that
   make them more amenable to the distributed setting; I just happened
@@ -307,11 +311,56 @@ distributed data structures behave deterministically.
 
 \subsection{Generalizing from threshold sets to threshold functions}\label{subsection:lvars-generalizing-from-threshold-sets-to-threshold-functions}
 
-\TODO{Write this subsection!}
+The previous section's generalization to activation-set-based
+threshold sets prompts us to ask: are further generalizations possible
+while retaining determinism?  The answer is \emph{yes}: both the
+original way of specifying threshold sets and the more general,
+activation-set-based formulation of them can be described by
+\emph{threshold functions}.  A threshold function is a partial
+function that takes a lattice element as its argument and is undefined
+for all inputs that are not at or above a given element in the lattice
+(which I will call its \emph{threshold point}), and \emph{constant}
+for all inputs that \emph{are} at or above its threshold point.  (Note
+that ``not at or above'' is more general than ``below'': a threshold
+function is undefined for inputs that are neither above nor below its
+threshold point.)
 
-\lk{This will be about "threshold functions", rather than either
-  simple threshold sets or generalized threshold sets (i.e., partial
-  functions that take a lattice element and are undefined for all
-  inputs that are not at or above a given point in the lattice, and
-  constant for all inputs that are at or above that point; both kinds
-  of threshold sets are a special case of this, afaict).}
+Threshold functions capture the semantics of both the original
+style of threshold sets, and the activation-set-based style:
+\begin{itemize}
+\item In the original style of threshold sets, every element $d$ of a
+  threshold set can be described by a threshold function that has $d$
+  as its threshold point and returns $d$ for all inputs at or above
+  that point.
+\item In the activation-set-based style of threshold sets, every
+  element $d$ of an activation set $Q$ can be described by a threshold
+  function that has $d$ as its threshold point and returns $Q$ for all
+  inputs at or above that point.
+\end{itemize}
+In both cases, inputs for which the threshold function is undefined
+correspond to situations in which the threshold read blocks.
+
+Seen from this point of view, it becomes clear that the key insight in
+generalizing from the original style of threshold sets to the
+activation-set-based style of threshold sets is that, for inputs for
+which a threshold function is defined, its return value need not be
+its threshold point. The activation set $Q$ is a particularly useful
+return value, but \emph{any} constant return value will suffice.
+
+\lk{By itself, this is kinda unconvincing; what I should really do is,
+  at the same time I'm adding generalized \il{update} to
+  $\lambdaLVish$ in the next chapter, also add a generalized version
+  of \il{get} based on threshold functions.  I think it would look
+  something like this: the language has to be parameterized by some
+  set $F$ of threshold functions $f_i$.  Then, if someone calls
+  $\getexp{l}{\setof{f_1, f_2, \dots}}$, it means that they want to
+  get the result of threshold function $f_1$ if $l$ is at or above
+  $f_1$'s threshold point; the result of threshold function $f_2$ if
+  $l$ is at or above $f_2$'s threshold point, and so on.  In order for
+  this to be deterministic, we still need the notion of pairwise
+  incompatibility: we need all the \emph{threshold points} of
+  threshold functions in a particular call to \il{get} to have $\top$
+  as their lub.  Something like that, anyway.  Even though this is
+  more general, I'm not sure it is really an improvement to change the
+  semantics in this way, because it's arguably even more annoying to
+  reason about than threshold sets...}
