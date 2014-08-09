@@ -10,18 +10,12 @@ modeling the full ensemble of event handlers, handler pools,
 quiescence, and freezing as separate primitives, I instead formalize
 the ``freeze-after'' pattern---which combined them---directly as a
 primitive.  This simplifies the calculus while still capturing the
-essence of the programming model.
-
-Also, in $\lambdaLVish$ I generalize the @put@ operation to allow the
-arbitrary \emph{update operations} that I described in
-Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}.
-Update operations are inflationary and commutative, but do not
-necessarily compute a least upper bound (and are not necessarily
-idempotent).  In order to do so, I parameterize the language
-definition not only by an application-specific lattice, but also by an
-application-specific set of commutative and inflationary update
-operations. \TODO{Add forward reference to where this is explained
-  more.}
+essence of the programming model.  I also generalize the @put@
+operation to allow arbitrary \emph{update operations} (previously
+described in
+Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}),
+which are inflationary and commutative, but do not necessarily compute
+a least upper bound.
 
 \subsection{Lattices}
 
@@ -198,50 +192,59 @@ and there is no $\state{\top}{\frozentrue}$ element of $D_p$.
 
 \subsection{$\lambdaLVish$: syntax and semantics}
 
-\TODO{Split the semantics, as in Chapter 2, and update the text to go
-  with the split semantics.}
-
 \FigLambdaLVishGrammar
 
 \FigLambdaLVishReductionSemantics
 
 \FigLambdaLVishContextSemantics
 
-The syntax and operational semantics of $\lambdaLVish$ appear in
-Figures \ref{f:lambdaLVish-syntax} and \ref{f:lambdaLVish-semantics},
-respectively.  As with $\lambdaLVar$, both the syntax and semantics
-are parameterized by the lattice $(D, \userleq, \bot, \top)$, and the
-reduction relation $\parstepsto$ is defined on \emph{configurations}
-$\config{S}{e}$, made up of a store $S$ and an expression $e$.  The
-\emph{error configuration}, written $\error$, is a unique element
-added to the set of configurations, but $\config{\topS}{e}$ is equal
-to $\error$ for all expressions $e$.  The metavariable $\conf$ ranges
-over configurations.
+The syntax of $\lambdaLVish$ appears in
+Figure~\ref{f:lambdaLVish-syntax}, and
+Figures~\ref{f:lambdaLVish-reduction-semantics}
+and~\ref{f:lambdaLVish-context-semantics} together give the
+operational semantics.  As with $\lambdaLVar$ in
+Chapter~\ref{ch:lvars}, both the syntax and semantics are
+parameterized by the lattice $(D, \userleq, \bot, \top)$, and the
+operational semantics is split into two parts, a \emph{reduction
+  semantics}, shown in
+Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}, and a
+\emph{context semantics}, shown in
+Figure~\ref{f:lvars-lambdaLVar-context-semantics}.  The reduction
+semantics is also parameterized by the set $U$ of update operations.
 
-$\lambdaLVish$ has all the expression forms of
-$\lambdaLVar$---variables, values, application expressions, @get@
-expressions, @put@ expressions, and @new@---and adds two new forms:
-the @freeze@ expression and the $\FAW$ expression, which I discuss in
-more detail below.  Values in $\lambdaLVish$ include all those from
-$\lambdaLVar$---the unit value $\unit$, lattice elements $d$,
-locations $l$, threshold sets $P$, and $\lambda$ expressions---as well
-as states $p$, which are pairs $\state{d}{\status}$, and event sets
-$Q$.  Instead of $T$, I now use the metavariable $P$ for threshold
-sets, in keeping with the fact that in $\lambdaLVish$, members of
-threshold sets are states $p$.
- 
-As with $\lambdaLVar$, $\lambdaLVish$ uses a reduction semantics based
-on evaluation contexts.  The {\sc E-Eval-Ctxt} rule allows us to apply
-reductions within a context, and is identical to the corresponding
-rule in $\lambdaLVar$, although the set of evaluation contexts that
-the metavariable $E$ ranges over has grown to accommodate @freeze@ and
-$\FAW$.  The {\sc E-Beta} rule is also identical to its counterpart in
-$\lambdaLVar$.
+The $\lambdaLVish$ grammar has most of the expression forms of
+$\lambdaLVar$: variables, values, application expressions, @get@
+expressions, and @new@.  Instead of @put@ expressions, it has $\PUTi$
+expressions, which are the interface to the specified set of update
+operations.  $\lambdaLVish$ also adds two new language forms, the
+@freeze@ expression and the $\FAW$ expression, which I discuss in more
+detail below.
 
-\subsection{Semantics of \lstinline|new|, \lstinline|put|, and \lstinline|get|}\label{subsection:quasi-semantics-of-new-put-and-get}
+Values in $\lambdaLVish$ include all those from $\lambdaLVar$---the
+unit value $\unit$, lattice elements $d$, locations $l$, threshold
+sets $P$, and $\lambda$ expressions---as well as states $p$, which are
+pairs $\state{d}{\status}$, and event sets $Q$.  Instead of $T$, I now
+use the metavariable $P$ for threshold sets, in keeping with the fact
+that in $\lambdaLVish$, members of threshold sets are states $p$.
 
-Because of the addition of status bits, the {\sc E-New}, {\sc E-Put},
-{\sc E-Put-Err}, {\sc E-Get} rules have changed slightly from their
+As before, configurations $\config{S}{e}$ are made up of a store and
+an expression; the \emph{error configuration}, written $\error$, is a
+unique element added to the set of configurations, but
+$\config{\topS}{e}$ is equal to $\error$ for all expressions $e$; and
+the metavariable $\conf$ ranges over configurations.  Both the
+reduction relation $\parstepsto$ and the context relation
+$\ctxstepsto$ are defined on configurations.
+
+As with $\lambdaLVar$, the $\lambdaLVish$ context relation
+$\ctxstepsto$ has only one rule, {\sc E-Eval-Ctxt}, which allows us to
+apply reductions within a context. The rule itself is identical to the
+corresponding rule in $\lambdaLVar$, although the set of evaluation
+contexts that the metavariable $E$ ranges over is different.
+
+\subsection{Semantics of \il{new}, $\PUTi$, and \il{get}}\label{subsection:quasi-semantics-of-new-put-and-get}
+
+Because of the addition of status bits to the semantics, the {\sc
+  E-New}, and {\sc E-Get} rules have changed slightly from their
 counterparts in $\lambdaLVar$:
 
 \begin{itemize}
@@ -249,13 +252,6 @@ counterparts in $\lambdaLVar$:
   with a binding for a new LVar whose initial state is $(\bot,
   \frozenfalse)$, and returns the location $l$ of that LVar (\ie, a
   pointer to the LVar).
-\item @put@ (implemented by the {\sc E-Put} and {\sc E-Put-Err} rules)
-  takes a pointer to an LVar and a new lattice element $d_2$ and
-  updates the LVar's state to the \emph{least upper bound} of the
-  current state and $\state{d_2}{\frozenfalse}$, potentially pushing
-  the state of the LVar upward in the lattice.  Any update that would
-  take the state of an LVar to $\topp$ results in the program
-  immediately stepping to $\error$.
 \item @get@ (implemented by the {\sc E-Get} rule) performs a blocking
   threshold read.  It takes a pointer to an LVar and a \emph{threshold
     set} $P$, which is a non-empty set of LVar states that must be
@@ -267,15 +263,18 @@ counterparts in $\lambdaLVar$:
   element of $P$, for if there is another $p'_2 \neq p_2$ in the
   threshold set such that $p'_2 \leqp p_1$, it would follow that
   $\lubp{p_2}{p'_2} = p_1 \neq \topp$, which contradicts the
-  requirement that $P$ be pairwise incompatible.\footnote{Although
-    $\incomp{P}$ is given as a premise of the {\sc E-Get} reduction
-    rule (suggesting that it is checked at runtime), in a real
-    implementation threshold sets need not be written explicitly, and
-    it is the data structure author's responsibility to ensure that
-    any provided read operations have threshold semantics; see
-    Chapter~\ref{ch:lvish}.\TODO{Point to a more specific part of
-      Chapter~\ref{ch:lvish}.}}
+  requirement that $P$ be pairwise incompatible.
 \end{itemize}
+
+$\lambdaLVish$'s counterpart to the @put@ operation is the $\PUTi$
+operation, which is actually a set of operations that provide access
+to the provided update operations $u_i$.  For each $u_i$ update
+operation, $\PUTi$ (implemented by the {\sc E-Put} rule) takes a
+pointer to an LVar and updates the LVar's state to result of calling
+$u_{p_i}$ on the LVar's current state, potentially pushing the state
+of the LVar upward in the lattice.  THe {\sc E-Put-Err} rule applies
+when a $\PUTi$ operation would take the state of an LVar to $\topp$;
+in that case, the semantics steps to $\error$.
 
 \subsection{Freezing and the $\FAW$ primitive}\label{subsection:quasi-freezing}
 
@@ -297,8 +296,8 @@ has the following semantics:
   that the LVar's state reaches or surpasses.  The callback $e_{\rm
     cb}$ is a function that takes a lattice element as its argument.
   Its return value is ignored, so it runs solely for effect.  For
-  instance, a callback might itself do a @put@ to the LVar to which it
-  is attached, triggering yet more callbacks.
+  instance, a callback might itself do a $\PUTi$ to the LVar to which
+  it is attached, triggering yet more callbacks.
 \item If the handler reaches a quiescent state, the LVar $e_{\rm lv}$
   is frozen, and its \emph{exact} state is returned (rather than an
   underapproximation of the state, as with @get@).
@@ -325,7 +324,7 @@ thread.
 The rule {\sc E-Spawn-Handler} launches a new callback thread any time
 the LVar's current value is at or above some element in $Q$ that has
 not already been handled.  This step can be taken nondeterministically
-at any time after the relevant @put@ has been performed.
+at any time after the relevant $\PUTi$ has been performed.
 
 The rule {\sc E-Freeze-Final} detects quiescence by checking that two
 properties hold.  First, every event of interest (lattice element in
@@ -336,22 +335,22 @@ completed.  When such a quiescent state is detected, {\sc
   E-Freeze-Final} freezes the LVar's state.  Like {\sc
   E-Spawn-Handler}, the rule can fire at any time,
 nondeterministically, that the handler appears quiescent---a transient
-property!  But after being frozen, any further @put@s that would have
-enabled additional callbacks will instead fault, causing the program
-to step to $\error$.
+property!  But after being frozen, any further $\PUTi$ updates that
+would have enabled additional callbacks will instead fault, causing
+the program to step to $\error$.
 
 Therefore, freezing is a way of ``betting'' that once a collection of
-callbacks have completed, no further @put@s that change the LVar's
-value will occur.  For a given run of a program, either all @put@s to
+callbacks have completed, no further updates that change the LVar's
+value will occur.  For a given run of a program, either all updates to
 an LVar arrive before it has been frozen, in which case the value
-returned by $\FAW$ is the lub of those values, or some @put@ arrives
+returned by $\FAW$ is the lub of those values, or some update arrives
 after the LVar has been frozen, in which case the program will fault.
 And thus we have arrived at \emph{quasi-determinism}: a program will
 always either evaluate to the same answer or it will fault.
 
 To ensure that we will win our bet, we need to guarantee that
 quiescence is a \emph{permanent} state, rather than a transient
-one---that is, we need to perform all @put@s either prior to $\FAW$,
+one---that is, we need to perform all updates either prior to $\FAW$,
 or by the callback function within it (as will be the case for
 fixpoint computations).  In practice, freezing is usually the very
 last step of an algorithm, permitting its result to be extracted. As

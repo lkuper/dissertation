@@ -8,7 +8,7 @@
 
 The syntax of $\lambdaLVar$ appears in
 Figure~\ref{f:lvars-lambdaLVar-syntax}, and
-Figures~\ref{f:lvars-lambdaLVar-reduction-semantics},
+Figures~\ref{f:lvars-lambdaLVar-reduction-semantics}
 and~\ref{f:lvars-lambdaLVar-context-semantics} together give the
 operational semantics.  Both the syntax and semantics are
 parameterized by the lattice $(D, \userleq, \bot, \top)$.
@@ -47,24 +47,33 @@ when a @put@ to a location would take its state to $\top$; in that
 case, the semantics steps to $\error$.  The incompatibility of the
 threshold set argument to @get@ is enforced in the {\sc E-Get} rule by
 the $\incomp{T}$ premise, which requires that the least upper bound of
-any two distinct elements in $T$ must be $\top$.
+any two distinct elements in $T$ must be $\top$.\footnote{Although
+  $\incomp{T}$ is given as a premise of the {\sc E-Get} reduction rule
+  (suggesting that it is checked at runtime), as I noted earlier in
+  Section~\ref{subsection:lvars-the-model-versus-reality}, in a real
+  implementation of LVars threshold sets need not have any runtime
+  representation, nor do they need to be written explicitly in the
+  code.  Rather, it is the data structure author's responsibility to
+  ensure that any operations provided for reading from LVars have
+  threshold semantics.}
 
-The context relation $\ctxstepsto$ has only one rule, {\sc
-  E-Eval-Ctxt}, which is a standard context rule, allowing reductions
-to apply within a context.  The choice of context determines where
-evaluation can occur; in $\lambdaLVar$, the order of evaluation is
-nondeterministic (that is, a given expression can generally reduce in
-more than one way), and so it is generally \emph{not} the case that an
-expression has a unique decomposition into redex and
-context.\footnote{In fact, my motivation for splitting the operational
-  semantics into a reduction semantics and a context semantics is to
-  isolate the nondeterminism of the context semantics, which
-  simplifies the determinism proof of Section~\ref{s:lvars-proof}.}
-For example, in an application $\app{e_1}{e_2}$, either $e_1$ or $e_2$
-might reduce first.  The nondeterminism in choice of evaluation
-context reflects the nondeterminism of scheduling between concurrent
-threads, and in $\lambdaLVar$, the arguments to @get@, @put@, and
-application expressions are \emph{implicitly} evaluated concurrently.
+The context relation $\ctxstepsto$ is also defined on configurations.
+It has only one rule, {\sc E-Eval-Ctxt}, which is a standard context
+rule, allowing reductions to apply within a context.  The choice of
+context determines where evaluation can occur; in $\lambdaLVar$, the
+order of evaluation is nondeterministic (that is, a given expression
+can generally reduce in more than one way), and so it is generally
+\emph{not} the case that an expression has a unique decomposition into
+redex and context.\footnote{In fact, my motivation for splitting the
+  operational semantics into a reduction semantics and a context
+  semantics is to isolate the nondeterminism of the context semantics,
+  which simplifies the determinism proof of
+  Section~\ref{s:lvars-proof}.}  For example, in an application
+$\app{e_1}{e_2}$, either $e_1$ or $e_2$ might reduce first.  The
+nondeterminism in choice of evaluation context reflects the
+nondeterminism of scheduling between concurrent threads, and in
+$\lambdaLVar$, the arguments to @get@, @put@, and application
+expressions are \emph{implicitly} evaluated concurrently.
 
 \subsection{Errors and observable determinism}\label{subsection:lvars-errors-and-observable-determinism}
 
