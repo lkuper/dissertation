@@ -5,26 +5,23 @@ LVish programming model. $\lambdaLVish$ is a quasi-deterministic,
 parallel, call-by-value $\lambda$-calculus extended with a store
 containing LVars.  It extends the original $\lambdaLVar$ language of
 Chapter~\ref{ch:lvars} to support the new features in the LVish model
-that I described in the previous section.  In comparison to the
-informal description in Section~\ref{s:quasi-informal}, though, I make
-two simplifications to keep the model lightweight:
-\begin{itemize}
-\item As with $\lambdaLVar$ in Chapter~\ref{ch:lvars}, I parameterize
-  the definition of $\lambdaLVish$ by a \emph{single}
-  application-specific lattice, representing the set of states that
-  LVars in the calculus can take on. Therefore $\lambdaLVish$ is
-  really a \emph{family} of calculi, varying by choice of lattice.
-  Multiple lattices can in principle be encoded using a sum
-  construction, so this modeling choice is just to keep the
-  presentation simple; in any case, our Haskell implementation
-  supports multiple lattices natively.
-\item Rather than modeling the full ensemble of event handlers,
-  handler pools, quiescence, and freezing as separate primitives, I
-  instead formalize the ``freeze-after'' pattern---which combined
-  them---directly as a primitive.  This greatly simplifies the
-  calculus, while still capturing the essence of the programming
-  model.
-\end{itemize}
+that I described in Section~\ref{s:quasi-informal}. Rather than
+modeling the full ensemble of event handlers, handler pools,
+quiescence, and freezing as separate primitives, I instead formalize
+the ``freeze-after'' pattern---which combined them---directly as a
+primitive.  This simplifies the calculus while still capturing the
+essence of the programming model.
+
+Also, in $\lambdaLVish$ I generalize the @put@ operation to allow the
+arbitrary \emph{update operations} that I described in
+Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}.
+Update operations are inflationary and commutative, but do not
+necessarily compute a least upper bound (and are not necessarily
+idempotent).  In order to do so, I parameterize the language
+definition not only by an application-specific lattice, but also by an
+application-specific set of commutative and inflationary update
+operations. \TODO{Add forward reference to where this is explained
+  more.}
 
 \subsection{Lattices}
 
@@ -37,17 +34,12 @@ of every LVar, while $\top$ represents the ``error'' state that would
 result from conflicting updates to an LVar.  The partial order
 $\userleq$ represents the order in which an LVar may take on states.
 It induces a binary \emph{least upper bound} (lub) operation
-$\userlub{}{}$ on the elements of $D$.
-
-Every two elements of $D$ must have a least upper bound in $D$.
-Intuitively, the existence of a lub for every two elements of $D$
-means that it is possible for two subcomputations to independently
-update an LVar, and then deterministically merge the results by taking
-the lub of the resulting two states.  Formally, this makes $(D,
-\userleq, \bot, \top)$ a \emph{bounded join-semilattice} with a
-designated greatest element $\top$; I continue to use ``lattice'' as
-shorthand, and I use $D$ as a shorthand for the entire 4-tuple $(D,
-\userleq, \bot, \top)$ when its meaning is clear from the context.
+$\userlub{}{}$ on the elements of $D$.  Every two elements of $D$ must
+have a least upper bound in $D$.  Formally, this makes $(D, \userleq,
+\bot, \top)$ a \emph{bounded join-semilattice} with a designated
+greatest element $\top$; I continue to use ``lattice'' as shorthand,
+and I use $D$ as a shorthand for the entire 4-tuple $(D, \userleq,
+\bot, \top)$ when its meaning is clear from the context.
 
 \subsection{Freezing}
 
@@ -102,6 +94,66 @@ is a lattice, then $(D_p, \leqp, \botp, \topp)$ is as well:
 See Section~\ref{section:lattice-structure-proof}.
 \end{proof}
 
+\subsection{Update operations}
+
+$\lambdaLVish$ generalizes the @put@ operation of $\lambdaLVar$ to a
+family of operations $\PUTi$.  We do so in order to allow the
+generalized update operations of
+Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}
+that are commutative and inflationary, but do not necessarily compute
+a least upper bound.
+
+In order to do this, we parameterize the semantics of $\lambdaLVish$
+not only by the lattice $D$ but also by a set $U$ of \emph{update
+  operations} $u_i : D \rightarrow D$.  Each $u_i$ must meet the
+following conditions:
+\begin{itemize}
+\item $\forall d, i.     \;\; d \userleq u_i(d)$, and
+\item $\forall d, i, j.  \;\; u_i(u_j(d)) = u_j(u_i(d))$.
+\end{itemize}
+As discussed in
+Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes},
+the first of these conditions says that each update operation is
+inflationary with respect to $\userleq$, and the second condition says
+that update operations commute with each other.
+
+If we want to encode the original least-upper-bound semantics of @put@
+using $\PUTi$, we can do so by instantiating $U$ such that there is
+one $u_i$ for each element $d_i$ of the lattice $D$, and defining
+$u_i(d)$ to be $\userlub{d}{d_i}$.  On the other hand, if $D$ is a
+lattice of natural numbers and we want increment-only counters, we can
+instantiate $U$ to be a singleton set $\setof{ u }$ where $u(d) = d +
+1$.  (As described in
+Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes},
+we could also have a set of update operations $\{ u_{(+1)}, u_{(+2)},
+\dots \}$, where $u_{(+1)}(d)$ increments $d$'s contents by one,
+$u_{(+2)}(d)$ increments by two, and so on.) Update operations are
+therefore general enough to express least-upper-bound writes as well
+as non-idempotent increments.
+
+In $\lambdaLVish$, the @put@ operation took two arguments, a location
+$l$ and a lattice element $d$.  The $\PUTi$ operations take a location
+$l$ as their only argument, and $\putiexp{l}$ performs the update
+operation $u_i(l)$ on the contents of $l$.
+
+More specifically, since $l$ points to a state $\state{d}{\status}$
+instead of an element $d$, $\putiexp{l}$ must perform $u_{p_i}$, a
+lifted version of $u_i$ that applies to states. Each $u_{p_i}$ takes
+an element of $D_p$ as its argument and returns an element of $D_p$ as
+its result.  We define the set $U_p$ of lifted operations $u_{p_i} :
+D_p \rightarrow D_p$ as follows:
+  \begin{displaymath}
+    \begin{array}{lcl}
+      u_{p_i}(\state{d}{\frozenfalse}) & = & \state{u_i(d)}{\frozenfalse} \\ 
+      u_{p_i}(\state{d}{\frozentrue}) & = & \left\{
+                                       \begin{array}{ll}
+                                         \state{d}{\frozentrue} & \mbox{if } u_i(d) = d \\ 
+                                         \state{\top}{\frozenfalse} & \mbox{otherwise}
+                                       \end{array}
+                                     \right. \\
+    \end{array}
+  \end{displaymath}
+
 \subsection{Stores}
 
 During the evaluation of $\lambdaLVish$ programs, a \emph{store} $S$
@@ -139,7 +191,7 @@ then
 Just as a a store containing a binding $\storebindingRaw{l}{\top}$ can
 never arise during the execution of a $\lambdaLVar$ program, a store
 containing a binding $\storebinding{l}{\top}{\status}$ can never arise
-during the execution of a $\lambdaLVish$ program. An attempted @put@
+during the execution of a $\lambdaLVish$ program. An attempted write
 that would take the value of $l$ to
 $\state{\top}{\frozenfalse}$---that is, $\topp$---will raise an error,
 and there is no $\state{\top}{\frozentrue}$ element of $D_p$.
@@ -151,7 +203,9 @@ and there is no $\state{\top}{\frozentrue}$ element of $D_p$.
 
 \FigLambdaLVishGrammar
 
-\FigLambdaLVishSemantics
+\FigLambdaLVishReductionSemantics
+
+\FigLambdaLVishContextSemantics
 
 The syntax and operational semantics of $\lambdaLVish$ appear in
 Figures \ref{f:lambdaLVish-syntax} and \ref{f:lambdaLVish-semantics},

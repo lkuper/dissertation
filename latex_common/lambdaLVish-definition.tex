@@ -11,7 +11,7 @@
            v \sep 
            \app{e}{e} \sep 
            \getexp{e}{e} \sep 
-           \putexp{e}{e} \sep
+           \putiexp{e} \sep
            \NEW \sep
            \freeze{e} \\
            & & \sep &
@@ -36,8 +36,7 @@
            \app{e}{E} \sep
            \getexp{E}{e} \sep
            \getexp{e}{E} \sep 
-           \putexp{E}{e} \sep
-           \putexp{e}{E} \\
+           \putiexp{E} \\
            & & \sep &
            \freeze {E} \sep
            \freezeafter{E}{e}{e} \\
@@ -53,19 +52,16 @@
 \end{figure}
 }
 
-\newcommand{\FigLambdaLVishSemantics}[1][t]{
+\newcommand{\FigLambdaLVishReductionSemantics}[1][t]{
 \begin{landscape}
 \begin{figure*}[#1]
-  Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$:
-  \\
+  Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$, \\
+  and a set of update operations $u_i: D \rightarrow D$: \\
+  \bigskip
   $\incomp{P} \defeq \qforall{p_1,p_2 \in P}{(p_1 \neq p_2 \implies
     \lubp{p_1}{p_2} = \topp)}$\hfill \fbox{$\conf \parstepsto \conf'$}
   \\
   \begin{mathpar}
-    \inferrule*[lab=E-Eval-Ctxt]
-        {\config{S}{e} \parstepsto \config{S'}{e'}}
-        {\config{S}{\E{e}} \parstepsto \config{S'}{\E{e'}}}
-
     \inferrule*[lab=E-Beta]
         {~}
         {\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \config{S}{\subst{e}{x}{v}}}
@@ -75,14 +71,13 @@
         {\config{S}{\NEW} \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}}
 
     \inferrule*[lab=E-Put]
-        {S(l) = p_1 \\ p_2 = \lubp{p_1}{\state{d_2}{\frozenfalse}} \\ p_2 \neq \topp}
-        {\config{S}{\putexp{l}{d_2}} \parstepsto
-          \config{\extSRaw{S}{l}{p_2}}{\unit}}
+        {S(l) = p_1 \\ u_{p_i}(p_1) \neq \topp}
+        {\config{S}{\putiexp{l}} \parstepsto
+          \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}}
 
     \inferrule*[lab=E-Put-Err]
-        {S(l) = p_1 \\ \lubp{p_1}{\state{d_2}{\frozenfalse}} = \topp}
-        {\config{S}{\putexp{l}{d_2}} \parstepsto 
-          \error}
+        {S(l) = p_1 \\ u_{p_i}(p_1) = \topp}
+        {\config{S}{\putiexp{l}} \parstepsto \error}
 
     \inferrule*[lab=E-Get]
         {S(l) = p_1 \\ \incomp{P} \\ p_2 \in P \\ p_2 \leqp p_1}
@@ -124,8 +119,21 @@
           \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}
         }
   \end{mathpar}
-  \caption{An operational semantics for $\lambdaLVish$.}
-  \label{f:lambdaLVish-semantics}
+  \caption{Reduction semantics for $\lambdaLVish$.}
+  \label{f:lambdaLVish-reduction-semantics}
 \end{figure*}
 \end{landscape}
+}
+
+\newcommand{\FigLambdaLVishContextSemantics}[1][t]{
+\begin{figure*}[#1]
+  \hfill \fbox{$\conf \ctxstepsto \conf'$}
+  \begin{mathpar}
+    \inferrule*[lab=E-Eval-Ctxt]
+        {\config{S}{e} \parstepsto \config{S'}{e'}}
+        {\config{S}{\E{e}} \ctxstepsto \config{S'}{\E{e'}}}
+  \end{mathpar}
+  \caption{Context semantics for $\lambdaLVish$.}
+  \label{f:lvars-lambdaLVish-context-semantics}
+\end{figure*}
 }

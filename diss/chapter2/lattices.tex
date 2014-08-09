@@ -97,12 +97,12 @@ keeps track of the states of LVars.  Each LVar is represented by a
 \emph{binding} that maps from a location $l$, drawn from a countable
 set $\Loc$, to a \emph{state}, which is some element $d \in D$.
 Although each LVar in a program has its own state, the states of all
-the LVars are drawn from the same lattice $D$.  We can do this with no
-loss of generality because lattices corresponding to different types
-of LVars could always be unioned into a single lattice (with shared
-$\top$ and $\bot$ elements).\footnote{Alternatively, in a typed
-  formulation of $\lambdaLVar$, the type of an LVar might determine
-  the set of states it can take on.}
+the LVars are drawn from the same lattice $D$.\footnote{In practice,
+  different LVars in a program might have different state spaces (and,
+  in the LVish Haskell library that I will present in
+  Chapter~\ref{ch:lvish}, they do).  Multiple lattices can in
+  principle be encoded using a sum construction, so this modeling
+  choice is just to keep the presentation simple.}
 
 \begin{definition}\label{def:lvars-store}
 A \emph{store} is either a finite partial mapping $S : \Loc \fmap
