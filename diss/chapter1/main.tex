@@ -194,9 +194,9 @@ imperative disjoint parallelism is compatible with LVars as well.
 Furthermore, as I show in Section~\ref{s:lvars-generalizing}, we can
 generalize the behavior of the @put@ and @get@ operations while
 retaining determinism: we can generalize @put@ from least-upper-bound
-writes to arbitrary inflationary and commutative writes, and we can
-generalize the @get@ operation to allow a more general form of
-threshold reads.
+writes to non-idempotent (but still inflationary and commutative)
+writes, and we can generalize the @get@ operation to allow a more
+general form of threshold reads.
 
 \section{Quasi-deterministic and event-driven programming with LVars}\label{s:intro-quasi}
 
@@ -326,11 +326,10 @@ make use of handlers and freezing:
   comparing sets of phylogenetic trees that relies heavily on a
   parallel tree-edit distance algorithm~\cite{hashrf}.  In addition to
   handlers and freezing, the PhyBin application crucially relies on
-  the aforementioned ability to perform generalized writes to LVars
-  that are commutative and inflationary with respect to the lattice in
-  question, but \emph{not} idempotent (in contrast to
+  the aforementioned ability to perform non-idempotent (but
+  inflationary and commutative) writes to LVars (in contrast to
   least-upper-bound writes discussed above, which are idempotent as
-  well as commutative and inflationary).
+  well as inflationary and commutative).
 \end{itemize}
 
 \section{Deterministic threshold queries of distributed data structures}\label{s:intro-cvrdts}

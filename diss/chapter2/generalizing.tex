@@ -28,51 +28,63 @@ the LVar by one, resulting in $3$.
 
 To support this alternative semantics in the LVars model, we
 generalize the model as follows.  For an LVar with lattice $(D,
-\userleq, \bot, \top)$, we can define a set of @update@ operations
-$\UPDATE_i : D \rightarrow D$, which must meet the following two
+\userleq, \bot, \top)$, we can define a set of \emph{update}
+operations $u_i : D \rightarrow D$, which must meet the following two
 conditions:
 \begin{itemize}
-\item $\forall d, i.     \;\; d \userleq \UPDATE_i(d) $
-\item $\forall d, i, j.  \;\; \UPDATE_i(\UPDATE_j(d)) = \UPDATE_j(\UPDATE_i(d)) $
+\item $\forall d, i.     \;\; d \userleq u_i(d) $
+\item $\forall d, i, j.  \;\; u_i(u_j(d)) = y_j(u_i(d)) $
 \end{itemize}
-The first of these conditions says that an @update@ operation is
+The first of these conditions says that each update operation is
 inflationary with respect to $\userleq$.  The second condition says
-that @update@ operations commute with each other.  In fact, the @put@
+that update operations commute with each other.  In fact, the @put@
 operation meets the above two conditions, and therefore can be viewed
-as a special case of @update@ that, in addition to being inflationary
-and commutative, also happens to compute a least upper bound.
+as a special case of an update operation that, in addition to being
+inflationary and commutative, also happens to compute a least upper
+bound.
 
-However, when generalizing LVars to support @update@, we must keep in
-mind that least-upper-bound @put@ operations do not necessarily mix
-with arbitrary @update@ operations on the same LVar.  For example,
-consider a set of @update@ operations $\{\UPDATE_{(+1)},
-\UPDATE_{(+2)}, \dots \}$ for atomically incrementing a counter
-represented by a natural number LVar, with a lattice ordered by the
-usual $\leq$ on natural numbers.  The $\UPDATE_{(+1)}$ operation
-increments the counter by one, $\UPDATE_{(+2)}$ increments it by two,
-and so on.  It is easy to see that these operations commute.  However,
-a @put@ of $4$ and a $\UPDATE_{(+1)}$ do not commute: if we start with
-an initial state of $0$ and the @put@ occurs first, then the state of
-the LVar changes to $4$ since $\max(0, 4) = 4$, and the subsequent
-$\UPDATE_{(+1)}$ updates it to $5$.  But if the $\UPDATE_{(+1)}$
-happens first, then the final state of the LVar will be $\max(1, 4) =
-4$.  Furthermore, multiple distinct families of @update@ functions
-only commute among themselves and cannot be combined.
+\lk{``update'' used to be called ``bump'', but I think ``update'' is a
+  better name because I want it to be clear that \il{put} is a special
+  case of it, and ``bump'' sounds like something that is specifically
+  \emph{not} idempotent, while ``update'' is merely something that
+  \emph{doesn't have to be} idempotent.}
+
+However, when generalizing LVars to support update operations, we must
+keep in mind that least-upper-bound @put@ operations do not
+necessarily mix with arbitrary update operations on the same LVar.
+For example, consider a set of update operations $\{ u_{(+1)},
+u_{(+2)}, \dots \}$ for atomically incrementing a counter represented
+by a natural number LVar, with a lattice ordered by the usual $\leq$
+on natural numbers.  The $u_{(+1)}$ operation increments the counter
+by one, $u_{(+2)}$ increments it by two, and so on.  It is easy to see
+that these operations commute.  However, a @put@ of $4$ and a
+$u_{(+1)}$ do not commute: if we start with an initial state of $0$
+and the @put@ occurs first, then the state of the LVar changes to $4$
+since $\max(0, 4) = 4$, and the subsequent $u_{(+1)}$ updates it to
+$5$.  But if the $u_{(+1)}$ happens first, then the final state of the
+LVar will be $\max(1, 4) = 4$.  Furthermore, multiple distinct
+families of update operations only commute among themselves and cannot
+be combined.
 
 In practice, the author of a particular LVar data structure must
-choose which @update@ operations that data structure should provide,
-and it is the data structure author's responsibiity to ensure that
-they commute.  For example, the LVish Haskell library (which I discuss
-in Chapter~\ref{ch:lvish}) provides a set data structure,
+choose which update operations that data structure should provide, and
+it is the data structure author's responsibiity to ensure that they
+commute.  For example, the LVish Haskell library (which I discuss in
+Chapter~\ref{ch:lvish}) provides a set data structure,
 @Data.LVar.Set@, that supports only @put@, whereas the counter data
-structure @Data.LVar.Counter@ supports only @update@; an attempt to
+structure @Data.LVar.Counter@ supports only increments; an attempt to
 call @put@ on a @Counter@ would be ruled out by the type system.
 However, \emph{composing} LVars that support different families of
-@update@ operations is fine.  For example, an LVar could represent a
+update operations is fine.  For example, an LVar could represent a
 monotonically growing collection (which supports @put@) of counter
 LVars, where each counter is itself monotonically increasing and
-supports only @update@.  Indeed, the PhyBin case study described in
-Section~\ref{s:lvish-phybin} uses just such a collection of counters.
+supports only increment.  Indeed, the PhyBin case study described in
+Section~\ref{s:lvish-phybin} uses just such a collection of
+counters.\footnote{Unlike \il{put}, arbitrary update operations are
+  not idempotent, which means that in order to support arbitrary
+  update operations we must be careful not to assume idempotency of
+  writes in the LVish scheduler implementation.  I discuss this
+  consideration in more detail in Section~\ref{s:lvish-internals}.}
 
 The determinism of $\lambdaLVar$ relies on the fact that the states of
 all LVars evolve monotonically with respect to their lattices, and
@@ -81,29 +93,30 @@ order in which @put@s occur does not matter.  Together, these
 properties suffice to ensure that the threshold reads made by @get@
 operations are deterministic. The rest of a $\lambdaLVar$ program is
 purely functional, and its behavior is, in fact, a pure function of
-these @get@ observations.  Since a given family of @update@ operations
+these @get@ observations.  Since a given family of update operations
 is also commutative and inflationary with respect to the lattice of
 the LVar they operate on, they preserve determinism.
 
-In Chapter~\ref{ch:quasi}, in addition to extending the LVars model to
+In Chapter~\ref{ch:quasi}, in addition to extending $\lambdaLVar$ to
 support the new features of \emph{freezing} and \emph{event handlers},
-I generalize the @put@ operation to @update@.  The resulting
-generalized language definition is therefore parameterized not only by
-an application-specific lattice, but also by an application-specific
-family of commutative and inflationary @update@ operations.
+I generalize the @put@ operation to allow arbitrary update operations.
+The resulting generalized language definition is therefore
+parameterized not only by an application-specific lattice, but also by
+an application-specific set of commutative and inflationary update
+operations.
 
 \lk{The Chapter~\ref{ch:quasi} $\lambdaLVish$ result is
   quasi-determinism, not determinism.  So, if I really wanted to be
-  serious about showing that \il{update} is deterministic and not
-  merely quasi-deterministic, I would do this more modularly: I would
+  serious about showing that update is deterministic and not merely
+  quasi-deterministic, I would do this more modularly: I would
   actually present another version of the $\lambdaLVar$ language here,
-  with \il{put} replaced with \il{update}, and then re-do the
-  determinism proof for it, instead of just lumping it into the
-  quasi-determinism result in the next chapter.  If I did that,
-  though, then this section would be big enough to justify being its
-  own chapter.  I'm going to just appeal to people's common sense that
-  the quasi-determinism in $\lambdaLVish$ comes from freezing, not
-  from \il{update}.  I hope that this is OK!}
+  with \il{put} replaced with update, and then re-do the determinism
+  proof for it, instead of just lumping it into the quasi-determinism
+  result in the next chapter.  If I did that, though, then this
+  section would be big enough to justify being its own chapter.  I'm
+  going to just appeal to people's common sense that the
+  quasi-determinism in $\lambdaLVish$ comes from freezing, not from
+  update.  I hope that this is OK!}
 
 \subsection{A more general formulation of threshold sets}\label{subsection:lvars-a-more-general-formulation-of-threshold-sets}
 
@@ -348,19 +361,19 @@ its threshold point. The activation set $Q$ is a particularly useful
 return value, but \emph{any} constant return value will suffice.
 
 \lk{By itself, this is kinda unconvincing; what I should really do is,
-  at the same time I'm adding generalized \il{update} to
-  $\lambdaLVish$ in the next chapter, also add a generalized version
-  of \il{get} based on threshold functions.  I think it would look
-  something like this: the language has to be parameterized by some
-  set $F$ of threshold functions $f_i$.  Then, if someone calls
-  $\getexp{l}{\setof{f_1, f_2, \dots}}$, it means that they want to
-  get the result of threshold function $f_1$ if $l$ is at or above
-  $f_1$'s threshold point; the result of threshold function $f_2$ if
-  $l$ is at or above $f_2$'s threshold point, and so on.  In order for
-  this to be deterministic, we still need the notion of pairwise
-  incompatibility: we need all the \emph{threshold points} of
-  threshold functions in a particular call to \il{get} to have $\top$
-  as their lub.  Something like that, anyway.  Even though this is
-  more general, I'm not sure it is really an improvement to change the
-  semantics in this way, because it's arguably even more annoying to
-  reason about than threshold sets...}
+  at the same time I'm adding generalized update to $\lambdaLVish$ in
+  the next chapter, also add a generalized version of \il{get} based
+  on threshold functions.  I think it would look something like this:
+  the language has to be parameterized by some set $F$ of threshold
+  functions $f_i$.  Then, if someone calls $\getexp{l}{\setof{f_1,
+      f_2, \dots}}$, it means that they want to get the result of
+  threshold function $f_1$ if $l$ is at or above $f_1$'s threshold
+  point; the result of threshold function $f_2$ if $l$ is at or above
+  $f_2$'s threshold point, and so on.  In order for this to be
+  deterministic, we still need the notion of pairwise incompatibility:
+  we need all the \emph{threshold points} of threshold functions in a
+  particular call to \il{get} to have $\top$ as their lub.  Something
+  like that, anyway.  Even though this is more general, I'm not sure
+  it is really an improvement to change the semantics in this way,
+  because it's arguably even more annoying to reason about than
+  threshold sets...}
