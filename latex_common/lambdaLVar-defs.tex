@@ -1,5 +1,5 @@
 \newcommand{\LVarsDefEqStore}{
-\begin{definition}\label{def:lvars-eqstore}
+\begin{definition}[equality of stores]\label{def:lvars-eqstore}
   Two stores $S$ and $S'$ are \emph{equal} iff:
   \begin{enumerate}
     \item $S = \topS$ and $S' = \topS$, or
@@ -10,7 +10,7 @@
 }
 
 \newcommand{\LVarsDefLeqStore}{
-\begin{definition}\label{def:lvars-leqstore}
+\begin{definition}[store ordering]\label{def:lvars-leqstore}
   A store $S$ is \emph{less than or equal to} a store $S'$ (written
   $\leqstore{S}{S'}$) iff:
   \begin{itemize}
@@ -30,9 +30,9 @@
 }
 
 \newcommand{\LVarsDefLubStore}{
-\begin{definition}\label{def:lvars-lubstore}
+\begin{definition}[least upper bound of stores]\label{def:lvars-lubstore}
 
-  The \emph{least upper bound (lub)} of two stores $S_1$ and $S_2$ (written
+  The \emph{least upper bound} of two stores $S_1$ and $S_2$ (written
   $\lubstore{S_1}{S_2}$) is defined as follows:
   
   \begin{itemize}
@@ -56,7 +56,7 @@
 }
 
 \newcommand{\LVarsDefPermutation}{
-\begin{definition}\label{def:lvars-permutation}
+\begin{definition}[permutation]\label{def:lvars-permutation}
   A \emph{permutation} is a function $\pi : \Loc \rightarrow \Loc$
   such that:
   \begin{enumerate}
@@ -70,8 +70,8 @@
 }
 
 \newcommand{\LVarsDefPermutationExpression}{
-\begin{definition}\label{def:lvars-permutation-expression}
-  A permutation of an expression $e$ is a function $\pi$ defined as
+\begin{definition}[permutation (expressions)]\label{def:lvars-permutation-expression}
+  A \emph{permutation} of an expression $e$ is a function $\pi$ defined as
   follows:
   \begin{displaymath}
     \begin{array}{ll}
@@ -94,8 +94,8 @@
 }
 
 \newcommand{\LVarsDefPermutationStore}{
-\begin{definition}\label{def:lvars-permutation-store}
-  A permutation of an evaluation $S$ is a function $\pi$ defined as
+\begin{definition}[permutation (stores)]\label{def:lvars-permutation-store}
+  A \emph{permutation} of a store $S$ is a function $\pi$ defined as
   follows:
   \begin{displaymath}
     \begin{array}{ll}
@@ -110,8 +110,8 @@
 }
 
 \newcommand{\LVarsDefPermutationConfiguration}{
-\begin{definition}\label{def:lvars-permutation-configuration}
-  A permutation of a configuration $\config{S}{e}$ is a function $\pi$
+\begin{definition}[permutation (configurations)]\label{def:lvars-permutation-configuration}
+  A \emph{permutation} of a configuration $\config{S}{e}$ is a function $\pi$
   defined as follows: if $\config{S}{e} = \error$, then
   $\pi(\config{S}{e}) = \error$; otherwise, $\pi(\config{S}{e}) =
   \config{\pi(S)}{\pi(e)}$.
@@ -119,7 +119,7 @@
 }
 
 \newcommand{\LVarsDefNonConflicting}{
-\begin{definition}\label{def:lvars-non-conflicting}
+\begin{definition}[non-conflicting store]\label{def:lvars-non-conflicting}
   A store $S''$ is \emph{non-conflicting} with the transition
   $\config{S}{e} \parstepsto \config{S'}{e'}$ iff $(\dom{S'} -
   \dom{S}) \cap \dom{S''} = \emptyset$.

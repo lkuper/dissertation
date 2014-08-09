@@ -84,8 +84,8 @@ $S$, then $\pi(l) \notin \dom{(\pi(S)}$,\lk{Do I need to spell out why
 With these definitions in place, I can prove a lemma that says that
 the names of locations in a configuration do not affect whether or not
 it can take a step. Lemma~\ref{lem:lvars-permutability} says that a
-configuration $\conf$ can step to $\conf$ exactly when $\pi(\conf)$
-can step to $\pi(\conf)$.
+configuration $\conf$ can step to $\conf'$ exactly when $\pi(\conf)$
+can step to $\pi(\conf')$.
 
 \LVarsLemPermutability
 \begin{proof}
@@ -102,6 +102,11 @@ can step to $\pi(\conf)$.
 \end{proof}
 
 \subsection{Internal determinism of the reduction semantics}
+
+\lk{I'm leaving this section in for the time being, but I don't
+  actually use this fact anywhere yet!  Could I have used it to
+  simplify the proof of Lemma~\ref{lem:lvars-strong-local-confluence}
+  or something?}
 
 My goal is to show that $\lambdaLVar$ is deterministic according to
 the definition of \emph{observable determinism} that I gave in
@@ -157,10 +162,6 @@ pointers to them---but we can account for this by saying that the
 reduction semantics is internally deterministic up to a permutation on
 locations.  Lemma~\ref{lem:lvars-internal-determinism} formalizes this
 claim.
-
-\lk{We don't actually use this fact anywhere!  Could I have used it to
-  simplify the proof of Lemma~\ref{lem:lvars-strong-local-confluence}
-  or something?}
 
 \LVarsLemInternalDeterminism
 \begin{proof}

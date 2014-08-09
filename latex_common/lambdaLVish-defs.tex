@@ -125,6 +125,71 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 \end{definition}
 }
 
+\newcommand{\DefPermutation}{
+\begin{definition}[permutation]\label{def:lvars-permutation}
+  A \emph{permutation} is a function $\pi : \Loc \rightarrow \Loc$
+  such that:
+  \begin{enumerate}
+  \item it is invertible, that is, there is an inverse function
+    $\piinv : \Loc \rightarrow \Loc$ with the property that $\pi(l) =
+    l'$ iff $\piinv(l') = l$; and
+    \item it is the identity on all but finitely many elements of
+      $Loc$.
+  \end{enumerate}
+\end{definition}
+}
+
+\newcommand{\DefPermutationExpression}{
+\begin{definition}[permutation (expressions)]\label{def:lvars-permutation-expression}
+  A \emph{permutation} of an expression $e$ is a function $\pi$ defined as
+  follows:
+  \begin{displaymath}
+    \begin{array}{ll}
+      \pi(x) &= x \\
+      \pi(\unit) &= \unit \\
+      \pi(d) &= d \\
+      \pi(p) &= p \\
+      \pi(l) &= \pi(l) \\
+      \pi(P) &= P \\
+      \pi(Q) &= Q \\
+      \pi(\lam{x}{e}) &= \lam{x}{\pi(e)} \\
+      \pi(\app{e_1}{e_2}) &= \app{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\getexp{e_1}{e_2}) &= \getexp{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\putiexp{e}) &= \putiexp{\pi(e)} \\
+      \pi(\NEW) &= \NEW \\
+      \pi(\freeze{e}) &= \freeze{\pi(e)} \\
+      \pi(\freezeafter{e_1}{e_2}{e_3}) &= \freezeafter{\pi(e_1)}{\pi(e_2)}{\pi(e_3)} \\
+      \pi(\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{e, \dots}{H}}) &= \freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{\pi(e), \dots}}{H} \\
+    \end{array}
+  \end{displaymath}
+\end{definition}
+}
+
+\newcommand{\DefPermutationStore}{
+\begin{definition}[permutation (stores)]\label{def:lvars-permutation-store}
+  A \emph{permutation} of a store $S$ is a function $\pi$ defined as
+  follows:
+  \begin{displaymath}
+    \begin{array}{ll}
+      \pi(\topS) &= \topS \\
+      \pi(\store{\storebindingRaw{l_1}{p_1}, \dots,
+        \storebindingRaw{l_n}{p_n}}) &=
+      \store{\storebindingRaw{\pi(l_1)}{p_1}, \dots,
+        \storebindingRaw{\pi(l_n)}{p_n}} \\
+    \end{array}
+  \end{displaymath}
+\end{definition}
+}
+
+\newcommand{\DefPermutationConfiguration}{
+\begin{definition}[permutation (configurations)]\label{def:lvars-permutation-configuration}
+  A \emph{permutation} of a configuration $\config{S}{e}$ is a function $\pi$
+  defined as follows: if $\config{S}{e} = \error$, then
+  $\pi(\config{S}{e}) = \error$; otherwise, $\pi(\config{S}{e}) =
+  \config{\pi(S)}{\pi(e)}$.
+\end{definition}
+}
+
 \newcommand{\DefEqualStatus}{
 \begin{definition}\label{def:equal-status}
   Two stores $S$ and $S'$ are \emph{equal in status}

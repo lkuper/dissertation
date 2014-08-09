@@ -1,28 +1,92 @@
 \section{Proof of quasi-determinism for $\lambdaLVish$}\label{s:quasi-proof-of-quasi-determinism}
 
-\TODO{All this needs to be revised after the semantics split, and
-  updated to be structured the same as Chapter 2.}
-
 In this section, I give a proof of quasi-determinism for
 $\lambdaLVish$ that formalizes the claim made earlier in this chapter:
 that, for a given program, although some executions may raise
 exceptions, all executions that produce a final result will produce
 the same final result.
 
-The quasi-determinism theorem says that if two executions starting
-from a configuration $\conf$ terminate in configurations $\conf'$ and
-$\conf''$, then either $\conf'$ and $\conf''$ are the same
-configuration, or one of them is $\error$.  As with the determinism
-result for $\lambdaLVar$, quasi-determinism follows from a series of
-supporting lemmas which I first prove.  Unlike with the determinism
-proof for $\lambdaLVar$, though, for $\lambdaLVish$ I do not need to
-prove a Clash lemma (\eg, Lemma~\ref{lem:lvars-clash}) or an Error
+The quasi-determinism theorem I show says that if two executions
+starting from a configuration $\conf$ terminate in configurations
+$\conf'$ and $\conf''$, then either $\conf'$ and $\conf''$ are the
+same configuration (up to a permutation on locations), or one of them
+is $\error$.  As with the determinism proof for $\lambdaLVar$ that I
+give in Section~\ref{s:lvars-proof}, quasi-determinism follows from a
+series of supporting lemmas.  The basic structure of the proof follows
+that of the $\lambdaLVar$ determinism proof closely.  Unlike for
+$\lambdaLVar$, though, for $\lambdaLVish$ I do not need to prove a
+Clash lemma (\eg, Lemma~\ref{lem:lvars-clash}) or an Error
 Preservation lemma (\eg, Lemma~\ref{lem:lvars-error-preservation}).
-These properties aren't necessary because quasi-determinism, with its
-``...or one of them is $\error$'', is a weaker property than
-determinism.
+Those lemmas are unnecessary here because quasi-determinism is a
+weaker property than determinism.
 
-\subsection{Monotonicity lemma}\label{subsection:quasi-monotonicity}
+\subsection{Permutations and permutability}\label{subsection:quasi-permutations}
+
+As with $\lambdaLVar$, the $\lambdaLVish$ is nondeterministic with
+respect to the names of locations it allocates.  We therefore prove
+quasi-determinism up to a permutation on locations.  We can reuse the
+definition of a permutation verbatim from
+Section~\ref{subsection:lvars-permutations}:
+
+\DefPermutation
+
+We can then lift $\pi$ to apply expressions, stores, and
+configurations.  Because expressions and stores are defined slightly
+differently in $\lambdaLVish$ than they are in $\lambdaLVar$, we must
+update our definitions of permutation of a store and permutation of an
+expression:
+
+\DefPermutationExpression
+
+\DefPermutationStore
+
+And the definition of permutation of a configuration is as it was before:
+
+\DefPermutationConfiguration
+
+We can now prove a Permutability lemma for $\lambdaLVish$, which says
+that a configuration $\conf$ can step to $\conf'$ exactly when
+$\pi(\conf)$ can step to $\pi(\conf')$.
+
+\LemPermutability
+\begin{proof}
+  Similar to the proof of Lemma~\ref{lem:lvars-permutability}
+  (Permutability for $\lambdaLVar$); see
+  Section~\ref{section:permutability-proof}.
+  \TODO{Update description here once the proof is done.}
+\end{proof}
+
+\lk{For now, not saying anything about internal determinism, because I
+  don't know if we need it.}
+
+\subsection{Locality}
+
+Just as with the determinism proof for $\lambdaLVar$, proving
+quasi-determinism for $\lambdaLVish$ will require us to handle
+expressions that can decompose into redex and context in multiple
+ways.  An expression $e$ such that $e = \evalctxt{E_1}{e_1} =
+\evalctxt{E_2}{e_2}$ can step in two different ways by the {\sc
+  E-Eval-Ctxt} rule: $\config{S}{\evalctxt{E_1}{e_1}} \ctxstepsto
+\config{S_1}{\evalctxt{E_1}{e'_1}}$, and
+$\config{S}{\evalctxt{E_2}{e_2}} \ctxstepsto
+\config{S_2}{\evalctxt{E_2}{e'_2}}$.
+
+The Locality lemma says that $\ctxstepsto$ acts ``locally'' in each of
+these steps: when $e_1$ steps to $e'_1$ within its context, the
+expression $e_2$ will be left alone, because it belongs to the
+context.  Likewise, when $e_2$ steps to $e'_2$ within its context, the
+expression $e_1$ will be left alone.  The statement of the Locality
+lemma is the same as that of Lemma~\ref{lem:lvars-locality} (Locality
+for $\lambdaLVar$), but the proof must account for the set of possible
+evaluation contexts in $\lambdaLVish$ being different (and larger).
+
+\LemLocality
+\begin{proof}
+  \TODO{Add short description here once the proof is done.} See
+  Section~\ref{section:locality-proof}.
+\end{proof}
+
+\subsection{Monotonicity}\label{subsection:quasi-monotonicity}
 
 The Monotonicity lemma says that, as evaluation proceeds according to
 the $\parstepsto$ relation, the store can only grow with respect to
@@ -30,20 +94,21 @@ the $\leqstore{}{}$ ordering.
 
 \LemMonotonicity
 \begin{proof}
-  By induction on the derivation of $\config{S}{e} \parstepsto
-  \config{S'}{e'}$, by cases on the last rule in the derivation; see
-  Section~\ref{section:monotonicity-proof}.
+  Straightforward by cases on the rule of the reduction semantics by
+  which $\config{S}{e}$ steps to $\config{S'}{e'}$. The interesting
+  cases are for the {\sc E-New} and {\sc E-Put} rules.  See
+  Section~\ref{section:monotonicity-proof}.  \TODO{Update description
+    here once the proof is done.  Freezing might be interesting, too!}
 \end{proof}
 
-\subsection{Independence lemma}\label{subsection:quasi-independence}
+\subsection{Independence}\label{subsection:quasi-independence}
 
-Like the Independence lemma for $\lambdaLVar$
-(Lemma~\ref{lem:lvars-independence}), Lemma~\ref{lem:independence}
+Like the lemma for $\lambdaLVar$ of the same name
+(Lemma~\ref{lem:lvars-independence}), the Independence lemma
 establishes a ``frame property'' for $\lambdaLVish$ that captures the
-idea that independent effects commute with each other.  Just as with
-the $\lambdaLVar$ version of the Independence lemma,
-Lemma~\ref{lem:independence} requires as a precondidion that the store
-$S''$ must be \emph{non-conflicting}
+idea that independent effects commute with each other.  Just as for
+$\lambdaLVar$, Lemma~\ref{lem:independence} requires as a precondidion
+that the store $S''$ must be \emph{non-conflicting}
 (Definition~\ref{def:lvars-non-conflicting}) with the original
 transition from $\config{S}{e}$ to $\config{S'}{e'}$, meaning that
 locations in $S''$ cannot share names with locations newly allocated
@@ -60,34 +125,33 @@ assumption rules out interference from freezing.
 
 \LemIndependence
 \begin{proof}
-   By induction on the derivation of $\config{S}{e} \parstepsto
-   \config{S'}{e'}$, by cases on the last rule in the derivation; see
-   Section~\ref{section:independence-proof}.
+  By cases on the rule of the reduction semantics by which
+  $\config{S}{e}$ steps to $\config{S'}{e'}$. The interesting cases
+  are for the {\sc E-New} and {\sc E-Put} rules.  Since
+  $\config{S'}{e'} \neq \error$, we do not need to consider the {\sc
+    E-Put-Err} rule.  See Section~\ref{section:independence-proof}.
 \end{proof}
 
-\subsection{Quasi-confluence lemmas}\label{subsection:quasi-quasi-confluence}
+\subsection{Quasi-Confluence}\label{subsection:quasi-quasi-confluence}
 
-\TODO{Add some explanatory text here.}
-
-\lk{In the POPL paper and TR, there was a lemma called ``Strong Local
-  Quasi-Diamond'', and another, almost identical one called ``Strong
-  Local Quasi-Confluence'' that followed almost directly from Strong
-  Local Quasi-Diamond.  Here I combine them into a single lemma and
-  call it Strong Local Quasi-Confluence.  I don't want to use the word
-  "diamond", since to a lot of people that connotes "exactly one step
-  on each side of the diamond", which isn't true for this language
-  (that is, sometimes it's zero steps).  The only reason we were using
-  the word ``diamond'' was because it was an artifact of the
-  determinism proof in the original FHPC paper, which in turn was an
-  artifact of the CnC paper---see
-  Section~\ref{subsection:lvars-confluence} for more commentary on
-  that.}
+Lemma~\ref{lem:strong-local-quasi-confluence} The Strong Local
+Quasi-Confluence lemma says that if a configuration $\conf$ can step
+to configurations $\conf_a$ and $\conf_b$, then one of two
+possibilities is true: either there exists a configuraton $\conf_c$
+that $\conf_a$ and $\conf_b$ can each reach in at most one step,
+modulo a permutation on locations, \emph{or} at least one of $\conf_a$
+or $\conf_b$ steps to $\error$.
+Lemmas~\ref{lem:strong-one-sided-quasi-confluence}
+and~\ref{lem:strong-quasi-confluence} then generalize that result to
+arbitrary numbers of steps.
 
 \LemStrongLocalQuasiConfluence
 \begin{proof}
-  By induction on the derivation of $\conf \parstepsto \conf_a$, by
-  cases on the last rule in the derivation; see
+  Similar to the proof of
+  Lemma~\ref{lem:lvars-strong-local-confluence} (Strong Local
+  Confluence for $\lambdaLVar$); see
   Section~\ref{section:strong-local-quasi-confluence-proof}.
+  \TODO{Update description here once the proof is done.}
 \end{proof}
 
 \LemStrongOneSidedQuasiConfluence
