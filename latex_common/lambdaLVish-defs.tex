@@ -159,7 +159,7 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
       \pi(\NEW) &= \NEW \\
       \pi(\freeze{e}) &= \freeze{\pi(e)} \\
       \pi(\freezeafter{e_1}{e_2}{e_3}) &= \freezeafter{\pi(e_1)}{\pi(e_2)}{\pi(e_3)} \\
-      \pi(\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{e, \dots}{H}}) &= \freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{\pi(e), \dots}}{H} \\
+      \pi(\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{e, \dots}}{H}) &= \freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{\pi(e), \dots}}{H} \\
     \end{array}
   \end{displaymath}
 \end{definition}
