@@ -399,11 +399,7 @@ computation that returns a result of type @a@.\footnote{To be precise,
 ensures that it is not possible to reuse an LVar from one @runPar@
 session to the next, just as the @ST@ monad in Haskell prevents an
 @STRef@ from escaping @runST@; likewise the types of individual LVars
-must be parameterized by @s@ as well.  For simplicity of presentation,
-we elided the @e@ and @s@ type parameters in
-Section~\ref{s:refresher}, instead following the simpler @Par a@
-format of the earlier \emph{monad-par} library~\cite{monad-par}, but
-we include them from this point onward.
+must be parameterized by @s@ as well.
 
 To enable future additions of effect ``switches'' \new{encoded in
   \il{e}}, we follow the precedent of recent work by Kiselyov \etal~on
