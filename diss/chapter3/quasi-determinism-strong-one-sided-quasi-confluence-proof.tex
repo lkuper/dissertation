@@ -1,38 +1,40 @@
 \begin{proof}
+  \TODO{Revise to mention permutations.}
+
   We proceed by induction on $m$.  In the base case of $m = 1$, the
   result is immediate from
   Lemma~\ref{lem:strong-local-quasi-confluence}, with $k = 1$.
 
-  For the induction step, suppose $\conf \parstepsto^m \conf''
-  \parstepsto \conf'''$ and suppose the lemma holds for $m$.
+  For the induction step, suppose $\conf \ctxstepsto^m \conf''
+  \ctxstepsto \conf'''$ and suppose the lemma holds for $m$.
 
   We show that it holds for $m + 1$, as follows.
 
   We are required to show that either:
   \begin{enumerate}
     \item there exist $\conf_c, i,
-      j$ such that $\conf' \parstepsto^{i} \conf_c$ and $\conf'''
-      \parstepsto^{j} \conf_c$ and $i \leq m + 1$ and $j \leq 1$, or
-    \item there exists $k \leq m + 1$ such that $\conf' \parstepsto^k
+      j$ such that $\conf' \ctxstepsto^{i} \conf_c$ and $\conf'''
+      \ctxstepsto^{j} \conf_c$ and $i \leq m + 1$ and $j \leq 1$, or
+    \item there exists $k \leq m + 1$ such that $\conf' \ctxstepsto^k
       \error$, or there exists $k \leq 1$ such that $\conf'''
-      \parstepsto^k \error$.
+      \ctxstepsto^k \error$.
   \end{enumerate}
 
   From the induction hypothesis, we have that either:
   \begin{enumerate}
     \item there exist $\conf_c', i',
-      j'$ such that $\conf' \parstepsto^{i'} \conf_c'$ and $\conf''
-      \parstepsto^{j'} \conf_c'$ and $i' \leq m$ and $j' \leq 1$, or
+      j'$ such that $\conf' \ctxstepsto^{i'} \conf_c'$ and $\conf''
+      \ctxstepsto^{j'} \conf_c'$ and $i' \leq m$ and $j' \leq 1$, or
     \item there exists $k' \leq m$ such that $\conf'
-      \parstepsto^{k'} \error$, or there exists $k' \leq 1$ such that
-      $\conf'' \parstepsto^{k'} \error$.
+      \ctxstepsto^{k'} \error$, or there exists $k' \leq 1$ such that
+      $\conf'' \ctxstepsto^{k'} \error$.
   \end{enumerate}
 
   We consider these two cases in turn:
   \begin{enumerate}
     \item There exist $\conf_c', i',
-      j'$ such that $\conf' \parstepsto^{i'} \conf_c'$ and $\conf''
-      \parstepsto^{j'} \conf_c'$ and $i' \leq m$ and $j' \leq 1$:
+      j'$ such that $\conf' \ctxstepsto^{i'} \conf_c'$ and $\conf''
+      \ctxstepsto^{j'} \conf_c'$ and $i' \leq m$ and $j' \leq 1$:
 
       \lk{This gets very hairy.  I could spell things out in more
         detail, but it's MUCH better explained with a drawing, which
@@ -47,29 +49,29 @@
         
       \item If $j' = 1$:
         
-        From $\conf'' \parstepsto \conf'''$ and $\conf''
-        \parstepsto^{j'} \conf_c'$ and
+        From $\conf'' \ctxstepsto \conf'''$ and $\conf''
+        \ctxstepsto^{j'} \conf_c'$ and
         Lemma~\ref{lem:strong-local-quasi-confluence}, one of the
         following two cases is true:
         \begin{enumerate}
         \item There exist $\conf_c''$ and $i''$ and $j''$ such that
-          $\conf'_c \parstepsto^{i''} \conf_c''$ and $\conf'''
-          \parstepsto^{j''} \conf_c''$ and $i'' \leq 1$ and $j''
-          \leq 1$.  So we also have $\conf' \parstepsto^{i'}
-          \conf_c' \parstepsto^{i''} \conf_c''$.  In summary, we
+          $\conf'_c \ctxstepsto^{i''} \conf_c''$ and $\conf'''
+          \ctxstepsto^{j''} \conf_c''$ and $i'' \leq 1$ and $j''
+          \leq 1$.  So we also have $\conf' \ctxstepsto^{i'}
+          \conf_c' \ctxstepsto^{i''} \conf_c''$.  In summary, we
           pick $\conf_c = \conf_c''$ and $i = i' + i''$ and $j =
           j''$, which is sufficient because $i = i' + i'' \leq m +
           1$ and $j = j'' \leq 1$.
-        \item $\conf''' \parstepsto \error$ or $\conf'_c \parstepsto
+        \item $\conf''' \ctxstepsto \error$ or $\conf'_c \ctxstepsto
           \error$.
 
-          If $\conf''' \parstepsto \error$, then choosing $k = 1$
+          If $\conf''' \ctxstepsto \error$, then choosing $k = 1$
           satisfies the proof.
 
-          Otherwise, $\conf'_c \parstepsto \error$, therefore $\conf'
-          \parstepsto^{i'} \conf'_c \parstepsto \error$.
+          Otherwise, $\conf'_c \ctxstepsto \error$, therefore $\conf'
+          \ctxstepsto^{i'} \conf'_c \ctxstepsto \error$.
 
-          Hence $\conf' \parstepsto^{i'+1} \error$.
+          Hence $\conf' \ctxstepsto^{i'+1} \error$.
 
           Since $i' \leq m$, we have that $i' + 1 \leq m + 1$, and
           so choosing $k = i' + 1$ satisfies the proof.
@@ -78,50 +80,50 @@
 
       \end{itemize}
 
-    \item There exists $k' \leq m$ such that $\conf' \parstepsto^{k'}
+    \item There exists $k' \leq m$ such that $\conf' \ctxstepsto^{k'}
       \error$, or there exists $k' \leq 1$ such that $\conf''
-      \parstepsto^{k'} \error$:
+      \ctxstepsto^{k'} \error$:
 
-      If there exists $k' \leq m$ such that $\conf' \parstepsto^{k'}
+      If there exists $k' \leq m$ such that $\conf' \ctxstepsto^{k'}
       \error$, then choosing $k = k'$ satisfies the proof.
 
       Otherwise, there exists $k' \leq 1$ such that $\conf''
-      \parstepsto^{k'} \error$.  We proceed by cases on $k'$:
+      \ctxstepsto^{k'} \error$.  We proceed by cases on $k'$:
 
       \begin{itemize}
 
       \item If $k' = 0$, then $\conf'' = \error$.
 
-        Hence this case is not possible, since $\conf'' \parstepsto
+        Hence this case is not possible, since $\conf'' \ctxstepsto
         \conf'''$ and $\error$ cannot step.
 
       \item If $k' = 1$:
 
-        From $\conf'' \parstepsto \conf'''$ and $\conf''
-        \parstepsto^{k'} \error$ and
+        From $\conf'' \ctxstepsto \conf'''$ and $\conf''
+        \ctxstepsto^{k'} \error$ and
         Lemma~\ref{lem:strong-local-quasi-confluence}, one of the
         following two cases is true:
 
         \begin{enumerate}
         \item There exist $\conf_c''$ and $i''$ and $j''$ such that
-          $\error \parstepsto^{i''} \conf_c''$ and $\conf'''
-          \parstepsto^{j''} \conf_c''$ and $i'' \leq 1$ and $j''
+          $\error \ctxstepsto^{i''} \conf_c''$ and $\conf'''
+          \ctxstepsto^{j''} \conf_c''$ and $i'' \leq 1$ and $j''
           \leq 1$.
 
           Since $\error$ cannot step, $i'' = 0$ and $\conf''_c =
           \error$.
 
-          Hence $\conf''' \parstepsto^{j''} \error$.
+          Hence $\conf''' \ctxstepsto^{j''} \error$.
 
           \lk{This is the one place that we need to allow $k$ to be
             $\leq$ 1 instead of exactly 1.}
 
           Since $j'' \leq 1$, choosing $k = j''$ satisfies the proof.
 
-        \item $\error \parstepsto \error$ or $\conf''' \parstepsto
+        \item $\error \ctxstepsto \error$ or $\conf''' \ctxstepsto
           \error$.
 
-          Since $\error$ cannot step, $\conf''' \parstepsto \error$.
+          Since $\error$ cannot step, $\conf''' \ctxstepsto \error$.
 
           Hence choosing $k = 1$ satisfies the proof.
 

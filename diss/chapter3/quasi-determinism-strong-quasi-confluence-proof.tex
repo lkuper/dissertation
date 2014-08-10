@@ -1,37 +1,39 @@
 \begin{proof}
+  \TODO{Revise to mention permutations.}
+
   We proceed by induction on $n$.  In the base case of $n = 1$, the
   result is immediate from Lemma~\ref{lem:strong-one-sided-quasi-confluence}.
 
-  For the induction step, suppose $\conf \parstepsto^n \conf'
-  \parstepsto \conf'''$ and suppose the lemma holds for $n$.
+  For the induction step, suppose $\conf \ctxstepsto^n \conf'
+  \ctxstepsto \conf'''$ and suppose the lemma holds for $n$.
 
   We show that it holds for $n + 1$, as follows.
 
   We are required to show that either:
   \begin{enumerate}
-  \item there exist $\conf_c, i, j$ such that $\conf''' \parstepsto^i
-    \conf_c$ and $\conf'' \parstepsto^j \conf_c$ and $i \leq m$ and $j
+  \item there exist $\conf_c, i, j$ such that $\conf''' \ctxstepsto^i
+    \conf_c$ and $\conf'' \ctxstepsto^j \conf_c$ and $i \leq m$ and $j
     \leq n + 1$, or
-  \item there exists $k \leq m$ such that $\conf''' \parstepsto^k
+  \item there exists $k \leq m$ such that $\conf''' \ctxstepsto^k
     \error$, or there exists $k \leq n + 1$ such that $\conf''
-    \parstepsto^k \error$.
+    \ctxstepsto^k \error$.
   \end{enumerate}
 
   From the induction hypothesis, we have that either:
   \begin{enumerate}
   \item there exist $\conf'_c, i', j'$ such that $\conf'
-    \parstepsto^{i'} \conf'_c$ and $\conf'' \parstepsto^{j'} \conf'_c$
+    \ctxstepsto^{i'} \conf'_c$ and $\conf'' \ctxstepsto^{j'} \conf'_c$
     and $i' \leq m$ and $j' \leq n$, or
-  \item there exists $k' \leq m$ such that $\conf' \parstepsto^{k'}
+  \item there exists $k' \leq m$ such that $\conf' \ctxstepsto^{k'}
     \error$, or there exists $k' \leq n$ such that $\conf''
-    \parstepsto^{k'} \error$.
+    \ctxstepsto^{k'} \error$.
   \end{enumerate}
 
   We consider these two cases in turn:
 
   \begin{enumerate}
   \item There exist $\conf'_c, i', j'$ such that $\conf'
-    \parstepsto^{i'} \conf'_c$ and $\conf'' \parstepsto^{j'} \conf'_c$
+    \ctxstepsto^{i'} \conf'_c$ and $\conf'' \ctxstepsto^{j'} \conf'_c$
     and $i' \leq m$ and $j' \leq n$:
 
     We proceed by cases on $i'$:
@@ -42,33 +44,33 @@
 
     \item If $i' \geq 1$:
 
-      From $\conf' \parstepsto \conf'''$ and $\conf' \parstepsto^{i'}
+      From $\conf' \ctxstepsto \conf'''$ and $\conf' \ctxstepsto^{i'}
       \conf_c'$ and Lemma~\ref{lem:strong-one-sided-quasi-confluence},
       one of the following two cases is true:
       \begin{enumerate}
         \item There exist $\conf_c''$ and $i''$ and $j''$ such that
-          $\conf''' \parstepsto^{i''} \conf_c''$ and $\conf_c'
-          \parstepsto^{j''} \conf_c''$ and $i'' \leq i'$ and $j'' \leq
-          1$.  So we also have $\conf'' \parstepsto^{j'} \conf_c'
-          \parstepsto^{j''} \conf_c''$.  In summary, we pick $\conf_c
+          $\conf''' \ctxstepsto^{i''} \conf_c''$ and $\conf_c'
+          \ctxstepsto^{j''} \conf_c''$ and $i'' \leq i'$ and $j'' \leq
+          1$.  So we also have $\conf'' \ctxstepsto^{j'} \conf_c'
+          \ctxstepsto^{j''} \conf_c''$.  In summary, we pick $\conf_c
           = \conf_c''$ and $i = i''$ and $j = j' + j''$, which is
           sufficient because $i = i'' \leq i' \leq m$ and $j = j' +
           j'' \leq n + 1$.
         \item There exists $k'' \leq i'$ such that $\conf'''
-          \parstepsto^{k''} \error$, or there exists $k'' \leq 1$ such
-          that $\conf'_c \parstepsto^{k''} \error$.
+          \ctxstepsto^{k''} \error$, or there exists $k'' \leq 1$ such
+          that $\conf'_c \ctxstepsto^{k''} \error$.
 
           If there exists $k'' \leq i'$ such that $\conf'''
-          \parstepsto^{k''} \error$, then choosing $k = k''$ satisfies
+          \ctxstepsto^{k''} \error$, then choosing $k = k''$ satisfies
           the proof, since $k'' \leq i' \leq m$.
 
           Otherwise, there exists $k'' \leq 1$ such
-          that $\conf'_c \parstepsto^{k''} \error$.
+          that $\conf'_c \ctxstepsto^{k''} \error$.
 
-          Therefore, $\conf'' \parstepsto^{j'} \conf_c'
-          \parstepsto^{k''} \error$.
+          Therefore, $\conf'' \ctxstepsto^{j'} \conf_c'
+          \ctxstepsto^{k''} \error$.
 
-          Hence $\conf'' \parstepsto^{j' + k''} \error$.
+          Hence $\conf'' \ctxstepsto^{j' + k''} \error$.
 
           Since $j' \leq n$ and $k'' \leq 1$, $j' + k'' \leq n + 1$.
 
@@ -77,49 +79,49 @@
       \end{enumerate}
     \end{itemize}
 
-  \item There exists $k' \leq m$ such that $\conf' \parstepsto^{k'}
+  \item There exists $k' \leq m$ such that $\conf' \ctxstepsto^{k'}
     \error$, or there exists $k' \leq n$ such that $\conf''
-    \parstepsto^{k'} \error$:
+    \ctxstepsto^{k'} \error$:
 
-    If there exists $k' \leq n$ such that $\conf'' \parstepsto^{k'}
+    If there exists $k' \leq n$ such that $\conf'' \ctxstepsto^{k'}
     \error$, then choosing $k = k'$ satisfies the proof.
 
     Otherwise, there exists $k' \leq m$ such that $\conf'
-    \parstepsto^{k'} \error$.  We proceed by cases on $k'$:
+    \ctxstepsto^{k'} \error$.  We proceed by cases on $k'$:
 
     \begin{itemize}
 
     \item If $k' = 0$, then $\conf' = \error$.
 
-      Hence this case is not possible, since $\conf' \parstepsto
+      Hence this case is not possible, since $\conf' \ctxstepsto
       \conf'''$ and $\error$ cannot step.
 
     \item If $k' \geq 1$:
 
-      From $\conf' \parstepsto \conf'''$ and $\conf' \parstepsto^{k'}
+      From $\conf' \ctxstepsto \conf'''$ and $\conf' \ctxstepsto^{k'}
       \error$ and Lemma~\ref{lem:strong-one-sided-quasi-confluence},
       one of the following two cases is true:
 
       \begin{enumerate}
         \item There exist $\conf''_c$ and $i''$ and $j''$ such that
-          $\conf''' \parstepsto^{i''} \conf''_c$ and $\error
-          \parstepsto^{j''} \conf''_c$ and $i'' \leq k'$ and $j'' \leq
+          $\conf''' \ctxstepsto^{i''} \conf''_c$ and $\error
+          \ctxstepsto^{j''} \conf''_c$ and $i'' \leq k'$ and $j'' \leq
           1$.
 
           Since $\error$ cannot step, $j'' = 0$ and $\conf''_c =
           \error$.
 
-          Hence $\conf''' \parstepsto^{i''} \error$.
+          Hence $\conf''' \ctxstepsto^{i''} \error$.
 
           Since $i'' \leq k' \leq m$, choosing $k = i''$ satisfies the
           proof.
 
         \item There exists $k'' \leq k'$ such that $\conf'''
-          \parstepsto^{k''} \error$, or there exists $k'' \leq 1$ such
-          that $\error \parstepsto^{k''} \error$.
+          \ctxstepsto^{k''} \error$, or there exists $k'' \leq 1$ such
+          that $\error \ctxstepsto^{k''} \error$.
 
           Since $\error$ cannot step, there exists $k'' \leq k'$ such
-          that $\conf''' \parstepsto^{k''} \error$.
+          that $\conf''' \ctxstepsto^{k''} \error$.
 
           Since $k'' \leq k' \leq m$, choosing $k = k''$ satisfies the
           proof.
