@@ -3,6 +3,7 @@
 \newcommand{\FigLambdaLVarGrammar}[1][t]{
 \begin{figure}[#1]
   Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$:
+{\doublespacing
     \[
     \begin{array}{rlcl}
       \mbox{configurations} & \conf & \bnfdef & \config{S}{e} \sep \error \\
@@ -37,6 +38,7 @@
            \putexp{e}{E}
     \end{array}
     \]
+}
   \caption{Syntax for $\lambdaLVar$.}
   \label{f:lvars-lambdaLVar-syntax}
 \end{figure}
@@ -49,6 +51,7 @@
   $\incomp{T} \defeq \qforall{d_1,d_2 \in T}{(d_1 \neq d_2 \implies \userlub{d_1}{d_2}
     = \top)}$\hfill \fbox{$\conf \parstepsto \conf'$}
   \bigskip
+{\doublespacing
   \begin{mathpar}
     \inferrule*[lab=E-Beta]
         {~}
@@ -72,6 +75,7 @@
         {S(l) = d_1 \\ \incomp{T} \\ d_2 \in T \\ d_2 \userleq d_1}
         {\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}}
   \end{mathpar}
+}
   \caption{Reduction semantics for $\lambdaLVar$.}
   \label{f:lvars-lambdaLVar-reduction-semantics}
 \end{figure*}

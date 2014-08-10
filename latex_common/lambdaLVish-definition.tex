@@ -3,6 +3,7 @@
 \newcommand{\FigLambdaLVishGrammar}[1][t]{
 \begin{figure}[#1]
   Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$:
+{\doublespacing
     \[
     \begin{array}{rlcl}
       \mbox{configurations} & \conf & \bnfdef & \config{S}{e} \sep \error \\
@@ -47,6 +48,7 @@
            \freezeafterfull{v}{v}{v}{\setof{e\dots~E~e\dots}}{H}
     \end{array}           
     \]
+}
   \caption{Syntax for $\lambdaLVish$.}
   \label{f:lambdaLVish-syntax}
 \end{figure}
@@ -60,7 +62,8 @@
   \bigskip
   $\incomp{P} \defeq \qforall{p_1,p_2 \in P}{(p_1 \neq p_2 \implies
     \lubp{p_1}{p_2} = \topp)}$\hfill \fbox{$\conf \parstepsto \conf'$}
-  \\
+  \bigskip
+{\doublespacing
   \begin{mathpar}
     \inferrule*[lab=E-Beta]
         {~}
@@ -119,6 +122,7 @@
           \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}
         }
   \end{mathpar}
+}
   \caption{Reduction semantics for $\lambdaLVish$.}
   \label{f:lambdaLVish-reduction-semantics}
 \end{figure*}
