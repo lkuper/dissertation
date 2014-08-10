@@ -1,9 +1,9 @@
 \section{The big picture}\label{s:lvish-big-picture}
 
-Our library adopts and builds on the basic approach of the @Par@
-monad~\cite{monad-par, marlow-book}, enabling us to employ our own
-notion of lightweight, library-level threads with a custom scheduler.
-It supports the programming model laid out in
+Our library adopts and builds on the basic approach of the @Par@ monad
+and the monad-par library~\cite{monad-par}, enabling us to employ our
+own notion of lightweight, library-level threads with a custom
+scheduler.  It supports the programming model laid out in
 Section~\ref{s:quasi-informal} in full, including explicit handler
 pools.  It differs from the formalism of Section~\ref{s:quasi-formal}
 in following Haskell's by-need evaluation strategy, which also means

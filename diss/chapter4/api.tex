@@ -10,9 +10,9 @@ examples.\footnote{The examples in this section, among others, are
 \subsection{Basic examples using IVars}
 
 As mentioned in the previous section, the LVish library extends the
-approach of Haskell's @Par@ monad library for deterministic
-parallelism, which allows communication between parallel tasks through
-IVars.  Recall that IVars can only be assigned to once.  Therefore the
+approach of Haskell's monad-par library for deterministic parallelism,
+which allows communication between parallel tasks through IVars.
+Recall that IVars can only be assigned to once.  Therefore the
 following program written using @Par@ will deterministically raise an
 error, because it tries to write to the IVar @num@ twice:
 
@@ -24,17 +24,18 @@ Here, @p@ is a computation of type @Par Int@, meaning that it runs in
 the @Par@ monad (via the call to @runPar@) and returns a value of
 @Int@ type.  @num@ is an IVar, created with a call to @new@ and then
 assigned to via two calls to @put@, each of which runs in a separately
-@fork@ed task.  The program raises a ``multiple put'' error at
-runtime, which is as it should be: differing writes to the same shared
-location could cause the subsequent call to @get@ to behave
-nondeterministically.  (Here, @get@ has IVar semantics, not LVar
-semantics: rather than performing a threshold read, it blocks until
-@num@ has been written, then unblocks and evaluates to the exact
-contents of @num@.)
+@fork@ed task.  The @runPar@ function is an implicit global barrier:
+all @fork@s have to complete before @runPar@ can return.
 
-However, in the original @Par@ library on which LVish is based, even
-multiple writes of the \emph{same} value to an IVar will raise a
-``multiple put'' error:
+The program raises a ``multiple put'' error at runtime, which is as it
+should be: differing writes to the same shared location could cause
+the subsequent call to @get@ to behave nondeterministically.  (Here,
+@get@ has IVar semantics, not LVar semantics: rather than performing a
+threshold read, it blocks until @num@ has been written, then unblocks
+and evaluates to the exact contents of @num@.)
+
+However, in monad-par, even multiple writes of the \emph{same} value
+to an IVar will raise a ``multiple put'' error:
 
 \singlespacing
 \lstinputlisting{chapter4/code/repeated-4-ivar.hs}
@@ -48,7 +49,7 @@ IVar single-write restriction.
 
 Let us consider how a program that writes the same value to an IVar
 twice would behave when written using the LVish library.  Of course,
-in LVish we are not limited to IVars, but we will consider IVars first
+in LVish we are not limited to IVars, but I will consider IVars first
 as an interesting special case of LVars, and then go on to consider
 some more sophisticated LVars later in this section.
 
@@ -60,15 +61,28 @@ an error:
 \lstinputlisting{chapter4/code/repeated-4-lvar.hs}
 \doublespacing
 
-There are several aspects of this example that deserve explanation.
-We are now importing the @Control.LVish@ library rather than
-@Control.Monad.Par@, and we specifically import @Data.LVar.IVar@, in
-order to specify which LVar we want to deal with (since we are no
-longer limited to IVars).
+Here, we import the @Control.LVish@ module rather than
+@Control.Monad.Par@ (that is, we are using LVish instead of
+monad-par), and we must specifically import @Data.LVar.IVar@ in order
+to specify which LVar data structure we want to work with (since we
+are no longer limited to IVars).  Just as in monad-par, the LVish
+@runPar@ function is a global barrier: both @fork@s must compete
+before @runPar@ can return.  Also, as before, we have @new@, @put@,
+and @get@ operations that respectively create, update, and read from
+@num@.  However, these operations now have LVar semantics: the @put@
+operation performs a least-upper-bound write, and the @get@ operation
+performs a threshold read, where the threshold set is implicitly the
+set of all @Int@s.  We do not need to explicitly write down the
+threshold set in the code; rather, it is the obligation of the
+@Data.LVar.IVar@ module to provide operations (@put@ and @get@) that
+have the semantic effect of least-upper-bound writes and threshold
+reads (as I touched on earlier in
+Section~\ref{subsection:lvars-the-model-versus-reality}).
 
-But there are other changes to make note of: the @Par@ type
-constructor has gained two new type parameters, @e@ and @s@, and @p@
-now has a \emph{type class constraint} of @(HasPut e, HasGet e)@.
+There are two other important differences between the monad-par
+program and the LVish program: the @Par@ type constructor has gained
+two new type parameters, @e@ and @s@, and @p@'s type annotation now
+has a \emph{type class constraint} of @(HasPut e, HasGet e)@.
 Furthermore, we are now using GHC's @DataKinds@ and @TypeFamilies@
 pragmas.  In the following section, I explain these changes.
 
@@ -87,16 +101,16 @@ operations, which I discuss in more detail in
 Section~\ref{subsection:lvish-discussion-leveraging-idempotency}.
 
 In order to capture these constraints and make them explicit in the
-types of LVar computations, we index @Par@ computations with a
+types of LVar computations, LVish indexes @Par@ computations with a
 \emph{phantom type} @e@ that indicates their \emph{effect level}.  The
 @Par@ type becomes, instead, @Par e@, where @e@ is a type-level
 encoding of booleans indicating which operations, such as writes,
 reads, or freeze operations, are allowed to occur inside it.
 
 Since we do not know in advance which effects this
-``switch-on-and-off'' capability will need to support, we follow the
-precedent of Kiselyov \etal~on extensible effects in
-Haskell~\cite{oleg-amr-haskell-2013}: we abstract away the specific
+``switch-on-and-off'' capability will need to support, LVish follows
+the precedent of Kiselyov \etal~on extensible effects in
+Haskell~\cite{oleg-amr-haskell-2013}: it abstracts away the specific
 structure of @e@ into \emph{type class constraints}, which allow a
 @Par@ computation to be annotated with the \emph{interface} that its
 @e@ type parameter is expected to satisfy.  This static effect
@@ -106,10 +120,10 @@ computation annotated with the effect level constraint @HasPut@ can
 perform @put@s.  In our example above, @p@ is annotated with both
 @HasPut@ and @HasGet@ and therefore can perform both @put@s and
 @get@s.  We will see several more examples of effect level constraints
-in @Par@ computations shortly.
+in LVish @Par@ computations shortly.
 
-Our @Par@ type constructor also has a second type parameter, @s@,
-making @Par e s a@ the complete type of a @Par@ computation that
+The LVish @Par@ type constructor also has a second type parameter,
+@s@, making @Par e s a@ the complete type of a @Par@ computation that
 returns a result of type @a@.  The @s@ parameter ensures that, when a
 computation in the Par monad is run using the provided @runPar@
 operation (or using a variant of @runPar@, which I will discuss
