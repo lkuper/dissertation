@@ -6,14 +6,14 @@ other deterministic paradigms, and (2) composing pipeline-parallel
 stages of computation (each of which may be internally parallelized).
 In this section, I describe a case study that fits this mold:
 \emph{parallelized control-flow analysis}.  I discuss the process of
-porting a sequential implementation of $k$-CFA to a parallel
-implementation using LVish.
+porting a sequential implementation of a $k$-CFA static program
+analysis to a parallel implementation using LVish.
 
 The \emph{$k$-CFA} analyses provide a hierarchy of increasingly
 precise methods to compute the flow of values to expressions in a
-higher-order language.  For this case study, we began with a simple,
+higher-order language.  For this case study, we began with a
 sequential implementation of $k$-CFA translated to Haskell from a
-version by Might \cite{MightkCFABlog}.\footnote{Haskell port by Max
+version by Might~\cite{MightkCFABlog}.\footnote{Haskell port by Max
   Bolingbroke:
   \url{https://github.com/batterseapower/haskell-kata/blob/master/0CFA.hs}.}
 The algorithm processes expressions written in a
@@ -28,9 +28,10 @@ $k$ in $k$-CFA).
 
 Taken together, the current redex, environment, store, and call
 history make up the abstract state of the program, and the goal is to
-explore a graph of these abstract states.  This graph-exploration
-phase is followed by a second, summarization phase that combines all
-the information discovered into one store.
+explore a graph of these abstract states in order to discover the flow
+of control of a program without actually running it.  This
+graph-exploration phase is followed by a second, summarization phase
+that combines all the information discovered into one store.
 
 \subsection{$k$-CFA phase 1: breadth-first exploration}
 
@@ -159,16 +160,7 @@ invocations are used to traverse a triply-nested structure, and yet
 the side effect in the innermost handler directly updates the final
 accumulator, @storeFin@.
 
-\begin{figure}
-  \includegraphics[width=3.1in]{chapter4/figures/DataFlowNet.pdf}
-  \caption{Simplified handler network for $k$-CFA.  Exploration and
-    summarization processes are driven by the same LVar.  The
-    triply-nested \il{forEach} calls in \il{summarize} become a chain
-    of three handlers.}
-  \label{fig:dataflow}
-\end{figure}
-
-\paragraph{Flipping the switch}
+\subsection{Flipping the switch: the advantage of sharing}
 
 The verbatim port uses LVars poorly: copying them repeatedly and
 discarding them without modification.  This effect overwhelms the
@@ -195,57 +187,52 @@ by \emph{not} creating a copy:
    let store' = store 
 \end{lstlisting}
 
-This one-line change speeds up execution by up to $25\times$ on a
-single thread, and the asynchronous, @ISet@-driven parallelism enables
-subsequent parallel speedup as well (up to $202\times$ total
-improvement over the purely functional version).
+This one-line change speeds up execution by up to $25\times$ \emph{on
+  one core}.  The lesson here is that, although pure functional
+parallel programs are guaranteed to be deterministic, the overhead of
+allocation and copying in an idiomatic pure functional program can
+overwhelm the advantages of parallelism.  In the LVish version, the
+ability to use shared mutable data structures---even though they are
+only mutable in the extremely restricted and determinism-preserving
+way that LVish allows---affords a significant speedup even when the
+code runs sequentially.  The effect is then multiplied as we add
+parallel resources: the asynchronous, @ISet@-driven parallelism
+enables parallel speedup for a total of up to $202\times$ total
+improvement over the purely functional version.
 
-Figure~\ref{fig:bench} shows performance data for the ``blur''
-benchmark drawn from a recent paper on
-$k$-CFA~\cite{earl-might-icfp-2012}.  (We use $k=2$ for the benchmarks
-in this section.)  In general, it proved difficult to generate example
-inputs to $k$-CFA that took long enough to be candidates for parallel
-speedup.  We were, however, able to ``scale up'' the blur benchmark by
-replicating the code $N$ times, feeding one into the continuation
-argument for the next.  Figure~\ref{fig:bench} also shows the results
-for one synthetic benchmark that managed to negate the benefits of our
-sharing approach, which is simply a long chain of $300$ ``not''
-functions (using a CPS conversion of the Church encoding for
-booleans).  It has a small state space of large states with many
-variables (600 states and 1211 variables).
+\subsection{Parallel speedup results}
 
-\subsection{The role of lock-free data structures}
+We implemented two versions of the $k$-CFA algorithm using data
+structures that the LVish library provides.  One uses the LVish
+library's reference implementation of a set, which uses a pure
+@Data.Set@ wrapped in a mutable container.  The other is a lock-free
+set based on concurrent skip lists~\cite{art}.\footnote{In fact, LVish
+  is the first project to incorporate \emph{any} lock-free data
+  structures in Haskell, which required solving some unique problems
+  pertaining to Haskell's laziness and the GHC compiler's assumptions
+  regarding referential transparency.\lk{Ryan, I don't want this
+    statement to go unsupported---is there anything I can point to
+    about this?  Even a blog post?}}
 
-As part of our library, we provide lock-free implementations of finite
-maps and sets based on concurrent skip lists~\cite{art}.\footnote{In
-  fact, this project is the first to incorporate \emph{any} lock-free
-  data structures in Haskell, which required solving some unique
-  problems pertaining to Haskell's laziness and the GHC compiler's
-  assumptions regarding referential transparency.\lk{Ryan, I don't
-    want this statement to go unsupported---is there anything I can
-    point to about this?  Even a blog post?}}  We also provide
-reference implementations that use a nondestructive @Data.Set@ inside
-a mutable container.
+We evaluated both the reference and the lock-free $k$-CFA
+implementations on two benchmarks. For the first, we used a version of
+the ``blur'' benchmark from a recent paper on $k$-CFA by Earl
+\etal~\cite{earl-might-icfp-2012}.  In general, it proved difficult to
+generate example inputs to $k$-CFA that took long enough to be
+candidates for parallel speedup; we were, however, able to ``scale
+up'' the blur benchmark by replicating the code $N$ times, feeding one
+into the continuation argument for the next.  For our second
+benchmark, we ran the $k$-CFA analysis on a program that was simply a
+long chain of $300$ ``not'' functions (using a CPS conversion of the
+Church encoding for booleans).  This latter benchmark, which we call
+``notChain'', has a small state space of large states with many
+variables (600 states and 1211 variables), and was specifically
+designed to negate the benefits of our sharing approach.
 
-Our scalable implementation is not yet carefully optimized, and at one
-and two cores, our lock-free $k$-CFA is $38\%$ to $43\%$ slower than
-the reference implementation on the ``blur'' benchmark.  But the
-effect of scalable data structures is quite visible on a 12-core
-machine.\footnote{Intel Xeon 5660; full machine details available at
-  \url{https://portal.futuregrid.org/hardware/delta}.}  Without them,
-``blur'' (replicated $8\times$) stops scaling and begins slowing down
-slightly after four cores.  Even at four cores, variance is high in
-the reference implementation (min/max $0.96$s / $1.71$s over 7 runs).
-With lock-free structures, by contrast, performance steadily improves
-to a speedup of $8.14\times$ on 12 cores ($0.64$s at $67\%$ GC
-productivity).  Part of the benefit of LVish is to allow purely
-functional programs to make use of lock-free structures, in much the
-same way that the @ST@ monad allows access to efficient in-place array
-computations.
-
+%trim=left bottom right top
 \begin{figure}  
 \begin{center}
-  \includegraphics[width=3.3in]{chapter4/figures/CFA_speedups.pdf}
+  \includegraphics[trim=0.5in 0.5in 0.5in 1in,clip,width=\textwidth]{chapter4/figures/CFA_speedups.pdf}
 \end{center}
   \caption{Parallel speedup for the ``blur'' and ``notChain''
     benchmarks.  Speedup is normalized to the sequential times for the
@@ -259,3 +246,37 @@ computations.
     stores due to a lack of fan-out in the state graph.  }
   \label{fig:bench}
 \end{figure}
+
+Figure~\ref{fig:bench} shows the parallel speedup results of our
+experiments on a twelve-core machine.\footnote{Intel Xeon 5660; full
+  machine details available at
+  \url{https://portal.futuregrid.org/hardware/delta}.}  (We used $k=2$
+for the benchmarks in this section.)  The blue line in
+Figure~\ref{fig:bench} shows what a linear parallel speedup would look
+like as cores are added, The yellow and green lines show the parallel
+speedup of the ``blur'' benchmark for the reference implementation and
+lock-free implementation of $k$-CFA, respectively, and the purple and
+red lines show parallel speedup of the ``notChain'' benchmark for the
+reference and lock-free implementations, respectively.
+
+The results for the reference implementations are normalized to the
+same baseline as the lock-free results for the single-core versions.
+At one and two cores, the lock-free $k$-CFA implementation (shown in
+green) is $38\%$ to $43\%$ slower than the reference implementation
+(in yellow) on the ``blur'' benchmark.  The reference implementation,
+however, stops scaling after four cores.  Even at four cores, variance
+is high in the reference implementation (min/max $0.96$s / $1.71$s
+over 7 runs).  Meanwhile, the lock-free implementation continues
+scaling and achieves an $8.14\times$ speedup on twelve cores ($0.64$s
+at $67\%$ GC productivity).
+
+Of course, it is unsurprising that using an efficient, concurrent,
+lock-free shared data structure results in a better parallel speedup;
+rather, the interesting thing about these results is that despite its
+determinism guarantee, \emph{there is nothing about the LVars model
+  that precludes using such data structures}.  Any data structure that
+has the semantics of an LVar is fine.  Part of the benefit of LVish is
+to allow parallel programs to make use of lock-free data structures
+while retaining the determinism guarantee of LVars, in much the same
+way that the @ST@ monad allows access to efficient in-place array
+computations.
