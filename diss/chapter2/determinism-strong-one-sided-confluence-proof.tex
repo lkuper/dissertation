@@ -1,39 +1,63 @@
 \begin{proof}
-  \TODO{This should mention permutations.}
-
   We proceed by induction on $m$.  In the base case of $m = 1$, the
   result is immediate from
   Lemma~\ref{lem:lvars-strong-local-confluence}.
 
-  For the induction step, suppose $\conf \parstepsto^m \conf''
-  \parstepsto \conf'''$ and suppose the lemma holds for $m$.
+  For the induction step, suppose $\conf \ctxstepsto^m \conf''
+  \ctxstepsto \conf'''$ and suppose the lemma holds for $m$.
 
   We show that it holds for $m + 1$, as follows.
 
-  We are required to show that there exist $\conf_c, i, j$ such that
-  $\conf' \parstepsto^{i} \conf_c$ and $\conf''' \parstepsto^{j}
-  \conf_c$ and $i \leq m + 1$ and $j \leq 1$.
+  We are required to show that there exist $\conf_c, i, j, \pi$ such
+  that $\conf' \ctxstepsto^{i} \conf_c$ and $\pi(\conf''')
+  \ctxstepsto^{j} \conf_c$ and $i \leq m + 1$ and $j \leq 1$.
 
   From the induction hypothesis, we have that there exist $\conf_c',
-  i', j'$ such that $\conf' \parstepsto^{i'} \conf_c'$ and $\conf''
-  \parstepsto^{j'} \conf_c'$ and $i' \leq m$ and $j' \leq 1$.
+  i', j', \pi'$ such that $\conf' \ctxstepsto^{i'} \conf_c'$ and
+  $\pi'(\conf'') \ctxstepsto^{j'} \conf_c'$ and $i' \leq m$ and $j'
+  \leq 1$.
 
   We proceed by cases on $j'$:
   \begin{itemize}
 
-  \item If $j' = 0$, then $\conf'' = \conf_c'$.  We can then
-    choose $\conf_c = \conf'''$ and $i = i' + 1$ and $j = 0$.
-    
-  \item If $j' = 1$: From $\conf'' \parstepsto \conf'''$ and $\conf''
-    \parstepsto^{j'} \conf_c'$ and
-    Lemma~\ref{lem:lvars-strong-local-confluence}, we have that there
-    exist $\conf_c''$ and $i''$ and $j''$ such that $\conf'_c
-    \parstepsto^{i''} \conf_c''$ and $\conf''' \parstepsto^{j''}
-    \conf_c''$ and $i'' \leq 1$ and $j'' \leq 1$.
+  \item If $j' = 0$, then $\pi'(\conf'') = \conf_c'$.
 
-    So we also have $\conf' \parstepsto^{i'} \conf_c'
-    \parstepsto^{i''} \conf_c''$.  In summary, we pick $\conf_c =
-    \conf_c''$ and $i = i' + i''$ and $j = j''$, which is sufficient
+    Since $\conf'' \ctxstepsto \conf'''$, we have that $\pi'(\conf'')
+    \ctxstepsto \pi'(\conf''')$ by
+    Lemma~\ref{lem:lvars-permutability} (Permutability).
+
+    We can then choose $\conf_c = \pi'(\conf''')$ and $i = i' + 1$ and
+    $j = 0$ and $\pi = \pi'$.  The key is that $\conf'
+    \ctxstepsto^{i'} \conf'_c = \pi'(\conf'') \ctxstepsto
+    \pi'(\conf''')$ for a total of $i' + 1$ steps.
+    
+  \item If $j' = 1$:
+
+    First, since $\pi'(\conf'') \ctxstepsto^{j'} \conf'_c$, then by
+    Lemma~\ref{lem:lvars-permutability} (Permutability) we have that
+    $\conf'' \ctxstepsto^{j'} \piprimeinv(\conf'_c)$.
+
+    Then, by $\conf'' \ctxstepsto^{j'} \piprimeinv(\conf'_c)$ and
+    $\conf'' \ctxstepsto \conf'''$ and
+    Lemma~\ref{lem:lvars-strong-local-confluence} (Strong Local
+    Confluence), we have that there exist $\conf_c''$ and $i''$ and
+    $j''$ and $\pi''$ such that $\piprimeinv(\conf'_c)
+    \ctxstepsto^{i''} \conf_c''$ and $\pi''(\conf''')
+    \ctxstepsto^{j''} \conf_c''$ and $i'' \leq 1$ and $j'' \leq 1$.
+
+    Since $\piprimeinv(\conf'_c) \ctxstepsto^{i''} \conf_c''$, by
+    Lemma~\ref{lem:lvars-permutability} (Permutability) we have that
+    $\conf'_c \ctxstepsto^{i''} \pi'(\conf_c'')$.
+
+    So we also have $\conf' \ctxstepsto^{i'} \conf_c'
+    \ctxstepsto^{i''} \pi'(\conf_c'')$.
+
+    Since $\pi''(\conf''') \ctxstepsto^{j''} \conf_c''$, by
+    Lemma~\ref{lem:lvars-permutability} (Permutability) we have that
+    $\pi'(\pi''(\conf''')) \ctxstepsto^{j''} \pi'(\conf_c'')$.
+
+    In summary, we pick $\conf_c = \pi'(\conf_c'')$ and $i = i' + i''$
+    and $j = j''$ and $\pi = \pi'' \circ \pi'$, which is sufficient
     because $i = i' + i'' \leq m + 1$ and $j = j'' \leq 1$.
   \end{itemize}
 
