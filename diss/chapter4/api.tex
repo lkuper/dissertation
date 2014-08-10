@@ -7,7 +7,7 @@ In this section I explain the LVish library API.
 \TODO{Add a bunch of examples and explanatory material from the
   lvar-examples repo.}
 
-\subsection{The \lstinline|s| and \lstinline|e| type parameters}
+\subsection{The \il{s} and \il{e} type parameters: session tracking and effect tracking}
 
 In order to support both determinism and quasi-determinism guarantees
 in the LVish library, we need to be able to guarantee that only
@@ -16,9 +16,9 @@ deterministic computation, only @put@ and @get@ should be allowed; in
 a quasi-deterministic computation, @freeze@ operations should be
 allowed as well.  Yet other combinations may be desirable: for
 instance, we may want a computation to perform \emph{only} writes, and
-not reads.  Furthermore, we might want to specifically allow or
-disallow \emph{non-idempotent} writes, as discussed in
-Section~\ref{s:lvars-generalizing}.
+not reads.  Furthermore, we want to be able to specifically allow or
+disallow \emph{non-idempotent} writes, which I discuss in more detail
+in Section~\ref{subsection:lvish-discussion-leveraging-idempotency}.
 
 In order to capture these constraints and make them explicit in the
 types of LVar computations, we index @Par@ computations with a

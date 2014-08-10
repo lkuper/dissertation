@@ -88,7 +88,7 @@ is a lattice, then $(D_p, \leqp, \botp, \topp)$ is as well:
 See Section~\ref{section:lattice-structure-proof}.
 \end{proof}
 
-\subsection{Update operations}
+\subsection{Update operations}\label{subsection:quasi-update-operations}
 
 $\lambdaLVish$ generalizes the @put@ operation of $\lambdaLVar$ to a
 family of operations $\PUTi$.  We do so in order to allow the
@@ -123,7 +123,9 @@ we could also have a set of update operations $\{ u_{(+1)}, u_{(+2)},
 \dots \}$, where $u_{(+1)}(d)$ increments $d$'s contents by one,
 $u_{(+2)}(d)$ increments by two, and so on.) Update operations are
 therefore general enough to express least-upper-bound writes as well
-as non-idempotent increments.
+as non-idempotent increments.  (When a write is specifically a
+least-upper-bound write, I will continue to use the notation @put@,
+without the subscript.)
 
 In $\lambdaLVish$, the @put@ operation took two arguments, a location
 $l$ and a lattice element $d$.  The $\PUTi$ operations take a location
@@ -244,7 +246,7 @@ contexts that the metavariable $E$ ranges over is different.
 \subsection{Semantics of \il{new}, $\PUTi$, and \il{get}}\label{subsection:quasi-semantics-of-new-put-and-get}
 
 Because of the addition of status bits to the semantics, the {\sc
-  E-New}, and {\sc E-Get} rules have changed slightly from their
+  E-New} and {\sc E-Get} rules have changed slightly from their
 counterparts in $\lambdaLVar$:
 
 \begin{itemize}
