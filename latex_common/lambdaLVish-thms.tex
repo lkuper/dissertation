@@ -87,14 +87,13 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
 
 \newcommand{\LemStrongLocalQuasiConfluence}{
 \begin{lem}[Strong Local Quasi-Confluence]\label{lem:strong-local-quasi-confluence}
- \TODO{Figure out if we need to mention permutations in the statement
-   of the proof.}  If $\conf \parstepsto \conf_a$ and $\conf
- \parstepsto \conf_b$, then either:
+ If $\conf \ctxstepsto \conf_a$ and $\conf \ctxstepsto \conf_b$, then
+ either:
   \begin{enumerate}
-  \item there exist $i$, $j$ ,and $\conf_c$ such that $\conf_a
-    \parstepsto^i \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i
-    \leq 1$ and $j \leq 1$, or
-  \item $\conf_a \parstepsto \textup{\error}$ or $\conf_b \parstepsto
+  \item there exist $\conf_c, i, j, \pi$ such that $\conf_a
+    \ctxstepsto^i \conf_c$ and $\pi(\conf_b) \ctxstepsto^j \conf_c$
+    and $i \leq 1$ and $j \leq 1$, or
+  \item $\conf_a \ctxstepsto \textup{\error}$ or $\conf_b \ctxstepsto
     \textup{\error}$.
   \end{enumerate}
 \end{lem}
@@ -102,55 +101,42 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
 
 \newcommand{\LemStrongOneSidedQuasiConfluence}{
 \begin{lem}[Strong One-Sided Quasi-Confluence]\label{lem:strong-one-sided-quasi-confluence}
-  \TODO{If the statement of
-    Lemma~\ref{lem:strong-local-quasi-confluence} changes to mention
-    permutations, then figure out how the statement of this one has to
-    change as well.}
-  If $\conf \parstepsto \conf'$ and $\conf \parstepsto^m \conf''$,
+  If $\conf \ctxstepsto \conf'$ and $\conf \ctxstepsto^m \conf''$,
   where $1 \leq m$, then either:
   \begin{enumerate}
-    \item there exist $\conf_c, i, j$ such that $\conf' \parstepsto^i
-      \conf_c$ and $\conf'' \parstepsto^j \conf_c$ and $i \leq m$ and
-      $j \leq 1$, or
-    \item there exists $k \leq m$ such that $\conf' \parstepsto^k
+    \item there exist $\conf_c, i, j, \pi$ such that $\conf'
+      \ctxstepsto^i \conf_c$ and $\pi(\conf'') \ctxstepsto^j \conf_c$
+      and $i \leq m$ and $j \leq 1$, or
+    \item there exists $k \leq m$ such that $\conf' \ctxstepsto^k
       \textup{\error}$, or there exists $k \leq 1$ such that $\conf''
-      \parstepsto^k \textup{\error}$.
+      \ctxstepsto^k \textup{\error}$.
   \end{enumerate}
 \end{lem}
 }
 
 \newcommand{\LemStrongQuasiConfluence}{
 \begin{lem}[Strong Quasi-Confluence]\label{lem:strong-quasi-confluence}
-  \TODO{If the statement of
-    Lemma~\ref{lem:strong-local-quasi-confluence} changes to mention
-    permutations, then figure out how the statement of this one has to
-    change as well.}
-  If $\conf \parstepsto^n \conf'$ and $\conf \parstepsto^m
-  \conf''$, where $1 \leq n$ and $1 \leq m$, then either:
+  If $\conf \ctxstepsto^n \conf'$ and $\conf \ctxstepsto^m \conf''$,
+  where $1 \leq n$ and $1 \leq m$, then either:
   \begin{enumerate}
-    \item there exist $\conf_c, i, j$ such that $\conf' \parstepsto^i
-      \conf_c$ and $\conf'' \parstepsto^j \conf_c$ and $i \leq m$ and
-      $j \leq n$, or
-  \item there exists $k \leq m$ such that $\conf' \parstepsto^k
+    \item there exist $\conf_c, i, j, \pi$ such that $\conf'
+      \ctxstepsto^i \conf_c$ and $\pi(\conf'') \ctxstepsto^j \conf_c$
+      and $i \leq m$ and $j \leq n$, or
+  \item there exists $k \leq m$ such that $\conf' \ctxstepsto^k
     \textup{\error}$, or there exists $k \leq n$ such that $\conf''
-    \parstepsto^k \textup{\error}$.
+    \ctxstepsto^k \textup{\error}$.
   \end{enumerate}
-  \TODO{Figure out if we need to mention permutations in the statement
-    of the proof.}
 \end{lem}
 }
 
 \newcommand{\LemQuasiConfluence}{
 \begin{lem}[Quasi-Confluence]\label{lem:quasi-confluence}
-  \TODO{If the statement of
-    Lemma~\ref{lem:strong-local-quasi-confluence} changes to mention
-    permutations, then figure out how the statement of this one has to
-    change as well.}
-  If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^*
-  \conf''$, then either: 
+  If $\conf \ctxstepsto^* \conf'$ and $\conf \ctxstepsto^* \conf''$,
+  then either:
   \begin{enumerate}
-  \item there exists $\conf_c$ such that $\conf' \parstepsto^*
-    \conf_c$ and $\conf'' \parstepsto^* \conf_c$, or
+  \item there exist $\conf_c$ and $\pi$ such that $\conf'
+    \ctxstepsto^* \conf_c$ and $\pi(\conf'') \ctxstepsto^* \conf_c$,
+    or
   \item $\conf' = \textup{\error}$ or $\conf'' = \textup{\error}$.
   \end{enumerate}
 \end{lem}
@@ -162,15 +148,10 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
 
 \newcommand{\ThmQuasiDeterminism}{
 \begin{thm}[Quasi-Determinism]\label{thm:quasi-determinism}
-  \TODO{If the statement of
-    Lemma~\ref{lem:strong-local-quasi-confluence} changes to mention
-    permutations, then figure out how the statement (and proof) of
-    this one has to change as well.}
-  If $\conf \parstepsto^* \conf'$ and $\conf \parstepsto^* \conf''$,
-  and neither $\conf'$ nor $\conf''$ can take a step,
-  then either:
+  If $\conf \ctxstepsto^* \conf'$ and $\conf \ctxstepsto^* \conf''$,
+  and neither $\conf'$ nor $\conf''$ can take a step, then either:
   \begin{enumerate}
-    \item $\conf' = \conf''$, or
+    \item there exists $\pi$ such that $\conf' = \pi(\conf'')$, or
     \item $\conf' = \textup{\error}$ or $\conf'' = \textup{\error}$.
   \end{enumerate}
 \end{thm}
@@ -178,11 +159,16 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
   By Lemma~\ref{lem:quasi-confluence}, one of the following two cases
   applies:
   \begin{enumerate}
-    \item There exists $\conf_c$ such that $\conf' \parstepsto^*
-      \conf_c$ and $\conf'' \parstepsto^* \conf_c$.  In this case,
-      since neither $\conf'$ nor $\conf''$ can step further, we must
-      have $\conf' = \conf_c$ and $\conf'' = \conf_c$, hence $\conf' =
-      \conf''$.
+    \item There exists $\conf_c$ and $\pi$ such that $\conf'
+      \ctxstepsto^* \conf_c$ and $\pi(\conf'') \ctxstepsto^* \conf_c$.
+      Since $\conf'$ cannot step, we must have $\conf' = \conf_c$.
+
+      By Lemma~\ref{lem:permutability} (Permutability), $\conf''$ can
+      step iff $\pi(\conf'')$ can step, so since $\conf''$ cannot
+      step, $\pi(\conf'')$ cannot step either.
+
+      Hence we must have $\pi(\conf'') = \conf_c$.  Since $\conf' =
+      \conf_c$ and $\pi(\conf'') = \conf_c$, $\conf' = \pi(\conf'')$.
     \item $\conf' = \error$ or $\conf'' = \error$, and so the result
       is immediate.
   \end{enumerate}
