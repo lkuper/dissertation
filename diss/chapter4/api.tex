@@ -1,24 +1,90 @@
-\section{The LVish library interface}\label{s:lvish-api}
+\section{The LVish library interface for application writers}\label{s:lvish-api}
 
-In this section I explain the LVish library API.
+In this section I illustrate the use of the LVish library from the
+point of view of the application writer, through a series of
+examples.\footnote{The examples in this section, among others, are
+  available at \url{https://github.com/lkuper/lvar-examples/}.  All of
+  the examples are tested against GHC 7.6.3, the most recent release
+  at the time of this writing.\TODO{I should test against 7.8!}}
 
-\TODO{More explanatory text here.}
+\subsection{Basic examples using IVars}
 
-\TODO{Add a bunch of examples and explanatory material from the
-  lvar-examples repo.}
+As mentioned in the previous section, the LVish library extends the
+approach of Haskell's @Par@ monad library for deterministic
+parallelism, which allows communication between parallel tasks through
+IVars.  Recall that IVars can only be assigned to once.  Therefore the
+following program written using @Par@ will deterministically raise an
+error, because it tries to write to the IVar @num@ twice:
 
-\subsection{The \il{s} and \il{e} type parameters: session tracking and effect tracking}
+\singlespacing
+\lstinputlisting{chapter4/code/ivar-example.hs}
+\doublespacing
+
+Here, @p@ is a computation of type @Par Int@, meaning that it runs in
+the @Par@ monad (via the call to @runPar@) and returns a value of
+@Int@ type.  @num@ is an IVar, created with a call to @new@ and then
+assigned to via two calls to @put@, each of which runs in a separately
+@fork@ed task.  The program raises a ``multiple put'' error at
+runtime, which is as it should be: differing writes to the same shared
+location could cause the subsequent call to @get@ to behave
+nondeterministically.  (Here, @get@ has IVar semantics, not LVar
+semantics: rather than performing a threshold read, it blocks until
+@num@ has been written, then unblocks and evaluates to the exact
+contents of @num@.)
+
+However, in the original @Par@ library on which LVish is based, even
+multiple writes of the \emph{same} value to an IVar will raise a
+``multiple put'' error:
+
+\singlespacing
+\lstinputlisting{chapter4/code/repeated-4-ivar.hs}
+\doublespacing
+
+This program differs from the previous one only in that the two @put@s
+are writing @4@ and @4@, rather than @3@ and @4@.  Even though the
+call to @get@ would produce a deterministic result regardless of which
+write happened first, the program still raises an error because of the
+IVar single-write restriction.
+
+Let us consider how a program that writes the same value to an IVar
+twice would behave when written using the LVish library.  Of course,
+in LVish we are not limited to IVars, but we will consider IVars first
+as an interesting special case of LVars, and then go on to consider
+some more sophisticated LVars later in this section.
+
+A version of the above program written using LVish will write @4@ to
+an IVar twice and then deterministically print @4@ instead of raising
+an error:
+
+\singlespacing
+\lstinputlisting{chapter4/code/repeated-4-lvar.hs}
+\doublespacing
+
+There are several aspects of this example that deserve explanation.
+We are now importing the @Control.LVish@ library rather than
+@Control.Monad.Par@, and we specifically import @Data.LVar.IVar@, in
+order to specify which LVar we want to deal with (since we are no
+longer limited to IVars).
+
+But there are other changes to make note of: the @Par@ type
+constructor has gained two new type parameters, @e@ and @s@, and @p@
+now has a \emph{type class constraint} of @(HasPut e, HasGet e)@.
+Furthermore, we are now using GHC's @DataKinds@ and @TypeFamilies@
+pragmas.  In the following section, I explain these changes.
+
+\subsection{The \il{e} and \il{s} type parameters: effect tracking and session tracking}
 
 In order to support both determinism and quasi-determinism guarantees
 in the LVish library, we need to be able to guarantee that only
 certain LVar effects can occur within a given @Par@ computation.  In a
-deterministic computation, only @put@ and @get@ should be allowed; in
-a quasi-deterministic computation, @freeze@ operations should be
-allowed as well.  Yet other combinations may be desirable: for
-instance, we may want a computation to perform \emph{only} writes, and
-not reads.  Furthermore, we want to be able to specifically allow or
-disallow \emph{non-idempotent} writes, which I discuss in more detail
-in Section~\ref{subsection:lvish-discussion-leveraging-idempotency}.
+deterministic computation, only update operations (such as @put@) and
+threshold reads should be allowed; in a quasi-deterministic
+computation, @freeze@ operations should be allowed as well.  Yet other
+combinations may be desirable: for instance, we may want a computation
+to perform \emph{only} writes, and not reads.  Furthermore, we want to
+be able to specifically allow or disallow \emph{non-idempotent} update
+operations, which I discuss in more detail in
+Section~\ref{subsection:lvish-discussion-leveraging-idempotency}.
 
 In order to capture these constraints and make them explicit in the
 types of LVar computations, we index @Par@ computations with a
@@ -37,8 +103,10 @@ structure of @e@ into \emph{type class constraints}, which allow a
 tracking mechanism allows us to define ``effect shorthands'' and use
 them as Haskell type class constraints.  For example, a @Par@
 computation annotated with the effect level constraint @HasPut@ can
-perform @put@s.  We will see several examples of effect level
-constraints in @Par@ computations shortly.
+perform @put@s.  In our example above, @p@ is annotated with both
+@HasPut@ and @HasGet@ and therefore can perform both @put@s and
+@get@s.  We will see several more examples of effect level constraints
+in @Par@ computations shortly.
 
 Our @Par@ type constructor also has a second type parameter, @s@,
 making @Par e s a@ the complete type of a @Par@ computation that
@@ -53,17 +121,17 @@ single ``session'', \ie, a single use of a @run@ function, in the same
 way that the @ST@ monad in Haskell prevents an @STRef@ from escaping
 @runST@.  Doing so allows the Lvish implementation to assume that
 LVars are created and used within the same session.\footnote{The
-  addition of the \lstinline|s| type parameter to \lstinline|Par| in
-  the LVish library does not have to do with LVars as such. In the
-  monad-par library there is no \lstinline|s| parameter on
-  \lstinline|Par| computations and therefore nothing to prevent a
-  programmer from reusing an IVar from one \lstinline|Par| computation
-  to another.  As Simon Marlow notes in \emph{Parallel and Concurrent
-    Programming in Haskell}~\cite{marlow-book}, ``This is a Very Bad
-  Idea; don't do it.''}
+  addition of the \il{s} type parameter to \il{Par} in the LVish
+  library has nothing to do with LVars in particular; it would also be
+  a useful addition to the original \il{Par} library to prevent
+  programmers from reusing an IVar from one \il{Par} computation to
+  another, which is, as Simon Marlow has noted, ``a Very Bad Idea;
+  don't do it''~\cite{marlow-book}.}
 
-\lk{I feel like this section would be easier to understand if I
-  included the types of \lstinline|runPar| and friends, but they're so
-  ugly with the effect switchboards that I don't want to put them in
-  here. :(}
+\subsection{Container types in LVish: sets and maps}
 
+\TODO{finish this}
+
+\subsection{A graph traversal example in LVish}
+
+\TODO{finish this}
