@@ -56,10 +56,12 @@ efficiently communicate such changes between @put@s and
 
 LVish uses the following generic representation for LVars:
 
+\singlespacing
 \begin{lstlisting}
   data LVar a d = 
        LVar { state :: a,  status :: IORef (Status d) }
 \end{lstlisting}
+\doublespacing
 
 where the type parameter @a@ is the (mutable) data structure
 representing the lattice, and @d@ is the type of deltas for the
@@ -68,9 +70,11 @@ lattice.\footnote{For non-atomistic lattices, we take \il{a} and
 reference that represents the status bit, which says whether or not an
 LVar is frozen:
 
+\singlespacing
 \begin{lstlisting}
   data Status d = Frozen | Active (B.Bag (Listener d))
 \end{lstlisting}
+\doublespacing
 
 The status bit of an LVar is tied together with a bag of waiting
 \emph{listeners}, which include blocked @get@s and handlers; once the
@@ -80,11 +84,13 @@ for.\footnote{In particular, with one atomic update of the flag we
   garbage-collected.}  The bag module (imported as @B@) supports
 atomic insertion and removal, and \emph{concurrent} traversal:
 
+\singlespacing
 \begin{lstlisting}
   put     :: Bag a -> a -> IO (Token a)
   remove  :: Token a -> IO ()
   foreach :: Bag a -> (a -> Token a -> IO ()) -> IO ()
 \end{lstlisting}
+\doublespacing
 
 Removal of elements is done via abstract \emph{tokens}, which are
 acquired by insertion or traversal.  Updates may occur concurrently
@@ -93,11 +99,13 @@ with a traversal, but are not guaranteed to be visible to it.
 A listener for an LVar is a pair of callbacks, one called when the
 LVar's lattice value changes, and the other when the LVar is frozen:
 
+\singlespacing
 \begin{lstlisting}
  data Listener d = Listener {
    onUpd :: d -> Token (Listener d) -> SchedQ -> IO (),
    onFrz ::      Token (Listener d) -> SchedQ -> IO () }
 \end{lstlisting}
+\doublespacing
 
 The listener is given access to its own token in the listener bag,
 which it can use to deregister from future events (useful for a @get@
@@ -108,11 +116,13 @@ Internally, the @Par@ monad represents computations in
 continuation-passing style, in terms of their interpretation in the
 @IO@ monad:
 
+\singlespacing
 \begin{lstlisting}
   type ClosedPar = SchedQ -> IO ()
   type ParCont a = a -> ClosedPar
   mkPar :: (ParCont a -> ClosedPar) -> Par lvl a
 \end{lstlisting}
+\doublespacing
 
 The @ClosedPar@ type represents ready-to-run @Par@ computations, which
 are given direct access to the CPU-local scheduler queue.  Rather than
@@ -149,6 +159,7 @@ maps with key/value pair deltas, we can use @getLV@ internally to
 build the following @getKey@ function that is exposed to application
 writers:
 
+\singlespacing
 \begin{lstlisting}
   -- Wait for the map to contain a key; return its value
   getKey key mapLV = getLV mapLV gThresh dThresh where
@@ -156,6 +167,7 @@ writers:
     dThresh (k,v) | k == key  = return (Just v)
                   | otherwise = return Nothing 
 \end{lstlisting}
+\doublespacing
 
 where @lookup@ imperatively looks up a key in the underlying map.
 
@@ -267,10 +279,12 @@ quasi-deterministic.
 Given the above infrastructure, the implementation of handlers is
 relatively straightforward.  We represent handler pools as follows:
 
+\singlespacing
 \begin{lstlisting}
   data HandlerPool = HandlerPool {
     numCallbacks :: Counter,  blocked :: B.Bag ClosedPar }
 \end{lstlisting}
+\doublespacing
 
 where @Counter@ is a simple counter supporting atomic increment,
 decrement, and checks for equality with zero.\footnote{One can use a
@@ -284,6 +298,7 @@ state.
 We create a pool using @newPool@ (of type @Par lvl HandlerPool@), and
 implement quiescence testing as follows:
 
+\singlespacing
 \begin{lstlisting}
   quiesce :: HandlerPool -> Par lvl ()
   quiesce hp@(HandlerPool cnt bag) = mkPar $ \k q -> do
@@ -292,6 +307,7 @@ implement quiescence testing as follows:
     if quiescent then do B.remove tok; k () q
                  else sched q
 \end{lstlisting}
+\doublespacing
 
 where the @poll@ function indicates whether @cnt@ is (transiently)
 zero.  Note that we are following the same listener-enrollment
@@ -300,6 +316,7 @@ listeners.
 
 Finally, @addHandler@ has the following interface:
 
+\singlespacing
 \begin{lstlisting}
 addHandler :: 
      Maybe HandlerPool              -- Pool to enroll in
@@ -308,6 +325,7 @@ addHandler ::
   -> (d -> IO (Maybe (Par lvl ()))) -- Delta callback
   -> Par lvl ()
 \end{lstlisting}
+\doublespacing
 
 As with @getLV@, handlers are specified using both global and delta
 threshold functions.  Rather than returning results, however, these
@@ -347,12 +365,14 @@ listeners when a single delta threshold is passed; handlers listen
 continuously to an LVar until it is frozen.  We might, for example,
 expose the following @foreach@ function for a finite map:
 
+\singlespacing
 \begin{lstlisting}
  foreach mh mapLV cb = addHandler mh lv gThresh dThresh
    where
      dThresh (k,v) = return (Just (cb k v))
      gThresh mp    = traverse mp (\(k,v) -> cb k v) mp
 \end{lstlisting}
+\doublespacing
 
 Here, idempotence really pays off: without it, we must synchronize to
 ensure that no callbacks are duplicated between the global threshold
@@ -369,9 +389,11 @@ constraint says that a @Par@ computation is allowed to perform such
 writes.  For example, an increment-only counter might have an
 @incrCounter@ operation with the following signature:
 
+\singlespacing
 \begin{lstlisting}
    incrCounter :: HasBump e => Counter s -> Par s e ()
 \end{lstlisting}
+\doublespacing
 
 \lk{This is from the PLDI paper, but shouldn't it also have \il{NoPut}
   as a constraint?  Also, do we assume\il{HasPut} and \il{NoBump} by

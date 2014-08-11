@@ -38,6 +38,7 @@ that combines all the information discovered into one store.
 The following function from the original, sequential version of the
 analysis expresses the heart of the search process:
 
+\singlespacing
 \begin{lstlisting}
 explore :: Set State -> [State] -> Set State
 explore seen [] = seen
@@ -46,6 +47,7 @@ explore seen (todo:todos)
   | otherwise   = explore (insert todo seen)
                           (toList (next todo) ++ todos)  
 \end{lstlisting}
+\doublespacing
 
 This code uses idiomatic Haskell data types like @Data.Set@ and lists.
 However, it presents a dilemma with respect to exposing parallelism.
@@ -60,9 +62,11 @@ the graph; rather, they check in with @seen@ after one step.
 We confirmed this prediction by adding a parallelism annotation from
 the aforementioned Strategies library:
 
+\singlespacing
 \begin{lstlisting}
 withStrategy (parBuffer 8 rseq) (next todo)
 \end{lstlisting}
+\doublespacing
 
 The GHC runtime reported that 100\% of created futures were
 ``duds''---that is, the main thread forced them before any helper
@@ -100,11 +104,13 @@ types, @Set@ and @Map@, to their LVar counterparts, @ISet@ and @IMap@.
 In particular, a store maps a program location (with context) onto a
 set of abstract values:
 
+\singlespacing
 \begin{lstlisting}
   import Data.LVar.Map as IM
   import Data.LVar.Set as IS
   type Store s = IMap Addr s (ISet s Value)
 \end{lstlisting}
+\doublespacing
 
 Next, we replaced allocations of containers, and @map@/@fold@
 operations over them, with the analogous operations on their LVar
@@ -120,6 +126,8 @@ are modified through effects.
 In some places the style of the ported code is functional, while in
 others it is imperative.  For example, the @summarize@ function uses
 nested @forEach@ invocations to accumulate data into a store map:
+
+\singlespacing
 \begin{lstlisting}
   summarize :: ISet s (State s) -> Par d s (Store s)
   summarize states = do
@@ -130,6 +138,7 @@ nested @forEach@ invocations to accumulate data into a store map:
           IM.modify storeFin key (putInSet elmt)
     return storeFin    
 \end{lstlisting}
+\doublespacing
 
 While this code can be read in terms of traditional parallel nested
 loops, it in fact creates a network of handlers that convey
@@ -173,9 +182,11 @@ The most clearly unnecessary operation in the verbatim port is in the
 ported, it creates a fresh store to extend with new bindings as we
 take each step through the state space graph:
 
+\singlespacing
 \begin{lstlisting}
    store' <- IM.copy store 
 \end{lstlisting}
+\doublespacing
 
 Of course, a ``copy'' for an LVar is persistent: it is just a handler
 that forces the copy to receive everything the original does.  But in
@@ -183,9 +194,11 @@ LVish, it is also trivial to \emph{entangle} the parallel branches of
 the search, allowing them to share information about bindings, simply
 by \emph{not} creating a copy:
 
+\singlespacing
 \begin{lstlisting}
    let store' = store 
 \end{lstlisting}
+\doublespacing
 
 This one-line change speeds up execution by up to $25\times$ \emph{on
   one core}.  The lesson here is that, although pure functional

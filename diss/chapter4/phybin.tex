@@ -101,9 +101,11 @@ in Figure~\ref{f:hashrf-alg} are potentially parallel.
 
 In the original PhyBin source code, the type of the splits map is:
 
+\singlespacing
 \begin{lstlisting}
   type BipTable = Map DenseLabelSet (Set TreeID)
 \end{lstlisting}
+\doublespacing
 
 Here, a @DenseLabelSet@ encodes an individual bipartition as a bit
 vector.  PhyBin uses purely functional data structures for the @Map@

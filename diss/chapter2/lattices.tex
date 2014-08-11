@@ -71,9 +71,13 @@ states that a a single-assignment variable (that is, an IVar) can take
 on.  A natural-number-valued IVar, for instance, has a state space
 corresponding to the lattice in
 Figure~\ref{f:lvars-example-lattices}(b), that is,
+
+\singlespacing
 \begin{displaymath}
   D = (\lbrace \top, \bot \rbrace \cup \mathbb{N}, \userleq, \bot, \top), 
 \end{displaymath}
+\doublespacing
+
 where the partial order $\userleq$ is defined by setting $\bot
 \userleq d \userleq \top$ and $d \userleq d$ for all $d \in D$.  This
 is a lattice of height three and infinite width, where the naturals

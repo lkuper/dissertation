@@ -21,10 +21,14 @@ To illustrate how event handlers work, consider again the lattice of
 Figure~\ref{f:lvars-example-lattices}(a) from Chapter~\ref{ch:lvars}.
 Suppose that $\mathit{lv}$ is an LVar whose states correspond to this
 lattice.  The expression
+
+\singlespacing
 \begin{equation}
   \ADDHANDLER~\mathit{lv}~\{ 1, 3, 5, \dots \}~(\lam{x}{\putexp{\mathit{lv}}{x+1}})
 \label{e:lvish-example-1}
 \end{equation}
+\doublespacing
+
 registers a handler for $\mathit{lv}$ that executes the callback
 function $\lam{x}{\putexp{\mathit{lv}}{x+1}}$ for each odd number that
 $\mathit{lv}$ is at or above.  When \ref{e:lvish-example-1} is
@@ -52,6 +56,8 @@ handler being registered.  To see why this semantics is necessary,
 consider the following, more subtle example (written in a hypothetical
 language with a semantics similar to that of $\lambdaLVar$, but with
 the addition of @addHandler@):
+
+\singlespacing
 \begin{equation}
 \begin{split}
 & \LETPAR ~\_ = \putexp{\mathit{lv}}{0} \\
@@ -62,6 +68,8 @@ the addition of @addHandler@):
 \end{split}
 \label{e:lvish-example-2}
 \end{equation}
+\doublespacing
+
 Can~\ref{e:lvish-example-2} ever block?  If a callback only executed
 for events that arrived after its handler was registered, or only for
 the largest event in its event set that had occurred, then the
@@ -176,7 +184,9 @@ is returned.
 We can use the new features in LVish to write a parallel graph
 traversal in the following simple fashion:
 
+\singlespacing
 \lstinputlisting{chapter3/code/bfs_new.hs}
+\doublespacing
 
 This code, written using the LVish Haskell library (which I will go on
 to describe in Chapter~\ref{ch:lvish}), discovers (in parallel) the
