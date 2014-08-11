@@ -45,7 +45,7 @@
 }
 
 \newcommand{\FigLambdaLVarReductionSemantics}[1][t]{
-\begin{figure*}[#1]
+\begin{figure}[#1]
   Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$:
   \bigskip
   $\incomp{T} \defeq \qforall{d_1,d_2 \in T}{(d_1 \neq d_2 \implies \userlub{d_1}{d_2}
@@ -78,11 +78,11 @@
 }
   \caption{Reduction semantics for $\lambdaLVar$.}
   \label{f:lvars-lambdaLVar-reduction-semantics}
-\end{figure*}
+\end{figure}
 }
 
 \newcommand{\FigLambdaLVarContextSemantics}[1][t]{
-\begin{figure*}[#1]
+\begin{figure}[#1]
   \hfill \fbox{$\conf \ctxstepsto \conf'$}
   \begin{mathpar}
     \inferrule*[lab=E-Eval-Ctxt]
@@ -91,5 +91,5 @@
   \end{mathpar}
   \caption{Context semantics for $\lambdaLVar$.}
   \label{f:lvars-lambdaLVar-context-semantics}
-\end{figure*}
+\end{figure}
 }

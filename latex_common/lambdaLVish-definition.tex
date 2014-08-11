@@ -56,7 +56,7 @@
 
 \newcommand{\FigLambdaLVishReductionSemantics}[1][t]{
 \begin{landscape}
-\begin{figure*}[#1]
+\begin{figure}[#1]
   Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$, \\
   and a set of $U$ of update operations $u_i: D \rightarrow D$: \\
   \bigskip
@@ -125,12 +125,12 @@
 }
   \caption{Reduction semantics for $\lambdaLVish$.}
   \label{f:lambdaLVish-reduction-semantics}
-\end{figure*}
+\end{figure}
 \end{landscape}
 }
 
 \newcommand{\FigLambdaLVishContextSemantics}[1][t]{
-\begin{figure*}[#1]
+\begin{figure}[#1]
   \hfill \fbox{$\conf \ctxstepsto \conf'$}
   \begin{mathpar}
     \inferrule*[lab=E-Eval-Ctxt]
@@ -139,5 +139,5 @@
   \end{mathpar}
   \caption{Context semantics for $\lambdaLVish$.}
   \label{f:lambdaLVish-context-semantics}
-\end{figure*}
+\end{figure}
 }
