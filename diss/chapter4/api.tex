@@ -235,6 +235,24 @@ into it.
 Finally, let us look at some examples that use event handlers as well
 as freezing.
 
+Here, @neighbors@ is an operation that takes a @Graph@ and a @Vertex@
+and returns a list of the vertex's neighbor vertices.
+
+Furthermore, @newHandler@ is an operation that takes an LVar and a
+callback @f@ and creates and returns a handler pool to which a single
+event handler has been added: one that associates the provided LVar
+with the provided callback.  We can implement @newHandler@ using
+LVish's built-in @newPool@ and @addHandler@ operations, as follows:
+
+\singlespacing
+\begin{lstlisting}
+newHandler lv f = do
+  hp <- newPool
+  addHandler (Just hp) lv f
+  return hp
+\end{lstlisting}
+\doublespacing
+
 \singlespacing
 \lstinputlisting{chapter4/code/graph-traversal-explicit-freeze.hs}
 \doublespacing

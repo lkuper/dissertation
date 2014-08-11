@@ -1,11 +1,5 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE TypeFamilies #-}
-
 import Control.LVish
 import Data.LVar.PureMap
-
-data Item = Book | Shoes
-  deriving (Show, Ord, Eq)
 
 p :: (HasPut e, HasGet e) => Par e s Int
 p = do

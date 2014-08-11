@@ -1,6 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE TypeFamilies #-}
-
 import Control.LVish
 import Control.LVish.DeepFrz
 import Data.LVar.PureMap
