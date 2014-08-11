@@ -47,15 +47,13 @@ call to @get@ would produce a deterministic result regardless of which
 write happened first, the program still raises an error because of the
 IVar single-write restriction.
 
-Let us consider how a program that writes the same value to an IVar
-twice would behave when written using the LVish library.  Of course,
-in LVish we are not limited to IVars, but I will consider IVars first
-as an interesting special case of LVars, and then go on to consider
-some more sophisticated LVars later in this section.
-
-A version of the above program written using LVish will write @4@ to
-an IVar twice and then deterministically print @4@ instead of raising
-an error:
+Now let's consider a version of this program written using the LVish
+library.  (Of course, in LVish we are not limited to IVars, but we
+will consider IVars first as an interesting special case of LVars, and
+then go on to consider some more sophisticated LVars later in this
+section.)  A version of the above program written using LVish will
+write @4@ to an IVar twice and then deterministically print @4@
+instead of raising an error:
 
 \singlespacing
 \lstinputlisting{chapter4/code/repeated-4-lvar.hs}
@@ -65,7 +63,7 @@ Here, we import the @Control.LVish@ module rather than
 @Control.Monad.Par@ (that is, we are using LVish instead of
 monad-par), and we must specifically import @Data.LVar.IVar@ in order
 to specify which LVar data structure we want to work with (since we
-are no longer limited to IVars).  Just as in monad-par, the LVish
+are no longer limited to IVars).  Just as with monad-par, the LVish
 @runPar@ function is a global barrier: both @fork@s must compete
 before @runPar@ can return.  Also, as before, we have @new@, @put@,
 and @get@ operations that respectively create, update, and read from
@@ -109,6 +107,9 @@ types of LVar computations, LVish indexes @Par@ computations with a
 encoding of booleans indicating which operations, such as writes,
 reads, or freeze operations, are allowed to occur inside it.
 
+\lk{Any terminology preference for ``effect level'' vs. ``effect
+  signature''?}
+
 Since we do not know in advance which effects this
 ``switch-on-and-off'' capability will need to support, LVish follows
 the precedent of Kiselyov \etal~on extensible effects in
@@ -118,17 +119,19 @@ structure of @e@ into \emph{type class constraints}, which allow a
 @e@ type parameter is expected to satisfy.  This static effect
 tracking mechanism allows us to define ``effect shorthands'' and use
 them as Haskell type class constraints.  For example, a @Par@
-computation annotated with the effect level constraint @HasPut@ can
-perform @put@s.  In our example above, @p@ is annotated with both
-@HasPut@ and @HasGet@ and therefore can perform both @put@s and
-@get@s.  We will see several more examples of effect level constraints
-in LVish @Par@ computations shortly.  The effect tracking
-infrastructure is also the reason why we need to use the @DataKinds@
-and @TypeFamilies@ language extensions in our LVish programs.  For
-brevity, I will elide the @LANGUAGE@ pragmas in the rest of the
-example LVish programs in this section.  \TODO{I need to figure out
-  and actually explain \emph{why} the effect tracking requires
-  \il{DataKinds} and \il{TypeFamilies}.}
+computation where @e@ is annotated with the effect level constraint
+@HasPut@ can perform @put@s.  In our example above, @e@ is annotated
+with both @HasPut@ and @HasGet@ and therefore the @Par@ computation in
+question can perform both @put@s and @get@s.  We will see several more
+examples of effect level constraints in LVish @Par@ computations
+shortly.
+
+The effect tracking infrastructure is also the reason why we need to
+use the @DataKinds@ and @TypeFamilies@ language extensions in our
+LVish programs.  For brevity, I will elide the @LANGUAGE@ pragmas in
+the rest of the example LVish programs in this section.  \TODO{I need
+  to figure out and actually explain \emph{why} the effect tracking
+  requires \il{DataKinds} and \il{TypeFamilies}.}
 
 The LVish @Par@ type constructor also has a second type parameter,
 @s@, making @Par e s a@ the complete type of a @Par@ computation that
@@ -158,107 +161,213 @@ LVars are created and used within the same session.\footnote{The
 
 \subsection{Container LVars: a shopping cart example}
 
-Next, let us consider an example program in which we concurrently add
-items to a shopping cart.  Here, the cart is represented using the
-@PureMap@ LVar type (provided by the @Data.LVar.PureMap@ module),
-which is a key-value map where the keys are items in the cart and the
-values are the quantities of each item.\footnote{The ``pure'' in
-  \il{PureMap} distinguishes it from LVish's other map data structure,
-  \il{SLMap}, which is a lock-free data structure based on concurrent
-  skip lists.  \il{PureMap}, on the other hand, is a reference
-  implementation of a map, which uses a pure \il{Data.Map} wrapped in
-  a mutable container.  Both data structures present the same API, but
-  \il{SLMap} is designed to scale as parallel resources are added.  I
-  discuss the role of lock-free data structures in LVish in more
-  detail in Section~\ref{subsection:lvish-parallel-speedup-results}.
-  In any case, either \il{PureMap} or \il{SLMap} would have worked for
-  this example.}
+For our next few examples, let us consider concurrently adding items
+to a shopping cart.  Suppose we have an @Item@ data type for items
+that can be added to the cart.  For the sake of this example, suppose
+that only two items are on offer:
+
+\singlespacing
+\begin{lstlisting}
+data Item = Book | Shoes
+  deriving (Show, Ord, Eq)
+\end{lstlisting}
+\doublespacing
+
+The cart itself can be represented using the @IMap@ LVar type
+(provided by the @Data.LVar.PureMap@ module), which is a key-value map
+where the keys are @Item@s and the values are the quantities of each
+item.\footnote{The ``Pure'' in \il{Data.LVar.PureMap} distinguishes it
+  from LVish's other map data structure, which is also called
+  \il{IMap}, but is provided by the \il{Data.LVar.SLMap} module and is
+  a lock-free data structure based on concurrent skip lists.  The
+  \il{IMap} provided by \il{Data.LVar.PureMap}, on the other hand, is
+  a reference implementation of a map, which uses a pure \il{Data.Map}
+  wrapped in a mutable container.  Both \il{IMap}s present the same
+  API, but the lock-free version is designed to scale as parallel
+  resources are added.  I discuss the role of lock-free data
+  structures in LVish in more detail in
+  Section~\ref{subsection:lvish-parallel-speedup-results}; in any
+  case, either implementation of \il{IMap} would have worked for this
+  example.}
+
+\lk{It's probably a little late to be complaining about this, but I
+  really don't like the names `\il{IMap} and \il{ISet}.  They're by
+  analogy with \il{IVar}, but the ``i'' originally stood for
+  ``immutable'', and they're \emph{not} immutable!  Any way we can
+  change them?  Maybe to \il{LMap}, \il{LSet}, etc.?}
 
 \singlespacing
 \lstinputlisting{chapter4/code/map-lvar-getkey-lib.hs}
 \doublespacing
 
-Here, the @newEmptyMap@ operation creates a new @PureMap@,
-and the @insert@ operation allows us to add new key-value pairs to the
-cart.  In this case, we are adding the @Book@ item with a quantity of
-@2@, and the @Shoes@ item with a quantity of @1@.
+Here, the @newEmptyMap@ operation creates a new @IMap@, and the
+@insert@ operation allows us to add new key-value pairs to the cart.
+In this case, we are concurrently adding the @Book@ item with a
+quantity of @2@, and the @Shoes@ item with a quantity of @1@.
 
 The @getKey@ operation allows us to threshold on a key, in this case
-@Book@, and get back the value associated with that key.  The
-\emph{implicit} threshold set of a call to @getKey@ is the set of all
-values that might be associated with a key; in this case, the set of
-all @Int@s.  This is a valid threshold set because in this example,
-map entries are \emph{immutable}: we cannot, for instance, insert a
-key of @Book@ with a quantity of @2@ and then later change the @2@ to
-@3@.  In a more realistic shopping cart, the values in the cart could
-themselves be LVars representing incrementable counters, as in the
-previous section.  \TODO{I'd like there to be some kind of footnote
-  here about the problem that LVars-that-contain-LVars presents for
-  determinism.  I don't actually understand the problem, though.}
-However, a shopping cart from which we can \emph{delete} items is not
-possible because it would go against the principle of monotonic
-growth.\footnote{Having said that, one way to encode a container that
-  allows both insertion and removal of elements is to represent it
-  internally with \emph{two} containers, one for the inserted elements
-  and one for the removed elements, where both containers grow
-  monotonically.  \emph{Conflict-free replicated data types}
-  (CRDTs)~\cite{crdts} use variations on this approach to encode
-  counters that support decrements as well as increments, sets that
-  support removals as well as additions, and other data structures
-  that support seemingly non-monotonic operations.  I discuss the
-  relationship of LVars to CRDTs in more detail in
-  Chapter~\ref{ch:distributed}.}
+@Book@, and get back the value associated with that key once it has
+been written.  The (implicit) threshold set of a call to @getKey@ is
+the set of all values that might be associated with a key; in this
+case, the set of all @Int@s.  This is a legal threshold set because in
+this example, map entries are \emph{immutable}: we cannot, for
+instance, insert a key of @Book@ with a quantity of @2@ and then later
+change the @2@ to @3@.  In a more realistic shopping cart, the values
+in the cart could themselves be LVars representing incrementable
+counters, as in the previous section.  \TODO{I'd like there to be some
+  kind of footnote here about the problem that
+  LVars-that-contain-LVars presents for determinism.  I don't actually
+  understand the problem, though.}  However, a shopping cart from
+which we can \emph{delete} items is not possible because it would go
+against the principle of monotonic growth.\footnote{On the other hand,
+  one way to encode a container that allows both insertion and removal
+  of elements is to represent it internally with \emph{two}
+  containers, one for the inserted elements and one for the removed
+  elements, where both containers grow monotonically.
+  \emph{Conflict-free replicated data types} (CRDTs)~\cite{crdts} use
+  variations on this approach to encode counters that support
+  decrements as well as increments, sets that support removals as well
+  as additions, and other data structures that support seemingly
+  non-monotonic operations.  I discuss the relationship of LVars to
+  CRDTs in more detail in Chapter~\ref{ch:distributed}.}
+
+In this program, the call to @getKey@ will be able to unblock as soon
+as the first @insert@ operation has completed, and the program will
+deterministically print @2@ regardless of whether the second @insert@
+has completed at the time that @getKey@ unblocks.
 
 \subsection{A quasi-deterministic shopping cart example}
 
-So far, the examples that we have seen are fully deterministic; they
-do not use @freeze@.  Next, let us consider a program where we freeze
-and read the contents of a shopping cart concurrently with inserting
-into it.
-
-\TODO{finish this}
+So far, the examples in this section have been fully deterministic;
+they do not use @freeze@.  Next, let us consider a program that
+freezes and reads the exact contents of a shopping cart, concurrently
+with inserting into it.
 
 \singlespacing
 \lstinputlisting{chapter4/code/map-lvar-quasi.hs}
 \doublespacing
 
-\subsection{Regaining determinism with \il{runParThenFreeze}}
+Here, we are @insert@ing items into our cart and then calling @getKey@
+on the @Book@ key, as before.  But, instead of returning the result of
+the call to @getKey@, this time @p@ returns the result of a call to
+@freezeMap@.  Note that the return type of @p@ is a @Par@ computation
+containing not an @Int@, but rather an entire map from @Item@s to
+@Int@s.
 
-\TODO{finish this}
+In fact, this map is not the @IMap@ that @Data.LVar.PureMap@ provides,
+but rather the standard @Map@ from the @Data.Map@ module (imported as
+@M@).  This is possible because @Data.LVar.PureMap@ is implemented
+using @Data.Map@, and so freezing its @IMap@ simply returns the
+underlying @Data.Map@.
+
+Because @p@ performs a freezing operation, the effect level of its
+return type must reflect the fact that it is allowed to perform
+freezes.  Therefore, in addition to @HasPut@, we now have the
+additional type class constraint of @HasFreeze@ on @e@.  Furthermore,
+because @p@ is allowed to perform a freeze, we cannot run it with
+@runPar@, as in our previous examples, but must instead use a special
+variant, @runParQuasiDet@, whose type signature allows @Par@
+computations that allow freezing to be passed to it.
+
+The quasi-determinism in this program arises from the fact that the
+call to @freezeMap@ may run before both @fork@ed computations have
+completed.  In this example, one or both calls to @insert@ may run
+after the call to @freezeMap@.  If this happens, the program will
+raise a write-after-freeze exception.  The other possibility is that
+both items are already in the cart at the time it is frozen, in which
+case the program will run without error and print both items.  There
+are therefore two possible outcomes: a cart with both items, or a
+write-after-freeze error.  The advantage of quasi-determinism is that
+it is not possible to get multiple \emph{non-error} outcomes, such as,
+for instance, an empty cart or a cart in which only the @Book@ has
+been written.
+
+\subsection{Regaining full determinism with \il{runParThenFreeze}}\label{subsection:lvish-regaining-full-determinism-with-runparthenfreeze}
+
+The advantage of freezing is that it allows us to observe the exact,
+complete contents of an LVar; the disadvantage is that it introduces
+quasi-determinism due to the possibility of a write racing with a
+freeze, as in the example above.  But, if we could ensure that a
+@freeze@ operation happened \emph{last}, we would be able to freeze
+LVars with no risk to determinism.  In fact, the LVish library offers
+a straightforward solution to this problem: instead of writing
+@freeze@ operations ourselves (and perhaps accidentally writing an
+undersynchronized program that freezes an LVar too early), we can ask
+LVish to freeze an LVar for us itself while ``on the way out'' of a
+@Par@ computation.  The mechanism that allows this is a special
+@runParThenFreeze@ function.  A version of the above program written
+using @runParThenFreeze@ is as follows:
 
 \singlespacing
 \lstinputlisting{chapter4/code/map-lvar-freezeafter.hs}
 \doublespacing
 
+An interesting thing to note about this @Par@ computation is that it
+\emph{only} performs writes (as evidenced by its effect level, which
+is only constrained by @HasPut@).  Also, unlike the previous version,
+where the @freeze@ took place inside the @Par@ computation, this
+computation returns an @IMap@ rather than a @Map@.
+
+Because there is no synchronization operation after the two @fork@
+calls, @p@ may well return @cart@ before both (or either) of the items
+have been added to it.  However, since @runParThenFreeze@ is an
+implicit global barrier (just as @runPar@ and @runParQuasiDet@ are),
+both calls to @insert@ \emph{must} complete before @runParThenFreeze@
+can return---which means that the result of the program is
+deterministic.
+
 \subsection{Event-driven programming: a deterministic parallel graph traversal}
 
-Finally, let us look at some examples that use event handlers as well
-as freezing.
-
-Here, @neighbors@ is an operation that takes a @Graph@ and a @Vertex@
-and returns a list of the vertex's neighbor vertices.
-
-Furthermore, @newHandler@ is an operation that takes an LVar and a
-callback @f@ and creates and returns a handler pool to which a single
-event handler has been added: one that associates the provided LVar
-with the provided callback.  We can implement @newHandler@ using
-LVish's built-in @newPool@ and @addHandler@ operations, as follows:
-
-\singlespacing
-\begin{lstlisting}
-newHandler lv f = do
-  hp <- newPool
-  addHandler (Just hp) lv f
-  return hp
-\end{lstlisting}
-\doublespacing
+Finally, we'll look at an example that uses event handlers as well as
+freezing.  The function @traverse@ takes a graph @g@ and a vertex
+@startNode@ and finds the set of all vertices reachable from
+@startNode@, in parallel.
 
 \singlespacing
 \lstinputlisting{chapter4/code/graph-traversal-explicit-freeze.hs}
 \doublespacing
 
+@traverse@ works by first creatiing a new LVar of set type, called
+@seen@.  Its next step is to attach an event handler to @seen@, using
+the @newHandler@ function.  @newHandler@ takes two arguments: an LVar
+and the callback that we want to run every time an event occurs on
+that LVar (in this case, every time a new node is added to the
+set).\footnote{\il{newHandler} is not provided by LVish, but we can
+  easily implement it using LVish's built-in \il{newPool} and
+  \il{addHandler} operations.\lk{Actually, is there any good reason
+    why LVish \emph{doesn't} provide something like \il{newHandler}?}}
+We respond to such events by looking up the neighbors of the newly
+arrived node (with a call to the @neighbors@ operation, which takes a
+graph and a vertex and returns a list of the vertex's neighbor
+vertices), then mapping the @insert@ function over that list of
+neighbors.
+
+Finally, @traverse@ adds the starting node to the @seen@ set by
+calling \il{insert startNode seen}---and the event handler does the
+rest of the work.  We know that we are done handling events when the
+call to @quiesce h@ returns; it will block until all events have been
+handled.  Finally, we freeze and return the LVar, which by this point
+is a set of all reachable nodes.
+
+The good news is that this particular graph traversal is
+deterministic.  The bad news is that, in general, freezing introduces
+quasi-determinism, since we could have accidentally forgotten to call
+@quiesce@ before the freeze---which is why @traverse@ must be run with
+@runParQuasiDet@, rather than @runPar@.  Although the program is
+deterministic, the \emph{language-level} guarantee is merely of
+quasi-determinism, not determinism.
+
+However, just as with the final shopping cart example above, we can
+use @runParThenFreeze@ to ensure that freezing happens last.  Here is
+a version of @traverse@ that is guaranteed to be deterministic at the
+language level:
+
 \singlespacing
 \lstinputlisting{chapter4/code/graph-traversal-implicit-freeze.hs}
 \doublespacing
 
-\TODO{finish this}
+Here, since freezing is performed by @runParThenFreeze@ rather by an
+explicit call to @freeze@, is is no longer necessary to explicitly
+call @quiesce@, either!  The reason for this is that the implicit
+barrier of @runParThenFreeze@ will ensure that all outstanding events
+that can be handled will be handled before it can return.

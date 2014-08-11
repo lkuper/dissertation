@@ -3,12 +3,11 @@ import Control.LVish.DeepFrz
 import Data.LVar.PureMap
 import qualified Data.Map as M
 
-p :: (HasPut e, HasGet e, HasFreeze e) => Par e s (M.Map Item Int)
+p :: (HasPut e, HasFreeze e) => Par e s (M.Map Item Int)
 p = do
   cart <- newEmptyMap
-  fork (insert Book 1 cart)
+  fork (insert Book 2 cart)
   fork (insert Shoes 1 cart)
-  getKey Book cart -- Note the under-synchronization.
   freezeMap cart
 
 main = do

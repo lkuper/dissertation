@@ -357,7 +357,7 @@ one---that is, we need to perform all updates either prior to $\FAW$,
 or by the callback function within it (as will be the case for
 fixpoint computations).  In practice, freezing is usually the very
 last step of an algorithm, permitting its result to be extracted. As
-we will see in Chapter~\ref{ch:lvish}, our implementation provides a
-special @runParThenFreeze@ function that does so, and thereby
-guarantees full determinism.\TODO{Point to a more specific part of
-  Chapter~\ref{ch:lvish}.}
+we will see in
+Section~\ref{subsection:lvish-regaining-full-determinism-with-runparthenfreeze},
+our LVish library provides a special @runParThenFreeze@ function that
+does so, and thereby guarantees full determinism.
