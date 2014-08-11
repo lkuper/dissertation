@@ -83,8 +83,10 @@ There are two other important differences between the monad-par
 program and the LVish program: the @Par@ type constructor has gained
 two new type parameters, @e@ and @s@, and @p@'s type annotation now
 has a \emph{type class constraint} of @(HasPut e, HasGet e)@.
-Furthermore, we are now using GHC's @DataKinds@ and @TypeFamilies@
-pragmas.  In the following section, I explain these changes.
+Furthermore, we have added two @LANGUAGE@ pragmas, instructing the
+compiler that we are now using the @DataKinds@ and @TypeFamilies@
+language extensions.  In the following section, I explain these
+changes.
 
 \subsection{The \il{e} and \il{s} type parameters: effect tracking and session tracking}
 
@@ -120,7 +122,13 @@ computation annotated with the effect level constraint @HasPut@ can
 perform @put@s.  In our example above, @p@ is annotated with both
 @HasPut@ and @HasGet@ and therefore can perform both @put@s and
 @get@s.  We will see several more examples of effect level constraints
-in LVish @Par@ computations shortly.
+in LVish @Par@ computations shortly.  The effect tracking
+infrastructure is also the reason why we need to use the @DataKinds@
+and @TypeFamilies@ language extensions in our LVish programs.  For
+brevity, I will elide the @LANGUAGE@ pragmas in the rest of the
+example LVish programs in this section.  \TODO{I need to figure out
+  and actually explain \emph{why} the effect tracking requires
+  \il{DataKinds} and \il{TypeFamilies}.}
 
 The LVish @Par@ type constructor also has a second type parameter,
 @s@, making @Par e s a@ the complete type of a @Par@ computation that
@@ -142,10 +150,97 @@ LVars are created and used within the same session.\footnote{The
   another, which is, as Simon Marlow has noted, ``a Very Bad Idea;
   don't do it''~\cite{marlow-book}.}
 
-\subsection{Container types in LVish: sets and maps}
+\subsection{Non-idempotent writes: an increment-only counter}
+
+\TODO{I want to put an example here, but the last time I tried
+  actually using \il{Data.LVar.Counter} in LVish, it didn't work. :(
+  Need to figure this out!}
+
+\subsection{Container LVars: a shopping cart example}
+
+Next, let us consider an example program in which we concurrently add
+items to a shopping cart.  Here, the cart is represented using the
+@PureMap@ LVar type (provided by the @Data.LVar.PureMap@ module),
+which is a key-value map where the keys are items in the cart and the
+values are the quantities of each item.\footnote{The ``pure'' in
+  \il{PureMap} distinguishes it from LVish's other map data structure,
+  \il{SLMap}, which is a lock-free data structure based on concurrent
+  skip lists.  \il{PureMap}, on the other hand, is a reference
+  implementation of a map, which uses a pure \il{Data.Map} wrapped in
+  a mutable container.  Both data structures present the same API, but
+  \il{SLMap} is designed to scale as parallel resources are added.  I
+  discuss the role of lock-free data structures in LVish in more
+  detail in Section~\ref{subsection:lvish-parallel-speedup-results}.
+  In any case, either \il{PureMap} or \il{SLMap} would have worked for
+  this example.}
+
+\singlespacing
+\lstinputlisting{chapter4/code/map-lvar-getkey-lib.hs}
+\doublespacing
+
+Here, the @newEmptyMap@ operation creates a new @PureMap@,
+and the @insert@ operation allows us to add new key-value pairs to the
+cart.  In this case, we are adding the @Book@ item with a quantity of
+@2@, and the @Shoes@ item with a quantity of @1@.
+
+The @getKey@ operation allows us to threshold on a key, in this case
+@Book@, and get back the value associated with that key.  The
+\emph{implicit} threshold set of a call to @getKey@ is the set of all
+values that might be associated with a key; in this case, the set of
+all @Int@s.  This is a valid threshold set because in this example,
+map entries are \emph{immutable}: we cannot, for instance, insert a
+key of @Book@ with a quantity of @2@ and then later change the @2@ to
+@3@.  In a more realistic shopping cart, the values in the cart could
+themselves be LVars representing incrementable counters, as in the
+previous section.  \TODO{I'd like there to be some kind of footnote
+  here about the problem that LVars-that-contain-LVars presents for
+  determinism.  I don't actually understand the problem, though.}
+However, a shopping cart from which we can \emph{delete} items is not
+possible because it would go against the principle of monotonic
+growth.\footnote{Having said that, one way to encode a container that
+  allows both insertion and removal of elements is to represent it
+  internally with \emph{two} containers, one for the inserted elements
+  and one for the removed elements, where both containers grow
+  monotonically.  \emph{Conflict-free replicated data types}
+  (CRDTs)~\cite{crdts} use variations on this approach to encode
+  counters that support decrements as well as increments, sets that
+  support removals as well as additions, and other data structures
+  that support seemingly non-monotonic operations.  I discuss the
+  relationship of LVars to CRDTs in more detail in
+  Chapter~\ref{ch:distributed}.}
+
+\subsection{A quasi-deterministic shopping cart example}
+
+So far, the examples that we have seen are fully deterministic; they
+do not use @freeze@.  Next, let us consider a program where we freeze
+and read the contents of a shopping cart concurrently with inserting
+into it.
 
 \TODO{finish this}
 
-\subsection{A graph traversal example in LVish}
+\singlespacing
+\lstinputlisting{chapter4/code/map-lvar-quasi.hs}
+\doublespacing
+
+\subsection{Regaining determinism with \il{runParThenFreeze}}
+
+\TODO{finish this}
+
+\singlespacing
+\lstinputlisting{chapter4/code/map-lvar-freezeafter.hs}
+\doublespacing
+
+\subsection{Event-driven programming: a deterministic parallel graph traversal}
+
+Finally, let us look at some examples that use event handlers as well
+as freezing.
+
+\singlespacing
+\lstinputlisting{chapter4/code/graph-traversal-explicit-freeze.hs}
+\doublespacing
+
+\singlespacing
+\lstinputlisting{chapter4/code/graph-traversal-implicit-freeze.hs}
+\doublespacing
 
 \TODO{finish this}

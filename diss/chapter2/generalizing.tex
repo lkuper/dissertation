@@ -26,6 +26,9 @@ deterministic, it is not the desired semantics for every application.
 Instead, we might want each write to \emph{increment} the contents of
 the LVar by one, resulting in $3$.
 
+\lk{``Although it is tempting to think that LVar writes are always
+  idempotent, there is a \il{Counter} example.''}
+
 To support this alternative semantics in the LVars model, we
 generalize the model as follows.  For an LVar with lattice $(D,
 \userleq, \bot, \top)$, we can define a set of \emph{update}

@@ -200,21 +200,26 @@ parallel resources: the asynchronous, @ISet@-driven parallelism
 enables parallel speedup for a total of up to $202\times$ total
 improvement over the purely functional version.
 
-\subsection{Parallel speedup results}
+\subsection{Parallel speedup results}\label{subsection:lvish-parallel-speedup-results}
 
-We implemented two versions of the $k$-CFA algorithm using data
-structures that the LVish library provides.  One uses the LVish
+We implemented two versions of the $k$-CFA algorithm using set data
+structures that the LVish library provides.  The first of these,
+@PureSet@, exported by the @Data.LVar.PureSet@ module) uses the LVish
 library's reference implementation of a set, which uses a pure
-@Data.Set@ wrapped in a mutable container.  The other is a lock-free
-set based on concurrent skip lists~\cite{art}.\footnote{In fact, LVish
-  is the first project to incorporate \emph{any} lock-free data
-  structures in Haskell, which required solving some unique problems
-  pertaining to Haskell's laziness and the GHC compiler's assumptions
-  regarding referential transparency.\lk{Ryan, I don't want this
-    statement to go unsupported---is there anything I can point to
-    about this?  Even a blog post?}}
+@Data.Set@ wrapped in a mutable container.  The other, @SLSet@,
+exported by @Data.LVar.SLSet@, is a lock-free set based on concurrent
+skip lists~\cite{art}.\footnote{LVish also provides analogous
+  reference and lock-free implementations of maps (\il{PureMap} and
+  \il{SLMap}).  In fact, LVish is the first project to incorporate
+  \emph{any} lock-free data structures in Haskell, which required
+  solving some unique problems pertaining to Haskell's laziness and
+  the GHC compiler's assumptions regarding referential
+  transparency.\lk{Question for Ryan: ``first project to incorporate
+    any lock-free data structures in Haskell'' seems like a strong
+    statement that I don't want to let go unsupported---is there
+    anything I can point to about this?  Even just a blog post?}}
 
-We evaluated both the reference and the lock-free $k$-CFA
+We evaluated both the @PureSet@-based and @SLSet@-based $k$-CFA
 implementations on two benchmarks. For the first, we used a version of
 the ``blur'' benchmark from a recent paper on $k$-CFA by Earl
 \etal~\cite{earl-might-icfp-2012}.  In general, it proved difficult to
@@ -251,24 +256,25 @@ Figure~\ref{fig:bench} shows the parallel speedup results of our
 experiments on a twelve-core machine.\footnote{Intel Xeon 5660; full
   machine details available at
   \url{https://portal.futuregrid.org/hardware/delta}.}  (We used $k=2$
-for the benchmarks in this section.)  The blue line in
-Figure~\ref{fig:bench} shows what a linear parallel speedup would look
-like as cores are added, The yellow and green lines show the parallel
-speedup of the ``blur'' benchmark for the reference implementation and
-lock-free implementation of $k$-CFA, respectively, and the purple and
-red lines show parallel speedup of the ``notChain'' benchmark for the
-reference and lock-free implementations, respectively.
+for the benchmarks in this section.)  The lines labeled ``blur'' and
+``blur/lockfree'' show the parallel speedup of the ``blur'' benchmark
+for the @PureSet@-based implementation and @SLSet@-based
+implementation of $k$-CFA, respectively, and the lines labeled
+``notChain'' and ``notChain/lockfree'' show parallel speedup of the
+``notChain'' benchmark for the @PureSet@-based and @SLSet@-based
+implementations, respectively.
 
-The results for the reference implementations are normalized to the
-same baseline as the lock-free results for the single-core versions.
-At one and two cores, the lock-free $k$-CFA implementation (shown in
-green) is $38\%$ to $43\%$ slower than the reference implementation
-(in yellow) on the ``blur'' benchmark.  The reference implementation,
-however, stops scaling after four cores.  Even at four cores, variance
-is high in the reference implementation (min/max $0.96$s / $1.71$s
-over 7 runs).  Meanwhile, the lock-free implementation continues
-scaling and achieves an $8.14\times$ speedup on twelve cores ($0.64$s
-at $67\%$ GC productivity).
+The results for the @PureSet@-based implementations are normalized to
+the same baseline as the results for the @SLSet@-based implementations
+at one core.  At one and two cores, the @SLSet@-based $k$-CFA
+implementation (shown in green) is $38\%$ to $43\%$ slower than the
+@PureSet@-based implementation (in yellow) on the ``blur'' benchmark.
+The @PureSet@-based implementation, however, stops scaling after four
+cores.  Even at four cores, variance is high in the @PureSet@-based
+implementation (min/max $0.96$s / $1.71$s over 7 runs).  Meanwhile,
+the @SLSet@-based implementation continues scaling and achieves an
+$8.14\times$ speedup on twelve cores ($0.64$s at $67\%$ GC
+productivity).
 
 Of course, it is unsurprising that using an efficient, concurrent,
 lock-free shared data structure results in a better parallel speedup;
