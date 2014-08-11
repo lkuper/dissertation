@@ -327,7 +327,7 @@ freezing.  The function @traverse@ takes a graph @g@ and a vertex
 \lstinputlisting{chapter4/code/graph-traversal-explicit-freeze.hs}
 \doublespacing
 
-@traverse@ works by first creatiing a new LVar of set type, called
+@traverse@ works by first creating a new LVar of set type, called
 @seen@.  Its next step is to attach an event handler to @seen@, using
 the @newHandler@ function.  @newHandler@ takes two arguments: an LVar
 and the callback that we want to run every time an event occurs on
@@ -367,7 +367,7 @@ language level:
 \doublespacing
 
 Here, since freezing is performed by @runParThenFreeze@ rather by an
-explicit call to @freeze@, is is no longer necessary to explicitly
+explicit call to @freeze@, it is no longer necessary to explicitly
 call @quiesce@, either!  The reason for this is that the implicit
 barrier of @runParThenFreeze@ will ensure that all outstanding events
 that can be handled will be handled before it can return.
