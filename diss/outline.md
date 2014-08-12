@@ -25,15 +25,15 @@
 4. The LVish library: interface, implementation, and evaluation
   4.1. The big picture
   4.2. The LVish library interface
-  4.3. The LVish library implementation
-  4.4. Case study: parallelizing k-CFA with LVish
-  4.5. Case study: parallelizing PhyBin with LVish
+  4.3. Par-monad transformers and disjoint parallel update
+  4.4. The LVish library implementation
+  4.5. Case study: parallelizing k-CFA with LVish
+  4.6. Case study: parallelizing PhyBin with LVish
 
 5. Deterministic threshold reads of distributed data structures
   5.1. Background: CvRDTs and eventual consistency
   5.2. Adding threshold queries to CvRDTs
   5.3. Determinism of threshold queries
-  (5.4. Joining forces: LVars and CvRDTs <-- maybe?)
 
 6. Related work
   6.1. Deterministic Parallel Java
@@ -44,6 +44,8 @@
   (6.6. Related work in separation logic <-- maybe?)
 
 7. Conclusion
+  7.1. Remapping the deterministic parallel landscape
+  7.2. Distributed programming and the future
 
 ### Appendices
 
