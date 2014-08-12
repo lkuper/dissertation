@@ -107,9 +107,9 @@ general enough to subsume existing deterministic parallel languages
 because it is parameterized by the choice of lattice.  For example, a
 lattice of channel histories with a prefix ordering allows LVars to
 represent FIFO channels that implement a Kahn process network, whereas
-instantiating $\lambdaLVar$ with a lattice with ``empty'' and ``full''
-states (where $\mathit{empty} <
-\mathit{full}$) results in a parallel single-assignment language.
+instantiating $\lambdaLVar$ with a lattice with one ``empty'' state
+and multiple ``full'' states (where $\forall{i}.\; \mathit{empty}
+< \mathit{full_i}$) results in a parallel single-assignment language.
 Different instantiations of the lattice result in a family of
 deterministic parallel languages.
 

@@ -36,22 +36,29 @@ changes to the @Par@ scheduling strategy (which we will need to do in
 order to support LVars) without having to make any modifications to
 GHC or its run-time system.
 
+\lk{Ugh, I hate roadmap paragraphs, and this is just about the worst of
+all time. Maybe I can make this better.}
+
 In this chapter, I describe the \emph{LVish} library, a Haskell
 library for practical deterministic and quasi-deterministic parallel
 programming with LVars.  We have already had a taste of what it is
 like to use the LVish library; Section~\ref{s:quasi-informal} gave an
-example of an LVish Haskell program.  In this chapter I go on to give
-a systematic introduction to the LVish library.  First, in
+example of an LVish Haskell program.  Here, I go on to give a
+systematic introduction to the LVish library.  First, in
 Section~\ref{s:lvish-big-picture}, I discuss the library at a high
 level.  Then, in Section~\ref{s:lvish-api}, I describe the LVish API,
 and I discuss the parallel breadth-first traversal of
 Section~\ref{s:quasi-informal} in more detail.  In
-Section~\ref{s:lvish-internals}, I describe how the library itself is
-implemented.  Finally, in Sections~\ref{s:lvish-k-cfa}
-and~\ref{s:lvish-phybin}, I present two case studies of parallelizing
-existing Haskell programs by porting them to LVish.  First, in
-Section~\ref{s:lvish-k-cfa}, I describe using LVish to parallelize a
-control-flow analysis ($k$-CFA) algorithm.  Second, in
-Section~\ref{s:lvish-phybin}, I describe using LVish to parallelize
+Section~\ref{s:lvish-disjoint}, I discuss how LVish
+supports \emph{imperative disjoint parallelism} (in the style of
+DPJ~\cite{dpj-oopsla}) alongside LVars, which we accomplish using a
+monad transformer, @ParST@.  In Section~\ref{s:lvish-internals}, I
+describe how the LVish library itself is implemented.  Finally, in
+Sections~\ref{s:lvish-k-cfa} and~\ref{s:lvish-phybin}, I present two
+case studies of parallelizing existing Haskell programs by porting
+them to LVish.  First, in Section~\ref{s:lvish-k-cfa}, I describe
+using LVish to parallelize a control-flow analysis ($k$-CFA)
+algorithm.  Second, in Section~\ref{s:lvish-phybin}, I describe using
+LVish to parallelize
 \emph{PhyBin}, a bioinformatics application that relies heavily on a
 (parallelizable) tree-edit distance algorithm.

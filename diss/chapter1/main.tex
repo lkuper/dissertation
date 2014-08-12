@@ -189,10 +189,10 @@ parallel execution and schedule nondeterminism.  \lk{Maybe I don't
 Chapter~\ref{ch:lvars}, no-shared-state parallelism, data-flow
 parallelism and single-assignment parallelism are all subsumed by the
 LVars programming model, and as we will see in
-Chapter~\ref{ch:lvish}\lk{Maybe refer to a specific section?},
-imperative disjoint parallelism is compatible with LVars as well.
-Furthermore, as I show in Section~\ref{s:lvars-generalizing}, we can
-generalize the behavior of the @put@ and @get@ operations while
+Section~\ref{section:lvish-par-monad-transformers-and-disjoint-parallel-update},
+imperative disjoint parallel updates are compatible with LVars as
+well.  Furthermore, as I show in Section~\ref{s:lvars-generalizing},
+we can generalize the behavior of the @put@ and @get@ operations while
 retaining determinism: we can generalize @put@ from least-upper-bound
 writes to non-idempotent (but still inflationary and commutative)
 writes, and we can generalize the @get@ operation to allow a more
@@ -260,7 +260,7 @@ we can ensure that the freeze does indeed happen after all writes have
 completed, then we can ensure that the computation is deterministic,
 and it is possible to enforce this ``freeze-last'' idiom at the
 implementation level, as I discuss below (and, in more detail, in
-Chapter~\ref{ch:lvish}\lk{Refer to a specific section?}).
+Section~\ref{subsection:lvish-regaining-full-determinism-with-runparthenfreeze}).
 
 \section{The LVish library}\label{s:intro-lvish}
 

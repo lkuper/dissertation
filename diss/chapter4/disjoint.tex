@@ -1,0 +1,256 @@
+\section{\il{Par}-monad transformers and disjoint parallel update}\label{section:lvish-par-monad-transformers-and-disjoint-parallel-update}
+
+\lk{This section is from sections 4 and 5 of the PLDI paper.  I'm
+  generally a bit unhappy with it---it's too Haskelly compared to the
+  surrounding material, and there's probably more detail than there
+  needs to be; I'd like to pare it down to the bare minimum needed to
+  explain \il{ParST} (can we get away with not explaining monad
+  transformers?).  Also, the PLDI paper had an argument here as to why
+  \il{ParST} retains determinism, which I've left out because it's
+  kind of handwavy and unconvincing.}
+
+\lk{Really, all we want to say is this: We can apply something called
+  a ParST transformer to the Par monad that will let us thread some
+  state through, and at a fork the state has to be either split or
+  duplicated.  If we're splitting, say, a vector of locations, the
+  Haskell type system is powerful enough to ensure at compile time
+  that neither of the child computations can access the original
+  complete vector.}
+
+The effect-tracking system of the previous section provides a way to
+toggle on and off a fixed set of basic capabilities using the type
+system---that is, with the switches embedded in the @e@ effect
+signature that parameterizes the @Par@ type.  These type-level
+distinctions are needed for defining restricted but safe idioms, but
+they do not address \emph{extensibility}.  For that, we turn to
+multiple monads rather than a single parameterized @Par@ monad.
+
+\TODO{This ``extensibility'' point is kind of out of place here---it
+  made sense in the context of the PLDI paper, but here it's not clear
+  what I'm talking about.}
+
+\subsection{Monad transformers and their use in LVish}
+
+Haskell programmers use a variety of different monads: @Reader@ for
+threading parameters, @State@ for in-place update, @Cont@ for
+continuations, and so on.  All monads support the same core operations
+(@bind@ and @return@ from the @Monad@ type class) and satisfy the
+three monad laws.  However, each monad must also provide other
+operations that make it worth using.  Most famously, the @IO@ monad
+provides various input-output operations.
+
+A monad \emph{transformer}, on the other hand, is a type constructor
+that adds ``plug-in'' capabilities to an underlying monad.  For
+example, the @StateT@ monad transformer adds an extra piece of
+implicit, modifiable state to an underlying monad.  Adding a monad
+transformer to a type always returns another monad (preserving the
+@Monad@ instance).
+
+In the same way, we can define a \emph{@Par@-monad transformer} as a
+type constructor @T@, where, for all @Par@ monads @m@, @T m@ is
+another @Par@ monad with additional capabilities, and where a value of
+type @T m a@, for instance, @T (Par e s) a@, is a computation in that
+monad.  Indeed, @Par@-monad transformers \emph{are} valid monad
+transformers (in the sense of providing a standard @MonadTrans@
+instance).
+
+The semantics of a @Par@ monad is captured by a series of type
+classes, all of which are closed under @Par@-monad transformer
+application.  At minimum, an instance of the @Par@ monad type class
+must provide the @fork@ operation that we have seen in our examples so
+far:
+
+\singlespacing
+\begin{lstlisting}
+   class (Monad m) => ParMonad m where
+     fork :: m () -> m ()
+\end{lstlisting}
+\doublespacing
+
+Programs with @fork@ create a binary tree of monadic actions with @()@
+(unit) return values.  Additional type classes capture the interfaces
+to basic parallel data structures and control constructs such as
+futures (@ParFuture@), @IVar@s (@ParIVar@), and more general LVars
+(@ParLVar@). For example, the class @ParIVar@ provides @new@ and @put@
+operations with the signatures below.\footnote{Although it may appear
+  that generic treatment of \il{Par} monads as type variables \il{m}
+  removes the additional metadata in a type such as \il{Par e s a},
+  note that it is possible to recover this information with type-level
+  functions.}
+
+\singlespacing
+\begin{lstlisting}[mathescape=true]
+   class (ParMonad m) => ParFuture m  where
+     $\ldots$ 
+   class (ParMonad m) => ParIVar m  where
+     type IVar m :: * -> *
+     new :: m (IVar m a)
+     put :: IVar m a -> a -> m ()
+     get :: IVar m a -> m a
+\end{lstlisting}
+\doublespacing
+
+The \il{ParFuture}, \il{ParIVar}, and \il{ParLVar} type classes form a
+hierarchy: any implementation that can support LVars can support
+IVars, and any that can support IVars can support futures.  Taken
+together, this framework for generic @Par@ programming makes it
+possible for LVish programs to be reusable across a variety of
+schedulers.  This can be quite useful; for example, LVish provides a
+\il{ParFuture} instance for the native GHC work-stealing
+scheduler~\cite{runtime-support-multicore-haskell}.
+
+\subsection{Example: threading state in parallel}
+
+Perhaps the simplest example of a @Par@-monad transformer is the
+standard @StateT@ monad transformer (provided by Haskell's
+@Control.Monad.State@ package).  However, even if @m@ is a @Par@
+monad, for @StateT s m@ to also be a @Par@ monad, the state @s@ must
+be \emph{splittable}; that is, it must be specified what is to be done
+with the state at @fork@ points in the control flow.  For example, the
+state may be duplicated, split, or otherwise updated to note the fork.
+
+The below code promotes @StateT@ to be a @Par@-monad transformer:
+
+\singlespacing
+\begin{lstlisting}
+  class SplittableState a where
+    splitState :: a -> (a,a)
+
+  instance (SplittableState s, ParMonad m) => 
+           ParMonad (StateT s m) where  
+    fork task =
+       do s <- State.get 
+          let (s1,s2) = splitState s
+          State.put s2
+          lift (fork (do runStateT task s1; return ()))
+\end{lstlisting}
+\doublespacing
+
+Note that here, @put@ and @get@ are not LVar operations, but the
+standard procedures for setting and retrieving the state in a
+@StateT@.
+
+\subsection{Determinism guarantee}
+
+The @StateT@ transformer preserves determinism because it is
+effectively \emph{syntactic sugar}.  That is, @StateT@ does not allow
+one to write any program that could not already be written using the
+underlying @Par@ monad, simply by passing around an extra argument.
+
+This is because @StateT@ only provides a \emph{functional} state (an
+implicit argument and return value), not actual mutable heap
+locations.  Genuine mutable locations in pure computations, on the
+other hand, require Haskell's @ST@ monad, the safer sister monad to
+@IO@.
+
+\subsection{Disjoint parallel update with \il{ParST}}
+
+The LVars model is based on the notion that it is fine for multiple
+threads to access and update shared memory, so long as updates commute
+and ``build on'' one another, only adding information rather than
+destroying it.  Yet it should be possible for threads to update memory
+destructively, so long as the memory updated by different threads is
+\emph{disjoint}.  This is the approach to deterministic parallelism
+taken by, for example, Deterministic Parallel Java
+(DPJ)~\cite{dpj-oopsla}, which uses a region-based type and effect
+system to ensure that each mutable region of the heap is passed
+linearly to a thread that then gains exclusive permission to update
+that region.  In order to add this capability to the LVish library,
+though, we need destructive updates to interoperate with LVar effects.
+Moreover, we wish to do so at the library level, without requiring
+language extensions.
+
+Our solution is to provide a @ParST@ transformer, a variant of the
+@StateT@ transformer of Section~\ref{s:transformers}.  @ParST@ allows
+arbitrarily complex mutable state, such as tuples of vectors (arrays).
+However, @ParST@ enforces the restriction that {every} memory location
+in the state is reachable by only one pointer: alias freedom.
+
+Previous approaches to integrating mutable memory with pure functional
+code (\ie, the @ST@ monad) work with LVish, but only allow
+thread-private memory.  There is no way to operate on the same
+structure (for instance, on two halves of an array) from different
+threads.  @ParST@ exploits the fact that it is perfectly safe to do so
+as long as the different threads are accessing disjoint parts of the
+data structure.  Below we demonstrate the idea using a simplified
+convenience module provided alongside the general (@ParST@) library,
+which handles the specific case of a single vector as the mutable
+state being shared.
+
+\singlespacing
+\begin{lstlisting}
+  runParVecT 10 (
+    do -- Fill all 10 slots with "a":
+       set "a"
+       -- Get a pointer to the state:
+       ptr <- reify 
+       -- Call pre-existing ST code:
+       new <- pickLetter ptr
+       forkSTSplit (SplitAt 5)
+         (write 0 new)
+         (write 0 "c")
+       -- ptr is again accessible here
+       ellipses)
+\end{lstlisting}
+\doublespacing
+
+This program demonstrates running a parallel, stateful session within
+a @Par@ computation.  The shared mutable vector is implicit and global
+within the monadic @do@ block.  We fork the control flow of the
+program with @forkSTSplit@, where @(write 0 new)@ and @(write 0 "c")@
+are the two forked child computations.  The @SplitAt@ value describes
+how to partition the state into disjoint pieces: @(SplitAt 5)@
+indicates that the element at index $5$ in the vector is the ``split
+point'', and hence the first child computation passed to @forkSTSplit@
+may access only the first half of the vector, while the other may
+access only the second half.  (We will see shortly how this
+generalizes.)  Each child computation sees only a \emph{local} view of
+the vector, so writing @"c"@ to index @0@ in the second child
+computation is really writing to index $5$ of the global vector.
+
+Ensuring the safety of @ParST@ hinges on two requirements:
+
+\begin{itemize}
+\item \emph{Disjointness:} Any thread can get a direct pointer to its
+  state.  In the above example, @ptr@ is an @STVector@ that can be
+  passed to any standard library procedures in the @ST@ monad.
+  However, it must \emph{not} be possible to access @ptr@ from
+  @forkSTSplit@'s child computations.  We accomplish this using
+  Haskell's support for higher-rank types,\footnote{That is, the type
+    of a child computation begins with \il{(forall s DOT ParST
+      ellipses)}.} ensuring that accessing @ptr@ from a child
+  computation causes a type error.  Finally, @forkSTSplit@ is a
+  fork-join construct; after it completes the parent thread again has
+  full access to @ptr@.
+
+\item \emph{Alias freedom:} Imagine that we expanded the example above
+  to have as its state a \emph{tuple} of two vectors: $(v_1,v_2)$.
+  \emph{If} we allowed the user to supply an arbitrary initial state
+  to their @ParST@ computation, then they might provide the state
+  $(v_1, v_1)$, \ie, two copies of the same pointer.  This breaks the
+  abstraction, enabling them to reach the same mutable location from
+  multiple threads (by splitting the supposedly-disjoint vectors at a
+  different index).  Thus, in LVish, users do not populate the state
+  directly, but only describe a \emph{recipe} for its creation.  Each
+  type used as a @ParST@ state has an associated type for descriptions
+  of (1) how to create an initial structure, and (2) how to split it
+  into disjoint pieces.  We provide a trusted library of instances for
+  commonly used types.
+\end{itemize}
+
+\subsection{Inter-thread communication}
+
+Disjoint state update does not solve the problem of communication
+between threads.  Hence systems built around this idea often include
+other means for performing reductions, or require ``commutativity
+annotations'' for operations such as adding to a set.  For instance,
+DPJ provides a @commuteswith@ form for asserting that operations
+commute with one another to enable concurrent mutation.  In LVish,
+however, such annotations are unnecessary, because LVish already
+provides a language-level guarantee that all effects commute!  Thus, a
+programmer using LVish with @ParST@ can use any LVar to communicate
+results between threads performing disjoint updates, without requiring
+trusted code or annotations.  Moreover, LVish with @ParST@ is unique
+among deterministic parallel programming models in that it allows both
+DPJ-style, disjoint destructive parallel updates, and blocking,
+dataflow-style communication between threads (through LVars).

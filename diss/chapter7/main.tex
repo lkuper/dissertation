@@ -1,86 +1,144 @@
 \chapter{Conclusions and future work}\label{ch:conclusion} % 7
 
-\TODO{Revise this chapter.}
+The goal of this dissertation is to establish that:
+\begin{quote}
+  Lattice-based data structures are a general and practical foundation
+  for deterministic and quasi-deterministic parallel and distributed
+  programming.
+\end{quote}
+The LVars programming model
 
-\lk{The following text is from the FHPC paper conclusion.}
+\subsection{Remapping the deterministic parallel landscape}
 
 As single-assignment languages and Kahn process networks demonstrate,
-monotonicity serves as the foundation of deterministic parallelism.
-Taking monotonicity as a starting point, our work generalizes single
-assignment to monotonic multiple assignment parameterized by a
-user-specified lattice.  By combining monotonic writes with threshold
-reads, we get a shared-state parallel programming model that
-generalizes and unifies an entire class of monotonic languages
-suitable for asynchronous, data-driven applications.  Our model is
-provably deterministic, and further provides a foundation for
-exploration of limited nondeterminism.  Future work will improve upon
-our prototype implementation, formally establish the relationship between
-LVars and other deterministic parallel models,
-investigate consistent termination %for $\lambdapar$,
-and prove the
-limited nondeterminism property of %$\lambdapar$ extended with $\CONSUME$.
+monotonicity can serve as the foundation of diverse
+deterministic-by-construction parallel programming models.  The LVars
+model takes monotonicity as a starting point and generalizes single
+assignment to monotonic multiple assignment, parameterized by a
+lattice.  In doing so, it generalizes and unifies the existing points
+on the deterministic parallel programming landscape that we mapped out
+in Chapter~\ref{ch:intro}:
+\begin{itemize}
+  \item \emph{No-shared-state parallelism:} The purely functional core
+    of the $\lambdaLVar$ and $\lambdaLVish$ calculi (and of the LVish
+    Haskell library) allow no-shared-state, pure task parallelism.  Of
+    course, shared-state programming is the point of the LVars model.
+    However, it is significant that we take pure programming as a
+    starting point, because it distinguishes LVars model from
+    approaches such as DPJ~\cite{dpj-oopsla} that begin with a
+    parallel (but nondeterministic) language and then restrict the
+    sharing of state to regain determinism.  The LVars model works in
+    the other direction: it begins with a deterministic parallel
+    language without shared state, and then adds limited effects that
+    retain determinism.
+  \item \emph{Data-flow parallelism:} Because LVars are
+    lattice-generic, the LVars model can subsume Kahn process networks
+    and other parallel programming models based on data flow, since we
+    can use LVars to represent a lattice of channel histories, ordered
+    by a prefix ordering.
+  \item \emph{Single-assignment parallelism:} Single-assignment
+    variables, or IVars, are subsumed by LVars: an IVar is an LVar
+    whose lattice has one ``empty'' state and multiple ``full'' states
+    (where $\forall{i}.\; \mathit{empty} < \mathit{full_i}$).  In
+    fact, given how useful IVars are, the subsumption of IVars by
+    LVars demonstrates that immutability is an important special case
+    of monotonicity.\footnote{As Neil Conway puts it, ``Immutability
+      is a special case of monotone growth, albeit a particularly
+      useful one''
+      (\url{https://twitter.com/neil_conway/status/392337034896871424}).}
+  \item \emph{Imperative disjoint parallelism:} Although the LVars
+    model generally does \emph{not} require that the state accessed by
+    concurrent threads is disjoint, this style of ensuring determinism
+    is still compatible with the LVars model, and it is practically
+    achievable using the @ParST@ monad transformer in LVish, as we saw
+    in
+    Section~\ref{section:lvish-par-monad-transformers-and-disjoint-parallel-update}.
+\end{itemize}
+In addition to subsuming or accommodating all these existing points on
+the landscape, the LVars model identifies a new point on the map: a
+\emph{quasi-deterministic} programming model, allowing programs that
+perform \emph{freezing} and are deterministic modulo exceptions.  The
+ability to freeze and read the exact contents of an LVar greatly
+increases the expressiveness of the LVars model, especially when used
+in conjunction with event handlers.  Furthermore, we can regain full
+determinism by ensuring that freezing happens last, and, as we saw in
+Section~\ref{subsection:lvish-regaining-full-determinism-with-runparthenfreeze},
+it is possible to enforce this ``freeze after writing'' requirement at
+the implementation level.
 
-\lk{The following text is the conclusion cut from the POPL paper.}
+Of course, there is still more work to do.  For example, although
+imperative disjoint parallelism and the LVars model seem to be
+compatible, as evidenced by the use of @ParST@ in LVish, we have not
+yet formalized their relationship.  In fact, this is an example of a
+general pattern in which the LVish library is usually one step ahead
+of the LVars formalism: to take another example, the LVish library
+supported the general inflationary, commutative writes of
+Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}
+well before the notion had been formalized in $\lambdaLVish$.
+Moreover, even for the parts of the LVish library that \emph{are}
+fully accounted for in the model, we do not have proof that the LVish
+library is a faithful implementation of the formal LVars model.
+Although it is unlikely that this game of catch-up can ever be won, an
+interesting direction to pursue for future work would be a
+\emph{verified} implementation of LVish, for instance, in a
+dependently typed programming language.  Even though a fully verified
+implementation of LVish (including the scheduler implementation) might
+be unrealistic, a more manageable might be invidividiually verified
+LVar data structures.  For example, in a dependently typed language
+such as Idris or Agda, we could use the type system to express
+properties that must be true of an LVar, such as that the states that
+it can take on form a lattice and that writes are commutative and
+inflationary.
 
-We have presented LVish, an extension to the LVars programming model
-that provides, first, the ability to \emph{freeze} an LVar and observe
-its exact contents, and second, the ability to attach event handlers
-to an LVar that respond to state changes.  We have shown that the
-resulting extended programming model is \emph{quasi-deterministic}, in
-which programs always either evaluate to the same answer or raise an
-exception.  Finally, we have provided an implementation of LVish as a
-Haskell library, and our $k$-CFA case study demonstrates how our
-library enables an expressive and useful style of programming that
-yields promising parallel speedup.
+\subsection{Distributed programming and the future}
 
-\lk{The following text is from the POPL related work section.}
+\lk{Maybe some of this material should actually be moved to the end of
+  Chapter~\ref{ch:distributed}, because that chapter ends sort of
+  abruptly.  I'm not sure.}
 
-Future work will further explore the relationship between LVars and
-CRDTs: in one direction, we will investigate LVar-based data
-structures inspired by CRDTs that support non-monotonic operations; in
-the other direction, we will investigate the feasibility and
-usefulness of LVar threshold reads in a distributed setting.
+Most of this dissertation concerns the problem of how to program
+\emph{parallel} systems, in which programs are running on multiple
+processors.  However, I am also concerned with the problem of how to
+program \emph{distributed} systems, in which programs must run on
+networked computers around the world.  Since enormous bodies of work
+have been developed to deal with both of these problems, one of the
+roles that programming languages research can play is to try to find
+unifying abstractions between the two, and it is in that spirit that I
+have explored the relationship of LVars to existing work on
+distributed systems.
 
-\lk{The following text is from the PLDI paper conclusion.}
+This work is made much easier by the fact that LVars have a close
+cousin in the distributed systems literature in convergent replicated
+data types (CvRDTs)~\cite{crdts,crdts-tr}, which leverage lattice
+properties to guarantee that all replicas of a distributed object are
+eventually consistent.  Chapter~\ref{ch:distributed} begins to explore
+the relationship between LVars and CvRDTs by porting LVar-style
+threshold reads to the CvRDT setting.  However, there is \emph{much}
+more work to do here.  Most immediately, although the idea of a single
+lattice-based framework for reasoning about strongly consistent and
+eventually consistent reads is appealing and elegant, it is not yet
+clear what the applications for threshold-readable CvRDTs are.
 
-We present an extended version of the LVish library for deterministic
- parallelism, augmented with the ability to manage a wide variety of
- effects previously not seen in combination in any
- guaranteed-deterministic parallel programming system.
- Our extended library offers the
-well-known benefits of language-level enforcement of determinism, but
-without being limited to a single shared data structure or a single
-programming paradigm as previous deterministic-by-construction
-programming models have been.  
-Furthermore, our case study and empirical results demonstrate that
-deterministic parallelism can be effective, while also
-retaining the ease of use that is the
-hallmark of deterministic parallel models.
+Second, it should also be possible to back-port ideas from the realm
+of CvRDTs to LVars.  We have taken a few steps in this direction---in
+fact, supporting the aforementioned commutative and inflationary
+updates is actually a step toward making LVars more like CvRDTs, since
+CvRDTs have always allowed arbitrary inflationary and commutative
+writes to individual replicas (the least-upper-bound operation is only
+used when replicas' states are \emph{merged} with one another).  But
+the LVars model could further benefit from applying techniques
+pioneered by CvRDTs to support data structures that allow seemingly
+non-monotonic updates, such as counters that support decrements as
+well as increments and sets that support removals as well as
+additions.
 
-\lk{The following text is from the OPODIS paper conclusion.}
+Finally, a huge remaining difference between LVars and CvRDTs is that
+in the LVars model, we do not have to contend with replication!  The
+LVars model is a shared-memory model, and when an LVar is updated, all
+reading threads can immediately see the update.  CvRDTs, as well as
+distributed lattice-based programming languages like
+Bloom~\cite{bloom-cidr, blooml} may serve as a source of inspiration
+for a future version of LVish that supports distributed execution.
 
-In this paper we show how to extend CvRDTs with support for
-deterministic queries.  Borrowing from our previous work on LVars for
-deterministic parallel programming, we propose \emph{threshold
-  queries}, which, rather than returning the exact contents of a
-CvRDT, only reveal whether the contents have crossed a given
-``threshold'' in the CvRDT's lattice, blocking until the threshold is
-reached and then returning a deterministic result.  We prove that a
-threshold query that returns a given result is guaranteed to return
-that result on subsequent queries of the same replica, regardless of
-the replica's state.  Moreover, executions of the same query on other
-replicas are guaranteed to eventually return the same answer, and to
-block until they do so.  The technique generalizes to any lattice, and
-hence any CvRDT, allowing CvRDTs to support both eventually consistent
-and strongly consistent queries without waiting for all replicas to
-agree.
-
-Since real applications call for a combination of strongly consistent
-and eventually consistent queries, threshold queries offer a way to
-support a mix of consistency choices within a single, lattice-based
-reasoning framework.  Furthermore, since threshold queries behave
-deterministically regardless of whether all replicas agree, they
-suggest a way to save on synchronization costs: existing operations
-that require all replicas to agree could be done with threshold
-queries instead, and retain behavior that is \emph{observably}
-strongly consistent while avoiding unnecessary synchronization.
+\lk{Maybe say something about my eventual goal of connecting up LVars,
+  CvRDTs, and separation logic?}
