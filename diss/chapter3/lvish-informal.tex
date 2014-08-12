@@ -163,6 +163,8 @@ LVish model quasi-deterministic, rather than fully deterministic.
 
 Putting all the above pieces together, we arrive at a particularly
 common pattern of programming in the LVish model:
+
+\singlespacing
 \[
 \begin{array}[t]{l}
   \termfont{freezeAfter} = \lam{\mathit{lv}}{\lam{Q}{\lam{f}{}}}
@@ -179,6 +181,8 @@ common pattern of programming in the LVish model:
   \end{array}
 \end{array}
 \]
+\doublespacing
+
 In this pattern, an event handler is registered for an LVar,
 subsequently quiesced, and then the LVar is frozen and its exact value
 is returned.
