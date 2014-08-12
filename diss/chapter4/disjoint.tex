@@ -46,8 +46,8 @@ implicit, modifiable state to an underlying monad.  Adding a monad
 transformer to a type always returns another monad (preserving the
 @Monad@ instance).
 
-In the same way, we can define a \emph{@Par@-monad transformer} as a
-type constructor @T@, where, for all @Par@ monads @m@, @T m@ is
+In the same way, we can define a \emph{\il{Par}-monad transformer} as
+a type constructor @T@, where, for all @Par@ monads @m@, @T m@ is
 another @Par@ monad with additional capabilities, and where a value of
 type @T m a@, for instance, @T (Par e s) a@, is a computation in that
 monad.  Indeed, @Par@-monad transformers \emph{are} valid monad
