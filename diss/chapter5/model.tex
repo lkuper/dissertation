@@ -79,10 +79,10 @@ causal history):
     \item a query $q$ or a threshold query $t$, then the causal
       history at replica $i$ after execution $k$ does not change:
       $c^{k}_{i} = c^{k-1}_{i}$.
-    \item an update $u^{k}_{i}(a)$: then the causal history at replica
+    \item an update $u^{k}_{i}(a)$, then the causal history at replica
       $i$ after execution $k$ is $c^{k}_{i} = c^{k-1}_{i} \cup {
       u^{k}_{i}(a) }$.
-    \item a merge $m^{k}_{i}(s^{k'}_{i'})$: then the causal history at
+    \item a merge $m^{k}_{i}(s^{k'}_{i'})$, then the causal history at
       replica $i$ after execution $k$ is the union of the local and
       remote histories: $c^{k}_{i} = c^{k-1}_{i} \cup c^{k'}_{i'}$.
   \end{itemize}
