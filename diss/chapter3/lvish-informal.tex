@@ -118,6 +118,8 @@ handlers whose collective quiescence can be tested.
 
 The simplest way to program with handler pools is to use a pattern
 like the following:
+
+\singlespacing
 \[
 \begin{array}[t]{l}
 \termfont{let}~\mathit{h}~=~\NEWPOOL \\
@@ -128,6 +130,8 @@ like the following:
   \end{array}
 \end{array}
 \]
+\doublespacing
+
 where $\mathit{lv}$ is an LVar, $Q$ is an event set, and $f$ is a
 callback.  Handler pools are created with the @newPool@ function, and
 handlers are registered with @addHandlerInPool@, a variant of

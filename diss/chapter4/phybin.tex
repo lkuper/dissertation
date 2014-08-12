@@ -76,16 +76,18 @@ in Figure~\ref{f:hashrf-alg} are potentially parallel.
   could be made more obvious in the pseudocode somehow.}
 
 \begin{figure}
-\begin{lstlisting}
-  (1) for t `member` alltrees:
-        for bip `member` t:
-          insert(splitsmap, (t, bip))
-  (2) for (_, tree_set) `member` splitsmap: 
-        for t1 `member` alltrees:
-          for t2 `member` alltrees:
-            if t1 `member` tree_set `xor` t2 `member` tree_set
-            then increment(distancematrix[t1,t2])
-\end{lstlisting}  
+  \singlespacing
+  \begin{lstlisting}
+    (1) for t `member` alltrees:
+    for bip `member` t:
+    insert(splitsmap, (t, bip))
+    (2) for (_, tree_set) `member` splitsmap: 
+    for t1 `member` alltrees:
+    for t2 `member` alltrees:
+    if t1 `member` tree_set `xor` t2 `member` tree_set
+    then increment(distancematrix[t1,t2])
+  \end{lstlisting}  
+  \doublespacing
   \caption{Pseudocode of the HashRF algorithm for computing a tree
     edit distance matrix.  \il{alltrees} is the set of trees,
     represented as sets of bipartitions; \il{splitsmap} and
