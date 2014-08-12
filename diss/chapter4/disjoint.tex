@@ -161,10 +161,10 @@ Moreover, we wish to do so at the library level, without requiring
 language extensions.
 
 Our solution is to provide a @ParST@ transformer, a variant of the
-@StateT@ transformer of Section~\ref{s:transformers}.  @ParST@ allows
-arbitrarily complex mutable state, such as tuples of vectors (arrays).
-However, @ParST@ enforces the restriction that {every} memory location
-in the state is reachable by only one pointer: alias freedom.
+@StateT@ transformer described above.  @ParST@ allows arbitrarily
+complex mutable state, such as tuples of vectors (arrays).  However,
+@ParST@ enforces the restriction that {every} memory location in the
+state is reachable by only one pointer: alias freedom.
 
 Previous approaches to integrating mutable memory with pure functional
 code (\ie, the @ST@ monad) work with LVish, but only allow
