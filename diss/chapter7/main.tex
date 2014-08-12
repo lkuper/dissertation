@@ -20,23 +20,23 @@ programming landscape that we mapped out in Chapter~\ref{ch:intro}:
     Haskell library) allow no-shared-state, pure task parallelism.  Of
     course, shared-state programming is the point of the LVars model.
     However, it is significant that we take pure programming as a
-    starting point, because it distinguishes LVars model from
+    starting point, because it distinguishes the LVars model from
     approaches such as DPJ~\cite{dpj-oopsla} that begin with a
     parallel (but nondeterministic) language and then restrict the
     sharing of state to regain determinism.  The LVars model works in
     the other direction: it begins with a deterministic parallel
     language without shared state, and then adds limited effects that
     retain determinism.
-  \item \emph{Data-flow parallelism:} Because LVars are
-    lattice-generic, the LVars model can subsume Kahn process networks
-    and other parallel programming models based on data flow, since we
-    can use LVars to represent a lattice of channel histories, ordered
-    by a prefix ordering.
+  \item \emph{Data-flow parallelism:} As we have seen, because LVars
+    are lattice-generic, the LVars model can subsume Kahn process
+    networks and other parallel programming models based on data flow,
+    since we can use LVars to represent a lattice of channel
+    histories, ordered by a prefix ordering.
   \item \emph{Single-assignment parallelism:} Single-assignment
-    variables, or IVars, are subsumed by LVars: an IVar is an LVar
-    whose lattice has one ``empty'' state and multiple ``full'' states
-    (where $\forall{i}.\; \mathit{empty} < \mathit{full_i}$).  In
-    fact, given how useful IVars are, the subsumption of IVars by
+    variables, or IVars, are also subsumed by LVars: an IVar is an
+    LVar whose lattice has one ``empty'' state and multiple ``full''
+    states (where $\forall{i}.\; \mathit{empty} < \mathit{full_i}$).
+    In fact, given how useful IVars are, the subsumption of IVars by
     LVars demonstrates that immutability is an important special case
     of monotonicity.\footnote{As Neil Conway puts it, ``Immutability
       is a special case of monotone growth, albeit a particularly
@@ -47,8 +47,7 @@ programming landscape that we mapped out in Chapter~\ref{ch:intro}:
     concurrent threads is disjoint, this style of ensuring determinism
     is still compatible with the LVars model, and it is practically
     achievable using the @ParST@ monad transformer in LVish, as we saw
-    in
-    Section~\ref{section:lvish-par-monad-transformers-and-disjoint-parallel-update}.
+    in Section~\ref{s:lvish-disjoint}.
 \end{itemize}
 In addition to subsuming or accommodating all these existing points on
 the landscape, the LVars model identifies a new point on the map: a
@@ -74,6 +73,7 @@ well before the notion had been formalized in $\lambdaLVish$.
 Moreover, even for the parts of the LVish library that \emph{are}
 fully accounted for in the model, we do not have proof that the LVish
 library is a faithful implementation of the formal LVars model.
+
 Although it is unlikely that this game of catch-up can ever be won, an
 interesting direction to pursue for future work would be a
 \emph{verified} implementation of LVish, for instance, in a
@@ -96,24 +96,25 @@ Most of this dissertation concerns the problem of how to program
 \emph{parallel} systems, in which programs are running on multiple
 processors.  However, I am also concerned with the problem of how to
 program \emph{distributed} systems, in which programs must run on
-networked computers around the world.  Since enormous bodies of work
-have been developed to deal with both of these problems, one of the
+networked computers around the world.  Enormous bodies of work have
+been developed to deal with both of these problems, and one of the
 roles that programming languages research can play is to try to find
-unifying abstractions between the two, and it is in that spirit that I
+unifying abstractions between the two. It is in that spirit that I
 have explored the relationship of LVars to existing work on
 distributed systems.
 
 This work is made much easier by the fact that LVars have a close
 cousin in the distributed systems literature in convergent replicated
 data types (CvRDTs)~\cite{crdts,crdts-tr}, which leverage lattice
-properties to guarantee that all replicas of a distributed object are
-eventually consistent.  Chapter~\ref{ch:distributed} begins to explore
-the relationship between LVars and CvRDTs by porting LVar-style
-threshold reads to the CvRDT setting.  However, there is \emph{much}
-more work to do here.  Most immediately, although the idea of a single
-lattice-based framework for reasoning about strongly consistent and
-eventually consistent reads is appealing and elegant, it is not yet
-clear what the applications for threshold-readable CvRDTs are.
+properties to guarantee that all replicas of an object (for instance,
+in a distributed database) are eventually consistent.
+Chapter~\ref{ch:distributed} begins to explore the relationship
+between LVars and CvRDTs by porting LVar-style threshold reads to the
+CvRDT setting.  However, there is \emph{much} more work to do here.
+Most immediately, although the idea of a single lattice-based
+framework for reasoning about both strongly consistent and eventually
+consistent queries of distributed data is appealing and elegant, it is
+not yet clear what the applications for threshold-readable CvRDTs are.
 
 Second, it should also be possible to back-port ideas from the realm
 of CvRDTs to LVars.  We have taken a few steps in this direction---in
@@ -133,8 +134,11 @@ in the LVars model, we do not have to contend with replication!  The
 LVars model is a shared-memory model, and when an LVar is updated, all
 reading threads can immediately see the update.  CvRDTs, as well as
 distributed lattice-based programming languages like
-Bloom~\cite{bloom-cidr, blooml} may serve as a source of inspiration
+Bloom~\cite{bloom-cidr, blooml}, may serve as a source of inspiration
 for a future version of LVish that supports distributed execution.
+
+\lk{Saying something about Adam's work on meta-par would make sense
+  here.}
 
 \lk{Maybe say something about my eventual goal of connecting up LVars,
   CvRDTs, and separation logic?}
