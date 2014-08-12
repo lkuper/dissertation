@@ -189,14 +189,13 @@ parallel execution and schedule nondeterminism.  \lk{Maybe I don't
 Chapter~\ref{ch:lvars}, no-shared-state parallelism, data-flow
 parallelism and single-assignment parallelism are all subsumed by the
 LVars programming model, and as we will see in
-Section~\ref{section:lvish-par-monad-transformers-and-disjoint-parallel-update},
-imperative disjoint parallel updates are compatible with LVars as
-well.  Furthermore, as I show in Section~\ref{s:lvars-generalizing},
-we can generalize the behavior of the @put@ and @get@ operations while
-retaining determinism: we can generalize @put@ from least-upper-bound
-writes to non-idempotent (but still inflationary and commutative)
-writes, and we can generalize the @get@ operation to allow a more
-general form of threshold reads.
+Section~\ref{s:lvish-disjoint}, imperative disjoint parallel updates
+are compatible with LVars as well.  Furthermore, as I show in
+Section~\ref{s:lvars-generalizing}, we can generalize the behavior of
+the @put@ and @get@ operations while retaining determinism: we can
+generalize @put@ from least-upper-bound writes to non-idempotent (but
+still inflationary and commutative) writes, and we can generalize the
+@get@ operation to allow a more general form of threshold reads.
 
 \section{Quasi-deterministic and event-driven programming with LVars}\label{s:intro-quasi}
 
