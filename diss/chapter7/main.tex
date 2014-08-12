@@ -1,23 +1,19 @@
 \chapter{Conclusions and future work}\label{ch:conclusion} % 7
 
-The goal of this dissertation is to establish that:
-\begin{quote}
-  Lattice-based data structures are a general and practical foundation
-  for deterministic and quasi-deterministic parallel and distributed
-  programming.
-\end{quote}
-The LVars programming model
-
-\subsection{Remapping the deterministic parallel landscape}
-
 As single-assignment languages and Kahn process networks demonstrate,
 monotonicity can serve as the foundation of diverse
 deterministic-by-construction parallel programming models.  The LVars
-model takes monotonicity as a starting point and generalizes single
-assignment to monotonic multiple assignment, parameterized by a
-lattice.  In doing so, it generalizes and unifies the existing points
-on the deterministic parallel programming landscape that we mapped out
-in Chapter~\ref{ch:intro}:
+programming model takes monotonicity as a starting point and
+generalizes single assignment to monotonic multiple assignment,
+parameterized by a lattice.  The LVars model, and the accompanying
+LVish library, support my claim that lattice-based data structures are
+a general and practical foundation for deterministic and
+quasi-deterministic parallel and distributed programming.
+
+\section{Remapping the deterministic parallel landscape}
+
+Let us reconsider how LVars fit into the deterministic parallel
+programming landscape that we mapped out in Chapter~\ref{ch:intro}:
 \begin{itemize}
   \item \emph{No-shared-state parallelism:} The purely functional core
     of the $\lambdaLVar$ and $\lambdaLVish$ calculi (and of the LVish
@@ -90,7 +86,7 @@ properties that must be true of an LVar, such as that the states that
 it can take on form a lattice and that writes are commutative and
 inflationary.
 
-\subsection{Distributed programming and the future}
+\section{Distributed programming and the future of LVars and LVish}
 
 \lk{Maybe some of this material should actually be moved to the end of
   Chapter~\ref{ch:distributed}, because that chapter ends sort of
