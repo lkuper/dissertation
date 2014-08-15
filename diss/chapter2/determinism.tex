@@ -50,9 +50,7 @@ we work modulo an arbitrary \emph{permutation} on locations.
 Recall from Section~\ref{subsection:lvars-stores} that we have a
 countable set of locations $\Loc$.  Then, a permutation is defined as
 follows:
-
 \LVarsDefPermutation
-
 Condition (1) in Definition~\ref{def:lvars-permutation} ensures that
 we only consider location renamings that we can ``undo'', and
 condition (2) ensures that we only consider renamings of a finite
@@ -60,20 +58,23 @@ number of locations.  Equivalently, we can say that $\pi$ is a
 bijection from $\Loc$ to $\Loc$ such that it is the identity on all
 but finitely many elements.
 
-We can straightforwardly lift Definition~\ref{def:lvars-permutation}
-to expressions and stores, and hence also to configurations.  To lift
-a permutation $\pi$ to expressions, we over the syntax of terms
-structurally and apply $\pi$ to any locations that occur in the term.
-We can also lift $\pi$ to evaluation contexts, structurally: $\pi([~])
-= [~]$, $\pi(\app{E}{e} = \app{\pi(E)}{\pi(e)}$, and so on.
-
-To lift $\pi$ to stores, we apply $\pi$ to all locations in the domain
-of the store.  (We do not have to do any renaming in the codomain of
-the store, since locations cannot occur in elements of the
-application-specific lattice $D$.)  Since $\pi$ is a bijection, it
-follows that if some location $l$ is not in the domain of some store
-$S$, then $\pi(l) \notin \dom{(\pi(S)}$,\lk{Do I need to spell out why
-  this is true?} a fact that will be useful to us shortly.
+Definitions~\ref{def:lvars-permutation-expression},
+\ref{def:lvars-permutation-store},
+and~\ref{def:lvars-permutation-configuration} lift
+Definition~\ref{def:lvars-permutation} to expressions, stores, and
+configurations, respectively.  There is nothing surprising about these
+definitions: to apply a permutation $\pi$ to an expression, we just
+apply $\pi$ to any locations that occur in the expression.  We can
+also lift $\pi$ to evaluation contexts, structurally: $\pi([~]) =
+[~]$, $\pi(\app{E}{e} = \app{\pi(E)}{\pi(e)}$, and so on.  To lift
+$\pi$ to stores, we apply $\pi$ to all locations in the domain of the
+store.  (We do not have to do any renaming in the codomain of the
+store, since location names cannot occur in elements of the lattice
+$D$ and hence cannot occur in the contents of other store locations.)
+Since $\pi$ is a bijection, it follows that if some location $l$ is
+not in the domain of some store $S$, then $\pi(l) \notin
+\dom{(\pi(S)}$,\lk{Do I need to spell out why this is true?} a fact
+that will be useful to us shortly.
 
 \LVarsDefPermutationExpression
 
@@ -81,11 +82,11 @@ $S$, then $\pi(l) \notin \dom{(\pi(S)}$,\lk{Do I need to spell out why
 
 \LVarsDefPermutationConfiguration
 
-With these definitions in place, I can prove a lemma that says that
-the names of locations in a configuration do not affect whether or not
-it can take a step. Lemma~\ref{lem:lvars-permutability} says that a
-configuration $\conf$ can step to $\conf'$ exactly when $\pi(\conf)$
-can step to $\pi(\conf')$.
+With these definitions in place, I can prove
+Lemma~\ref{lem:lvars-permutability}, which says that the names of
+locations in a configuration do not affect whether or not that
+configuration can take a step: a configuration $\conf$ can step to
+$\conf'$ exactly when $\pi(\conf)$ can step to $\pi(\conf')$.
 
 \LVarsLemPermutability
 \begin{proof}
