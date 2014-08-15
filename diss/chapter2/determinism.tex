@@ -43,9 +43,10 @@ The {\sc E-New} rule allocates a fresh location $l \in \Loc$ in the
 store, with the only requirement on $l$ being that it is not (yet) in
 the domain of the store.  Therefore, multiple runs of the same program
 may differ in what locations they allocate, and therefore the
-reduction semantics is nondeterministic with respect to allocation.
-However, this is not a kind of nondeterminism that we care about, so
-we work modulo an arbitrary \emph{permutation} on locations.
+reduction semantics is nondeterministic with respect to which
+locations are allocated.  Since this is not a kind of nondeterminism
+that we care about, we work modulo an arbitrary \emph{permutation} on
+locations.
 
 Recall from Section~\ref{subsection:lvars-stores} that we have a
 countable set of locations $\Loc$.  Then, a permutation is defined as
@@ -101,6 +102,15 @@ $\conf'$ exactly when $\pi(\conf)$ can step to $\pi(\conf')$.
   Part~\ref{thm:permutable-context-transitions} of the proof builds on
   part~\ref{thm:permutable-reduction-transitions}.
 \end{proof}
+
+Because the names of locations in a configuration do not affect
+whether it can step, we can rename locations as needed, which will be
+important later on when proving the \emph{confluence} lemmas of
+Section~\ref{subsection:lvars-confluence}.\footnote{For another
+  example of using permutations in the metatheory of a language to
+  account for an allocator's nondeterministic choice of locations in
+  an otherwise deterministic setting, see
+  Krishnaswami~\cite{simple-frp}.}
 
 \subsection{Internal determinism of the reduction semantics}
 
@@ -290,23 +300,45 @@ $\error$.
 
 Lemma~\ref{lem:lvars-strong-local-confluence}, the Strong Local
 Confluence lemma, says that if a configuration $\conf$ can step to
-configurations $\conf_a$ and $\conf_b$, then there exists an
+configurations $\conf_a$ and $\conf_b$, then there exists a
 configuration $\conf_c$ that $\conf_a$ and $\conf_b$ can each reach in
 at most one step, modulo a permutation on the locations in $\conf_b$.
 Lemmas~\ref{lem:lvars-strong-one-sided-confluence}
 and~\ref{lem:lvars-strong-confluence} then generalize that result to
 arbitrary numbers of steps.
 
-The structure of this part of the proof differs slightly from the
-Budimli\'c \etal~determinism proof for Featherweight CnC.  Budimli\'c
-\etal~prove a \emph{diamond} property, in which $\conf_a$ and
-$\conf_b$ each step to $\conf_c$ in \emph{exactly} one step.  They
+The structure of this part of the proof differs from the Budimli\'c
+\etal~determinism proof for Featherweight CnC in two ways.  First,
+Budimli\'c \etal~prove a \emph{diamond} property, in which $\conf_a$
+and $\conf_b$ each step to $\conf_c$ in \emph{exactly} one step.  They
 then get a property like Lemma~\ref{lem:lvars-strong-local-confluence}
 as an immediate consequence of the diamond property, by choosing $i =
 j = 1$.  But a true diamond property with exactly one step ``on each
 side of the diamond'' is stronger than we need here, and, in fact,
 does not hold for $\lambdaLVar$; so, instead, I prove the weaker ``at
 most one step'' property directly.
+
+Second, Budimli\'c \etal~do not have to deal with permutations in
+their proof, because the Featherweight CnC language does no
+allocation; there is no counterpart to $\lambdaLVar$'s $\NEW$
+expression in Featherweight CnC.  Instead, Featherweight CnC models
+the store as a pre-existing array of locations, where every location
+has a default initial value of $\bot$.  Because there is no way (and
+no need) to allocate new locations in Featherweight CnC, it is never
+the case that two subexpressions independently happen to allocate
+locations with the same name---which is exactly the situation that
+requires us to be able to rename locations in $\lambdaLVar$.  In fact,
+that situation is what makes the entire notion of permutations
+described in Section~\ref{subsection:lvars-permutations} a necessary
+part of the metatheory of $\lambdaLVar$.
+
+Taking the approach of Featherweight CnC, and therefore avoiding
+allocation entirely, would simplify both the $\lambdaLVar$ language
+and its determinism proof.  On the other hand, when programming with
+the LVish Haskell library of Chapter~\ref{ch:lvish}, one does have to
+explicitly create and allocate new LVars by calling the equivalent of
+$\NEW$, and so by modeling the $\NEW$ operation in $\lambdaLVar$, we
+keep the semantics a bit more faithful to the implementation.
 
 \LVarsLemStrongLocalConfluence
 \begin{proof}
