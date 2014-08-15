@@ -9,7 +9,6 @@ $(NAME).pdf: $(SOURCES)
 	bibtex $(NAME)
 	${LATEX} $(NAME).tex
 	${LATEX} $(NAME).tex
-	${MAKE} open
 
 #-----------------------------------------------
 # These targets actually change the build state:
