@@ -275,7 +275,7 @@ to the provided update operations $u_i$.  For each $u_i$ update
 operation, $\PUTi$ (implemented by the {\sc E-Put} rule) takes a
 pointer to an LVar and updates the LVar's state to result of calling
 $u_{p_i}$ on the LVar's current state, potentially pushing the state
-of the LVar upward in the lattice.  THe {\sc E-Put-Err} rule applies
+of the LVar upward in the lattice.  The {\sc E-Put-Err} rule applies
 when a $\PUTi$ operation would take the state of an LVar to $\topp$;
 in that case, the semantics steps to $\error$.
 
