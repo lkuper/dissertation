@@ -17,7 +17,6 @@
 % Stuff needed for typesetting lambdaLVish and its metatheory
 \input{../latex_common/lang}
 \input{../latex_common/metatheory}
-\input{../latex_common/theoremstyle}
 
 % For typesetting inference rules
 \usepackage{../latex_common/mathpartir}
@@ -35,6 +34,21 @@
 
 % Editing marks
 \input{../latex_common/editingmarks}
+
+%%% Formatting of definitions, theorems, etc.
+\newtheorem{lem}{Lemma}[chapter]
+\newtheorem{cor}{Corollary}[chapter]
+\newtheorem{thm}{Theorem}[chapter]
+
+\renewcommand{\theequation}{Example \thechapter.\arabic{equation}}
+\numberwithin{equation}{chapter}
+
+% Defining some extra theoremstyle stuff for documents that need it
+% (i.e., non-LNCS-style documents)
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newtheorem{remark}{Remark}[chapter]
 
 % Other presentational stuff
 \input{../latex_common/style}
@@ -127,7 +141,7 @@
 
 \bibliographystyle{is-abbrv}
 \newcommand{\myname}[0]{Lindsey Kuper}
-\bibliography{../latex_common/refs}
+\bibliography{../latex_common/refs,../latex_common/lkuper}
 
 \appendix
 

@@ -8,17 +8,149 @@
 \usepackage{graphicx}
 \usepackage{fullpage}
 \usepackage{times}
+\usepackage{lscape}
+\usepackage{setspace}
 
 % Stuff needed for typesetting lambdaLVish and its metatheory
 \input{../latex_common/lang}
 \input{../latex_common/metatheory}
-\input{../latex_common/theoremstyle}
 
 % For typesetting inference rules
 \usepackage{../latex_common/mathpartir}
 
-% Syntax and semantics of lambdaLVish
-\input{../latex_common/lambdaLVish-definition}
+% Syntax and semantics of lambdaLVish, specific to this proposal (the
+% semantics was later replaced by one split into a reduction semantics
+% and a context semantics, plus some other generalizations)
+\newcommand{\FigLambdaLVishGrammar}[1][t]{
+\begin{figure}[#1]
+  Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$:
+{\doublespacing
+    \[
+    \begin{array}{rlcl}
+      \mbox{configurations} & \conf & \bnfdef & \config{S}{e} \sep \error \\
+      \mbox{expressions} & e & \bnfdef & 
+           x \sep 
+           v \sep 
+           \app{e}{e} \sep 
+           \getexp{e}{e} \sep 
+           \putiexp{e} \sep
+           \NEW \sep
+           \freeze{e} \\
+           & & \sep &
+           \freezeafter{e}{e}{e} \\
+           & & \sep &
+           \freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{e, \dots}}{H} \\
+      \mbox{values} & v & \bnfdef & \unit \sep d \sep p \sep l \sep P \sep Q \sep \lam{x}{e} \\
+      \mbox{threshold sets} & P & \bnfdef & \stateset{p_1,\,p_2,\,\dots} \\
+      \mbox{event sets} & Q & \bnfdef & \stateset{d_1,\,d_2,\,\dots} \\
+      \mbox{``handled'' sets} & H & \bnfdef & \setof{d_1,\,\dots, d_n} \\
+      %% N.B. In Redex we actually rule out store values being Top in
+      %% the grammar, and have a special StoreVal type for elements
+      %% other than Top.  Here we don't bother, and we just say that
+      %% stores contain bindings from locations l to pairs p.
+      \mbox{stores} & S & \bnfdef &
+        \store{\storebindingRaw{l_1}{p_1},\,\dots, \storebindingRaw{l_n}{p_n}} \sep \topS \\
+      \mbox{states} & p & \bnfdef & \state{d}{\status} \\
+      \mbox{status bits} & \status & \bnfdef & \frozentrue \sep \frozenfalse \\
+      \mbox{evaluation contexts} & E & \bnfdef &
+           [~] \sep
+           \app{E}{e} \sep
+           \app{e}{E} \sep
+           \getexp{E}{e} \sep
+           \getexp{e}{E} \sep 
+           \putiexp{E} \\
+           & & \sep &
+           \freeze {E} \sep
+           \freezeafter{E}{e}{e} \\
+           & & \sep &
+           \freezeafter{e}{E}{e} \sep
+           \freezeafter{e}{e}{E} \\
+           & & \sep &
+           \freezeafterfull{v}{v}{v}{\setof{e\dots~E~e\dots}}{H}
+    \end{array}           
+    \]
+}
+  \caption{Syntax for $\lambdaLVish$.}
+  \label{f:lambdaLVish-syntax}
+\end{figure}
+}
+
+\newcommand{\FigLambdaLVishSemantics}[1][t]{
+\begin{landscape}
+\begin{figure}[#1]
+  Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$: \\
+{\doublespacing
+  \begin{mathpar}
+    \inferrule*[lab=E-Eval-Ctxt]
+        {\config{S}{e} \parstepsto \config{S'}{e'}}
+        {\config{S}{\E{e}} \parstepsto \config{S'}{\E{e'}}}
+
+    \inferrule*[lab=E-Beta]
+        {~}
+        {\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \config{S}{\subst{e}{x}{v}}}
+
+    \inferrule*[lab=E-New, right=\textnormal{($l \notin \dom{S}$)}]
+        {~}
+        {\config{S}{\NEW} \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}}
+
+    \inferrule*[lab=E-Put]
+        {S(l) = p_1 \\ u_{p_i}(p_1) \neq \topp}
+        {\config{S}{\putiexp{l}} \parstepsto
+          \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}}
+
+    \inferrule*[lab=E-Put-Err]
+        {S(l) = p_1 \\ u_{p_i}(p_1) = \topp}
+        {\config{S}{\putiexp{l}} \parstepsto \error}
+
+    \inferrule*[lab=E-Get]
+        {S(l) = p_1 \\ \incomp{P} \\ p_2 \in P \\ p_2 \leqp p_1}
+        {\config{S}{\getexp{l}{P}} \parstepsto \config{S}{p_2}}
+
+    \inferrule*[lab=E-Freeze-Init]
+        {~}
+        {\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto
+          \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}}
+
+    \inferrule*[lab=E-Spawn-Handler]
+        { S(l) = \state{d_1}{\status_1} \\ 
+          d_2 \userleq d_1 \\
+          d_2 \notin H \\
+          d_2 \in Q
+        }
+        {
+          \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e, \dots}}{H}}
+          \parstepsto
+          \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2}, e, \dots}}
+            {\{d_2\}\cup H}}
+        }
+
+    \inferrule*[lab=E-Freeze-Final]
+        { S(l) = \state{d_1}{\status_1} \\ 
+          \forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q} \Rightarrow 
+             d_2 \in H) }
+        {
+          \config{S}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+          \parstepsto
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}
+        }
+
+    \inferrule*[lab=E-Freeze-Simple]
+        { S(l) = \state{d_1}{\status_1} }
+        {
+          \config{S}{\freeze{l}}
+          \parstepsto
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}
+        }
+  \end{mathpar}
+}
+  \caption{Reduction semantics for $\lambdaLVish$.}
+  \label{f:lambdaLVish-semantics}
+\end{figure}
+\end{landscape}
+}
+
+% Language stuff that's specific to this proposal
+\newcommand{\bumpexp}[1]{\ensuremath{\termfont{bump}~#1}}
 
 % Definitions, lemmas, theorems
 \input{../latex_common/lambdaLVish-defs}
@@ -26,6 +158,18 @@
 
 % Editing marks
 \input{../latex_common/editingmarks}
+
+%%% Formatting of definitions, theorems, etc.
+\newtheorem{lem}{Lemma}
+\newtheorem{cor}{Corollary}
+\newtheorem{thm}{Theorem}
+
+% Defining some extra theoremstyle stuff for documents that need it
+% (i.e., non-LNCS-style documents)
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
 
 % Other presentational stuff
 \input{../latex_common/style}
@@ -608,11 +752,13 @@ of an $\lambdaLVish$ program, because, as we will see in
 Section~\ref{subsection:newputget}, an attempted @put@ that would
 take the value of $l$ to $\top$ will raise an error.
 
-\subsection{The $\lambdaLVish$ language}
-
 \FigLambdaLVishGrammar
 
 \FigLambdaLVishSemantics
+
+\newpage
+
+\subsection{The $\lambdaLVish$ language}
 
 The syntax and operational semantics of the $\lambdaLVish$ calculus
 appear in Figures \ref{f:lambdaLVish-syntax} and
@@ -1373,8 +1519,6 @@ as a domain-specific language embedded in Ruby), we can rely on
 Haskell's static type system for fine-grained effect tracking and
 monadic encapsulation of LVar effects.
 
-\newpage
-
 \section{Research plan}
 
 Together with my collaborators, I have already completed substantial
@@ -1432,6 +1576,6 @@ This plan puts me on track to defend in September 2014.
 
 \bibliographystyle{plain}
 \newcommand{\myname}[0]{Lindsey Kuper}
-\bibliography{../latex_common/refs}
+\bibliography{../latex_common/refs,../latex_common/lkuper}
 
 \end{document}

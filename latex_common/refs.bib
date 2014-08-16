@@ -1,414 +1,30 @@
-@techreport{LVars-TR,
-author = {\myname{} and Newton, Ryan R.},
-title = {A Lattice-Theoretical Approach to Deterministic Parallelism with Shared State},
-institution = {Indiana University},
-year = {2012},
-month = oct,
-number = {TR702},
-url = {http://www.cs.indiana.edu/cgi-bin/techreports/TRNNN.cgi?trnum=TR702},
+@misc{bfs-pbgl,
+ title = {{Breadth-First Search, Parallel Boost Graph Library}},
+ url = {\url{http://www.boost.org/doc/libs/1_51_0/libs/graph_parallel/doc/html/breadth_first_search.html}},
 }
 
-@inproceedings{LVars-paper,
-author = {\myname{} and Newton, Ryan R.},
-title = {{LVars}: lattice-based data structures for deterministic parallelism},
-year = {2013},
-booktitle = {FHPC},
-}
-
-@inproceedings{Freeze-paper,
-author = {\myname{} and Turon, Aaron and Krishnaswami, Neelakantan R. and Newton, Ryan R.},
-title = {Freeze After Writing: Quasi-Deterministic Parallel Programming with {LVars}},
-year = {2014},
-booktitle = {POPL},
-}
-
-@techreport{Freeze-TR,
-author = {\myname{} and Turon, Aaron and Krishnaswami, Neelakantan R. and Newton, Ryan R.},
-title = {Freeze After Writing: Quasi-Deterministic Parallel Programming with {LVars}},
-institution = {Indiana University},
-year = {2013},
-month = nov,
-number = {TR710},
-url = {http://www.cs.indiana.edu/cgi-bin/techreports/TRNNN.cgi?trnum=TR710},
-}
-
-@url{LVish,
-  author = {Turon, Aaron and \myname{} and Newton, Ryan R.},
-  title = {{LVish: Parallel scheduler, LVar data structures, and infrastructure to build more.}},
-  howpublished = {\url{http://hackage.haskell.org/package/lvish}},
-  year = {2013},
-  month = oct,
-}
-
-@url{IntelCnC,
- author = {{Intel Corporation}},
- title = {Intel (r) {C}oncurrent {C}ollections for {C}++},
- howpublished = {http://software.intel.com/en-us/articles/intel-concurrent-collections-for-cc/}
-}
-
-@url{IntelMIC,
- author = {{Intel Corporation}},
- title = {Intel (r) {M}any {I}ntegrated {Core} Architecture},
- howpublished = {http://www.intel.com/content/www/us/en/architecture-and-technology/many-integrated-core/intel-many-integrated-core-architecture.html}
-}
-
-@article{CnC,
- author = {Budimli\'{c}, Zoran and Burke, Michael and Cav\'{e}, Vincent and Knobe, Kathleen and Lowney, Geoff and Newton, Ryan and Palsberg, Jens and Peixotto, David and Sarkar, Vivek and Schlimbach, Frank and Ta{\c s}irlar, Sa{\u g}nak},
- title = {Concurrent {C}ollections},
- journal = {Sci. Program.},
- issue_date = {August 2010},
- volume = {18},
- number = {3-4},
- month = aug,
- year = {2010},
- publisher = {IOS Press},
- keywords = {Concurrent Collections (CnC), parallel programming, programming model},
+@inproceedings{bloom-cidr,
+ author = {Peter Alvaro and Neil Conway and Joe Hellerstein and William R. Marczak},
+ title = {Consistency Analysis in {B}loom: a {CALM} and Collected Approach},
+ booktitle = {CIDR},
+ year = {2011},
 }
 
 @article{IStructures,
  author = {Arvind and Nikhil, Rishiyur S. and Pingali, Keshav K.},
  title = {I-structures: data structures for parallel computing},
  journal = {ACM Trans. Program. Lang. Syst.},
- issue_date = {Oct. 1989},
  volume = {11},
  number = {4},
  month = oct,
  year = {1989},
-} 
-
-@article{TTRegions,
- author = {Tofte, Mads and Talpin, Jean-Pierre},
- title = {Region-based memory management},
- journal = {Inf. Comput.},
- volume = {132},
- issue = {2},
- month = feb,
- year = {1997},
- url = {http://dl.acm.org/citation.cfm?id=249657.249661},
- publisher = {Academic Press, Inc.},
-} 
-
-@inproceedings{LightweightMonadicRegions,
- author = {Kiselyov, Oleg and Shan, Chung-chieh},
- title = {Lightweight monadic regions},
- booktitle = {Haskell},
- year = {2008},
- location = {Victoria, BC, Canada},
- keywords = {effect systems, monads, parametric polymorphism, regions, resource management, subtyping, type classes, type systems},
-} 
-
-@INPROCEEDINGS{LinearRegions,
-    author = {Matthew Fluet and Greg Morrisett and Amal Ahmed},
-    title = {Linear Regions Are All You Need},
-    booktitle = {ESOP},
-    year = {2006},
 }
 
-@article{MonadicRegions,
- author = {Fluet, Matthew and Morrisett, Greg},
- title = {Monadic regions},
- journal = {J. Funct. Program.},
- volume = {16},
- issue = {4-5},
- month = jul,
- year = {2006},
- publisher = {Cambridge University Press},
-} 
-
-@inproceedings{LambdaEek,
- author = {Jia, Limin and Zhao, Jianzhou and Sj\"{o}berg, Vilhelm and Weirich, Stephanie},
- title = {Dependent types and program equivalence},
+@inproceedings{lawsOfOrder,
+ author = {Attiya, Hagit and Guerraoui, Rachid and Hendler, Danny and Kuznetsov, Petr and Michael, Maged M. and Vechev, Martin},
+ title = {Laws of order: expensive synchronization in concurrent algorithms cannot be eliminated},
  booktitle = {POPL},
- year = {2010},
- location = {Madrid, Spain},
- keywords = {dependent types, program equivalence},
-} 
-
-@INPROCEEDINGS{ConcurrentKripke,
-    author = {Vineet Gupta},
-    title = {Concurrent {K}ripke Structures},
-    booktitle = {North American Process Algebra Workshop},
-    year = {1993}
-}
-
-@TECHREPORT{DistributedKripke,
-    author = {Rohit Chadha and Damiano Macedonio and Vladimiro Sassone},
-    title = {A Distributed {K}ripke Semantics},
-    institution = {},
-    year = {2004}
-}
-
-@phdthesis{AmalThesis,
- author = {Ahmed, Amal Jamil},
- title = {Semantics of types for mutable state},
- year = {2004},
- note = {AAI3136691},
- publisher = {Princeton University},
-} 
-
-@inproceedings{IndirectionTheory,
- author = {Hobor, Aquinas and Dockins, Robert and Appel, Andrew W.},
- title = {A theory of indirection via approximation},
- booktitle = {POPL},
- year = {2010},
- location = {Madrid, Spain},
- keywords = {indirection theory, step-indexed models},
-} 
-
-@inproceedings{LSLR,
- author = {Dreyer, Derek and Ahmed, Amal and Birkedal, Lars},
- title = {Logical Step-Indexed Logical Relations},
- booktitle = {LICS},
- year = {2009},
- publisher = {IEEE Computer Society},
- keywords = {Step-indexed logical relations, Plotkin-Abadi logic, parametricity, recursive types, contextual equivalence},
-} 
-
-@INPROCEEDINGS{StepIndexedNondeterminism,
-  title = {Step-indexed Relational Reasoning for Countable Nondeterminism},
-  author = {Jan Schwinghammer and Lars Birkedal},
-  year = {2011},
-  month = sep,
-  editor = {Marc Bezem},
-  publisher = {Leibniz International Proceedings in Informatics (LIPIcs)},
-  booktitle = {CSL},
-}
-
-@article{OriginsBisimulation,
- author = {Sangiorgi, Davide},
- title = {On the origins of bisimulation and coinduction},
- journal = {ACM Trans. Program. Lang. Syst.},
- issue_date = {May 2009},
- volume = {31},
- issue = {4},
- month = may,
- year = {2009},
- articleno = {15},
- keywords = {Bisimulation, coinduction, fixed points, greatest fixed points, history},
-}
-
-@MISC{RelatingSILRsBisimulations,
-    author = {Dimitrios Vytiniotis and Vasileios Koutavas},
-    title = {Relating step-indexed logical relations and bisimulations},
-    year = {2009}
-}
-
-%% To appear in POPL 2012.
-@MISC{MarriageKLRsBisimulations,
-    author = {Chung-Kil Hur and Derek Dreyer and Georg Neis and Viktor Vafeiadis},
-    title = {The Marriage of {K}ripke Logical Relations and Bisimulations},
-    year = {2012}
-}
-
-@book{Sabot_Paralation,
- author = {Sabot, Gary W.},
- title = {The  Paralation Model: Architecture-Independent Parallel Programming},
- year = {1989},
- publisher = {MIT Press},
-} 
-
-@inproceedings{monad-par,
- author = {Marlow, Simon and Newton, Ryan and {Peyton Jones}, Simon},
- title = {A monad for deterministic parallelism},
- booktitle = {Haskell},
  year = {2011},
-} 
-
-@article{FelleisenHiebEvalCtxts,
- author = {Felleisen, Matthias and Hieb, Robert},
- title = {The revised report on the syntactic theories of sequential control and state},
- journal = {Theor. Comput. Sci.},
- volume = {103},
- issue = {2},
- year = {1992},
- publisher = {Elsevier Science Publishers Ltd.},
-} 
-
-@INPROCEEDINGS{kahn-1974,
-  AUTHOR = {G. Kahn},
-  TITLE = {The semantics of a simple language for parallel
-programming},
-  BOOKTITLE = {Information processing},
-  EDITOR = {J. L. Rosenfeld},
-  PUBLISHER = {North Holland, Amsterdam},
-  MONTH = aug,
-  YEAR = {1974},
-}
-
-@article{MapReduce,
- author = {Dean, Jeffrey and Ghemawat, Sanjay},
- title = {{MapReduce}: simplified data processing on large clusters},
- journal = {Commun. ACM},
- issue_date = {January 2008},
- volume = {51},
- issue = {1},
- month = jan,
- year = {2008},
-} 
-
-@article{hammond_par_90s,
- author = {Trinder, P. W. and Hammond, K. and Mattson,Jr., J. S. and Partridge, A. S. and {Peyton Jones}, S. L.},
- title = {{GUM}: a portable parallel implementation of {Haskell}},
- journal = {SIGPLAN Not.},
- volume = {31},
- issue = {5},
- month = may,
- year = {1996},
-} 
-
-@inproceedings{blelloch_something,
- author = {Blelloch, Guy E. and Greiner, John},
- title = {A provable time and space efficient implementation of {NESL}},
- booktitle = {ICFP},
- year = {1996},
- location = {Philadelphia, Pennsylvania, United States},
-} 
-
-@inproceedings{manticore_parallel_tuples,
- author = {Fluet, Matthew and Rainey, Mike and Reppy, John and Shaw, Adam},
- title = {Implicitly-threaded parallelism in {M}anticore},
- booktitle = {ICFP},
- year = {2008},
- location = {Victoria, BC, Canada},
- keywords = {data parallelism, exceptions, implictly-threaded parallelism, parallel binding, parallel case},
-} 
- 
-
- 
-
-@book{ph,
- author ={Nikhil, Rishiyur and Arvind},
- title = {Implicit parallel programming in pH},
- year = {2001},
- publisher = {Morgan Kaufmann Publishers Inc.},
-key = {{$\!\!$}} ,
-} 
-
-@article{HuetZipper,
- author = {Huet, G\'{e}rard},
- title = {The Zipper},
- journal = {J. Funct. Program.},
- volume = {7},
- issue = {5},
- month = sept,
- year = {1997},
- publisher = {Cambridge University Press},
-} 
-
-@inproceedings{Tesler-1968,
- author = {Tesler, L. G. and Enea, H. J.},
- title = {A language design for concurrent processes},
- booktitle = {AFIPS},
- year = {1968 (Spring)},
- location = {Atlantic City, New Jersey},
-} 
-
-@phdthesis{spoonhower-thesis,
- author = {Spoonhower, Daniel John},
- advisor = {Blelloch, Guy E. and Harper, Robert},
- title = {Scheduling deterministic parallel programs},
- year = {2009},
- note = {AAI3358062},
- publisher = {Carnegie Mellon University},
-}
-
-@url{MightkCFABlog,
- author = {Might, Matthew},
- title = {{$k$-CFA: Determining types and/or control-flow in languages like Python, Java and Scheme}},
- howpublished = {http://matt.might.net/articles/implementation-of-kcfa-and-0cfa/},
-} 
-
-@url{HarperBlog,
- author = {Harper, Robert},
- title = {Parallelism is not concurrency},
- howpublished = {http://existentialtype.wordpress.com/2011/03/17/parallelism-is-not-concurrency/},
- year = {2011},
-}
-
-@url{MarloweBlog,
- author = {Marlowe, Simon},
- title = {Parallelism /= concurrency},
- howpublished = {http://ghcmutterings.wordpress.com/2009/10/06/parallelism-concurrency/},
- year = {2009},
-}
-
-@inproceedings{beyond-nested-workstealing,
- author = {Spoonhower, Daniel and Blelloch, Guy E. and Gibbons, Phillip B. and Harper, Robert},
- title = {Beyond nested parallelism: tight bounds on work-stealing overheads for parallel futures},
- booktitle = {SPAA},
- year = {2009},
- location = {Calgary, AB, Canada},
- keywords = {futures, performance bounds, scheduling, work stealing},
-} 
-
-@book{tbb,
- author = {Reinders, James},
- title = {Intel {T}hreading {B}uilding {B}locks},
- year = {2007},
- edition = {First},
- publisher = {O'Reilly \& Associates, Inc.},
-} 
-
-@article{nir-shavit-acm-communications,
- author = {Shavit, Nir},
- title = {Data structures in the multicore age},
- journal = {Commun. ACM},
- issue_date = {March 2011},
- volume = {54},
- issue = {3},
- month = mar,
- year = {2011},
-}
-
-@MISC{id,
-    author = {Nikhil, Rishiyur S.},
-    title = {ID Language Reference Manual},
-    year = {1991}
-}
-
-@inproceedings{newton-asynchronous-reduction,
- author = {Ryan Newton and others},
- booktitle = {Workshop on Determinism and Correctness
-                  in Parallel Programming (WoDet)},
- title = {Deterministic Reductions in an Asynchronous
-                  Parallel Language},
- year = {2011}}
-
-@ARTICLE{Lee06theproblem,
-    author = {Edward A. Lee},
-    title = {The problem with threads},
-    journal = {Computer},
-    year = {2006},
-    volume = {39},
-}
-
-@techreport{cmu-ugrad-curriculum,
-author	=	{Randal E. Bryant and Klaus Sutner and Mark J. Stehlik},
-title	=	{Introductory Computer Science Education at {C}arnegie {M}ellon {U}niversity: A Deans' Perspective},
-institution=	{School of Computer Science, Carnegie Mellon University},
-number	=	{CMU-CS-10-140},
-month   = 	{August},
-year	=	{2010}
-}
-
-@incollection{ReynoldsUnification,
-    author = {Reynolds, John C.},
-    booktitle = {Machine Intelligence 5},
-    editor = {Meltzer, Bernard and Michie, Donald},
-    publisher = {Edinburgh University Press},
-    title = {Transformational Systems and the Algebraic Structure of Atomic Formulas},
-    year = {1969}
-}
-
-@article{valiron,
-  author    = {Peter Selinger and
-               Beno\^{\i}t Valiron},
-  title     = {A lambda calculus for quantum computation with classical
-               control},
-  journal   = {Mathematical Structures in Computer Science},
-  volume    = {16},
-  number    = {3},
-  year      = {2006},
 }
 
 @inproceedings{cray-mta,
@@ -416,94 +32,13 @@ year	=	{2010}
  title = {Designing Multithreaded Algorithms for Breadth-First Search and st-connectivity on the {Cray} {MTA}-2},
  booktitle = {ICPP},
  year = {2006},
-} 
-
-@inproceedings{concurrent-bag,
- author = {Sundell, H{\aa}kan and Gidenstam, Anders and Papatriantafilou, Marina and Tsigas, Philippas},
- title = {A lock-free algorithm for concurrent bags},
- series = {SPAA},
- year = {2011},
-} 
-
-@article{filinski-ST-monad-verified,
- author = {Filinski, Andrzej},
- title = {Monads in action},
- journal = {SIGPLAN Not.},
- issue_date = {January 2010},
- volume = {45},
- issue = {1},
- month = jan,
- year = {2010},
- keywords = {computational effects, modular semantics, monads},
-} 
-
-@inproceedings{OHearnLocalReasoning,
-  author    = {Peter W. O'Hearn and
-               John C. Reynolds and
-               Hongseok Yang},
-  title     = {Local Reasoning about Programs that Alter Data Structures},
-  booktitle = {CSL},
-  year      = {2001},
 }
 
-@book{baader98term,
-    author = {Baader, F. and Nipkow, T.},
-    citeulike-article-id = {402777},
-    keywords = {bibtex-import},
-    posted-at = {2005-11-21 10:38:17},
-    priority = {0},
-    publisher = {Cambridge University Press},
-    title = {{Term Rewriting and All That}},
-    year = {1998}
-}
-
-@book{redex-book,
- author = {Felleisen, Matthias and Findler, Robert Bruce and Flatt, Matthew},
- title = {Semantics Engineering with PLT Redex},
- year = {2009},
- edition = {1st},
- publisher = {The MIT Press},
-} 
-
-@misc{redex-multi-hole-email,
-url={http://lists.racket-lang.org/users/archive/2009-October/036237.html},
-}
-
-@inproceedings{run-your-research,
- author = {Klein, Casey and others},
- title = {Run your research: on the effectiveness of lightweight mechanization},
- booktitle = {POPL},
- year = {2012},
- location = {Philadelphia, PA, USA},
- keywords = {lightweight semantics engineering},
-} 
-
-@inproceedings{race-detector-data-structures,
- author = {Bender, Michael A. and Fineman, Jeremy T. and Gilbert, Seth and Leiserson, Charles E.},
- title = {On-the-fly maintenance of series-parallel relationships in fork-join multithreaded programs},
- booktitle = {SPAA},
- year = {2004},
- location = {Barcelona, Spain},
- keywords = {Cilk, SP-bags, SP-hybrid, SP-order, algorithm, amortized analysis, data race, data structure, dynamic set, fork-join, graph, least common ancestor, locking, multi-threading, mutual exclusion, on the fly, order maintenance, parallel computing, parse tree, race detection, series-parallel, thread, trace, tree, work stealing},
-} 
-
-
-@inproceedings{cilk-dprng,
- author = {Leiserson, Charles E. and Schardl, Tao B. and Sukha, Jim},
- title = {Deterministic parallel random-number generation for dynamic-multithreading platforms},
+@inproceedings{blelloch-internally-deterministic,
+ author = {Blelloch, Guy E. and Fineman, Jeremy T. and Gibbons, Phillip B. and Shun, Julian},
+ title = {Internally deterministic parallel algorithms can be fast},
  booktitle = {PPoPP},
  year = {2012},
- location = {New Orleans, Louisiana, USA},
- keywords = {cilk, determinism, dynamic multithreading, nondeterminism, parallel computing, pedigree, random-number generator},
-} 
-
-@article{monsoon,
- author = {Hicks, James and Chiou, Derek and Ang, Boon Seong and Arvind},
- title = {Performance studies of {I}d on the {M}onsoon dataflow system},
- journal = {J. Parallel Distrib. Comput.},
- issue_date = {1993},
- year = {1993},
- publisher = {Academic Press, Inc.},
 }
 
 @inproceedings{dpj-hotpar09,
@@ -518,458 +53,29 @@ url={http://lists.racket-lang.org/users/archive/2009-October/036237.html},
  title = {{A type and effect system for deterministic parallel Java}},
  booktitle = {OOPSLA},
  year = {2009},
-} 
+}
 
 @inproceedings{dpj-popl,
  author = {Bocchino,Jr., Robert L. and others},
  title = {Safe nondeterminism in a deterministic-by-default parallel language},
  booktitle = {POPL},
  year = {2011},
- location = {Austin, Texas, USA},
- keywords = {atomic sections, atomicity, data race freedom, determinism, effect systems, effects, nondeterminism, parallel programming languages, strong isolation, tranasctions, transactional memory},
-} 
-
-@inproceedings{cilk-hyperobjects,
- author = {Frigo, Matteo and others},
- title = {Reducers and other {C}ilk++ hyperobjects},
- booktitle = {SPAA},
- year = {2009},
- location = {Calgary, AB, Canada},
- keywords = {cilk, cilk++, hyperobject, reducer},
-} 
-
-
-@MISC{cps-citation,
-    author = {Olivier Danvy and Andrzej Filinski},
-    title = {Representing control: a study of the {CPS} transformation},
-    year = {1992}
 }
 
-@inproceedings{concurrent-revisions-haskell11,
- author = {Leijen, Daan and Fahndrich, Manuel and Burckhardt, Sebastian},
- title = {Prettier concurrency: purely functional concurrent revisions},
- booktitle = {Haskell},
- year = {2011},
- location = {Tokyo, Japan},
- keywords = {concurrent revisions, isolation, transaction},
-} 
-
-@inproceedings{semantics-concurrent-revisions,
- author = {Burckhardt, Sebastian and Leijen, Daan},
- title = {Semantics of concurrent revisions},
- booktitle = {ESOP},
- year = {2011},
- location = {Saarbr\&\#252;cken, Germany},
-} 
-
-@misc{bloom-website,
-title={Bloom homepage},
-url={http://bloom-lang.net},
-}
-
-@misc{bfs-pbgl,
-title={{Breadth-First Search, Parallel Boost Graph Library}},
-url={http://www.boost.org/doc/libs/1_51_0/libs/graph_parallel/doc/html/breadth_first_search.html},
-}
-
-@misc{parallel-BGL,
-title={{The Parallel Boost Graph Library}},
-url={http://www.boost.org/doc/libs/1_53_0/libs/graph_parallel},
-}
-
-@inproceedings{bloom-cidr,
-  author    = {Peter Alvaro and
-               Neil Conway and
-               Joe Hellerstein and
-               William R. Marczak},
-  title     = {Consistency Analysis in {B}loom: a {CALM} and Collected Approach},
-  booktitle = {CIDR},
-  year      = {2011},
-  ee        = {http://www.cidrdb.org/cidr2011/Papers/CIDR11_Paper35.pdf},
-  crossref  = {DBLP:conf/cidr/2011},
-  bibsource = {DBLP, http://dblp.uni-trier.de}
-}
-
-@proceedings{DBLP:conf/cidr/2011,
-  title     = {CIDR 2011, Fifth Biennial Conference on Innovative Data
-               Systems Research, Asilomar, CA, USA, January 9-12, 2011,
-               Online Proceedings},
-  booktitle = {CIDR},
-  year      = {2011},
-  bibsource = {DBLP, http://dblp.uni-trier.de}
-}
-
-@inproceedings{blooml,
-    Author = {Conway, Neil and Marczak, William and Alvaro, Peter and Hellerstein, Joseph M. and Maier, David},
-    Title = {Logic and Lattices for Distributed Programming},
-    Year = {2012},
-    booktitle = {SOCC},
-}
-
-
-@article{eventual-consistency,
- author = {Vogels, Werner},
- title = {Eventually consistent},
- journal = {Commun. ACM},
- issue_date = {January 2009},
- volume = {52},
- number = {1},
- month = jan,
- year = {2009},
-} 
-
-@inproceedings{cnc-space-folding,
-  author    = {Dragos Sbirlea and
-               Kathleen Knobe and
-               Vivek Sarkar},
-  title     = {Folding of Tagged Single Assignment Values for Memory-Efficient
-               Parallelism},
-  booktitle = {Euro-Par},
-  year      = {2012},
-}
-
-@article{chapel,
-title={Parallel Programmability and the {C}hapel Language},
-volume={21},
-number={3},
-journal={International Journal of High Performance Computing Applications},
-publisher={Sage Publications, Inc.},
-author={Chamberlain, B L and Callahan, D and Zima, H P},
-year={2007}
-}
-
-@misc{qthreads,
-title={Qthreads: An {API} for programming with millions of lightweight threads},
-journal={2008 IEEE International Symposium on Parallel and Distributed Processing},
-publisher={Ieee},
-author={Wheeler, K B and Murphy, R C and Thain, D},
-year={2008}}
-
-@inproceedings{blelloch-internally-deterministic,
- author = {Blelloch, Guy E. and Fineman, Jeremy T. and Gibbons, Phillip B. and Shun, Julian},
- title = {Internally deterministic parallel algorithms can be fast},
- booktitle = {Proceedings of the 17th ACM SIGPLAN symposium on Principles and Practice of Parallel Programming},
- series = {PPoPP '12},
+@url{BrewerCAPBlog,
+ author = {Brewer, Eric},
+ title = {{CAP} Twelve Years Later: How the ``Rules'' Have Changed},
+ howpublished = {\url{http://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed}},
  year = {2012},
- location = {New Orleans, Louisiana, USA},
- publisher = {ACM},
- address = {New York, NY, USA},
- keywords = {commutative operations, deterministic parallelism, geometry algorithms, graph algorithms, parallel algorithms, parallel programming, sorting, string processing},
 }
 
-@article{netzer-miller,
- author = {Netzer, Robert H. B. and Miller, Barton P.},
- title = {What are race conditions?: Some issues and formalizations},
- journal = {ACM Lett. Program. Lang. Syst.},
- issue_date = {March 1992},
- volume = {1},
- number = {1},
- month = mar,
- year = {1992},
- publisher = {ACM},
- address = {New York, NY, USA},
-} 
-
-@inproceedings{kulkarni2007optimistic,
-  title={Optimistic parallelism requires abstractions},
-  author={Kulkarni, Milind and Pingali, Keshav and Walter, Bruce and Ramanarayanan, Ganesh and Bala, Kavita and Chew, L Paul},
-  booktitle={ACM SIGPLAN Notices},
-  volume={42},
-  number={6},
-  year={2007},
-  organization={ACM}
-}
-
-@inproceedings{zhang2006layersynchronized,
-  title={Parallel breadth-first heuristic search on a shared-memory architecture},
-  author={Zhang, Yang and Hansen, Eric A.},
-  booktitle={AAAI Workshop on Heuristic Search, Memory-Based Heuristics and Their Applications},
-  year = {2006}
-}
-
-@inproceedings{cilk,
- author = {Frigo, Matteo and Leiserson, Charles E. and Randall, Keith H.},
- title = {The implementation of the {C}ilk-5 multithreaded language},
- booktitle = {PLDI},
- year = {1998},
-} 
-
-@inproceedings{marlow-par,
- author = {Marlow, Simon and Maier, Patrick and Loidl, Hans-Wolfgang and Aswad, Mustafa K. and Trinder, Phil},
- title = {{Seq no more: better strategies for parallel Haskell}},
- booktitle = {Haskell},
- year = {2010},
-}
-
-@inproceedings{concurrent-revisions-oopsla,
- author = {Burckhardt, Sebastian and Baldassin, Alexandro and Leijen, Daan},
- title = {Concurrent programming with revisions and isolation types},
- booktitle = {OOPSLA},
- year = {2010},
-} 
-
-@article{lee-sdn,
- author={Lee, E.A. and Messerschmitt, D.G.},
- journal={Proceedings of the IEEE},
- title={Synchronous data flow},
- year={1987},
- volume={75},
- number={9},
- pages={1235-1245}
-}
-
-@inproceedings{streamit-asplos,
-  author = "Michael I. Gordon and William Thies and Michal Karczmarek and Jasper Lin and Ali S. Meli and Christopher Leger and Andrew A. Lamb and Jeremy Wong and Henry Hoffman and David Z. Maze and Saman Amarasinghe",
-  title = "A Stream Compiler for Communication-Exposed Architectures",
-  booktitle = {ASPLOS},
-  year = "2002",
-}
-
-@book{reppy-cml-book,
-  author = {John H. Reppy},
-  title = {Concurrent Programming in {ML}},
-  publisher = {Cambridge University Press},
-  address = {Cambridge, England},
-  year = 1999,
-}
-
-@inproceedings{pbbs,
- author = {Shun, Julian and Blelloch, Guy E. and Fineman, Jeremy T. and Gibbons, Phillip B. and Kyrola, Aapo and Simhadri, Harsha Vardhan and Tangwongsan, Kanat},
- title = {{Brief announcement: the Problem Based Benchmark Suite}},
- booktitle = {SPAA},
- year = {2012},
-} 
-
-@inproceedings{dph,
-  title = {Harnessing the Multicores: Nested Data Parallelism in {H}askell},
-  author = {Simon L. {Peyton Jones} and Roman Leshchinskiy and Gabriele Keller and Manuel M. T. Chakravarty},
-  year = {2008},
-   booktitle = {FSTTCS},
-}
-
-@inproceedings{dph-status,
- author = {Chakravarty, Manuel M. T. and Leshchinskiy, Roman and Peyton Jones, Simon and Keller, Gabriele and Marlow, Simon},
- title = {{Data Parallel Haskell}: A Status Report},
- booktitle = {DAMP},
- year = {2007},
-} 
-
-@inproceedings{river-trail,
- author = {Herhut, Stephan and Hudson, Richard L. and Shpeisman, Tatiana and Sreeram, Jaswanth},
- title = {River Trail: A Path to Parallelism in JavaScript},
- booktitle = {OOPSLA},
- year = {2013},
-} 
-
-@article{monotone-frameworks,
-    author = {Kam, John B. and Ullman, Jeffrey D.},
-    journal = {Acta Informatica},
-    month = sep,
-    number = {3},
-    pages = {305--317},
-    title = {{Monotone data flow analysis frameworks}},
-    volume = {7},
-    year = {1977}
-}
-
-@InProceedings{flowpools,
-   author      = {Prokopec, Aleksandar and Miller, Heather and Schlatter,
-                 Tobias and Haller, Philipp and Odersky, Martin},
-   booktitle   = {LCPC},
-   title       = {Flow{P}ools: a lock-free deterministic
-                 concurrent dataflow abstraction},
-   year        = 2012
-}
-
-@inproceedings{lawsOfOrder,
- author = {Attiya, Hagit and Guerraoui, Rachid and Hendler, Danny and Kuznetsov, Petr and Michael, Maged M. and Vechev, Martin},
- title = {Laws of order: expensive synchronization in concurrent algorithms cannot be eliminated},
- booktitle = {POPL},
- year = {2011}
-} 
-
-@book{art,
- author = {Herlihy, M. and Shavit, N.},
- title = {The Art of Multiprocessor Programming},
- year = {2008},
- publisher = {Morgan Kaufmann},
- }
-
-@inproceedings{idempotent,
- author = {Michael, Maged M. and Vechev, Martin T. and Saraswat, Vijay A.},
- title = {Idempotent work stealing},
- booktitle = {PPoPP},
- year = {2009},
-} 
-
-@inproceedings{ChaseLev,
- author = {Chase, David and Lev, Yossi},
- title = {Dynamic circular work-stealing deque},
- booktitle = {SPAA},
- year = {2005},
-} 
-
-@inproceedings{snzi,
- author = {Ellen, Faith and Lev, Yossi and Luchangco, Victor and Moir, Mark},
- title = {{SNZI}: {S}calable {N}on{Z}ero {I}ndicators},
- booktitle = {PODC},
- year = {2007}
-} 
-
-@inproceedings{earl-might-icfp-2012,
- author = {Earl, Christopher and Sergey, Ilya and Might, Matthew and Van Horn, David},
- title = {Introspective pushdown analysis of higher-order programs},
- booktitle = {ICFP},
- year = {2012},
-} 
-
-@inproceedings{ppopp-2012-internally-deterministic,
- author = {Blelloch, Guy E. and Fineman, Jeremy T. and Gibbons, Phillip B. and Shun, Julian},
- title = {Internally deterministic parallel algorithms can be fast},
- booktitle = {PPoPP},
- year = {2012},
-} 
-
-@inproceedings{crdts,
- author = {Shapiro, Marc and Pregui\c{c}a, Nuno and Baquero, Carlos and Zawirski, Marek},
- title = {Conflict-free replicated data types},
- booktitle = {SSS},
- year = {2011},
-} 
-
-@phdthesis{practical-lock-freedom,
- author = {Fraser, Keir},
- title = {Practical lock-freedom},
- year = {2004},
- publisher = {University of Cambridge},
-} 
-
-@article{gilbert-lynch-cap,
- author = {Gilbert, Seth and Lynch, Nancy},
- title = {Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-tolerant Web Services},
- journal = {SIGACT News},
- issue_date = {June 2002},
- volume = {33},
- number = {2},
- month = jun,
- year = {2002},
-} 
-
-@inproceedings{dynamo,
- author = {DeCandia, Giuseppe and Hastorun, Deniz and Jampani, Madan and Kakulapati, Gunavardhan and Lakshman, Avinash and Pilchin, Alex and Sivasubramanian, Swaminathan and Vosshall, Peter and Vogels, Werner},
- title = {Dynamo: Amazon's Highly Available Key-value Store},
- booktitle = {SOSP},
- year = {2007},
-}
-
-@article{vogels-ec,
- author = {Vogels, Werner},
- title = {Eventually Consistent},
- journal = {Commun. ACM},
- issue_date = {January 2009},
- volume = {52},
- number = {1},
- month = jan,
- year = {2009},
-}
-
-@techreport{crdts-tr,
-    title = {{A comprehensive study of Convergent and Commutative Replicated Data Types}},
-    author = {Shapiro, Marc and Pregui{\c c}a, Nuno and Baquero, Carlos and Zawirski, Marek},
-    institution = {INRIA},
-    number = {RR-7506},
-    year = {2011},
-    month = jan,
-}
-
-@inproceedings{rdts-popl14,
-author = {Burckhardt, Sebastian and Gotsman, Alexey and Yang, Hongseok and Zawirski, Marek},
-title = {Replicated Data Types: Specification, Verification, Optimality},
-booktitle = {POPL},
-year = {2014},
-}
-
-@inproceedings{effectzoo,
-author = {\myname{} and Todd, Aaron and Tobin-Hochstadt, Sam and Newton, Ryan R.},
-title = {Taming the Parallel Effect Zoo: Extensible Deterministic Parallelism with {LVish}},
-booktitle={PLDI},
-year = {2014},
-}
-
-
-@article{PhyBin,
- title = {{PhyBin}: binning trees by topology},
- author = {Newton, Ryan R. and Newton, Irene L.G.},
- year = {2013},
- month = oct,
- volume = {1},
- pages = {e187},
- journal = {PeerJ},
-}
-
-@inproceedings{hashrf,
-  title={A Randomized Algorithm for Comparing Sets of Phylogenetic Trees},
-  author={Sul, Seung-Jin and Williams, Tiffani L.},
-  booktitle={APBC},
-  year={2007},
-}
-
-@inproceedings{safe-haskell,
-  title = {Safe Haskell},
-  author = {David Terei and David Mazières and Simon Marlow and Simon {Peyton Jones}},
-  booktitle = {Haskell},
-  year = {2012},
-}
-
-@inproceedings{lambdae,
-  title={{A pattern matcher for miniKanren, or, how to get into trouble with CPS macros}},
-  author={Keep, Andrew W. and Adams, Michael D. and \myname{} and Byrd, William E. and Friedman, Daniel P.},
-  booktitle={Scheme},
-  year={2009},
-}
-
-@techreport{tsl-tr,
-  title={Safety in Numbers},
-  author={Cok, David and Phillips, John and Wisniewski, Scott and Yong, Suan Hsi and Lloyd, Nathan and \myname{} and Gopan, Denis and Loginov, Alexey},
-  month= nov,
-  year={2010},
-  institution={GrammaTech, Inc.},
-  url={http://www.dtic.mil/dtic/tr/fulltext/u2/a532995.pdf}
-}
-
-@misc{multilang-talk,
-title= {Parametric polymorphism through run-time sealing, or, theorems for low, low prices!},
-author = {Ahmed, Amal and \myname{} and Matthews, Jacob},
-year = {2011},
-month = feb,
-note= {Northeastern University Programming Languages Seminar talk},
-}
-
-@inproceedings{joining-wodet,
-author = {\myname{} and Newton, Ryan R.},
-title = {Joining forces: toward a unified account of {LVars} and convergent replicated data types.},
-year = {2014 (to appear)},
-booktitle = {{\normalfont the} 5th Workshop on Determinism and Correctness in Parallel Programming (WoDet)},
-}
-
-@book{marlow-book,
- author = {Marlow, Simon},
- title = {Parallel and Concurrent Programming in Haskell},
- publisher = {O'Reilly Media},
- year = {2013},
-}
-
-@inproceedings{pileus,
- author = {Terry, Douglas B. and Prabhakaran, Vijayan and Kotla, Ramakrishna and Balakrishnan, Mahesh and Aguilera, Marcos K. and Abu-Libdeh, Hussam},
- title = {Consistency-based Service Level Agreements for Cloud Storage},
- booktitle = {SOSP},
- year = {2013},
-}
-
-@url{simpledb-vogels-article,
- author = {Vogels, Werner},
- title = {Choosing consistency},
- howpublished = {\url{http://www.allthingsdistributed.com/2010/02/strong_consistency_simpledb.html}},
+@article{CnC,
+ author = {Budimli\'{c}, Zoran and Burke, Michael and Cav\'{e}, Vincent and Knobe, Kathleen and Lowney, Geoff and Newton, Ryan and Palsberg, Jens and Peixotto, David and Sarkar, Vivek and Schlimbach, Frank and Ta{\c s}irlar, Sa{\u g}nak},
+ title = {Concurrent {C}ollections},
+ journal = {Sci. Program.},
+ volume = {18},
+ number = {3-4},
+ month = aug,
  year = {2010},
 }
 
@@ -980,47 +86,145 @@ booktitle = {{\normalfont the} 5th Workshop on Determinism and Correctness in Pa
  year = {2012},
 }
 
-@inproceedings{oleg-amr-haskell-2013,
-  author    = {Oleg Kiselyov and
-               Amr Sabry and
-               Cameron Swords},
-  title     = {Extensible effects: an alternative to monad transformers},
-  booktitle = {Haskell},
-  year      = {2013},
+@inproceedings{rdts-popl14,
+ author = {Burckhardt, Sebastian and Gotsman, Alexey and Yang, Hongseok and Zawirski, Marek},
+ title = {Replicated Data Types: Specification, Verification, Optimality},
+ booktitle = {POPL},
+ year = {2014},
 }
 
-@url{BrewerCAPBlog,
- author = {Brewer, Eric},
- title = {{CAP} Twelve Years Later: How the ``Rules'' Have Changed},
- howpublished = {\url{http://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed}},
+@inproceedings{semantics-concurrent-revisions,
+ author = {Burckhardt, Sebastian and Leijen, Daan},
+ title = {Semantics of concurrent revisions},
+ booktitle = {ESOP},
+ year = {2011},
+}
+
+@inproceedings{dph-status,
+ author = {Chakravarty, Manuel M. T. and Leshchinskiy, Roman and {Peyton Jones}, Simon and Keller, Gabriele and Marlow, Simon},
+ title = {{Data Parallel Haskell}: A Status Report},
+ booktitle = {DAMP},
+ year = {2007},
+}
+
+@inproceedings{ChaseLev,
+ author = {Chase, David and Lev, Yossi},
+ title = {Dynamic circular work-stealing deque},
+ booktitle = {SPAA},
+ year = {2005},
+}
+
+@inproceedings{blooml,
+ author = {Conway, Neil and Marczak, William and Alvaro, Peter and Hellerstein, Joseph M. and Maier, David},
+ title = {Logic and Lattices for Distributed Programming},
+ booktitle = {SOCC},
  year = {2012},
 }
 
-@article{phylip,
-    author = {Felsenstein, Joseph},
-    journal = {Cladistics},
-    keywords = {bibtex-import, inference, phylogeny, software},
-    pages = {164--166},
-    title = {{PHYLIP - Phylogeny Inference Package (Version 3.2)}},
-    volume = {5},
-    year = {1989},
+@inproceedings{dynamo,
+ author = {DeCandia, Giuseppe and Hastorun, Deniz and Jampani, Madan and Kakulapati, Gunavardhan and Lakshman, Avinash and Pilchin, Alex and Sivasubramanian, Swaminathan and Vosshall, Peter and Vogels, Werner},
+ title = {Dynamo: Amazon's Highly Available Key-value Store},
+ booktitle = {SOSP},
+ year = {2007},
 }
 
-@article{dendropy,
-author = {Jeet Sukumaran and Mark T. Holder},
-title = {{DendroPy}: a {Python} library for phylogenetic computing},
-journal = {Bioinformatics},
-year = {2010},
-pages = {1569-1571},
-volume= {26},
-}
-
-@inproceedings{runtime-support-multicore-haskell,
- author = {Marlow, Simon and Peyton Jones, Simon and Singh, Satnam},
- title = {Runtime Support for Multicore {H}askell},
+@inproceedings{earl-might-icfp-2012,
+ author = {Earl, Christopher and Sergey, Ilya and Might, Matthew and Van Horn, David},
+ title = {Introspective pushdown analysis of higher-order programs},
  booktitle = {ICFP},
+ year = {2012},
+}
+
+@inproceedings{snzi,
+ author = {Ellen, Faith and Lev, Yossi and Luchangco, Victor and Moir, Mark},
+ title = {{SNZI}: {S}calable {N}on{Z}ero {I}ndicators},
+ booktitle = {PODC},
+ year = {2007},
+}
+
+@book{redex-book,
+ author = {Felleisen, Matthias and Findler, Robert Bruce and Flatt, Matthew},
+ title = {Semantics Engineering with PLT Redex},
  year = {2009},
-} 
+ edition = {First},
+ publisher = {The MIT Press},
+}
+
+@misc{phylip,
+ author = {Felsenstein, Joseph},
+ title = {{PHYLIP (Phylogeny Inference Package) version 3.6}},
+ howpublished = {Distributed by the author},
+ year = {2005},
+ institution = {Department of Genome Sciences, University of Washington},
+ location = {Seattle},
+}
+
+@inproceedings{manticore_parallel_tuples,
+ author = {Fluet, Matthew and Rainey, Mike and Reppy, John and Shaw, Adam},
+ title = {Implicitly-threaded parallelism in {M}anticore},
+ booktitle = {ICFP},
+ year = {2008},
+}
+
+@phdthesis{practical-lock-freedom,
+ author = {Fraser, Keir},
+ title = {Practical lock-freedom},
+ year = {2004},
+}
+
+@inproceedings{cilk,
+ author = {Frigo, Matteo and Leiserson, Charles E. and Randall, Keith H.},
+ title = {The implementation of the {C}ilk-5 multithreaded language},
+ booktitle = {PLDI},
+ year = {1998},
+}
+
+@article{gilbert-lynch-cap,
+ author = {Gilbert, Seth and Lynch, Nancy},
+ title = {Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-tolerant Web Services},
+ journal = {SIGACT News},
+ volume = {33},
+ number = {2},
+ month = jun,
+ year = {2002},
+}
+
+@inproceedings{streamit-asplos,
+  author = {Michael I. Gordon and William Thies and Michal Karczmarek and Jasper Lin and Ali S. Meli and Christopher Leger and Andrew A. Lamb and Jeremy Wong and Henry Hoffman and David Z. Maze and Saman Amarasinghe},
+  title = {A Stream Compiler for Communication-Exposed Architectures},
+  booktitle = {ASPLOS},
+  year = {2002},
+}
+
+@inproceedings{river-trail,
+ author = {Herhut, Stephan and Hudson, Richard L. and Shpeisman, Tatiana and Sreeram, Jaswanth},
+ title = {{River Trail}: A Path to Parallelism in {JavaScript}},
+ booktitle = {OOPSLA},
+ year = {2013},
+}
+
+@book{art,
+ author = {Herlihy, M. and Shavit, N.},
+ title = {The Art of Multiprocessor Programming},
+ year = {2008},
+ publisher = {Morgan Kaufmann},
+ }
+
+@incollection{kahn-1974,
+ author = {Kahn, G.},
+ booktitle = {Information Processing '74: Proceedings of the IFIP Congress},
+ editor = {Rosenfeld, J. L.},
+ publisher = {North-Holland},
+ title = {The Semantics of a Simple Language for Parallel Programming},
+ year = {1974},
+}
+
+@inproceedings{oleg-amr-haskell-2013,
+ author    = {Oleg Kiselyov and Amr Sabry and Cameron Swords},
+ title     = {Extensible effects: an alternative to monad transformers},
+ booktitle = {Haskell},
+ year      = {2013},
+}
 
 @inproceedings{simple-frp,
  author = {Neelakantan R. Krishnaswami},
@@ -1028,4 +232,172 @@ volume= {26},
  booktitle = {ICFP},
  year =      {2013},
 }
-            
+
+@article{lee-sdn,
+ author = {Lee, E.A. and Messerschmitt, D.G.},
+ journal = {Proceedings of the IEEE},
+ title = {Synchronous data flow},
+ year = {1987},
+ volume = {75},
+ number = {9},
+}
+
+@inproceedings{concurrent-revisions-haskell11,
+ author = {Leijen, Daan and Fahndrich, Manuel and Burckhardt, Sebastian},
+ title = {Prettier concurrency: purely functional concurrent revisions},
+ booktitle = {Haskell},
+ year = {2011},
+}
+
+@book{marlow-book,
+ author = {Marlow, Simon},
+ title = {Parallel and Concurrent Programming in Haskell},
+ publisher = {O'Reilly Media},
+ year = {2013},
+}
+
+@inproceedings{marlow-par,
+ author = {Marlow, Simon and Maier, Patrick and Loidl, Hans-Wolfgang and Aswad, Mustafa K. and Trinder, Phil},
+ title = {Seq no more: better strategies for parallel {H}askell},
+ booktitle = {Haskell},
+ year = {2010},
+}
+
+@inproceedings{monad-par,
+ author = {Marlow, Simon and Newton, Ryan and {Peyton Jones}, Simon},
+ title = {A monad for deterministic parallelism},
+ booktitle = {Haskell},
+ year = {2011},
+}
+
+@inproceedings{runtime-support-multicore-haskell,
+ author = {Marlow, Simon and {Peyton Jones}, Simon and Singh, Satnam},
+ title = {Runtime Support for Multicore {H}askell},
+ booktitle = {ICFP},
+ year = {2009},
+}
+
+@inproceedings{idempotent,
+ author = {Michael, Maged M. and Vechev, Martin T. and Saraswat, Vijay A.},
+ title = {Idempotent work stealing},
+ booktitle = {PPoPP},
+ year = {2009},
+}
+
+@url{MightkCFABlog,
+ author = {Might, Matthew},
+ title = {{$k$-CFA: Determining types and/or control-flow in languages like Python, Java and Scheme}},
+ howpublished = {\url{http://matt.might.net/articles/implementation-of-kcfa-and-0cfa/}},
+}
+
+@article{PhyBin,
+ title = {{PhyBin}: binning trees by topology},
+ author = {Newton, Ryan R. and Newton, Irene L. G.},
+ year = {2013},
+ month = oct,
+ volume = {1},
+ journal = {PeerJ},
+}
+
+@misc{id,
+ author = {Nikhil, Rishiyur S.},
+ title = {Id Language Reference Manual},
+ year = {1991},
+}
+
+@inproceedings{dph,
+ author = {Simon L. {Peyton Jones} and Roman Leshchinskiy and Gabriele Keller and Manuel M. T. Chakravarty},
+ title = {Harnessing the Multicores: Nested Data Parallelism in {H}askell},
+ booktitle = {FSTTCS},
+ year = {2008},
+}
+
+@inproceedings{flowpools,
+ author = {Prokopec, Aleksandar and Miller, Heather and Schlatter, Tobias and Haller, Philipp and Odersky, Martin},
+ title = {Flow{P}ools: a lock-free deterministic concurrent dataflow abstraction},
+ booktitle = {LCPC},
+ year = {2012},
+}
+
+@book{reppy-cml-book,
+ author = {John H. Reppy},
+ title = {Concurrent Programming in {ML}},
+ publisher = {Cambridge University Press},
+ year = {1999},
+}
+
+@techreport{crdts-tr,
+ author = {Shapiro, Marc and Pregui\c{c}a, Nuno and Baquero, Carlos and Zawirski, Marek},
+ title = {{A comprehensive study of Convergent and Commutative Replicated Data Types}},
+ institution = {INRIA},
+ number = {RR-7506},
+ year = {2011},
+ month = jan,
+}
+
+@inproceedings{crdts,
+ author = {Shapiro, Marc and Pregui\c{c}a, Nuno and Baquero, Carlos and Zawirski, Marek},
+ title = {Conflict-free replicated data types},
+ booktitle = {SSS},
+ year = {2011},
+}
+
+@inproceedings{beyond-nested-workstealing,
+ author = {Spoonhower, Daniel and Blelloch, Guy E. and Gibbons, Phillip B. and Harper, Robert},
+ title = {Beyond nested parallelism: tight bounds on work-stealing overheads for parallel futures},
+ booktitle = {SPAA},
+ year = {2009},
+}
+
+@article{dendropy,
+ author = {Jeet Sukumaran and Mark T. Holder},
+ title = {{DendroPy}: a {Python} library for phylogenetic computing},
+ journal = {Bioinformatics},
+ year = {2010},
+ volume = {26},
+}
+
+@inproceedings{hashrf,
+ title = {A Randomized Algorithm for Comparing Sets of Phylogenetic Trees},
+ author = {Sul, Seung-Jin and Williams, Tiffani L.},
+ booktitle = {APBC},
+ year = {2007},
+}
+
+@inproceedings{safe-haskell,
+ author = {David Terei and David Mazières and Simon Marlow and Simon {Peyton Jones}},
+ title = {Safe {H}askell},
+ booktitle = {Haskell},
+ year = {2012},
+}
+
+@inproceedings{pileus,
+ author = {Terry, Douglas B. and Prabhakaran, Vijayan and Kotla, Ramakrishna and Balakrishnan, Mahesh and Aguilera, Marcos K. and Abu-Libdeh, Hussam},
+ title = {Consistency-based Service Level Agreements for Cloud Storage},
+ booktitle = {SOSP},
+ year = {2013},
+}
+
+@inproceedings{Tesler-1968,
+ author = {Tesler, L. G. and Enea, H. J.},
+ title = {A language design for concurrent processes},
+ booktitle = {AFIPS},
+ year = {1968 (Spring)},
+}
+
+@article{vogels-ec,
+ author = {Vogels, Werner},
+ title = {Eventually consistent},
+ journal = {Commun. ACM},
+ volume = {52},
+ number = {1},
+ month = jan,
+ year = {2009},
+}
+
+@url{simpledb-vogels-article,
+ author = {Vogels, Werner},
+ title = {Choosing consistency},
+ howpublished = {\url{http://www.allthingsdistributed.com/2010/02/strong_consistency_simpledb.html}},
+ year = {2010},
+}
