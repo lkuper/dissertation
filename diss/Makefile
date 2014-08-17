@@ -1,14 +1,14 @@
-NAME=dissertation
-LATEX=xelatex
+NAME := dissertation
+LATEX := xelatex
 UNAME := $(shell uname)
-SOURCES = $(wildcard *.tex *.bib) $(wildcard */*.tex) $(wildcard */figures/*.pdf) $(wildcard ../latex_common/*.tex)
-TEX_SOURCES = $(wildcard *.tex) $(wildcard */*.tex) $(wildcard ../latex_common/*.tex)
+SOURCES := $(wildcard *.tex *.bib) $(wildcard */*.tex) $(wildcard */figures/*.pdf) $(wildcard ../latex_common/*.tex)
+TEX_SOURCES := $(wildcard *.tex) $(wildcard */*.tex) $(wildcard ../latex_common/*.tex)
 
 $(NAME).pdf: $(SOURCES)
-	${LATEX} $(NAME).tex
+	$(LATEX) $(NAME).tex
 	bibtex $(NAME)
-	${LATEX} $(NAME).tex
-	${LATEX} $(NAME).tex
+	$(LATEX) $(NAME).tex
+	$(LATEX) $(NAME).tex
 
 #-----------------------------------------------
 # These targets actually change the build state:
@@ -17,11 +17,11 @@ ed: editingmarks
 
 editingmarks:
 	touch editingmarks.tex
-	${MAKE} $(NAME).pdf
+	$(MAKE) $(NAME).pdf
 
 plain: 
 	rm -f editingmarks.tex
-	${MAKE} $(NAME).pdf
+	$(MAKE) $(NAME).pdf
 	cp $(NAME).pdf plain.pdf
 
 #-----------------------------------------------
@@ -39,12 +39,12 @@ style:
 	echo "duplicates: "
 	perl ../bin/dups $(TEX_SOURCES)
 
-open: ${NAME}.pdf
-ifeq (${UNAME}, Darwin)
-	open ${NAME}.pdf
+open: $(NAME).pdf
+ifeq ($(UNAME), Darwin)
+	open $(NAME).pdf
 endif
-ifeq (${UNAME}, Linux)
-	evince ${NAME}.pdf &
+ifeq ($(UNAME), Linux)
+	evince $(NAME).pdf &
 endif
 
 clean:
