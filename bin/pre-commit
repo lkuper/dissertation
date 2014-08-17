@@ -3,9 +3,7 @@
 exec 1>&2
 
 cd diss
-make clean
-make ed
-cp dissertation.pdf draft-latest.pdf
-git --git-dir ~/repos/dissertation/.git --work-tree ~/repos/dissertation add draft-latest.pdf -f
+make
+scp dissertation.pdf sharks.cs.indiana.edu:~/.hyplan/papers/dissertation-draft-latest.pdf
 
 
