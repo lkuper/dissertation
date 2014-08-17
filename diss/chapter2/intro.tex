@@ -61,11 +61,10 @@ place over blocking FIFO queues with ever-increasing \emph{channel
 Intel Concurrent Collections system (CnC)~\cite{CnC} and the
 \emph{monad-par} Haskell library~\cite{monad-par}, a shared data store
 of blocking single-assignment memory locations grows monotonically.
-Hence \emph{monotonic data structures}---data structures to which
-information can only be added and never removed, and for which the
-order in which information is added is not observable---emerge as a
-common theme of both data-flow and single-assignment parallel
-programming models.
+Hence both programming models rely on \emph{monotonic data
+structures}: data structures to which information can only be added
+and never removed, and for which the timing of updates is not
+observable.
 
 Because state modifications that only add information and never
 destroy it can be structured to commute with one another and thereby

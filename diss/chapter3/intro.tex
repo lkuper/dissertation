@@ -1,10 +1,11 @@
 The LVars programming model presented in Chapter~\ref{ch:lvars} is
-based on the idea of \emph{monotonic data structures}, in which (1)
-information can only be added, never removed, and (2) the order in
-which information is added is not observable.  A paradigmatic example
-is a set that supports insertion but not removal, but there are many
-others.  In the LVars model, all shared data structures (called LVars)
-are monotonic, and the states that an LVar can take on form a
+based on the idea of \emph{monotonic data structures}, in which
+information can only be added, never removed, and the timing with
+which information is added (and hence the \emph{order} in which it is
+added) is not observable.  A paradigmatic example is a set that
+supports insertion but not removal, but there are many others.  In the
+LVars model, all shared data structures (called LVars) are monotonic,
+and the states that an LVar can take on form a
 \emph{lattice}.  Writes to an LVar must correspond to a least upper
 bound operation in the lattice, which means that they monotonically
 increase the information in the LVar, and that they commute with one
