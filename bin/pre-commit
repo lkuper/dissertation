@@ -2,7 +2,7 @@
 
 exec 1>&2
 
-cd diss
+cd dissertation
 make
 scp dissertation.pdf sharks.cs.indiana.edu:~/.hyplan/papers/dissertation-draft-latest.pdf
 
