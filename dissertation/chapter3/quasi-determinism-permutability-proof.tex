@@ -98,8 +98,39 @@
       to $\config{\extSRaw{(\pi(S))}{\pi(l)}{u_{p_i}(p_1)}}{\unit}$,
       and so the two configurations are equal and the case is
       satisfied.
-    \item Case {\sc E-Put-Err}: \TODO{.}
-    \item Case {\sc E-Get}: \TODO{.}
+    \item Case {\sc E-Put-Err}: $\conf = \config{S}{\putiexp{l}}$,
+      and $\conf' = \error$.
+
+      To show: $\pi(\config{S}{\putiexp{l}}) \parstepsto
+      \pi(\error)$.
+
+      By Definition~\ref{def:permutation-configuration}, $\pi(\conf) =
+      \config{\pi(S)}{\putiexp{\pi(l)}}$.
+
+      By {\sc E-Put-Err}, $\config{\pi(S)}{\putiexp{\pi(l)}}$ steps to
+      $\error$, since $S(l) = (\pi(S))(\pi(l)) = p_1$.
+
+      Since $\pi(\error) = \error$ by
+      Definition~\ref{def:permutation-configuration}, the case is
+      complete.
+    \item Case {\sc E-Get}: $\conf = \config{S}{\getexp{l}{P}}$, and
+      $\conf' = \config{S}{p_2}$.
+
+      To show: $\pi(\config{S}{\getexp{l}{P}}) \parstepsto
+      \pi(\config{S}{p_2})$.
+
+      By Definition~\ref{def:permutation-configuration}, $\pi(\conf) =
+      \config{\pi(S)}{\getexp{\pi(l)}{\pi(P)}}$, which, by
+      Definition~\ref{def:permutation-expression}, is equal to
+      $\config{\pi(S)}{\getexp{\pi(l)}{P}}$.
+
+      By {\sc E-Get}, $\config{\pi(S)}{\getexp{\pi(l)}{P}}$ steps to
+      $\config{\pi(S)}{p_2}$, since $S(l) = (\pi(S))(\pi(l)) = p_1$.
+
+      By Definition~\ref{def:permutation-configuration},
+      $\pi(\config{S}{p_2}) = \config{\pi(S)}{\pi(p_2)}$, which, by
+      Definition~\ref{def:permutation-expression}, is equivalent to
+      $\config{\pi(S)}{p_2}$.  Therefore the case is complete.
     \item Case {\sc E-Freeze-Init}: \TODO{.}
     \item Case {\sc E-Spawn-Handler}: \TODO{.}
     \item Case {\sc E-Freeze-Final}: \TODO{.}
