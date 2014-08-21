@@ -112,11 +112,10 @@
       \lk{We could spell this out in even more excruciating detail,
         but I think it's obvious enough.}
 
-      By the definition of store update,
-      $\extS{S}{l}{d_1}{\frozentrue}$ can only either update an
-      existing binding in $S$ or extend $S$ with a new binding.
-
-      Hence $\dom{S} \subseteq \dom{\extS{S}{l}{d_1}{\frozentrue}}$.
+      By definition, a store update operation on $S$ can only either
+      update an existing binding in $S$ or extend $S$ with a new
+      binding.  Hence $\dom{S} \subseteq
+      \dom{\extS{S}{l}{d_1}{\frozentrue}}$.
 
       From the premises of {\sc E-Freeze-Final}, $S(l) =
       \state{d_1}{\status_1}$.  Therefore $l \in \dom{S}$.
