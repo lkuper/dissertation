@@ -15,19 +15,18 @@ deterministic-by-construction programming model can provide a
 \emph{language-level} guarantee of determinism: deterministic programs
 are the only programs that can be expressed within the model.
 
-A deterministic program is one that ensures that all programs written
-using the model have the same \emph{observable behavior} every time
-they are run.  How do we define what is observable about a program's
-behavior?  Certainly, we do \emph{not} wish to preserve behaviors such
-as running time across multiple runs---ideally, a deterministic
-parallel program will run faster when more parallel resources are
-available.  Moreover, we do not want to count scheduling behavior as
-observable---in fact, we want to specifically \emph{allow} tasks to be
-scheduled dynamically and unpredictably, without allowing such
-\emph{schedule nondeterminism} to affect the observable behavior of a
-program.  Therefore, in this dissertation I will define the observable
-behavior of a program to be \emph{the value to which the program
-  evaluates}.
+A deterministic program is one that has the same \emph{observable
+  behavior} every time it is run.  How do we define what is observable
+about a program's behavior?  Certainly, we do \emph{not} wish to
+preserve behaviors such as running time across multiple
+runs---ideally, a deterministic parallel program will run faster when
+more parallel resources are available.  Moreover, we do not want to
+count scheduling behavior as observable---in fact, we want to
+specifically \emph{allow} tasks to be scheduled dynamically and
+unpredictably, without allowing such \emph{schedule nondeterminism} to
+affect the observable behavior of a program.  Therefore, in this
+dissertation I will define the observable behavior of a program to be
+\emph{the value to which the program evaluates}.
 
 \lk{In my proposal, I had a footnote here: ``We assume that programs
   have no side effects other than state effects.'' I think I instead
