@@ -309,17 +309,17 @@
       \lk{This case wouldn't work but for the $\lubstore{S'}{S''}
         \statuseq S$ requirement, which makes it a no-op freeze.}
 
-      Given: $\config{S}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+      Given: $\config{S}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}
       \parstepsto \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
       To show:
-      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}
       \parstepsto
       \config{\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}}{d_1}$.
 
       We will first show that
 
-      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}
       \parstepsto
       \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$
 
@@ -351,7 +351,7 @@
 
         Therefore, by {\sc E-Freeze-Final}, we have that
 
-        $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+        $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}
         \parstepsto
         \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
 
@@ -399,7 +399,7 @@
 
           Therefore, by {\sc E-Freeze-Final}, we have that
 
-          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}
           \parstepsto
           \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
 
@@ -424,7 +424,7 @@
 
           Therefore,
 
-          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}
           \parstepsto
           \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
 
@@ -442,7 +442,7 @@
 
           Therefore, by {\sc E-Freeze-Final}, we have that
 
-          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}
           \parstepsto
           \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
 
@@ -466,7 +466,7 @@
 
           Therefore,
 
-          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}
           \parstepsto
           \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
         \end{itemize}
@@ -474,7 +474,7 @@
 
       In each case we have shown that
 
-      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}
       \parstepsto
       \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
 
@@ -488,7 +488,7 @@
       \end{align*}
       Therefore
 
-      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v\dots}}{H}}
+      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}
       \parstepsto
       \config{\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}}{d_1}$,
 
