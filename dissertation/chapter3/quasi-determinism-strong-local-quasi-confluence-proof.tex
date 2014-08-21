@@ -344,14 +344,17 @@
       \end{itemize}
 
     \item {\sc E-Freeze-Final}: $\conf =
-      \config{S}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}$, and
-      $\conf_a = \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+            \dots}}{H}}$, and $\conf_a =
+      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
       Given:
       \begin{itemize}
-      \item $\config{S}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}
-        \parstepsto \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
-      \item $\config{S}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}} \parstepsto \conf_b$.
+      \item $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+            \dots}}{H}} \parstepsto
+        \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
+      \item $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+            \dots}}{H}} \parstepsto \conf_b$.
       \end{itemize}
 
       To show: There exist $\conf_c, i, j$ such that
@@ -375,7 +378,8 @@
 
       Given:
       \begin{itemize}
-      \item $\config{S}{\freeze{l}} \parstepsto \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
+      \item $\config{S}{\freeze{l}} \parstepsto
+        \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
       \item $\config{S}{\freeze{l}} \parstepsto \conf_b$.
       \end{itemize}
 

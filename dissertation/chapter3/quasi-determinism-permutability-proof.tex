@@ -182,16 +182,18 @@
       complete.
 
     \item Case {\sc E-Freeze-Final}: $\conf =
-      \config{S}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}$, and
-      $\conf' = \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+            \dots}}{H}}$, and $\conf' =
+      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
-      To show: $\pi(\config{S}{\freezeafterfull{l}{Q}{v}{\setof{v,
+      To show:
+      $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
             \dots}}{H}}) \parstepsto
       \pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
 
       By Definitions~\ref{def:permutation-configuration}
       and~\ref{def:permutation-expression}, $\pi(\conf) =
-      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\pi(v)}{\setof{\pi(v),
+      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(v),
             \dots}}{H}}$.
 
       \lk{How do we handle applying $\pi$ to an arbitrary value $v$?
