@@ -19,10 +19,9 @@
       To show: $\pi(\config{S}{\app{(\lam{x}{e})}{v}}) \parstepsto
       \pi(\config{S}{\subst{e}{x}{v}})$.
 
-      By Definition~\ref{def:lvars-permutation-configuration},
-      $\pi(\conf) = \config{\pi(S)}{\app{\pi(\lam{x}{e})}{\pi(v)}}$,
-      which, by Definition~\ref{def:lvars-permutation-expression}, is
-      equal to $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$.
+      By Definitions~\ref{def:lvars-permutation-configuration}
+      and~\ref{def:lvars-permutation-expression}, $\pi(\conf) =
+      \config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$.
 
       By {\sc E-Beta},
       $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$ steps to
@@ -44,10 +43,9 @@
       To show: $\pi(\config{S}{\NEW}) \parstepsto
       \pi(\config{\extSRaw{S}{l}{\bot}}{l})$.
 
-      By Definition~\ref{def:lvars-permutation-configuration},
-      $\pi(\conf) = \config{\pi(S)}{\pi(\NEW)}$, which, by
-      Definition~\ref{def:lvars-permutation-expression}, is equal to
-      $\config{\pi(S)}{\NEW}$.
+      By Definitions~\ref{def:lvars-permutation-configuration}
+      and~\ref{def:lvars-permutation-expression}, $\pi(\conf) =
+      \config{\pi(S)}{\NEW}$.
 
       By {\sc E-New}, $\config{\pi(S)}{\NEW}$ steps to
       $\config{\extSRaw{(\pi(S))}{l'}{\bot}}{l'}$, where $l' \notin
@@ -77,10 +75,9 @@
       To show: $\pi(\config{S}{\putexp{l}{d_2}}) \parstepsto
       \pi(\config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit})$.
 
-      By Definition~\ref{def:lvars-permutation-configuration},
-      $\pi(\conf) = \config{\pi(S)}{\putexp{\pi(l)}{\pi(d_2)}}$,
-      which, by Definition~\ref{def:lvars-permutation-expression}, is
-      equal to $\config{\pi(S)}{\putexp{\pi(l)}{d_2}}$.
+      By Definitions~\ref{def:lvars-permutation-configuration}
+      and~\ref{def:lvars-permutation-expression}, $\pi(\conf) =
+      \config{\pi(S)}{\putexp{\pi(l)}{d_2}}$.
 
       By {\sc E-Put}, $\config{\pi(S)}{\putexp{\pi(l)}{d_2}}$ steps to
       $\config{\extSRaw{(\pi(S))}{\pi(l)}{\userlub{d_1}{d_2}}}{\unit}$,
@@ -91,11 +88,9 @@
       is equal to
       $\pi(\config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit})$.
 
-      By Definition~\ref{def:lvars-permutation-configuration},
+      By Definitions~\ref{def:lvars-permutation-configuration}
+      and~\ref{def:lvars-permutation-expression},
       $\pi(\config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit})$ is
-      equal to
-      $\config{\extSRaw{(\pi(S))}{\pi(l)}{\pi(\userlub{d_1}{d_2})}}{\pi(\unit)}$,
-      which, by Definition~\ref{def:lvars-permutation-expression}, is
       equal to
       $\config{\extSRaw{(\pi(S))}{\pi(l)}{\userlub{d_1}{d_2}}}{\unit}$,
       and so the two configurations are equal and the case is
@@ -107,10 +102,9 @@
       To show: $\pi(\config{S}{\putexp{l}{d_2}}) \parstepsto
       \pi(\error)$.
 
-      By Definition~\ref{def:lvars-permutation-configuration},
-      $\pi(\conf) = \config{\pi(S)}{\putexp{\pi(l)}{\pi(d_2)}}$,
-      which, by Definition~\ref{def:lvars-permutation-expression}, is
-      equal to $\config{\pi(S)}{\putexp{\pi(l)}{d_2}}$.
+      By Definitions~\ref{def:lvars-permutation-configuration}
+      and~\ref{def:lvars-permutation-expression}, $\pi(\conf) =
+      \config{\pi(S)}{\putexp{\pi(l)}{d_2}}$.
 
       By {\sc E-Put-Err}, $\config{\pi(S)}{\putexp{\pi(l)}{d_2}}$
       steps to $\error$, since $S(l) = (\pi(S))(\pi(l)) = d_1$.
@@ -125,18 +119,17 @@
       To show: $\pi(\config{S}{\getexp{l}{T}}) \parstepsto
       \pi(\config{S}{d_2})$.
 
-      By Definition~\ref{def:lvars-permutation-configuration},
-      $\pi(\conf) = \config{\pi(S)}{\getexp{\pi(l)}{\pi(T)}}$,
-      which, by Definition~\ref{def:lvars-permutation-expression}, is
-      equal to $\config{\pi(S)}{\getexp{\pi(l)}{T}}$.
+      By Definitions~\ref{def:lvars-permutation-configuration}
+      and~\ref{def:lvars-permutation-expression}, $\pi(\conf) =
+      \config{\pi(S)}{\getexp{\pi(l)}{T}}$.
 
       By {\sc E-Get}, $\config{\pi(S)}{\getexp{\pi(l)}{T}}$ steps to
       $\config{\pi(S)}{d_2}$, since $S(l) = (\pi(S))(\pi(l)) = d_1$.
 
-      By Definition~\ref{def:lvars-permutation-configuration},
-      $\pi(\config{S}{d_2}) = \config{\pi(S)}{\pi(d_2)}$, which, by
-      Definition~\ref{def:lvars-permutation-expression}, is equivalent
-      to $\config{\pi(S)}{d_2}$.  Therefore the case is complete.
+      By Definitions~\ref{def:lvars-permutation-configuration}
+      and~\ref{def:lvars-permutation-expression},
+      $\pi(\config{S}{d_2}) \config{\pi(S)}{d_2}$.  Therefore the case
+      is complete.
   \end{itemize}
 
   For the reverse direction of
