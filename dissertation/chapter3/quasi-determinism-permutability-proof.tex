@@ -161,7 +161,26 @@
       \pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
             e, \dots}} {\{d_2\}\cup H}})$.
 
-      \TODO{.}
+      By Definitions~\ref{def:permutation-configuration}
+      and~\ref{def:permutation-expression}, $\pi(\conf) =
+      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(e),
+            \dots}}{H}}$.
+
+      Since $(\pi(S))(\pi(l)) = \state{d_1}{\status_1}$, by {\sc
+        E-Spawn-Handler} we have that
+      $\config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(e),
+            \dots}}{H}} \parstepsto
+      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\subst{\pi(e_0)}{x}{d_2},
+            \pi(e), \dots}} {\{d_2\}\cup H}}$.
+
+      By Definitions~\ref{def:permutation-configuration}
+      and~\ref{def:permutation-expression},
+      $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+            e, \dots}} {\{d_2\}\cup H}}) =
+      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\subst{\pi(e_0)}{x}{d_2},
+            \pi(e), \dots}} {\{d_2\}\cup H}}$.  Therefore the case is
+      complete.
+
     \item Case {\sc E-Freeze-Final}: $\conf =
       \config{S}{\freezeafterfull{l}{Q}{v}{\setof{v, \dots}}{H}}$, and
       $\conf' = \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
@@ -170,6 +189,15 @@
             \dots}}{H}}) \parstepsto
       \pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
 
+      By Definitions~\ref{def:permutation-configuration}
+      and~\ref{def:permutation-expression}, $\pi(\conf) =
+      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\pi(v)}{\setof{\pi(v),
+            \dots}}{H}}$.
+
+      \lk{How do we handle applying $\pi$ to an arbitrary value $v$?
+        I'm just writing $\pi(v)$ because we don't know what kind of
+        value it is.}
+
       \TODO{.}
     \item Case {\sc E-Freeze-Simple}: $\conf =
       \config{S}{\freeze{l}}$, and $\conf' =
@@ -177,6 +205,10 @@
 
       To show: $\pi(\config{S}{\freeze{l}}) \parstepsto
       \pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
+
+      By Definitions~\ref{def:permutation-configuration}
+      and~\ref{def:permutation-expression}, $\pi(\conf) =
+      \config{\pi(S)}{\freeze{\pi(l)}}$.
 
       \TODO{.}
   \end{itemize}
