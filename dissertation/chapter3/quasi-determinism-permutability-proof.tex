@@ -133,7 +133,22 @@
       \parstepsto
       \pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}})$.
 
-      \TODO{.}
+      By Definitions~\ref{def:permutation-configuration}
+      and~\ref{def:permutation-expression}, $\pi(\conf) =
+      \config{\pi(S)}{\freezeafter{\pi(l)}{Q}{\lam{x}{\pi(e)}}}$.
+
+      By {\sc E-Freeze-Init},
+      $\config{\pi(S)}{\freezeafter{\pi(l)}{Q}{\lam{x}{\pi(e)}}}
+      \parstepsto
+      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{}}{\setof{}}}$.
+
+      By Definitions~\ref{def:permutation-configuration}
+      and~\ref{def:permutation-expression},
+      $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}})
+      =
+      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{}}{\setof{}}}$.
+      Therefore the case is complete.
+
     \item Case {\sc E-Spawn-Handler}: $\conf =
       \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
             \dots}}{H}}$, and $\conf' =
