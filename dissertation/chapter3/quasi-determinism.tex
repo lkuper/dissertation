@@ -105,7 +105,7 @@ Like the lemma for $\lambdaLVar$ of the same name
 (Lemma~\ref{lem:lvars-independence}), the Independence lemma
 establishes a ``frame property'' for $\lambdaLVish$ that captures the
 idea that independent effects commute with each other.  Just as for
-$\lambdaLVar$, Lemma~\ref{lem:independence} requires as a precondidion
+$\lambdaLVar$, Lemma~\ref{lem:independence} requires as a precondition
 that the store $S''$ must be \emph{non-conflicting}
 (Definition~\ref{def:lvars-non-conflicting}) with the original
 transition from $\config{S}{e}$ to $\config{S'}{e'}$, meaning that
@@ -207,7 +207,7 @@ pattern expressed by the $\FAW$ primitive, but even those that freeze
 in arbitrary places using the simpler @freeze@ primitive.  This means
 that in practice, in a programming model based on LVars with freezing
 and handlers, even a program that fails to ensure quiescence
-(introducing the possiblility of a race between a @put@ and a
+(introducing the possibility of a race between a @put@ and a
 @freeze@) cannot produce multiple non-$\error$ answers.
 
 Therefore the LVish programming model is fundamentally different from

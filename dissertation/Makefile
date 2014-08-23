@@ -39,6 +39,9 @@ style:
 	echo "duplicates: "
 	perl ../bin/dups $(TEX_SOURCES)
 
+spell:
+	for file in $(TEX_SOURCES); do aspell -c $$file; done
+
 open: $(NAME).pdf
 ifeq ($(UNAME), Darwin)
 	open $(NAME).pdf
