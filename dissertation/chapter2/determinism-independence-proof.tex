@@ -45,7 +45,7 @@
 
       Therefore, in
       $\config{\extSRaw{(\lubstore{S}{S''})}{l'}{\bot}}{l'}$, we can
-      $\alpha$-rename $l'$ to $l$, \\ resulting in
+      $\alpha$-rename $l'$ to $l$, resulting in
       $\config{\extSRaw{(\lubstore{S}{S''})}{l}{\bot}}{l}$.
 
       Therefore $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
@@ -135,16 +135,16 @@
           \topS$.
 
           Therefore, by Definition~\ref{def:lvars-lubstore},
-          $\lubstore{d_2}{S''(l)} \neq \top$.
+          $\userlub{d_2}{S''(l)} \neq \top$.
 
           Note that:
           \begin{align*}
-            \top &\neq \lubstore{d_2}{S''(l)} \\ &=
+            \top &\neq \userlub{d_2}{S''(l)} \\ &=
             \userlub{\userlub{d_1}{d_2}}{S''(l)} \\ &=
             \userlub{\userlub{S(l)}{d_2}}{S''(l)} \\ &=
             \userlub{\userlub{S(l)}{S''(l)}}{d_2} \\ &=
             \userlub{(\lubstore{S}{S''})(l)}{d_2} \\ &=
-            \userlub{d'_1}{d_2} \\ &= d'_2. \\
+            \userlub{d'_1}{d_2} \\ &= d'_2.
           \end{align*}
           Hence $d'_2 \neq \top$.
 
