@@ -1,7 +1,7 @@
 NAME := dissertation
 LATEX := xelatex
 UNAME := $(shell uname)
-SOURCES := $(wildcard *.tex *.bib) $(wildcard */*.tex) $(wildcard */figures/*.pdf) $(wildcard ../latex_common/*.tex)
+SOURCES := $(wildcard *.tex *.bib) $(wildcard */*.tex) $(wildcard */figures/*.pdf) $(wildcard */code/*) $(wildcard ../latex_common/*.tex)
 TEX_SOURCES := $(wildcard *.tex) $(wildcard */*.tex) $(wildcard ../latex_common/*.tex)
 
 $(NAME).pdf: $(SOURCES)
