@@ -2,11 +2,7 @@
 
 \newcommand{\TBD}[0]{{\color{red}TBD}}
 \newcommand{\TODO}[1]{\noindent{\color{red} TODO: #1}}
-
 \newcommand{\lk}[1]{\pgwrapper{LK}{#1}}
-\newcommand{\rn}[1]{\pgwrapper{RRN}{#1}}
-\newcommand{\rnote}[1]{\pgwrapper{RRN}{#1}}
-\newcommand{\ajt}[1]{\pgwrapper{AJT}{#1}}
 
 \InputIfFileExists{editingmarks}{}{
     \def\noeditingmarks{}
@@ -16,9 +12,7 @@
 \ifx\noeditingmarks\undefined
    \newcommand{\textred}[1]{\textcolor{comment-red}{#1}}
    \newcommand{\pgwrapper}[2]{\textred{#1: #2}}
-   \newcommand{\new}[1]{\textcolor{blue}{#1}}
 \else
    \newcommand{\textred}[1]{\textcolor{comment-red}{#1}}
    \newcommand{\pgwrapper}[2]{}
-   \newcommand{\new}[1]{#1}
 \fi
