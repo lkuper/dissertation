@@ -1,6 +1,4 @@
 \begin{proof}
-  \TODO{Needs to be updated.}
-
   Consider arbitrary $S''$ such that $S''$ is non-conflicting with
   $\config{S}{e} \parstepsto \config{S'}{e'}$ and $\lubstore{S'}{S''}
   \statuseq S$ and $\lubstore{S'}{S''} \neq \topS$.
@@ -8,34 +6,15 @@
   To show: $\config{\lubstore{S}{S''}}{e} \parstepsto
   \config{\lubstore{S'}{S''}}{e'}$.
 
-  The proof is by induction on the derivation of $\config{S}{e}
-  \parstepsto \config{S'}{e'}$, by cases on the last rule in the
-  derivation.  In every case we may assume that $\config{S'}{e'} \neq
-  \error$.  Since $\config{S'}{e'} \neq \error$, we do not need to
-  consider the {\sc E-Put-Err} rule.
+  The proof is by cases on the rule of the reduction semantics by
+  which $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since
+  $\config{S'}{e'} \neq \error$, we do not need to consider the {\sc
+    E-Put-Err} rule.
 
   The assumption that $\lubstore{S'}{S''} \statuseq S$ is only needed
   in the {\sc E-Freeze-Final} and {\sc E-Freeze-Simple} cases.
 
   \begin{itemize}
-
-    \item Case {\sc E-Eval-Ctxt}:
-
-      Given: $\config{S}{\E{e}} \parstepsto \config{S'}{\E{e'}}$.
-
-      To show: $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto
-      \config{\lubstore{S'}{S''}}{\E{e'}}$.
-
-      From the premise of {\sc E-Eval-Ctxt}, we have that
-      $\config{S}{e} \parstepsto \config{S'}{e'}$.
-
-      Therefore, by IH, we have that $\config{\lubstore{S}{S''}}{e}
-      \parstepsto \config{\lubstore{S'}{S''}}{e'}$.
-
-      Therefore, by {\sc E-Eval-Ctxt}, we have that
-      $\config{\lubstore{S}{S''}}{\E{e}} \parstepsto
-      \config{\lubstore{S'}{S''}}{\E{e'}}$, as we were required to
-      show.
 
     \item Case {\sc E-Beta}:
 
@@ -69,10 +48,9 @@
 
       Therefore $l \notin \dom{\lubstore{S}{S''}}$.
 
-      Therefore, in 
+      Therefore, in
       $\config{\extS{(\lubstore{S}{S''})}{l'}{\bot}{\frozenfalse}}{l'}$,
-      we can $\alpha$-rename $l'$ to $l$, \\
-      resulting in
+      we can $\alpha$-rename $l'$ to $l$, resulting in
       $\config{\extS{(\lubstore{S}{S''})}{l}{\bot}{\frozenfalse}}{l}$.
 
       Therefore $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
@@ -92,20 +70,17 @@
 
     \item Case {\sc E-Put}:
 
-      \lk{The assumption that $\lubstore{\extSRaw{S}{l}{p_2}}{S''} \neq
-        \topS$ rules out the put-after-freeze possibility.}
+      Given: $\config{S}{\putiexp{l}} \parstepsto
+      \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}$.
 
-      Given: $\config{S}{\putexp{l}{d_2}} \parstepsto
-      \config{\extSRaw{S}{l}{p_2}}{\unit}$.
-
-      To show: $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}}
+      To show: $\config{\lubstore{S}{S''}}{\putiexp{l}{d_2}}
       \parstepsto
-      \config{\lubstore{\extSRaw{S}{l}{p_2}}{S''}}{\unit}$.
+      \config{\lubstore{\extSRaw{S}{l}{u_{p_i}(p_1)}}{S''}}{\unit}$.
 
       We will first show that
 
-      $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} \parstepsto
-      \config{\extSRaw{(\lubstore{S}{S''})}{l}{p_2}}{\unit}$
+      $\config{\lubstore{S}{S''}}{\putiexp{l}{d_2}} \parstepsto
+      \config{\extSRaw{(\lubstore{S}{S''})}{l}{u_{p_i}(p_1)}}{\unit}$
 
       and then show why this is sufficient.
 
@@ -114,10 +89,11 @@
       \begin{itemize}
         \item $l \notin \dom{S''}$:
 
-          By assumption, $\lubstore{\extSRaw{S}{l}{p_2}}{S''} \neq
-          \topS$.
+          By assumption, $\lubstore{\extSRaw{S}{l}{u_{p_i}(p_1)}}{S''}
+          \neq \topS$.
 
-          By Lemma~\ref{lem:monotonicity}, $\leqstore{S}{\extSRaw{S}{l}{p_2}}$.
+          By Lemma~\ref{lem:monotonicity},
+          $\leqstore{S}{\extSRaw{S}{l}{u_{p_i}(p_1)}}$.
 
           Hence $\lubstore{S}{S''} \neq \topS$.
 
@@ -128,19 +104,19 @@
 
           Hence $(\lubstore{S}{S''})(l) = p_1$.
 
-          From the premises of {\sc E-Put}, $p_2 =
-          \lubp{p_1}{\state{d_2}{\frozenfalse}}$ and $p_2 \neq \topp$.
+          From the premises of {\sc E-Put}, $u_{p_i}(p_1) \neq \topp$.
 
           Therefore, by {\sc E-Put}, we have:
-          $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} \parstepsto
-          \config{\extSRaw{(\lubstore{S}{S''})}{l}{p_2}}{\unit}$.
+          $\config{\lubstore{S}{S''}}{\putiexp{l}} \parstepsto
+          \config{\extSRaw{(\lubstore{S}{S''})}{l}{u_{p_i}(p_1)}}{\unit}$.
 
         \item $l \in \dom{S''}$:
 
-          By assumption, $\lubstore{\extSRaw{S}{l}{p_2}}{S''} \neq
+          By assumption, $\lubstore{\extSRaw{S}{l}{u_{p_i}(p_1)}}{S''} \neq
           \topS$.
 
-          By Lemma~\ref{lem:monotonicity}, $\leqstore{S}{\extSRaw{S}{l}{p_2}}$.
+          By Lemma~\ref{lem:monotonicity},
+          $\leqstore{S}{\extSRaw{S}{l}{u_{p_i}(p_1)}}$.
 
           Hence $\lubstore{S}{S''} \neq \topS$.
 
@@ -151,22 +127,18 @@
           Hence $(\lubstore{S}{S''})(l) = p'_1$, where $p_1 \leqp
           p'_1$.
 
-          From the premises of {\sc E-Put}, $p_2 =
-          \lubp{p_1}{\state{d_2}{\frozenfalse}}$.
-
-          Let $p'_2 = \lubp{p'_1}{\state{d_2}{\frozenfalse}}$.
-
-          Hence $p_2 \leqp p'_2$.
+          \TODO{From here forward, this subcase still needs to be
+            fixed.}
 
           By assumption, $\lubstore{\extSRaw{S}{l}{p_2}}{S''} \neq
           \topS$.
 
           Therefore, by Definition~\ref{def:lubstore},
-          $\lubstore{p_2}{S''(l)} \neq \topp$.
+          $\lubp{p_2}{S''(l)} \neq \topp$.
 
           Note that:
           \begin{align*}
-            \topp &\neq \lubstore{p_2}{S''(l)} \\
+            \topp &\neq \lubp{p_2}{S''(l)} \\
             &= \lubp{\lubp{p_1}{\state{d_2}{\frozenfalse}}}{S''(l)} \\
             &= \lubp{\lubp{S(l)}{\state{d_2}{\frozenfalse}}}{S''(l)} \\
             &= \lubp{\lubp{S(l)}{S''(l)}}{\state{d_2}{\frozenfalse}} \\
@@ -181,7 +153,7 @@
           \topp$.
 
           Therefore, by {\sc E-Put} we have:
-          $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} \parstepsto
+          $\config{\lubstore{S}{S''}}{\putiexp{l}{d_2}} \parstepsto
           \config{\extSRaw{(\lubstore{S}{S''})}{l}{p'_2}}{\unit}$.
 
           \lk{If we really wanted to be pedantic here, we'd actually
@@ -207,7 +179,7 @@
           Therefore $\extSRaw{(\lubstore{S}{S''})}{l}{p'_2} =
           \extSRaw{(\lubstore{S}{S''})}{l}{p_2}$.
 
-          Therefore, $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}}
+          Therefore, $\config{\lubstore{S}{S''}}{\putiexp{l}{d_2}}
           \parstepsto
           \config{\extSRaw{(\lubstore{S}{S''})}{l}{p_2}}{\unit}$.
       \end{itemize}
@@ -219,7 +191,7 @@
         &= \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{p_2}}}}{S''} \\
         &= \lubstore{\extSRaw{S}{l}{p_2}}{S''}.
       \end{align*}
-      Therefore $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}}
+      Therefore $\config{\lubstore{S}{S''}}{\putiexp{l}{d_2}}
       \parstepsto \config{\lubstore{\extSRaw{S}{l}{p_2}}{S''}}{\unit}$,
       as we were required to show.
 
@@ -251,12 +223,12 @@
 
     \item Case {\sc E-Freeze-Init}:
 
-      Given: $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto \\
+      Given: $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto
       \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
 
       To show:
       $\config{\lubstore{S}{S''}}{\freezeafter{l}{Q}{\lam{x}{e}}}
-      \parstepsto \\
+      \parstepsto
       \config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
 
       Immediate by {\sc E-Freeze-Init}.
@@ -266,14 +238,14 @@
       Given:
 
       $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}} \parstepsto \\
+            \dots}}{H}} \parstepsto
       \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
             e, \dots}} {\{d_2\}\cup H}}$.
 
       To show:
 
       $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}} \parstepsto \\
+            \dots}}{H}} \parstepsto
       \config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
             e, \dots}} {\{d_2\}\cup H}}$.
 
@@ -298,7 +270,7 @@
       Therefore, by {\sc E-Spawn-Handler},
 
       $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}} \parstepsto \\
+            \dots}}{H}} \parstepsto
       \config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
             e, \dots}} {\{d_2\}\cup H}}$,
 

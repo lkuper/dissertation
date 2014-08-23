@@ -125,9 +125,12 @@ assumption rules out interference from freezing.
 \begin{proof}
   By cases on the rule of the reduction semantics by which
   $\config{S}{e}$ steps to $\config{S'}{e'}$. The interesting cases
-  are for the {\sc E-New} and {\sc E-Put} rules.  Since
-  $\config{S'}{e'} \neq \error$, we do not need to consider the {\sc
-    E-Put-Err} rule.  See Section~\ref{section:independence-proof}.
+  are for the {\sc E-New} and {\sc E-Put} rules: in the {\sc E-Put}
+  case, the assumption that
+  $\lubstore{\extSRaw{S}{l}{u_{p_i}(p_1)}}{S''} \neq \topS$ rules out
+  the possibility of a @freeze@ operation conflicting with a write.
+  Since $\config{S'}{e'} \neq \error$, we do not need to consider the
+  {\sc E-Put-Err} rule.  See Section~\ref{section:independence-proof}.
 \end{proof}
 
 \subsection{Quasi-Confluence}\label{subsection:quasi-quasi-confluence}
