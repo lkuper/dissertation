@@ -200,7 +200,26 @@
         I'm just writing $\pi(v)$ because we don't know what kind of
         value it is.}
 
-      \TODO{.}
+      Since $(\pi(S))(\pi(l)) = \state{d_1}{\status_1}$, by {\sc
+        E-Freeze-Final} we have that
+      $\config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(v),
+            \dots}}{H}} \parstepsto
+      \config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$.  (From
+      Definition~\ref{def:permutation-expression}, we can see that if
+      $v$ is a value, $\pi(v)$ is also a value.)
+
+      It remains to show that
+      $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$ is equal
+      to $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
+
+      By Definitions~\ref{def:permutation-configuration}
+      and~\ref{def:permutation-expression},
+      $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$ is equal to
+      $\config{\pi(\extS{S}{l}{d_1}{\frozentrue})}{d_1})$, which is
+      equal to
+      $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$, and so
+      the two configurations are equal and the case is satisfied.
+
     \item Case {\sc E-Freeze-Simple}: $\conf =
       \config{S}{\freeze{l}}$, and $\conf' =
       \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
@@ -212,7 +231,23 @@
       and~\ref{def:permutation-expression}, $\pi(\conf) =
       \config{\pi(S)}{\freeze{\pi(l)}}$.
 
-      \TODO{.}
+      Since $(\pi(S))(\pi(l)) = \state{d_1}{\status_1}$, by {\sc
+        E-Freeze-Simple} we have that
+      $\config{\pi(S)}{\freeze{\pi(l)}} \parstepsto
+      \config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$.
+
+      It remains to show that
+      $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$ is equal
+      to $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
+
+      By Definitions~\ref{def:permutation-configuration}
+      and~\ref{def:permutation-expression},
+      $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$ is equal to
+      $\config{\pi(\extS{S}{l}{d_1}{\frozentrue})}{d_1})$, which is
+      equal to
+      $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$, and so
+      the two configurations are equal and the case is satisfied.
+
   \end{itemize}
 
   For the reverse direction of
