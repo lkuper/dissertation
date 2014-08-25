@@ -127,73 +127,18 @@
           Hence $(\lubstore{S}{S''})(l) = p'_1$, where $p_1 \leqp
           p'_1$.
 
-          \TODO{From here forward, this subcase still needs to be
-            fixed.}
-
-          By assumption, $\lubstore{\extSRaw{S}{l}{p_2}}{S''} \neq
-          \topS$.
-
-          Therefore, by Definition~\ref{def:lubstore},
-          $\lubp{p_2}{S''(l)} \neq \topp$.
-
-          Note that:
-          \begin{align*}
-            \topp &\neq \lubp{p_2}{S''(l)} \\
-            &= \lubp{\lubp{p_1}{\state{d_2}{\frozenfalse}}}{S''(l)} \\
-            &= \lubp{\lubp{S(l)}{\state{d_2}{\frozenfalse}}}{S''(l)} \\
-            &= \lubp{\lubp{S(l)}{S''(l)}}{\state{d_2}{\frozenfalse}} \\
-            &= \lubp{(\lubstore{S}{S''})(l)}{\state{d_2}{\frozenfalse}} \\
-            &= \lubp{p'_1}{\state{d_2}{\frozenfalse}} \\
-            &= p'_2. \\
-          \end{align*}
-          Hence $p'_2 \neq \topp$.
-
-          Hence $(\lubstore{S}{S''})(l) = p'_1$ and $p'_2 =
-          \lubp{p'_1}{\state{d_2}{\frozenfalse}}$ and $p'_2 \neq
-          \topp$.
-
-          Therefore, by {\sc E-Put} we have:
-          $\config{\lubstore{S}{S''}}{\putiexp{l}{d_2}} \parstepsto
-          \config{\extSRaw{(\lubstore{S}{S''})}{l}{p'_2}}{\unit}$.
-
-          \lk{If we really wanted to be pedantic here, we'd actually
-            prove that the stores are equal.  I'm assuming that if I
-            can show that $\extSRaw{(\lubstore{S}{S''})}{l}{p'_2}$ and
-            $\extSRaw{(\lubstore{S}{S''})}{l}{p_2}$ bind $l$ to the
-            same value, then it will be obvious that they're equal.}
-
-          Note that:
-          \begin{align*}
-            (\extSRaw{(\lubstore{S}{S''})}{l}{p'_2})(l) &= \lubp{(\lubstore{S}{S''})(l)}{(\store{\storebindingRaw{l}{p'_2}})(l)} \\
-            &= \lubp{p'_1}{p'_2} \\
-            &= \lubp{p'_1}{\lubp{p'_1}{\state{d_2}{\frozenfalse}}} \\
-            &= \lubp{p'_1}{\state{d_2}{\frozenfalse}}
-          \end{align*}
-          and
-          \begin{align*}
-            (\extSRaw{(\lubstore{S}{S''})}{l}{p_2})(l) &= \lubp{(\lubstore{S}{S''})(l)}{(\store{\storebindingRaw{l}{p_2}})(l)} \\
-            &= \lubp{p'_1}{p_2} \\
-            &= \lubp{p'_1}{\lubp{p_1}{\state{d_2}{\frozenfalse}}} \\
-            &= \lubp{p'_1}{\state{d_2}{\frozenfalse}} & \textrm{(since $p_1 \leqp p'_1$).}
-          \end{align*}
-          Therefore $\extSRaw{(\lubstore{S}{S''})}{l}{p'_2} =
-          \extSRaw{(\lubstore{S}{S''})}{l}{p_2}$.
-
-          Therefore, $\config{\lubstore{S}{S''}}{\putiexp{l}{d_2}}
-          \parstepsto
-          \config{\extSRaw{(\lubstore{S}{S''})}{l}{p_2}}{\unit}$.
-      \end{itemize}
-
-      Note that:
-      \begin{align*}
-        \extSRaw{(\lubstore{S}{S''})}{l}{p_2} &= \lubstore{\extSRaw{S}{l}{p_2}}{\extSRaw{S''}{l}{p_2}} \\
-        &= \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{p_2}}}}{\lubstore{S''}{\store{\storebindingRaw{l}{p_2}}}} \\
-        &= \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{p_2}}}}{S''} \\
-        &= \lubstore{\extSRaw{S}{l}{p_2}}{S''}.
-      \end{align*}
-      Therefore $\config{\lubstore{S}{S''}}{\putiexp{l}{d_2}}
-      \parstepsto \config{\lubstore{\extSRaw{S}{l}{p_2}}{S''}}{\unit}$,
-      as we were required to show.
+          \TODO{To make this case go through, I'm going to need to
+            change the assumptions that the proof depends on.  The
+            reason it doesn't work is that the least upper bound
+            operation doesn't commute with the update operation.  We
+            already knew that, of course; it's why you can't use both
+            "bump"s and least-upper-bound "put"s on the same LVar.
+            But it turns out that it's actually causing a problem
+            here.  What I'm going to do for now is jump ahead and try
+            to do the quasi-confluence proof.  Then I can try to see
+            what kind of Independence property we're actually going to
+            need, and what we can be sure will be true at the time
+            it's applied.}
 
     \item Case {\sc E-Get}:
 
