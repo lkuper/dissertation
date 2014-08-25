@@ -1,401 +1,776 @@
 \begin{proof}
-  \TODO{Needs to be updated.}
+  Suppose $\conf \ctxstepsto \conf_a$ and $\conf \ctxstepsto \conf_b$.
+  We have to show that either there exist $\conf_c, i, j, \pi$ such
+  that $\conf_a \ctxstepsto^i \conf_c$ and $\pi(\conf_b) \ctxstepsto^j
+  \conf_c$ and $i \leq 1$ and $j \leq 1$, or that $\conf_a \ctxstepsto
+  \error$ or $\conf_b \ctxstepsto \error$.
 
-  By induction on the derivation of $\conf \parstepsto \conf_a$, by
-  cases on the last rule in the derivation.
+  By inspection of the operational semantics, it must be the case that
+  $\conf$ steps to $\conf_a$ by the {\sc E-Eval-Ctxt} rule.  Let
+  $\conf = \config{S}{\evalctxt{E_a}{e_{a_1}}}$ and let $\conf_a =
+  \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$.
+
+  Likewise, it must be the case that $\conf$ steps to $\conf_b$ by the
+  {\sc E-Eval-Ctxt} rule.  Let $\conf =
+  \config{S}{\evalctxt{E_b}{e_{b_1}}}$ and let $\conf_b =
+  \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$.
+
+  Note that $\conf = \config{S}{\evalctxt{E_a}{e_{a_1}}} =
+  \config{S}{\evalctxt{E_b}{e_{b_1}}}$, and so
+  $\evalctxt{E_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_1}}$, but $E_a$ and
+  $E_b$ may differ and $e_{a_1}$ and $e_{b_1}$ may differ.
+
+  Since $\config{S}{\evalctxt{E_a}{e_{a_1}}} \ctxstepsto
+  \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$ and
+  $\config{S}{\evalctxt{E_b}{e_{b_1}}} \ctxstepsto
+  \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$ and $\evalctxt{E_a}{e_{a_1}}
+  = \evalctxt{E_b}{e_{b_1}}$, we have from Lemma~\ref{lem:locality}
+  (Locality) that there exist evaluation contexts $E'_a$ and $E'_b$
+  such that:
 
   \begin{itemize}
-    \item {\sc E-Eval-Ctxt}: \TODO{Figure out what to do here.}
+  \item $\evalctxt{E'_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_2}}$, and
+  \item $\evalctxt{E'_b}{e_{b_1}} = \evalctxt{E_a}{e_{a_2}}$, and
+  \item $\evalctxt{E'_a}{e_{a_2}} =
+  \evalctxt{E'_b}{e_{b_2}}$.
+  \end{itemize}
 
-    \item {\sc E-Beta}: $\conf = \config{S}{\app{(\lam{x}{e})}{v}}$,
-      and $\conf_a = \config{S}{\subst{e}{x}{v}}$.
+  In some of the cases that follow, we will show that $\conf_a
+  \ctxstepsto \error$ or that $\conf_b \ctxstepsto \error$.  In
+  others, we will choose $\conf_c = \error$.  In most cases, however,
+  our approach will be to show that there exist $S', i, j, \pi$ such
+  that:
+  \begin{itemize}
+  \item $\config{S_a}{\evalctxt{E_a}{e_{a_2}}} \ctxstepsto^i
+    \config{S'}{\evalctxt{E'_a}{e_{a_2}}}$, and
+  \item $\pi(\config{S_b}{\evalctxt{E_b}{e_{b_2}}}) \ctxstepsto^j
+    \config{S'}{\evalctxt{E'_a}{e_{a_2}}}$.
+  \end{itemize}
+  Since $\evalctxt{E'_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_2}}$,
+  $\evalctxt{E'_b}{e_{b_1}} = \evalctxt{E_a}{e_{a_2}}$, and
+  $\evalctxt{E'_a}{e_{a_2}} = \evalctxt{E'_b}{e_{b_2}}$, it suffices
+  to show that:
+  \begin{itemize}
+  \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto^i
+    \config{S'}{\evalctxt{E'_b}{e_{b_2}}}$, and
+  \item $\pi(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}) \ctxstepsto^j
+    \config{S'}{\evalctxt{E'_a}{e_{a_2}}}$.
+  \end{itemize}
 
-      Given:
+  From the premise of {\sc E-Eval-Ctxt}, we have that
+  $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$ and
+  $\config{S}{e_{b_1}} \parstepsto \config{S_b}{e_{b_2}}$.  We proceed
+  by case analysis on the rule by which $\config{S}{e_{a_1}}$ steps to
+  $\config{S_a}{e_{a_2}}$.
+
+  \begin{enumerate}
+  \item Case {\sc E-Beta}: We have $S_a = S$.
+
+    We proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item \label{slqc-beta-beta}Case {\sc E-Beta}: We have $S_b =
+      S$.
+
+      Choose $S' = S = S_a = S_b$, $i = 1$, $j = 1$, and $\pi = \id$.
+
+      We have to show that:
       \begin{itemize}
-      \item $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto
-        \config{S}{\subst{e}{x}{v}}$, and
-      \item $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \conf_b$.
+      \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{S_a}{\evalctxt{E'_b}{e_{b_2}}}$, and
+      \item $\config{S}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, 
       \end{itemize}
 
-      To show: There exist $\conf_c, i, j$ such that
+      both of which follow immediately from $\config{S}{e_{a_1}}
+      \parstepsto \config{S_a}{e_{a_2}}$ and $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.
 
-      $\config{S}{\subst{e}{x}{v}} \parstepsto^i \conf_c$ and $\conf_b
-      \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+    \item \label{slqc-beta-new}Case {\sc E-New}: We have $S_b =
+      \extS{S}{l}{\bot}{\frozenfalse}$.
 
-      By inspection of the operational semantics, $\conf_b =
-      \config{S}{\subst{e}{x}{v}}$.
+      Choose $S' = S_b$, $i = 1$, $j = 1$, and $\pi = \id$.
 
-      Choose $\conf_c = \config{S}{\subst{e}{x}{v}}$, $i = 0$ and $j =
-      0$.
-
-      Then $\config{S}{\subst{e}{x}{v}} = \conf_c$ and $\conf_b =
-      \conf_c$, as required.
-
-    \item {\sc E-New}: $\conf = \config{S}{\NEW}$, and $\conf_a =
-      \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
-
-      Given:
+      We have to show that:
       \begin{itemize}
-      \item $\config{S}{\NEW} \parstepsto
-        \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$, and
-      \item $\config{S}{\NEW} \parstepsto \conf_b$.
+      \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$, and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$.
       \end{itemize}
 
-      To show: There exist $\conf_c, i, j$ such that
+      The first of these follows immediately from $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
+      the second, consider that $S_b = \extS{S}{l}{\bot}{\frozenfalse} =
+      \lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}$.  Furthermore,
+      since no locations are allocated during the transition
+      $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$, we know
+      that $\store{\storebinding{l}{\bot}{\frozenfalse}}$ is non-conflicting with
+      it, and we know that
+      $\lubstore{S_a}{\store{\storebinding{l}{\bot}{\frozenfalse}}} \neq \topS$
+      since $S_a$ is just $S$ and
+      $\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}$ cannot be
+      $\topS$.  Therefore, by Lemma~\ref{lem:independence}
+      (Independence), we have that
+      $\config{\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{a_1}}
+      \parstepsto
+      \config{\lubstore{S_a}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{a_2}}$.
+      Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
+      By {\sc E-Eval-Ctxt}, it follows that
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
+      show.
 
-      $\config{\extS{S}{l}{\bot}{\frozenfalse}}{l} \parstepsto^i
-      \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and
-      $j \leq 1$.
+    \item \label{slqc-beta-put}Case {\sc E-Put}: 
 
-      By inspection of the operational semantics, $\conf_b =
-      \config{\extS{S}{l'}{\bot}{\frozenfalse}}{l'}$.
+      \TODO{Finish updating this case to use $\putiexp{}$.}
 
-      From the side condition of {\sc E-New}, $l \notin S$.
+      We have $S_b = \extSRaw{S}{l}{u_{p_i}(p_1)}$.
 
-      Therefore, in $\config{\extS{S}{l'}{\bot}{\frozenfalse}}{l'}$,
-      we can $\alpha$-rename $l'$ to $l$, resulting in
-      $\config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
+      Choose $S' = S_b$, $i = 1$, $j = 1$, and $\pi = \id$.
 
-      Choose $\conf_c = \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$,
-      $i = 0$ and $j = 0$.
-
-      Then $\config{S}{\subst{e}{x}{v}} = \conf_c$ and $\conf_b =
-      \conf_c$, as required.
-
-    \item {\sc E-Put}: $\conf = \config{S}{\putexp{l}{d_2}}$, and
-      $\conf_a = \config{\extSRaw{S}{l}{p_2}}{\unit}$.
-
-      Given:
+      We have to show that:
       \begin{itemize}
-      \item $\config{S}{\putexp{l}{d_2}} \parstepsto
-        \config{\extSRaw{S}{l}{p_2}}{\unit}$, and
-      \item $\config{S}{\putexp{l}{d_2}} \parstepsto \conf_b$.
+      \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$, and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$.
       \end{itemize}
 
-      To show: There exist $\conf_c, i, j$ such that
+      The first of these follows immediately from $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
+      the second, consider that $S_b =
+      \extSRaw{S}{l}{u_{p_i}(p_1)} =
+      \lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}$.
+      Furthermore, since no locations are allocated during the
+      transition $\config{S}{e_{a_1}} \parstepsto
+      \config{S_a}{e_{a_2}}$, we know that
+      $\store{\storebindingRaw{l}{u_{p_i}(p_1)}}$ is
+      non-conflicting with it, and we know that
+      $\lubstore{S_a}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+      \neq \topS$ since $S_a$ is just $S$ and
+      $\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}$
+      cannot be $\topS$, since we know from the premise of {\sc E-Put}
+      that $u_{p_i}(p_1) \neq \top$.  Therefore, by
+      Lemma~\ref{lem:independence} (Independence), we have that
+      $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{a_1}}
+      \parstepsto
+      \config{\lubstore{S_a}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{a_2}}$.
+      Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
+      By {\sc E-Eval-Ctxt}, it follows that
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
+      show.
 
-      $\config{\extSRaw{S}{l}{p_2}}{\unit} \parstepsto^i \conf_c$ and
-      $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+    \item \label{slqc-beta-put-err}Case {\sc E-Put-Err}:
 
-      By inspection of the operational semantics, $\conf_b =
-      \config{\extSRaw{S}{l}{p_2}}{\unit}$.
-
-      Choose $\conf_c = \config{\extSRaw{S}{l}{p_2}}{\unit}$, $i = 0$
-      and $j = 0$.
-
-      Then $\config{\extSRaw{S}{l}{p_2}}{\unit} = \conf_c$ and $\conf_b
-      = \conf_c$, as required.
-
-    \item {\sc E-Put-Err}: $\conf = \config{S}{\putexp{l}{d_2}}$, and
-      $\conf_a = \error$.
-
-      Given:
+      Here $\config{S_b}{e_{b_2}} = \error$, and so we choose $\conf_c
+      = \error$, $i = 1$, $j = 0$, and $\pi = \id$.  We have to show that:
       \begin{itemize}
-      \item $\config{S}{\putexp{l}{d_2}} \parstepsto \error$, and
-      \item $\config{S}{\putexp{l}{d_2}} \parstepsto \conf_b$.
-      \end{itemize}
-
-      To show: There exist $\conf_c, i, j$ such that
-
-      $\error \parstepsto^i \conf_c$ and $\conf_b \parstepsto^j
-      \conf_c$ and $i \leq 1$ and $j \leq 1$.
-
-      By inspection of the operational semantics, $\conf_b = \error$.
-
-      Choose $\conf_c = \error$, $i = 0$ and $j = 0$.
-
-      Then $\error = \conf_c$ and $\conf_b = \conf_c$, as required.
-
-    \item {\sc E-Get}: $\conf = \config{S}{\getexp{l}{P}}$, and
-      $\conf_a = \config{S}{p_2}$.
-
-      Given:
-      \begin{itemize}
-      \item $\config{S}{\getexp{l}{P}} \parstepsto \config{S}{p_2}$,
+      \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto \error$,
         and
-      \item $\config{S}{\getexp{l}{P}} \parstepsto \conf_b$.
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} = \error$.
       \end{itemize}
 
-      To show: There exist $\conf_c, i, j$ such that
+      The second of these is immediately true because since
+      $\config{S_b}{e_{b_2}} = \error$, $S_b = \topS$, and so
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ is equal to $\error$ as
+      well.  For the first, observe that $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$, hence by {\sc E-Eval-Ctxt},
+      $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$.  But $S_b = \topS$, so
+      $\config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$ is equal to $\error$,
+      and so $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \error$, as required.
 
-      $\config{S}{p_2} \parstepsto^i \conf_c$ and $\conf_b
-      \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+    \item \label{slqc-beta-get}Case {\sc E-Get}: Similar to
+      case~\ref{slqc-beta-beta}, since $S_b = S$.
+    \item \label{slqc-beta-freeze-init}Case {\sc E-Freeze-Init}:
+      Similar to case~\ref{slqc-beta-beta}, since $S_b = S$.
+    \item \label{slqc-beta-spawn-handler}Case {\sc E-Spawn-Handler}:
+      Similar to case~\ref{slqc-beta-beta}, since $S_b = S$.
+    \item \label{slqc-beta-freeze-final}Case {\sc E-Freeze-Final}: \TODO{}
+    \item \label{slqc-beta-freeze-simple}Case {\sc E-Freeze-Simple}: \TODO{}
 
-      By inspection of the operational semantics, $\conf_b =
-      \config{S}{p_2}$.
 
-      Choose $\conf_c = \config{S}{p_2}$, $i = 0$ and $j = 0$.
+    \end{enumerate}
+  \item Case {\sc E-New}: We have $S_a = \extS{S}{l}{\bot}{\frozenfalse}$.
 
-      Then $\config{S}{p_2} = \conf_c$ and $\conf_b = \conf_c$, as
-      required.
+    We proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item \label{slqc-new-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-new}.
+    \item \label{slqc-new-new}Case {\sc E-New}: We have $S_b = \extS{S}{l'}{\bot}{\frozenfalse}$.
 
-    \item {\sc E-Freeze-Init}: $\conf =
-      \config{S}{\freezeafter{l}{Q}{\lam{x}{e}}}$, and $\conf_a =
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
-
-      Given:
+      Now consider whether $l = l'$:
       \begin{itemize}
-      \item $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto
-        \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$,
+        \item If $l \neq l'$:
+
+          Choose $S' = \extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$, $i =
+          1$, $j = 1$, and $\pi = \id$.
+
+          We have to show that:
+          \begin{itemize}
+          \item
+            $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}}
+            \ctxstepsto
+            \config{\extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
+            and
+          \item
+            $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}
+            \ctxstepsto
+            \config{\extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{e_{a_2}}}$.
+          \end{itemize}
+
+          For the first of these, consider that $S_a =
+          \extS{S}{l}{\bot}{\frozenfalse} =
+          \lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}$, and that
+          $\extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse} =
+          \lubstore{\extS{S}{l'}{\bot}{\frozenfalse}}{\store{\storebinding{l}{\bot}{\frozenfalse}}}$.
+          Furthermore, since the only location allocated during the
+          transition $\config{S}{e_{b_1}} \parstepsto
+          \config{S_b}{e_{b_2}}$ is $l'$, we know that
+          $\store{\storebinding{l}{\bot}{\frozenfalse}}$ is non-conflicting with
+          it (since $l \neq l'$ in this case).  We also know that
+          $\lubstore{\extS{S}{l'}{\bot}{\frozenfalse}}{\store{\storebinding{l}{\bot}{\frozenfalse}}}
+          \neq \topS$, since $S \neq \topS$ and new bindings of
+          $\storebinding{l}{\bot}{\frozenfalse}$ and $\storebindingRaw{l'}{\bot}$
+          cannot cause it to become $\topS$.  Therefore, by
+          Lemma~\ref{lem:independence} (Independence), we have
+          that
+          $\config{\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_1}}
+          \parstepsto
+          \config{\lubstore{S_b}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_2}}$.
+          Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
+          \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.  By {\sc
+            E-Eval-Ctxt} it follows that
+          $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
+          \parstepsto
+          \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          which, since $S_b = \extS{S}{l'}{\bot}{\frozenfalse}$, is what we were
+          required to show.  The argument for the second is
+          symmetrical.
+
+        \item If $l = l'$:
+
+          In this case, observe that we do \emph{not} want the
+          expression in the final configuration to be
+          $\evalctxt{E'_a}{e_{a_2}}$ (nor its equivalent,
+          $\evalctxt{E'_b}{e_{b_2}}$).  The reason for this is that
+          $\evalctxt{E'_a}{e_{a_2}}$ contains both occurrences of $l$.
+          Rather, we want both configurations to step to a
+          configuration in which exactly one occurrence of $l$ has
+          been renamed to a fresh location $l''$.
+
+          Let $l''$ be a location such that $l'' \notin S$ and $l''
+          \neq l$ (and hence $l'' \neq l'$, as well).  Then choose $S'
+          = \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$, $i = 1$, $j =
+          1$, and $\pi = \setof{(l, l'')}$.
+
+          Either
+          $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{\pi(e_{a_2})}}$
+          or
+          $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$
+          would work as a final configuration; we choose
+          $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
+
+          We have to show that:
+          \begin{itemize}
+          \item
+            $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+            \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$,
+            and
+          \item
+            $\pi(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}) \ctxstepsto
+            \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
+          \end{itemize}
+
+          For the first of these, since $\config{S}{e_{b_1}}
+          \parstepsto \config{S_b}{e_{b_2}}$, we have by
+          Lemma~\ref{lem:permutability} (Permutability) that
+          $\pi(\config{S}{e_{b_1}}) \parstepsto
+          \pi(\config{S_b}{e_{b_2}})$.  Since $\pi = \setof{(l,
+            l'')}$, but $l \notin S$ (from the side condition on {\sc
+            E-New}), we have that $\pi(\config{S}{e_{b_1}}) =
+          \config{S}{e_{b_1}}$. Since $\config{S_b}{e_{b_2}} =
+          \config{\extS{S}{l'}{\bot}{\frozenfalse}}{l'}$, and $l = l'$, we have
+          that $\pi(\config{S_b}{e_{b_2}}) =
+          \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.  Hence
+          $\config{S}{e_{b_1}} \parstepsto
+          \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.
+
+          Since the only location allocated during the transition
+          $\config{S}{e_{b_1}} \parstepsto
+          \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$ is $l''$, we
+          know that $\store{\storebinding{l}{\bot}{\frozenfalse}}$ is
+          non-conflicting with it.  We also know that
+          $\lubstore{\extS{S}{l''}{\bot}{\frozenfalse}}{\store{\storebinding{l}{\bot}{\frozenfalse}}}
+          \neq \topS$, since $S \neq \topS$ and new bindings of
+          $\storebindingRaw{l''}{\bot}$ and
+          $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to become
+          $\topS$.  Therefore, by Lemma~\ref{lem:independence}
+          (Independence), we have that
+          $\config{\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_1}}
+          \parstepsto
+          \config{\lubstore{\extS{S}{l''}{\bot}{\frozenfalse}}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{\pi(e_{b_2})}$.
+          Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
+          \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.
+          By {\sc E-Eval-Ctxt} it follows that
+          $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
+          \parstepsto
+          \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$,
+          which, since $\extS{S}{l}{\bot}{\frozenfalse} = S_a$, is what we were
+          required to show.
+
+          For the second, observe that since $S_b =
+          \extS{S}{l}{\bot}{\frozenfalse}$, we have that $\pi(S_b) =
+          \extS{S}{l''}{\bot}{\frozenfalse}$.  Also, since $l$ does not occur in
+          $e_{a_1}$, we have that $\pi(\evalctxt{E'_a}{e_{a_1}}) =
+          \evalctxt{(\pi(E'_a))}{e_{a_1}}$.  Hence we have to show that
+
+          $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_1}}}
+          \ctxstepsto
+          \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
+
+          Since the only location allocated during the transition
+          $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$ is
+          $l$, we know that $\store{\storebindingRaw{l''}{\bot}}$ is
+          non-conflicting with it.  We also know that
+          $\lubstore{S_a}{\store{\storebindingRaw{l''}{\bot}}} \neq
+          \topS$, since $S_a = \extS{S}{l}{\bot}{\frozenfalse}$ and $S \neq
+          \topS$ and new bindings of $\storebindingRaw{l''}{\bot}$ and
+          $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to become
+          $\topS$.  Therefore, by Lemma~\ref{lem:independence}
+          (Independence), we have that
+          $\config{\lubstore{S}{\store{\storebindingRaw{l''}{\bot}}}}{e_{a_1}}
+          \parstepsto
+          \config{\lubstore{S_a}{\store{\storebindingRaw{l''}{\bot}}}}{e_{a_2}}$.
+          Hence $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{e_{a_1}} \parstepsto
+          \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{e_{a_2}}$.
+          By {\sc E-Eval-Ctxt} it follows that
+          $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_1}}}
+          \ctxstepsto
+          \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_2}}}$,
+          which completes the case since
+          $\evalctxt{E'_b}{\pi(e_{b_2})} =
+          \evalctxt{(\pi(E'_a))}{e_{a_2}}$.
+
+          \lk{This is really sketchy -- I should really explain why
+            $\evalctxt{E'_b}{\pi(e_{b_2})} =
+            \evalctxt{(\pi(E'_a))}{e_{a_2}}$.}
+
+      \end{itemize}
+
+    \item \label{slqc-new-put}Case {\sc E-Put}:
+
+      \TODO{Finish updating this case to use $\putiexp{}$.}
+
+      We have $S_b = \extSRaw{S}{l'}{u_{p_i}(p_1)}$.
+
+      We have to show that:
+      \begin{itemize}
+      \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
         and
-      \item $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto
-        \conf_b$.
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+        \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{e_{a_2}}}$.
       \end{itemize}
 
-      To show: There exist $\conf_c, i, j$ such that
+      For the first of these, consider that $S_a =
+      \extS{S}{l}{\bot}{\frozenfalse} =
+      \lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}$, and that
+      $\extS{S_b}{l}{\bot}{\frozenfalse} =
+      \lubstore{S_b}{\store{\storebinding{l}{\bot}{\frozenfalse}}}$.
+      Furthermore, since no locations are allocated during the
+      transition $\config{S}{e_{b_1}} \parstepsto
+      \config{S_b}{e_{b_2}}$, we know that
+      $\store{\storebinding{l}{\bot}{\frozenfalse}}$ is non-conflicting with it.
+      We also know that
+      $\lubstore{S_b}{\store{\storebinding{l}{\bot}{\frozenfalse}}} \neq \topS$,
+      since $S_b = \extSRaw{S}{l'}{u_{p_i}(p_1)}$ and we know
+      from the premise of {\sc E-Put} that $u_{p_i}(p_1) \neq
+      \top$.  Therefore, by Lemma~\ref{lem:independence}
+      (Independence), we have that
+      $\config{\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_1}}
+      \parstepsto
+      \config{\lubstore{S_b}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_2}}$.
+      Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
+      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.  By {\sc
+        E-Eval-Ctxt}, it follows that
+      $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
+      \ctxstepsto
+      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
+      which, since $S_a = \extS{S}{l}{\bot}{\frozenfalse}$, is what we were
+      required to show.
 
-      $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}
-      \parstepsto^i \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and
-      $i \leq 1$ and $j \leq 1$.
+      For the second, consider that $S_b =
+      \lubstore{S}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}$
+      and $\extS{S_b}{l}{\bot}{\frozenfalse} =
+      \lubstore{\extS{S}{l}{\bot}{\frozenfalse}}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}
+      =
+      \lubstore{S_a}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}$.
+      Furthermore, since the only location allocated during the
+      transition $\config{S}{e_{a_1}} \parstepsto
+      \config{S_a}{e_{a_2}}$ is $l$, we know that
+      $\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}$ is
+      non-conflicting with it.  (We know that $l \neq l'$ because we
+      have from the premise of {\sc E-Put} that $l' \in \dom{S}$, but
+      we have from the side condition of {\sc E-New} that $l \notin
+      \dom{S}$.)  We also know that
+      $\lubstore{\extS{S}{l}{\bot}{\frozenfalse}}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}
+      \neq \topS$, since we know from the premise of {\sc E-Put} that
+      $u_{p_i}(p_1) \neq \top$.  Therefore, by
+      Lemma~\ref{lem:independence} (Independence), we have that
+      $\config{\lubstore{S}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}}{e_{a_1}}
+      \parstepsto
+      \config{\lubstore{S_a}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}}{e_{a_2}}$.
+      Hence $\config{S_b}{e_{a_1}} \parstepsto
+      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{a_2}}$.  By {\sc
+        E-Eval-Ctxt}, it follows that
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{e_{a_2}}}$, as
+      we were required to show.
 
-      By inspection of the operational semantics, $\conf_b =
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
+    \item \label{slqc-new-put-err}Case {\sc E-Put-Err}:
 
-      Choose $\conf_c =
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$,
-      $i = 0$ and $j = 0$.
-
-      Then
-      $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}
-      = \conf_c$ and $\conf_b = \conf_c$, as required.
-
-    \item {\sc E-Spawn-Handler}: $\conf =
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}}$, and
-
-      $\conf_a =
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-            e, \dots}} {\{d_2\}\cup H}}$.
-
-      Given:
+      Here $\config{S_b}{e_{b_2}} = \error$, and so we choose $\conf_c
+      = \error$, $i = 1$, $j = 0$, and $\pi = \id$.  We have to show
+      that:
       \begin{itemize}
-      \item $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}} \parstepsto \\
-        \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-              e, \dots}} {\{d_2\}\cup H}}$, and
-      \item $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}} \parstepsto \conf_b$.
+      \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \error$, and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} = \error$.
       \end{itemize}
 
-      To show: There exist $\conf_c, i, j$ such that
+      The second of these is immediately true because since
+      $\config{S_b}{e_{b_2}} = \error$, $S_b = \topS$, and so
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ is equal to $\error$ as
+      well.  For the first, observe that since $\config{S}{e_{a_1}}
+      \parstepsto \config{S_a}{e_{a_2}}$, we have by
+      Lemma~\ref{lem:monotonicity} (Monotonicity) that
+      $\leqstore{S}{S_a}$.  Therefore, since $\config{S}{e_{b_1}}
+      \parstepsto \error$, we have by
+      (Error Preservation)
+      \TODO{Don't use Error Preservation.}
+      that $\config{S_a}{e_{b_1}} \parstepsto \error$.  Since $\error$
+      is equal to $\config{\topS}{e}$ for all expressions $e$,
+      $\config{S_a}{e_{b_1}} \parstepsto \config{\topS}{e}$ for all
+      $e$.  Therefore, by {\sc E-Eval-Ctxt},
+      $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \config{\topS}{\evalctxt{E'_b}{e}}$ for all $e$.  Since
+      $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal to $\error$, we
+      have that $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \error$, as we were required to show.
 
-      $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-            e, \dots}} {\{d_2\}\cup H}} \parstepsto^i \conf_c$ and
-      $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and $j \leq 1$.
+    \item \label{slqc-new-get}Case {\sc E-Get}: Similar to
+      case~\ref{slqc-new-beta}, since $S_b = S$.
+    \item \label{slqc-new-freeze-init}Case {\sc E-Freeze-Init}:
+      Similar to case~\ref{slqc-new-beta}, since $S_b = S$.
+    \item \label{slqc-new-spawn-handler}Case {\sc E-Spawn-Handler}:
+      Similar to case~\ref{slqc-new-beta}, since $S_b = S$.
+    \item \label{slqc-new-freeze-final}Case {\sc E-Freeze-Final}: \TODO{}
+    \item \label{slqc-new-freeze-simple}Case {\sc E-Freeze-Simple}: \TODO{}
 
-      \lk{This time, we could actually get different results on the
-        two sides of the diamond because we could choose a different
-        $d_2$, or we could run a different expression in $\setof{e,
-          \dots}$.}
+    \end{enumerate}
+  \item Case {\sc E-Put}:
 
-      By inspection of the operational semantics, one of the following
-      possibilities must hold:
+    \TODO{Finish updating this case to use $\putiexp{}$.}
+
+    We have $S_a = \extSRaw{S}{l}{u_{p_i}(p_1)}$.
+
+    We proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item \label{slqc-put-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-put}.
+    \item \label{slqc-put-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-put}.
+    \item \label{slqc-put-put}Case {\sc E-Put}:
+
+      \TODO{Finish updating this case to use $\putiexp{}$.}
+
+      We have $S_b = \extSRaw{S}{l'}{\userlub{d'_1}{d'_2}}$, where
+      $d'_1 = S(l')$.
+
+      Consider whether
+      $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+      = \topS$:
+
       \begin{itemize}
-      \item $\conf \parstepsto \conf_b$ by {\sc E-Spawn-Handler}:
+      \item
+        $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+        \neq \topS$:
 
-        Hence $\conf_b =
-        \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d'_2},
-              e, \dots}} {\{d'_2\}\cup H}}$.
+        Choose $S' = \lubstore{S_a}{S_b}$, $i = 1$, $j = 1$, and $\pi =
+        \id$.
 
-        Here, there are two subcases:
+        We have to show that:
         \begin{itemize}
-        \item $d'_2 \neq d_2$:
-
-          Choose: \\ 
-
-          $\conf_c = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                \subst{e_0}{x}{d'_2}, e, \dots}} {\{d_2, d'_2\}\cup H}}$, \\
-          $i = 1$ and $j = 1$.
-
-          To show:
-          \begin{enumerate}
-          \item $\conf_a \parstepsto \conf_c$, where \\
-            $\conf_a = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                e, \dots}} {\{d_2\}\cup H}}$ and \\
-            $\conf_c = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                  \subst{e_0}{x}{d'_2}, e, \dots}} {\{d_2, d'_2\}\cup H}}$.
-
-            The proof is as follows:
-
-            From the premises of {\sc E-Spawn-Handler}, \\
-            $S(l) = \state{d_1}{\status_1}$ and
-            $d'_2 \userleq d_1$ and 
-            $d'_2 \notin H$ and
-            $d'_2 \in Q$.
-
-            Therefore, by {\sc E-Spawn-Handler}, \\
-            $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                e, \dots}} {\{d_2\}\cup H}} \parstepsto \\
-            \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d'_2}, \subst{e_0}{x}{d_2},
-                  e, \dots}} \setof{d'_2} \cup {\{d_2\}\cup H}}$, \\
-            which is equivalent to \\
-
-            $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                  \subst{e_0}{x}{d'_2}, e, \dots}} {\{d_2, d'_2\}\cup
-                H}}$.
-
-            Hence $\conf_a \parstepsto \conf_c$.
-
-          \item $\conf_b \parstepsto \conf_c$, where \\
-            $\conf_b = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d'_2},
-                e, \dots}} {\{d'_2\}\cup H}}$, and \\
-            $\conf_c = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                  \subst{e_0}{x}{d'_2}, e, \dots}} {\{d_2, d'_2\}\cup H}}$.
-
-            The proof is as follows:
-
-            From the premises of {\sc E-Spawn-Handler}, \\
-            $S(l) = \state{d_1}{\status_1}$ and
-            $d_2 \userleq d_1$ and 
-            $d_2 \notin H$ and
-            $d_2 \in Q$.
-
-            Therefore, by {\sc E-Spawn-Handler}, \\
-            $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d'_2},
-                  e, \dots}} {\{d'_2\}\cup H}} \parstepsto \\
-            \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2}, \subst{e_0}{x}{d'_2},
-                  e, \dots}} \setof{d_2} \cup {\{d'_2\}\cup H}}$, \\
-            which is equivalent to \\
-
-            $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                  \subst{e_0}{x}{d'_2}, e, \dots}} {\{d_2, d'_2\}\cup H}}$.
-
-            Hence $\conf_b \parstepsto \conf_c$.
-          \end{enumerate}
-
-        \item $d'_2 = d_2$:
-
-          Choose:
-          $\conf_c = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                e, \dots}} {\{d_2\}\cup H}}$, \\
-          $i = 0$ and $j = 0$.
-
-          Then
-          $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                e, \dots}} {\{d_2\}\cup H}} = \conf_c$ and $\conf_b =
-          \conf_c$, as required.
+        \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+          \config{\lubstore{S_a}{S_b}}{\evalctxt{E'_b}{e_{b_2}}}$, and
+        \item $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+          \config{\lubstore{S_a}{S_b}}{\evalctxt{E'_a}{e_{a_2}}}$.
         \end{itemize}
 
-      \item $\conf \parstepsto \conf_b$ by {\sc E-Eval-Ctxt}:
+        For the first of these, since no locations are allocated
+        during the transition $\config{S}{e_{b_1}} \parstepsto
+        \config{S_b}{e_{b_2}}$, we know that
+        $\store{\storebindingRaw{l}{u_{p_i}(p_1)}}$ is
+        non-conflicting with it, and in this subcase, we know that
+        $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+        \neq \topS$.  Therefore, by Lemma~\ref{lem:independence}
+        (Independence), we have that
+        $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_1}}
+        \parstepsto
+        \config{\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_2}}$.
+        By {\sc E-Eval-Ctxt}, it follows that
+        $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{\evalctxt{E'_b}{e_{b_1}}}
+        \ctxstepsto
+        \config{\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{\evalctxt{E'_b}{e_{b_2}}}$.
+        Since
+        $\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+        = \extSRaw{S}{l}{u_{p_i}(p_1)} = S_a$, we have that
 
-        Hence $\conf_b =
-        \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e',
-              \dots}}{H}}$.
+        $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{\evalctxt{E'_b}{e_{b_2}}}$.
+        Furthermore, since $\config{S}{e_{b_1}} \parstepsto
+        \config{S_b}{e_{b_2}}$, by Lemma~\ref{lem:monotonicity}
+        (Monotonicity), we have that $\leqstore{S}{S_b}$, so
+        $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+        =
+        \lubstore{S_b}{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}
+        = \lubstore{S_b}{S_a} = \lubstore{S_a}{S_b}$.  So we have that
+        $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{\lubstore{S_a}{S_b}}{\evalctxt{E'_b}{e_{b_2}}}$, as we
+        were required to show.
 
-        \lk{Minor cheat here: the expression that could step could be
-          \emph{any} expression in the set $\setof{e, \dots}$, not
-          necessarily the first one.  I'm hoping it's enough to just
-          write out this case.}
+        The argument for the second is symmetrical, with
+        $\store{\storebindingRaw{l'}{\userlub{d'_1}{d'_2}}}$ being the
+        transition that is non-conflicting with $\config{S}{e_{a_1}}
+        \parstepsto \config{S_a}{e_{a_2}}$.
 
-        Choose: \\
-        $\conf_c = \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-              e', \dots}} {\{d_2\}\cup H}}$, \\
-        $i = 1$ and $j = 1$.
+      \item
+        $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+        = \topS$:
 
-        To show:
-        \begin{enumerate}
-        \item $\conf_a \parstepsto \conf_c$, where \\
-          $\conf_a = \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-              e, \dots}} {\{d_2\}\cup H}}$ and \\
-          $\conf_c = \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                e', \dots}} {\{d_2\}\cup H}}$.
+        Here we choose $\conf_c = \error$ and $\pi = \id$.  We have to
+        show that there exist $i \leq 1$ and $j \leq 1$ such that:
+        \begin{itemize}
+        \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto^i
+          \error$, and
+        \item
+          $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto^j \error$.
+        \end{itemize}
 
-          The proof is as follows:
+        For the first of these, since no locations are allocated
+        during the transition $\config{S}{e_{b_1}} \parstepsto
+        \config{S_b}{e_{b_2}}$, we know that
+        $\store{\storebindingRaw{l}{u_{p_i}(p_1)}}$ is
+        non-conflicting with it, and in this subcase, we know that
+        $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+        = \topS$.  Therefore, by (Clash),
+        \TODO{Don't use Clash.}
+        we have that
+        $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_1}}
+        \parstepsto^{i'} \error$, where $i' \leq 1$.  Since $\error$ is
+        equal to $\config{\topS}{e}$ for all expressions $e$,
+        $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_1}}
+        \parstepsto^{i'} \config{\topS}{e}$ for all $e$.
 
-          From the premise of {\sc E-Eval-Ctxt}, $\config{S}{e}
-          \parstepsto \config{S'}{e'}$.
+        Now consider whether $i' = 1$ or $i' = 0$:
+        \begin{itemize}
+          \item If $i' = 1$, by {\sc E-Eval-Ctxt}, it follows that
+            $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{\evalctxt{E'_b}{e_{b_1}}}
+            \ctxstepsto \config{\topS}{\evalctxt{E'_b}{e}}$ for all
+            $e$.  Since $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal
+            to $\error$, and since
+            $\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+            = \extSRaw{S}{l}{u_{p_i}(p_1)} = S_a$, we choose $i
+            = 1$ and we have that
+            $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+            \error$, as required.
 
-          From the definition of evaluation contexts, \\
-          $\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                [~], \dots}} {\{d_2\}\cup H}$ \\
-          is an evaluation context.
+          \item If $i' = 0$, we have that
+            $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_1}}
+            = \error$.  Hence
+            $\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+            = \topS$.  So, we choose $i = 0$, and since $S_a =
+            \extSRaw{S}{l}{u_{p_i}(p_1)} =
+            \lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+            = \topS$, we have that
+            $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} = \error$, as
+            desired.
+        \end{itemize}
 
-          Hence, by {\sc E-Eval-Ctxt}, \\
-          $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-              e, \dots}} {\{d_2\}\cup H}} \parstepsto \\
-          \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-                e', \dots}} {\{d_2\}\cup H}}$.
-          
-          Hence $\conf_a \parstepsto \conf_c$.
-
-        \item $\conf_b \parstepsto \conf_c$, where \\
-          $\conf_b = \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e',
-              \dots}}{H}}$, and \\
-          $\conf_c = \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-              e', \dots}} {\{d_2\}\cup H}}$.
-
-          The proof is as follows:
-
-          From the premises of {\sc E-Spawn-Handler}, \\
-          $S(l) = \state{d_1}{\status_1}$ and
-          $d_2 \userleq d_1$ and 
-          $d_2 \notin H$ and
-          $d_2 \in Q$.
-
-          Hence, by {\sc E-Spawn-Handler}, \\
-          $\config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e',
-              \dots}}{H}} \parstepsto \\
-          \config{S'}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2}, e',
-                \dots}}{\{d_2\}\cup H}}$.
-
-          Hence $\conf_b \parstepsto \conf_c$.
-        \end{enumerate}
+        The argument for the second is symmetrical, with
+        $\store{\storebindingRaw{l'}{\userlub{d'_1}{d'_2}}}$ being the
+        transition that is non-conflicting with $\config{S}{e_{a_1}}
+        \parstepsto \config{S_a}{e_{a_2}}$.
 
       \end{itemize}
 
-    \item {\sc E-Freeze-Final}: $\conf =
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}}$, and $\conf_a =
-      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+    \item \label{slqc-put-put-err}Case {\sc E-Put-Err}:
 
-      Given:
+      Here $\config{S_b}{e_{b_2}} = \error$, and so we choose $\conf_c
+      = \error$, $i = 1$, $j = 0$, and $\pi = \id$.  We have to show that:
       \begin{itemize}
-      \item $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}} \parstepsto
-        \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
-      \item $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}} \parstepsto \conf_b$.
+      \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \error$, and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} = \error$.
       \end{itemize}
 
-      To show: There exist $\conf_c, i, j$ such that
+      The second of these is immediately true because since
+      $\config{S_b}{e_{b_2}} = \error$, $S_b = \topS$, and so
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ is equal to $\error$ as
+      well.  For the first, observe that since $\config{S}{e_{a_1}}
+      \parstepsto \config{S_a}{e_{a_2}}$, we have by
+      Lemma~\ref{lem:monotonicity} (Monotonicity) that
+      $\leqstore{S}{S_a}$.  Therefore, since $\config{S}{e_{b_1}}
+      \parstepsto \error$, we have by
+      (Error Preservation)
+      \TODO{Don't use Error Preservation.}
+      that $\config{S_a}{e_{b_1}} \parstepsto \error$.  Since $\error$
+      is equal to $\config{\topS}{e}$ for all expressions $e$,
+      $\config{S_a}{e_{b_1}} \parstepsto \config{\topS}{e}$ for all
+      $e$.  Therefore, by {\sc E-Eval-Ctxt},
+      $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \config{\topS}{\evalctxt{E'_b}{e}}$ for all $e$.  Since
+      $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal to $\error$, we
+      have that $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \error$, as we were required to show.
 
-      $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} \parstepsto^i
-      \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and
-      $j \leq 1$.
+    \item \label{slqc-put-get}Case {\sc E-Get}: Similar to
+      case~\ref{slqc-put-beta}, since $S_b = S$.
+    \item \label{slqc-put-freeze-init}Case {\sc E-Freeze-Init}:
+      Similar to case~\ref{slqc-put-beta}, since $S_b = S$.
+    \item \label{slqc-put-spawn-handler}Case {\sc E-Spawn-Handler}:
+      Similar to case~\ref{slqc-put-beta}, since $S_b = S$.
+    \item \label{slqc-put-freeze-final}Case {\sc E-Freeze-Final}: \TODO{}
+    \item \label{slqc-put-freeze-simple}Case {\sc E-Freeze-Simple}: \TODO{}
 
-      By inspection of the operational semantics, $\conf_b =
-      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+    \end{enumerate}
+  \item Case {\sc E-Put-Err}: We have $\config{S_a}{e_{a_2}} =
+    \error$.
 
-      Choose $\conf_c = \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$,
-      $i = 0$ and $j = 0$.
+    We proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item \label{slqc-put-err-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-put-err}.
+    \item \label{slqc-put-err-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-put-err}.
+    \item \label{slqc-put-err-put}Case {\sc E-Put}: By symmetry with case~\ref{slqc-put-put-err}.
+    \item \label{slqc-put-err-put-err}Case {\sc E-Put-Err}: 
 
-      Then $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} = \conf_c$ and
-      $\conf_b = \conf_c$, as required.
-
-    \item {\sc E-Freeze-Simple}: $\conf =
-      \config{S}{\freeze{l}}$, and $\conf_a =
-      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
-
-      Given:
+      Here $\config{S_b}{e_{b_2}} = \error$, and so we choose $\conf_c
+      = \error$, $i = 0$, $j = 0$, and $\pi = \id$.  We have to show
+      that:
       \begin{itemize}
-      \item $\config{S}{\freeze{l}} \parstepsto
-        \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
-      \item $\config{S}{\freeze{l}} \parstepsto \conf_b$.
+      \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} = \error$, and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} = \error$.
       \end{itemize}
 
-      To show: There exist $\conf_c, i, j$ such that
-      $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} \parstepsto^i
-      \conf_c$ and $\conf_b \parstepsto^j \conf_c$ and $i \leq 1$ and
-      $j \leq 1$.
+      Since $\config{S_a}{e_{a_2}} = \error$, $S_a = \topS$, and since
+      $\config{S_b}{e_{b_2}} = \error$, $S_b = \topS$, so both of the
+      above follow immediately.
 
-      By inspection of the operational semantics, $\conf_b =
-      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+    \item \label{slqc-put-err-get}Case {\sc E-Get}: Similar to
+      case~\ref{slqc-put-err-beta}, since $S_b = S$.
+    \item \label{slqc-put-err-freeze-init}Case {\sc E-Freeze-Init}:
+      Similar to case~\ref{slqc-put-err-beta}, since $S_b = S$.
+    \item \label{slqc-put-err-spawn-handler}Case {\sc E-Spawn-Handler}:
+      Similar to case~\ref{slqc-put-err-beta}, since $S_b = S$.
+    \item \label{slqc-put-err-freeze-final}Case {\sc E-Freeze-Final}: \TODO{}
+    \item \label{slqc-put-err-freeze-simple}Case {\sc E-Freeze-Simple}: \TODO{}
 
-      Choose $\conf_c = \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$,
-      $i = 0$ and $j = 0$.
+    \end{enumerate}
+  \item Case {\sc E-Get}:
 
-      Then $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} = \conf_c$ and
-      $\conf_b = \conf_c$, as required.
-  \end{itemize}
+    We proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item \label{slqc-get-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-get}.
+    \item \label{slqc-get-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-get}.
+    \item \label{slqc-get-put}Case {\sc E-Put}: By symmetry with case~\ref{slqc-put-get}.
+    \item \label{slqc-get-put-err}Case {\sc E-Put-Err}: By symmetry with case~\ref{slqc-put-err-get}.
+    \item \label{slqc-get-get}Case {\sc E-Get}: Similar to
+      case~\ref{slqc-get-beta}, since $S_b = S$.
+    \item \label{slqc-get-freeze-init}Case {\sc E-Freeze-Init}:
+      Similar to case~\ref{slqc-get-beta}, since $S_b = S$.
+    \item \label{slqc-get-spawn-handler}Case {\sc E-Spawn-Handler}:
+      Similar to case~\ref{slqc-get-beta}, since $S_b = S$.
+    \item \label{slqc-get-freeze-final}Case {\sc E-Freeze-Final}: \TODO{}
+    \item \label{slqc-get-freeze-simple}Case {\sc E-Freeze-Simple}: \TODO{}
+    \end{enumerate}
+
+  \item Case {\sc E-Freeze-Init}:
+
+    We proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item \label{slqc-freeze-init-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-freeze-init}.
+    \item \label{slqc-freeze-init-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-freeze-init}.
+    \item \label{slqc-freeze-init-put}Case {\sc E-Put}: By symmetry with case~\ref{slqc-put-freeze-init}.
+    \item \label{slqc-freeze-init-put-err}Case {\sc E-Put-Err}: By symmetry with case~\ref{slqc-put-err-freeze-init}.
+    \item \label{slqc-freeze-init-get}Case {\sc E-Get}: By symmetry with case~\ref{slqc-get-freeze-init}.
+    \item \label{slqc-freeze-init-freeze-init}Case {\sc E-Freeze-Init}:
+      Similar to case~\ref{slqc-freeze-init-beta}, since $S_b = S$.
+    \item \label{slqc-freeze-init-spawn-handler}Case {\sc E-Spawn-Handler}:
+      Similar to case~\ref{slqc-freeze-init-beta}, since $S_b = S$.
+    \item \label{slqc-freeze-init-freeze-final}Case {\sc E-Freeze-Final}: \TODO{}
+    \item \label{slqc-freeze-init-freeze-simple}Case {\sc E-Freeze-Simple}: \TODO{}
+    \end{enumerate}
+
+  \item Case {\sc E-Spawn-Handler}:
+
+    We proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item \label{slqc-spawn-handler-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-spawn-handler}.
+    \item \label{slqc-spawn-handler-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-spawn-handler}.
+    \item \label{slqc-spawn-handler-put}Case {\sc E-Put}: By symmetry with case~\ref{slqc-put-spawn-handler}.
+    \item \label{slqc-spawn-handler-put-err}Case {\sc E-Put-Err}: By symmetry with case~\ref{slqc-put-err-spawn-handler}.
+    \item \label{slqc-spawn-handler-get}Case {\sc E-Get}: By symmetry with case~\ref{slqc-get-spawn-handler}.
+    \item \label{slqc-spawn-handler-freeze-init}Case {\sc E-Freeze-Init}: By symmetry with case~\ref{slqc-freeze-init-spawn-handler}.
+    \item \label{slqc-spawn-handler-spawn-handler}Case {\sc E-Spawn-Handler}:
+      Similar to case~\ref{slqc-spawn-handler-beta}, since $S_b = S$.
+    \item \label{slqc-spawn-handler-freeze-final}Case {\sc E-Freeze-Final}: \TODO{}
+    \item \label{slqc-spawn-handler-freeze-simple}Case {\sc E-Freeze-Simple}: \TODO{}
+    \end{enumerate}
+
+  \item Case {\sc E-Freeze-Final}:
+
+    We proceed by case analysis on the rule by which
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    \begin{enumerate}
+    \item \label{slqc-freeze-final-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-freeze-final}.
+    \item \label{slqc-freeze-final-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-freeze-final}.
+    \item \label{slqc-freeze-final-put}Case {\sc E-Put}: By symmetry with case~\ref{slqc-put-freeze-final}.
+    \item \label{slqc-freeze-final-put-err}Case {\sc E-Put-Err}: By symmetry with case~\ref{slqc-put-err-freeze-final}.
+    \item \label{slqc-freeze-final-get}Case {\sc E-Get}: By symmetry with case~\ref{slqc-get-freeze-final}.
+    \item \label{slqc-freeze-final-freeze-init}Case {\sc E-Freeze-Init}: By symmetry with case~\ref{slqc-freeze-init-freeze-final}.
+    \item \label{slqc-freeze-final-spawn-handler}Case {\sc E-Spawn-Handler}: By symmetry with case~\ref{slqc-spawn-handler-freeze-final}.
+    \item \label{slqc-freeze-final-freeze-final}Case {\sc E-Freeze-Final}: \TODO{}
+    \item \label{slqc-freeze-final-freeze-simple}Case {\sc E-Freeze-Simple}: \TODO{}
+    \end{enumerate}
+
+  \item Case {\sc E-Freeze-Simple}:
+
+    \begin{enumerate}
+    \item \label{slqc-freeze-simple-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-freeze-simple}.
+    \item \label{slqc-freeze-simple-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-freeze-simple}.
+    \item \label{slqc-freeze-simple-put}Case {\sc E-Put}: By symmetry with case~\ref{slqc-put-freeze-simple}.
+    \item \label{slqc-freeze-simple-put-err}Case {\sc E-Put-Err}: By symmetry with case~\ref{slqc-put-err-freeze-simple}.
+    \item \label{slqc-freeze-simple-get}Case {\sc E-Get}: By symmetry with case~\ref{slqc-get-freeze-simple}.
+    \item \label{slqc-freeze-simple-freeze-init}Case {\sc E-Freeze-Init}: By symmetry with case~\ref{slqc-freeze-init-freeze-simple}.
+    \item \label{slqc-freeze-simple-spawn-handler}Case {\sc E-Spawn-Handler}: By symmetry with case~\ref{slqc-spawn-handler-freeze-simple}.
+    \item \label{slqc-freeze-simple-freeze-final}Case {\sc E-Freeze-Final}: By symmetry with case~\ref{slqc-freeze-final-freeze-simple}.
+    \item \label{slqc-freeze-simple-freeze-simple}Case {\sc E-Freeze-Simple}: \TODO{}
+    \end{enumerate}
+
+  \end{enumerate}
 \end{proof}
 
