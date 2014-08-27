@@ -1,21 +1,17 @@
 \begin{proof}
-  \TODO{Needs to be redone now that the statement of the lemma has
-    changed.}
+  Consider arbitrary $U_S$ such that $U_S$ is non-conflicting with
+  $\config{S}{e} \parstepsto \config{S'}{e'}$ and $U_S(S') \neq \topS$
+  and and $U_S(S') \statuseq S$.
 
-  Consider arbitrary $S''$ such that $S''$ is non-conflicting with
-  $\config{S}{e} \parstepsto \config{S'}{e'}$ and $\lubstore{S'}{S''}
-  \statuseq S$ and $\lubstore{S'}{S''} \neq \topS$.
-
-  To show: $\config{\lubstore{S}{S''}}{e} \parstepsto
-  \config{\lubstore{S'}{S''}}{e'}$.
+  To show: $\config{U_S(S)}{e} \parstepsto \config{U_S(S')}{e'}$.
 
   The proof is by cases on the rule of the reduction semantics by
   which $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since
   $\config{S'}{e'} \neq \error$, we do not need to consider the {\sc
     E-Put-Err} rule.
 
-  The assumption that $\lubstore{S'}{S''} \statuseq S$ is only needed
-  in the {\sc E-Freeze-Final} and {\sc E-Freeze-Simple} cases.
+  The assumption that $U_S(S') \statuseq S$ is only needed in the {\sc
+    E-Freeze-Final} and {\sc E-Freeze-Simple} cases.
 
   \begin{itemize}
 
@@ -24,8 +20,8 @@
       Given: $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto
       \config{S}{\subst{e}{x}{v}}$.
 
-      To show: $\config{\lubstore{S}{S''}}{\app{(\lam{x}{e})}{v}} \parstepsto
-      \config{\lubstore{S}{S''}}{\subst{e}{x}{v}}$.
+      To show: $\config{U_S(S)}{\app{(\lam{x}{e})}{v}} \parstepsto
+      \config{U_S(S)}{\subst{e}{x}{v}}$.
 
       Immediate by {\sc E-Beta}.
 
@@ -34,8 +30,10 @@
       Given: $\config{S}{\NEW} \parstepsto
       \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
 
-      To show: $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
-      \config{\lubstore{(\extS{S}{l}{\bot}{\frozenfalse})}{S''}}{l}$.
+      To show: $\config{U_S(S)}{\NEW} \parstepsto
+      \config{U_S(\extS{S}{l}{\bot}{\frozenfalse})}{l}$.
+
+      \TODO{Needs to be redone.}
 
       By {\sc E-New}, we have that $\config{\lubstore{S}{S''}}{\NEW}
       \parstepsto
@@ -72,6 +70,8 @@
       required to show.
 
     \item Case {\sc E-Put}:
+
+      \TODO{Needs to be redone.}
 
       Given: $\config{S}{\putiexp{l}} \parstepsto
       \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}$.
@@ -137,6 +137,8 @@
 
     \item Case {\sc E-Get}:
 
+      \TODO{Needs to be redone.}
+
       Given: $\config{S}{\getexp{l}{P}} \parstepsto \config{S}{p_2}$.
 
       To show: $\config{\lubstore{S}{S''}}{\getexp{l}{P}} \parstepsto
@@ -166,14 +168,15 @@
       Given: $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto
       \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
 
-      To show:
-      $\config{\lubstore{S}{S''}}{\freezeafter{l}{Q}{\lam{x}{e}}}
+      To show: $\config{U_S(S)}{\freezeafter{l}{Q}{\lam{x}{e}}}
       \parstepsto
-      \config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
+      \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
 
       Immediate by {\sc E-Freeze-Init}.
 
     \item Case {\sc E-Spawn-Handler}:
+
+      \TODO{Needs to be redone.}
 
       Given:
 
@@ -217,6 +220,8 @@
       as we were required to show.
 
     \item Case {\sc E-Freeze-Final}:
+
+      \TODO{Needs to be redone.}
 
       \lk{This case wouldn't work but for the $\lubstore{S'}{S''}
         \statuseq S$ requirement, which makes it a no-op freeze.}
@@ -409,6 +414,8 @@
       as we were required to show.
 
     \item Case {\sc E-Freeze-Simple}:
+
+      \TODO{Needs to be redone.}
 
       Given: $\config{S}{\freeze{l}} \parstepsto
       \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
