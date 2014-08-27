@@ -149,6 +149,30 @@
 \end{landscape}
 }
 
+\newcommand{\LemIndependence}{
+\begin{lem}[Independence]\label{lem:independence}
+  If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
+  $\config{S'}{e'} \neq \textup{\error}$), then we have that:
+
+  $\config{\lubstore{S}{S''}}{e} \parstepsto \config{\lubstore{S'}{S''}}{e'}$,
+
+  where $S''$ is any store meeting the following conditions:
+  \begin{itemize}
+    \item $S''$ is non-conflicting with $\config{S}{e} \parstepsto \config{S'}{e'}$,
+    \item $\lubstore{S'}{S''} \statuseq S$, and
+    \item $\lubstore{S'}{S''} \neq \topS$.
+  \end{itemize}
+\end{lem}
+}
+
+\newcommand{\DefNonConflicting}{
+\begin{definition}\label{def:non-conflicting}
+  A store $S''$ is \emph{non-conflicting} with the transition
+  $\config{S}{e} \parstepsto \config{S'}{e'}$ iff $(\dom{S'} -
+  \dom{S}) \cap \dom{S''} = \emptyset$.
+\end{definition}
+}
+
 % Language stuff that's specific to this proposal
 \newcommand{\bumpexp}[1]{\ensuremath{\termfont{bump}~#1}}
 

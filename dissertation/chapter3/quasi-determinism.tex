@@ -99,39 +99,131 @@ the $\leqstore{}{}$ ordering.
   Section~\ref{section:monotonicity-proof}.
 \end{proof}
 
-\subsection{Independence}\label{subsection:quasi-independence}
+\subsection{Generalized Independence}\label{subsection:quasi-generalized-independence}
 
-Like the lemma for $\lambdaLVar$ of the same name
-(Lemma~\ref{lem:lvars-independence}), the Independence lemma
-establishes a ``frame property'' for $\lambdaLVish$ that captures the
-idea that independent effects commute with each other.  Just as for
-$\lambdaLVar$, Lemma~\ref{lem:independence} requires as a precondition
-that the store $S''$ must be \emph{non-conflicting}
-(Definition~\ref{def:lvars-non-conflicting}) with the original
-transition from $\config{S}{e}$ to $\config{S'}{e'}$, meaning that
-locations in $S''$ cannot share names with locations newly allocated
-during the transition, which rules out location name conflicts caused
-by allocation.
+Recall from Chapter~\ref{ch:lvars} that in order to prove determinism
+for $\lambdaLVar$, we needed to establish a ``frame property'' that
+captures the idea that independent effects commute with each other.
+For $\lambdaLVar$, the Independence lemma
+(Lemma~\ref{lem:lvars-independence}) established that property.  It
+shows that, if a configuration $\config{S}{e}$ can step to
+$\config{S'}{e'}$, then it is possible to ``frame on'' an additional
+store $S''$ without interfering with the ability to to take a
+step---that is, $\config{\lubstore{S}{S''}}{e} \parstepsto
+\config{\lubstore{S'}{S''}}{e'}$, subject to certain restrictions on
+$S''$.
 
-In the context of $\lambdaLVish$, where freezing is possible, we have
-an additional precondition that the stores $\lubstore{S'}{S''}$ and
-$S$ are \emph{equal in status}---that, for all the locations shared
-between them, the status bits of those locations agree.  This
-assumption rules out interference from freezing.
+For $\lambdaLVish$, we need to establish a similar frame property.
+However, since we have generalized from the least-upper-bound writes
+of the @put@ operation in Chapter~\ref{ch:lvars} to the arbitrary
+update operations discussed in
+Section~\ref{subsection:quasi-update-operations}, we also need to
+generalize our frame property.  In fact, the original
+Lemma~\ref{lem:lvars-independence} does not hold for $\lambdaLVish$ in
+general.  As an example, consider an LVar whose states form a lattice
+$\bot < 0 < 1 < \top$.  Consider the transition
+\[
+\config{\store{\storebinding{l}{0}{\frozenfalse}}}{\putiexp{l}}
+\parstepsto \config{\store{\storebinding{l}{1}{\frozenfalse}}}{\unit},
+\]
+where the update operation $u_i$ happens to increment its argument by
+one.  Now suppose that we wish to ``frame'' the store
+$\store{\storebinding{l}{1}{\frozenfalse}}$ onto this transition using
+Lemma~\ref{lem:lvars-independence}; that is, we wish to show that
+\[
+\config{\lubstore{\store{\storebinding{l}{0}{\frozenfalse}}}{\store{\storebinding{l}{1}{\frozenfalse}}}}{\putiexp{l}}
+\parstepsto
+\config{\lubstore{\store{\storebinding{l}{1}{\frozenfalse}}}{\store{\storebinding{l}{1}{\frozenfalse}}}}{\unit}.
+\]
+We know that
+$\lubstore{\store{\storebinding{l}{1}{\frozenfalse}}}{\store{\storebinding{l}{1}{\frozenfalse}}}
+\neq \topS$, which is required to be able to apply
+Lemma~\ref{lem:lvars-independence}.  Furthermore,
+$\store{\storebinding{l}{1}{\frozenfalse}}$ is non-conflicting with
+the original transition, since no new locations are allocated between
+$\store{\storebinding{l}{0}{\frozenfalse}}$ and
+$\store{\storebinding{l}{1}{\frozenfalse}}$.  However, it is
+\emph{not} the case that
+$\config{\lubstore{\store{\storebinding{l}{0}{\frozenfalse}}}{\store{\storebinding{l}{1}{\frozenfalse}}}}{\putiexp{l}}$
+steps to
+$\config{\lubstore{\store{\storebinding{l}{1}{\frozenfalse}}}{\store{\storebinding{l}{1}{\frozenfalse}}}}{\unit}$,
+because $u_{p_i}((\lubstore{S}{S''})(l)) = \topp$.  (As before,
+$u_{p_i}$ is the update operation $u_i$, lifted from lattice elements
+$d$ to states $\state{d}{\status}$.)
+
+What went wrong here?  The problem is that, as previously discussed in
+Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes},
+lub operations do not necessarily commute with arbitrary update
+operations.  In $\lambdaLVar$, where the only ``update operation'' is
+a least-upper-bound write performed via @put@, it is fine that the
+Independence lemma uses a lub operation to frame $S''$ onto the
+transition. For $\lambdaLVish$, though, we need to state our frame
+property in a way that will allow it to accommodate any update
+operation from the given set $U$.
+
+Therefore, I define a \emph{store update operation} $U_S$ to be a
+function from stores to stores that operates only on the states in a
+store (that is, it cannot change location names), and that can only
+apply operations $u_i$ from the given set $U$ of update operations
+(or, more specifically, their lifted versions $u_{p_i}$).  With this
+definition in hand, we can state a more general version of the
+Independence lemma:
+
+\LemGeneralizedIndependence
+\begin{proof}
+  By cases on the rule of the reduction semantics by which
+  $\config{S}{e}$ steps to $\config{S'}{e'}$; see
+  Section~\ref{section:generalized-independence-proof}.
+\end{proof}
+
+Lemma~\ref{lem:generalized-independence} has three preconditions on
+the store update operation $U_S$, two of which mirror the two
+preconditions on $S''$ from the original Independence lemma: the
+requirement that $U_S(S') \neq \topS$, and the requirement that $U_S$
+is non-conflicting with the transition from $\config{S}{e}$ to
+$\config{S'}{e'}$, meaning that $U_S$ cannot affect the contents of
+locations newly allocated during the transition.
+Definition~\ref{def:non-conflicting-store-update-operation} revises
+our previous definition of non-conflicting to apply to store update
+operations.
+
+\DefNonConflictingStoreUpdateOperation
+
+The third precondition on $U_S$ has to do with freezing: the stores
+$U_S(S')$ and $S$ must be \emph{equal in status}, which means that,
+for all the locations shared between them, the status bits of those
+locations agree.  This precondition rules out interference from
+freezing.
 
 \DefEqualStatus
 
-\LemIndependence
-\begin{proof}
-  By cases on the rule of the reduction semantics by which
-  $\config{S}{e}$ steps to $\config{S'}{e'}$. The interesting cases
-  are for the {\sc E-New} and {\sc E-Put} rules: in the {\sc E-Put}
-  case, the assumption that
-  $\lubstore{\extSRaw{S}{l}{u_{p_i}(p_1)}}{S''} \neq \topS$ rules out
-  the possibility of a @freeze@ operation conflicting with a write.
-  Since $\config{S'}{e'} \neq \error$, we do not need to consider the
-  {\sc E-Put-Err} rule.  See Section~\ref{section:independence-proof}.
-\end{proof}
+The two changes we have made to the Independence lemma---the use of
+$U_S$, and the requirement that the final store be equal in status to
+$S$---are orthogonal to each other, in accordance with the fact that
+\emph{arbitrary update operations} are an orthogonal language feature
+to \emph{freezing}.  A version of $\lambdaLVish$ that had freezing,
+but retained the least-upper-bound @put@ semantics of $\lambdaLVar$,
+could use the old formulation of the Independence lemma, taking the
+least upper bound of the original stores and a frame store $S''$, but
+it would still need to require that $\lubstore{S'}{S''} \statuseq S$.
+On the other hand, a version of the language \emph{without} freezing,
+but \emph{with} arbitrary updates, would still use $U_S$ but could
+leave out the requirement that $U_S(S')$ be equal in status to $S$.  I
+make particular note of the orthogonality of freezing and arbitrary
+updates because freezing introduces quasi-determinism, while arbitrary
+updates do not.\footnote{To rigorously show that arbitrary updates
+  retain full determinism and not merely quasi-determinism, I would
+  need to define yet another language, one that generalizes \il{put}
+  to $\PUTi$ but does not introduce freezing, and then prove
+  determinism for \emph{that} language.  Instead, I hope to informally
+  convince you that the quasi-determinism in $\lambdaLVish$ comes from
+  freezing, rather than from arbitrary updates.}
+
+Finally, although it no longer uses an explicit ``frame'' store, we
+can still think of Lemma~\ref{lem:generalized-independence} as a frame
+property; in fact, it is reminiscent of the generalized frame rule of
+the ``Views'' framework~\cite{views}, which I discuss in more detail
+in Section~\ref{s:related-frame-properties-and-separation-logics}.
 
 \subsection{Quasi-Confluence}\label{subsection:quasi-quasi-confluence}
 

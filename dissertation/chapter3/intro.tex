@@ -125,16 +125,22 @@ organized as follows: in Section~\ref{s:quasi-informal}, I introduce
 the LVish programming model informally, through a series of examples.
 I will also return to the graph traversal I discussed above and show
 how to implement it using the LVish Haskell library (which I will go
-on to discuss the internals of in Chapter~\ref{ch:lvish}).
-
-Then, in Section~\ref{s:quasi-formal}, I formalize the LVish model by
-extending the $\lambdaLVar$ calculus of Chapter~\ref{ch:lvars} to add
-support for handlers, quiescence, and freezing, calling the resulting
-language $\lambdaLVish$.  The main technical result of this chapter is
-a proof of quasi-determinism for
+on to discuss the internals of in Chapter~\ref{ch:lvish}).  Then, in
+Section~\ref{s:quasi-formal}, I formalize the LVish model by extending
+the $\lambdaLVar$ calculus of Chapter~\ref{ch:lvars} to add support
+for handlers, quiescence, and freezing, calling the resulting language
+$\lambdaLVish$.  Along with handlers, quiescence, and freezing, I add
+support for the arbitrary update operations described in
+Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}.
+Finally, the main technical result of this chapter is a proof of
+quasi-determinism for
 $\lambdaLVish$~(Section~\ref{s:quasi-proof-of-quasi-determinism}). Just
 as with the determinism proof I gave for $\lambdaLVar$ in
-Chapter~\ref{ch:lvars}, the quasi-determinism proof for $\lambdaLVish$
-relies on an Independence lemma
-(Section~\ref{subsection:quasi-independence}) that captures the
-commutative effects of LVar computations.
+Chapter~\ref{ch:lvars}, which relies on the Independence lemma
+(Lemma~\ref{lem:lvars-independence}), the quasi-determinism proof for
+$\lambdaLVish$ relies on a ``frame property'', the Generalized
+Independence lemma (Lemma~\ref{lem:generalized-independence}).  As I
+explain in Section~\ref{subsection:quasi-generalized-independence},
+the Generalized Independence lemma updates the original Independence
+lemma to account for both freezing and the arbitrary update operations
+that $\lambdaLVish$ allows.

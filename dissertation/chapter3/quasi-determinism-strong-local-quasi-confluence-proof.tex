@@ -35,6 +35,7 @@
   \evalctxt{E'_b}{e_{b_2}}$.
   \end{itemize}
 
+  \TODO{Audit this prose when the proof is done.}
   In some of the cases that follow, we will show that $\conf_a
   \ctxstepsto \error$ or that $\conf_b \ctxstepsto \error$.  In
   others, we will choose $\conf_c = \error$.  In most cases, however,
@@ -111,8 +112,12 @@
       $\lubstore{S_a}{\store{\storebinding{l}{\bot}{\frozenfalse}}} \neq \topS$
       since $S_a$ is just $S$ and
       $\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}$ cannot be
-      $\topS$.  Therefore, by Lemma~\ref{lem:independence}
-      (Independence), we have that
+      $\topS$.
+
+      \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+
+      Therefore, by Lemma~\ref{lem:generalized-independence}
+      (Generalized Independence), we have that
       $\config{\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{a_1}}
       \parstepsto
       \config{\lubstore{S_a}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{a_2}}$.
@@ -153,8 +158,12 @@
       \neq \topS$ since $S_a$ is just $S$ and
       $\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}$
       cannot be $\topS$, since we know from the premise of {\sc E-Put}
-      that $u_{p_i}(p_1) \neq \top$.  Therefore, by
-      Lemma~\ref{lem:independence} (Independence), we have that
+      that $u_{p_i}(p_1) \neq \top$.
+
+      \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+
+      Therefore, by Lemma~\ref{lem:generalized-independence}
+      (Generalized Independence), we have that
       $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{a_1}}
       \parstepsto
       \config{\lubstore{S_a}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{a_2}}$.
@@ -238,21 +247,26 @@
           $\lubstore{\extS{S}{l'}{\bot}{\frozenfalse}}{\store{\storebinding{l}{\bot}{\frozenfalse}}}
           \neq \topS$, since $S \neq \topS$ and new bindings of
           $\storebinding{l}{\bot}{\frozenfalse}$ and $\storebindingRaw{l'}{\bot}$
-          cannot cause it to become $\topS$.  Therefore, by
-          Lemma~\ref{lem:independence} (Independence), we have
-          that
+          cannot cause it to become $\topS$.
+
+          \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+
+          Therefore, by Lemma~\ref{lem:generalized-independence}
+          (Generalized Independence), we have that
           $\config{\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_1}}
           \parstepsto
           \config{\lubstore{S_b}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_2}}$.
-          Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
-          \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.  By {\sc
-            E-Eval-Ctxt} it follows that
-          $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
+          Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
           \parstepsto
-          \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
-          which, since $S_b = \extS{S}{l'}{\bot}{\frozenfalse}$, is what we were
-          required to show.  The argument for the second is
-          symmetrical.
+          \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.  By
+                 {\sc E-Eval-Ctxt} it follows that
+                 $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
+                 \parstepsto
+                 \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
+                 which, since $S_b =
+                 \extS{S}{l'}{\bot}{\frozenfalse}$, is what we were
+                 required to show.  The argument for the second is
+                 symmetrical.
 
         \item If $l = l'$:
 
@@ -311,19 +325,24 @@
           \neq \topS$, since $S \neq \topS$ and new bindings of
           $\storebindingRaw{l''}{\bot}$ and
           $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to become
-          $\topS$.  Therefore, by Lemma~\ref{lem:independence}
-          (Independence), we have that
+          $\topS$.
+
+          \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+
+          Therefore, by Lemma~\ref{lem:generalized-independence}
+          (Generalized Independence), we have that
           $\config{\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_1}}
           \parstepsto
           \config{\lubstore{\extS{S}{l''}{\bot}{\frozenfalse}}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{\pi(e_{b_2})}$.
-          Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
+          Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
+          \parstepsto
           \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.
           By {\sc E-Eval-Ctxt} it follows that
           $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
           \parstepsto
           \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$,
-          which, since $\extS{S}{l}{\bot}{\frozenfalse} = S_a$, is what we were
-          required to show.
+          which, since $\extS{S}{l}{\bot}{\frozenfalse} = S_a$, is
+          what we were required to show.
 
           For the second, observe that since $S_b =
           \extS{S}{l}{\bot}{\frozenfalse}$, we have that $\pi(S_b) =
@@ -343,8 +362,12 @@
           \topS$, since $S_a = \extS{S}{l}{\bot}{\frozenfalse}$ and $S \neq
           \topS$ and new bindings of $\storebindingRaw{l''}{\bot}$ and
           $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to become
-          $\topS$.  Therefore, by Lemma~\ref{lem:independence}
-          (Independence), we have that
+          $\topS$.
+
+          \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+
+          Therefore, by Lemma~\ref{lem:generalized-independence}
+          (Generalized Independence), we have that
           $\config{\lubstore{S}{\store{\storebindingRaw{l''}{\bot}}}}{e_{a_1}}
           \parstepsto
           \config{\lubstore{S_a}{\store{\storebindingRaw{l''}{\bot}}}}{e_{a_2}}$.
@@ -393,19 +416,24 @@
       $\lubstore{S_b}{\store{\storebinding{l}{\bot}{\frozenfalse}}} \neq \topS$,
       since $S_b = \extSRaw{S}{l'}{u_{p_i}(p_1)}$ and we know
       from the premise of {\sc E-Put} that $u_{p_i}(p_1) \neq
-      \top$.  Therefore, by Lemma~\ref{lem:independence}
-      (Independence), we have that
+      \top$.
+
+      \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+
+      Therefore, by Lemma~\ref{lem:generalized-independence}
+      (Generalized Independence), we have that
       $\config{\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_1}}
       \parstepsto
       \config{\lubstore{S_b}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_2}}$.
-      Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
+      Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
+      \parstepsto
       \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.  By {\sc
         E-Eval-Ctxt}, it follows that
       $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
       \ctxstepsto
       \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
-      which, since $S_a = \extS{S}{l}{\bot}{\frozenfalse}$, is what we were
-      required to show.
+      which, since $S_a = \extS{S}{l}{\bot}{\frozenfalse}$, is what we
+      were required to show.
 
       For the second, consider that $S_b =
       \lubstore{S}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}$
@@ -423,8 +451,12 @@
       \dom{S}$.)  We also know that
       $\lubstore{\extS{S}{l}{\bot}{\frozenfalse}}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}
       \neq \topS$, since we know from the premise of {\sc E-Put} that
-      $u_{p_i}(p_1) \neq \top$.  Therefore, by
-      Lemma~\ref{lem:independence} (Independence), we have that
+      $u_{p_i}(p_1) \neq \top$.
+
+      \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+
+      Therefore, by Lemma~\ref{lem:generalized-independence}
+      (Generalized Independence), we have that
       $\config{\lubstore{S}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}}{e_{a_1}}
       \parstepsto
       \config{\lubstore{S_a}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}}{e_{a_2}}$.
@@ -432,8 +464,8 @@
       \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{a_2}}$.  By {\sc
         E-Eval-Ctxt}, it follows that
       $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{e_{a_2}}}$, as
-      we were required to show.
+      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{e_{a_2}}}$,
+      as we were required to show.
 
     \item \label{slqc-new-put-err}Case {\sc E-Put-Err}:
 
@@ -521,8 +553,12 @@
         $\store{\storebindingRaw{l}{u_{p_i}(p_1)}}$ is
         non-conflicting with it, and in this subcase, we know that
         $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
-        \neq \topS$.  Therefore, by Lemma~\ref{lem:independence}
-        (Independence), we have that
+        \neq \topS$.
+
+        \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+
+        Therefore, by Lemma~\ref{lem:generalized-independence}
+        (Generalized Independence), we have that
         $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_1}}
         \parstepsto
         \config{\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_2}}$.
@@ -530,8 +566,7 @@
         $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{\evalctxt{E'_b}{e_{b_1}}}
         \ctxstepsto
         \config{\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{\evalctxt{E'_b}{e_{b_2}}}$.
-        Since
-        $\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
+        Since $\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
         = \extSRaw{S}{l}{u_{p_i}(p_1)} = S_a$, we have that
 
         $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto

@@ -224,18 +224,56 @@ the $\leqstore{}{}$ ordering.
 
 \subsection{Independence}\label{subsection:lvars-independence}
 
-The Independence lemma establishes a ``frame property'' for
+\begin{figure}
+    Frame rule:
+    \begin{mathpar}
+      \inferrule*
+          {\lbrace p \rbrace ~ C ~ \lbrace q \rbrace}
+          {\lbrace p * r \rbrace ~ C ~ \lbrace q * r \rbrace}
+    \end{mathpar}
+    \\
+    Lemma~\ref{lem:lvars-independence} (Independence), simplified:
+    \begin{mathpar}
+      \inferrule*
+          {\config{S}{e} \parstepsto \config{S'}{e'}}
+          {\config{\lubstore{S}{S''}}{e} \parstepsto \config{\lubstore{S'}{S''}}{e'}}
+    \end{mathpar}
+  \caption{Comparison of O'Hearn~\etal's frame
+    rule~\cite{OHearnLocalReasoning} and a simplified version of the
+    Independence lemma.  The separating conjunction connective $*$ in
+    the frame rule requires that its arguments be disjoint; the
+    Independence lemma uses the least upper bound operation in place
+    of $*$.}
+  \label{f:lvars-frame-rule}
+\end{figure}
+
+Figure~\ref{f:lvars-frame-rule} shows a \emph{frame rule}, due to
+O'Hearn \etal~\cite{OHearnLocalReasoning}, which captures the idea of
+\emph{local reasoning} about programs that alter state.  Here, $C$ is
+a program, and $p$ and $q$ are properties that we assert to be true
+before and after $C$ runs, respectively.  Putting them together,
+$\lbrace p \rbrace ~ C ~ \lbrace q \rbrace$ is a Hoare triple (in the
+style of Hoare logic~\cite{HoareAxiomatic}) specifying the behavior of
+$C$.  The frame rule says that, given a program $C$ with precondition
+$p$ and postcondition $q$, an assertion $r$ that is \emph{disjoint}
+with $p$ and holds before $C$ runs will continue to hold afterward.
+Moreover, the original postcondition $q$ will continue to hold.
+
+The Independence lemma establishes a similar ``frame property'' for
 $\lambdaLVar$ that captures the idea that independent effects commute
 with each other.  Consider an expression $e$ that runs starting in
 store $S$ and steps to $e'$, updating the store to $S'$.  The
 Independence lemma provides a double-edged guarantee about what will
 happen if we evaluate $e$ starting from a larger store
-$\lubstore{S}{S''}$: first, $e$ will update the store to
-$\lubstore{S'}{S''}$; second, $e$ will step to $e'$ as it did before.
-Here $\lubstore{S}{S''}$ is the least upper bound of the original $S$
+$\lubstore{S}{S''}$: we know both that $e$ will update the store to
+$\lubstore{S'}{S''}$, and that $e$ will step to $e'$ as it did before.
+Here, $\lubstore{S}{S''}$ is the least upper bound of the original $S$
 and some other store $S''$ that is ``framed on'' to $S$; intuitively,
 $S''$ is the store resulting from some other independently-running
-computation.
+computation.\footnote{See
+  Section~\ref{s:related-frame-properties-and-separation-logics} for a
+  more detailed discussion of frame properties and where they manifest
+  in the LVars model.}
 
 Lemma~\ref{lem:lvars-independence} requires as a precondition that the
 store $S''$ must be \emph{non-conflicting} with the original

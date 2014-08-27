@@ -69,24 +69,19 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
 \end{lem}
 }
 
-\newcommand{\LemIndependence}{
-\begin{lem}[Independence]\label{lem:independence}
+\newcommand{\LemGeneralizedIndependence}{
+\begin{lem}[Generalized Independence]\label{lem:generalized-independence}
   If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
   $\config{S'}{e'} \neq \textup{\error}$), then we have that:
    
-  $\config{\lubstore{S}{S''}}{e} \parstepsto \config{\lubstore{S'}{S''}}{e'}$,
+  $\config{U_S(S)}{e} \parstepsto \config{U_S(S')}{e'}$,
 
-  where $S''$ is any store meeting the following conditions:
+  where $U_S$ is a store update operation meeting the following conditions:
   \begin{itemize}
-    \item $S''$ is non-conflicting with $\config{S}{e} \parstepsto \config{S'}{e'}$,
-    \item $\lubstore{S'}{S''} \statuseq S$, and
-    \item$\lubstore{S'}{S''} \neq \topS$.
+    \item $U_S$ is non-conflicting with $\config{S}{e} \parstepsto \config{S'}{e'}$,
+    \item $U_S(S') \neq \topS$, and
+    \item $U_S(S') \statuseq S$.
   \end{itemize}
-
-  \TODO{We're probably going to have to add another assumption to the
-    statement of this lemma to make the {\sc E-Put} case go through,
-    now that we're dealing with arbitrary update operations.  I still
-    need to figure out what it is.}
 \end{lem}
 }
 

@@ -55,7 +55,6 @@ LVish only the data-structure author needs to write trusted code. The
 application programmer can run untrusted code that still enjoys a
 (quasi-)determinism guarantee, because only (quasi-)deterministic
 programs can be expressed as LVish @Par@ computations.
-
 More recently, Bocchino \etal~\cite{dpj-popl} proposed a type and
 effect system that allows for the incorporation of nondeterministic
 sections of code in DPJ.  The goal here is different from ours: while
@@ -179,6 +178,71 @@ LVish library is implemented in Haskell, we can rely on Haskell's type
 system for fine-grained effect tracking and monadic encapsulation of
 LVar effects.
 
-\lk{Contemplating adding another section of related work here, about
-  separation logic, frame properties, fictional separation logic, and
-  Views...}
+\section{Frame properties and separation logics}\label{s:related-frame-properties-and-separation-logics}
+
+In Section~\ref{subsection:lvars-independence}, we saw that the
+Independence lemma, Lemma~\ref{lem:lvars-independence}, expresses a
+\emph{frame property} reminiscent of the following \emph{frame rule}
+from separation logic and concurrent separation
+logic~\cite{OHearnLocalReasoning, ReynoldsSeparationLogic,
+  OHearnResourcesConcurrency}:
+\begin{mathpar}
+  \inferrule*
+      {\lbrace p \rbrace ~ C ~ \lbrace q \rbrace}
+      {\lbrace p * r \rbrace ~ C ~ \lbrace q * r \rbrace}
+\end{mathpar}
+Recall that $C$ is a program and $p$ and $q$ are respectively a
+precondition and postcondition on $C$.  Putting them together,
+$\lbrace p \rbrace ~ C ~ \lbrace q \rbrace$ is a specification of the
+behavior of $C$.
+
+The conclusion of the rule is written using the \emph{separating
+  conjunction} connective $*$.  The assertion $p * r$ says that $p$
+and $r$ are true and \emph{disjoint}; for instance, they might
+describe disjoint pieces of the heap.  The frame rule says that if $C$
+can run safely starting from a state satisfying $p$ and end in a state
+satisfying $q$, then it does not do any harm to have the disjoint
+property $r$ be true: $r$ will not interfere with the safe execution
+of $C$.  Furthermore, if $r$ is true to begin with, running $C$ will
+not interfere with the truth of $r$.
+
+The frame rule gets its name from the fact that $r$ is a ``frame''
+around $C$: everything that is not explicitly changed by $C$ is part
+of the frame and is inviolate.\footnote{The ``frame'' terminology was
+  originally introduced in 1969 by McCarthy and
+  Hayes~\cite{McCarthyHayesFrame}, who observed that specifying only
+  what is changed by an action does not generally allow an intelligent
+  agent to conclude that nothing else is changed; they called this
+  dilemma the \emph{frame problem}.}  O'Hearn \etal~refer to the parts
+of the heap actually used by $C$ as the "footprint" of $C$, and $r$ is
+outside of that footprint.  However, sometimes we do in fact want to
+allow some amount of ``physical'' overlap between $p$ and $r$ or
+between $q$ and $r$, while retaining ``logical'' separation.  In fact,
+the Independence lemma, since it replaces the separating conjunction
+with the least upper bound operation, allows a limited amount of
+overlap between the original store and the ``frame'' store $S''$.
+Recent work by Jensen and Birkedal on \emph{fictional separation
+  logic}~\cite{JensenBirkedalFictional} explores this idea in detail,
+generalizing separation logic to allow more sophisticated kinds of
+sharing.
+
+Even more recently, Dinsdale-Young \etal~\cite{views} introduced the
+``Views'' framework, which brings the notion of fictional separation
+to a concurrent setting.  The Views framework is a metatheory of
+concurrent reasoning principles that generalizes a variety of
+concurrent program logics and type systems, including concurrent
+separation logic.  It provides a generalized frame rule, which is
+parameterized by a function $f$ that is applied to the pre- and
+post-conditions in the conclusion of the rule:
+\begin{mathpar}
+  \inferrule*
+      {\lbrace p \rbrace ~ C ~ \lbrace q \rbrace}
+      {\lbrace f(p) \rbrace ~ C ~ \lbrace f(q) \rbrace}
+\end{mathpar}
+In this formulation of the rule, the ``frame'' is an abstract piece of
+knowledge that is not violated by the execution of $C$.  The
+Generalized Independence lemma
+(Lemma~\ref{lem:generalized-independence}) that I describe in
+Section~\ref{subsection:quasi-generalized-independence}, which extends
+the Independence lemma to handle arbitrary update operations, is
+reminiscent of this generalized frame rule.

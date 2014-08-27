@@ -1,4 +1,7 @@
 \begin{proof}
+  \TODO{Needs to be redone now that the statement of the lemma has
+    changed.}
+
   Consider arbitrary $S''$ such that $S''$ is non-conflicting with
   $\config{S}{e} \parstepsto \config{S'}{e'}$ and $\lubstore{S'}{S''}
   \statuseq S$ and $\lubstore{S'}{S''} \neq \topS$.
@@ -41,7 +44,7 @@
 
       By assumption, $S''$ is non-conflicting with $\config{S}{\NEW}
       \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
- 
+
       Therefore $l \notin \dom{S''}$.
 
       From the side condition of {\sc E-New}, $l \notin \dom{S}$.
@@ -123,22 +126,12 @@
           Therefore $(\lubstore{S}{S''})(l) = \lubp{S(l)}{S''(l)}$.
 
           From the premises of {\sc E-Put}, $S(l) = p_1$.
-          
+
           Hence $(\lubstore{S}{S''})(l) = p'_1$, where $p_1 \leqp
           p'_1$.
 
-          \TODO{To make this case go through, I'm going to need to
-            change the assumptions that the proof depends on.  The
-            reason it doesn't work is that the least upper bound
-            operation doesn't commute with the update operation.  We
-            already knew that, of course; it's why you can't use both
-            "bump"s and least-upper-bound "put"s on the same LVar.
-            But it turns out that it's actually causing a problem
-            here.  What I'm going to do for now is jump ahead and try
-            to do the quasi-confluence proof.  Then I can try to see
-            what kind of Independence property we're actually going to
-            need, and what we can be sure will be true at the time
-            it's applied.}
+          \TODO{Finish this case now that the statement of the lemma
+            is revised!}
 
       \end{itemize}
 
@@ -478,7 +471,7 @@
 
         Therefore $(\lubstore{S}{S''})(l) =
         \lubp{\state{d_1}{\frozentrue}}{S''(l)}$.
-        
+
         We proceed by cases on $S''(l)$:
         \begin{itemize}
         \item $S''(l) = \state{d_2}{\frozenfalse}$, where $d_2 \userleq d_1$:
