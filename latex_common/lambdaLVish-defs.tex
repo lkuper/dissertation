@@ -201,8 +201,8 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 \newcommand{\DefNonConflictingStoreUpdateOperation}{
 \begin{definition}[non-conflicting store update operation]\label{def:non-conflicting-store-update-operation}
   A store update operation $U_S$ is \emph{non-conflicting} with the
-  transition $\config{S}{e} \parstepsto \config{S'}{e'}$ iff, for all
-  bindings $\storebinding{l}{d}{\status}$ where $l \in (\dom{S'} -
-  \dom{S})$, $U_S$ is the identity on $\state{d}{\status}$.
+  transition $\config{S}{e} \parstepsto \config{S'}{e'}$ iff $U_S$ is
+  the identity on all bindings $\storebinding{l}{d}{\status}$ where $l
+  \in (\dom{S'} - \dom{S})$.
 \end{definition}
 }
