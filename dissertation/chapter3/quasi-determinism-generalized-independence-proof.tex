@@ -68,59 +68,7 @@
       To show: $\config{U_S(S)}{\putiexp{l}} \parstepsto
       \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{\unit}$.
 
-      We will first show that $\config{U_S(S)}{\putiexp{l}}
-      \parstepsto \config{\extSRaw{(U_S(S))}{l}{u_{p_i}(p_1)}}{\unit}$
-      and then show why this is sufficient.
-
-      \TODO{Needs to be redone.}
-
-      We proceed by cases on $l$:
-
-      \begin{itemize}
-        \item $l \notin \dom{S''}$:
-
-          By assumption, $\lubstore{\extSRaw{S}{l}{u_{p_i}(p_1)}}{S''}
-          \neq \topS$.
-
-          By Lemma~\ref{lem:monotonicity},
-          $\leqstore{S}{\extSRaw{S}{l}{u_{p_i}(p_1)}}$.
-
-          Hence $\lubstore{S}{S''} \neq \topS$.
-
-          Therefore, by Definition~\ref{def:lubstore},
-          $(\lubstore{S}{S''})(l) = S(l)$.
-
-          From the premises of {\sc E-Put}, $S(l) = p_1$.
-
-          Hence $(\lubstore{S}{S''})(l) = p_1$.
-
-          From the premises of {\sc E-Put}, $u_{p_i}(p_1) \neq \topp$.
-
-          Therefore, by {\sc E-Put}, we have:
-          $\config{\lubstore{S}{S''}}{\putiexp{l}} \parstepsto
-          \config{\extSRaw{(\lubstore{S}{S''})}{l}{u_{p_i}(p_1)}}{\unit}$.
-
-        \item $l \in \dom{S''}$:
-
-          By assumption, $\lubstore{\extSRaw{S}{l}{u_{p_i}(p_1)}}{S''} \neq
-          \topS$.
-
-          By Lemma~\ref{lem:monotonicity},
-          $\leqstore{S}{\extSRaw{S}{l}{u_{p_i}(p_1)}}$.
-
-          Hence $\lubstore{S}{S''} \neq \topS$.
-
-          Therefore $(\lubstore{S}{S''})(l) = \lubp{S(l)}{S''(l)}$.
-
-          From the premises of {\sc E-Put}, $S(l) = p_1$.
-
-          Hence $(\lubstore{S}{S''})(l) = p'_1$, where $p_1 \leqp
-          p'_1$.
-
-          \TODO{Finish this case now that the statement of the lemma
-            is revised!}
-
-      \end{itemize}
+      \TODO{.}
 
     \item Case {\sc E-Get}:
 
@@ -161,8 +109,6 @@
 
     \item Case {\sc E-Spawn-Handler}:
 
-      \TODO{Needs to be redone.}
-
       Given:
 
       $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
@@ -172,18 +118,18 @@
 
       To show:
 
-      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+      $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
             \dots}}{H}} \parstepsto
-      \config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+      \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
             e, \dots}} {\{d_2\}\cup H}}$.
 
       From the premises of {\sc E-Spawn-Handler}, $S(l) =
       \state{d_1}{\status_1}$ and $d_2 \userleq d_1$ and $d_2 \notin
       H$ and $d_2 \in Q$.
 
-      By assumption, $\lubstore{S}{S''} \neq \topS$.
+      By assumption, $U_S(S) \neq \topS$.
 
-      Hence $(\lubstore{S}{S''})(l) = \state{d'_1}{\status'_1}$ where
+      Hence $(U_S(S))(l) = \state{d'_1}{\status'_1}$ where
       $\state{d_1}{\status_1} \leqp \state{d'_1}{\status'_1}$.
 
       By Definition~\ref{def:lattice-with-status-bits}, $d_1 \userleq
@@ -191,25 +137,22 @@
 
       By the transitivity of $\userleq$, $d_2 \userleq d'_1$.
 
-      Hence $(\lubstore{S}{S''})(l) =
-      \state{d'_1}{\status'_1}$ and $d_2 \userleq d'_1$ and $d_2 \notin
-      H$ and $d_2 \in Q$.
+      Hence $(U_S(S))(l) = \state{d'_1}{\status'_1}$ and $d_2 \userleq
+      d'_1$ and $d_2 \notin H$ and $d_2 \in Q$.
 
       Therefore, by {\sc E-Spawn-Handler},
 
-      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+      $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
             \dots}}{H}} \parstepsto
-      \config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+      \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
             e, \dots}} {\{d_2\}\cup H}}$,
 
       as we were required to show.
 
     \item Case {\sc E-Freeze-Final}:
 
-      \TODO{Needs to be redone.}
-
-      \lk{This case wouldn't work but for the $\lubstore{S'}{S''}
-        \statuseq S$ requirement, which makes it a no-op freeze.}
+      \lk{This case wouldn't work but for the $U_S(S') \statuseq S$
+        requirement, which makes it a no-op freeze.}
 
       Given:
       $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
@@ -217,351 +160,21 @@
       \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
       To show:
-      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+      $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
             \dots}}{H}} \parstepsto
-      \config{\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}}{d_1}$.
+      \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{d_1}$.
 
-      We will first show that
-
-      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}} \parstepsto
-      \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$
-
-      and then show why this is sufficient.
-
-      We proceed by cases on $l$:
-      \begin{itemize}
-      \item $l \notin \dom{S''}$:
-
-        By assumption, $\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}
-        \neq \topS$.
-
-        By Lemma~\ref{lem:monotonicity},
-        $\leqstore{S}{\extS{S}{l}{d_1}{\frozentrue}}$.
-
-        Therefore $\lubstore{S}{S''} \neq \topS$.
-
-        Hence, by Definition~\ref{def:lubstore},
-        $(\lubstore{S}{S''})(l) = S(l)$.
-
-        From the premises of {\sc E-Freeze-Final}, we have that $S(l)
-        = \state{d_1}{\status_1}$.
-
-        Hence $(\lubstore{S}{S''})(l) = \state{d_1}{\status_1}$.
-
-        From the premises of {\sc E-Freeze-Final}, we have that
-        $\forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q} \Rightarrow d_2 \in
-        H)$.
-
-        Therefore, by {\sc E-Freeze-Final}, we have that
-
-        $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-              \dots}}{H}} \parstepsto
-        \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-
-
-      \item $l \in \dom{S''}$:
-
-        By assumption, $\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}
-        \neq \topS$.
-
-        By Lemma~\ref{lem:monotonicity},
-        $\leqstore{S}{\extS{S}{l}{d_1}{\frozentrue}}$.
-
-        Therefore $\lubstore{S}{S''} \neq \topS$.
-
-        Hence, by Definition~\ref{def:lubstore},
-        $(\lubstore{S}{S''})(l) = \lubp{S(l)}{S''(l)}$.
-
-        From the premises of {\sc E-Freeze-Final}, we have that
-        $S(l) = \state{d_1}{\status_1}$.
-
-        By assumption, $\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}
-        \statuseq S$.
-
-        Therefore $\status_1 = \frozentrue$.
-
-        Therefore $S(l) = \state{d_1}{\frozentrue}$.
-
-        Therefore $(\lubstore{S}{S''})(l) =
-        \lubp{\state{d_1}{\frozentrue}}{S''(l)}$.
-
-        We proceed by cases on $S''(l)$:
-        \begin{itemize}
-        \item $S''(l) = \state{d_3}{\frozenfalse}$, where $d_3 \userleq d_1$:
-
-          By Definition~\ref{def:lubp},
-          $\lubp{\state{d_1}{\frozentrue}}{\state{d_3}{\frozenfalse}}
-          = \state{d_1}{\frozentrue}$.
-
-          Therefore $(\lubstore{S}{S''})(l) =
-          \state{d_1}{\frozentrue}$.
-
-          From the premises of {\sc E-Freeze-Final}, we have that
-          $\forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q} \Rightarrow d_2 \in
-          H)$.
-
-          Therefore, by {\sc E-Freeze-Final}, we have that
-
-          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-                \dots}}{H}} \parstepsto
-          \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-
-        \item $S''(l) = \state{d_3}{\frozenfalse}$, where $d_3 \nuserleq d_1$:
-
-          By Definition~\ref{def:lubp},
-          $\lubp{\state{d_1}{\frozentrue}}{\state{d_3}{\frozenfalse}}
-          = \state{\top}{\frozenfalse}$.
-
-          Therefore $\lubp{S(l)}{S''(l)} =
-          \state{\top}{\frozenfalse}$.
-
-          By Definition~\ref{def:lattice-with-status-bits},
-          $\state{\top}{\frozenfalse} = \topp$.
-
-          Therefore $\lubp{S(l)}{S''(l)} = \topp$.
-
-          Therefore, by Definition~\ref{def:lubstore},
-          $\lubstore{S}{S''} = \topS$.
-
-          This is a contradiction.
-
-          Therefore,
-
-          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-                \dots}}{H}} \parstepsto
-          \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-
-        \item $S''(l) = \state{d_3}{\frozentrue}$, where $d_3 = d_1$:
-
-          By Definition~\ref{def:lubp},
-          $\lubp{\state{d_1}{\frozentrue}}{\state{d_3}{\frozentrue}} =
-          \state{d_1}{\frozentrue}$.
-
-          Therefore $(\lubstore{S}{S''})(l) = \state{d_1}{\frozentrue}$.
-
-          From the premises of {\sc E-Freeze-Final}, we have that
-          $\forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q} \Rightarrow d_2 \in
-          H)$.
-
-          Therefore, by {\sc E-Freeze-Final}, we have that
-
-          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-                \dots}}{H}} \parstepsto
-          \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-
-        \item $S''(l) = \state{d_3}{\frozentrue}$, where $d_3 \neq d_1$:
-
-          By Definition~\ref{def:lubp},
-          $\lubp{\state{d_1}{\frozentrue}}{\state{d_3}{\frozentrue}}
-          = \state{\top}{\frozenfalse}$.
-
-          Therefore $\lubp{S(l)}{S''(l)} = \state{\top}{\frozenfalse}$.
-
-          By Definition~\ref{def:lattice-with-status-bits},
-          $\state{\top}{\frozenfalse} = \topp$.
-
-          Therefore $\lubp{S(l)}{S''(l)} = \topp$.
-
-          Therefore, by Definition~\ref{def:lubstore},
-          $\lubstore{S}{S''} = \topS$.
-
-          This is a contradiction.
-
-          Therefore,
-
-          $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-                \dots}}{H}} \parstepsto
-          \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-        \end{itemize}
-      \end{itemize}
-
-      In each case we have shown that
-
-      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}} \parstepsto
-      \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-
-      Note that:
-      \begin{align*}
-        \extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue} &=
-        \lubstore{\extS{S}{l}{d_1}{\frozentrue}}{\extS{S''}{l}{d_1}{\frozentrue}} \\
-        &= \lubstore{\lubstore{S}{\store{\storebinding{l}{d_1}{\frozentrue}}}}{\lubstore{S''}{\store{\storebinding{l}{d_1}{\frozentrue}}}} \\
-        &= \lubstore{\lubstore{S}{\store{\storebinding{l}{d_1}{\frozentrue}}}}{S''} \\
-        &= \lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}.
-      \end{align*}
-      Therefore
-
-      $\config{\lubstore{S}{S''}}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}} \parstepsto
-      \config{\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}}{d_1}$,
-
-      as we were required to show.
+      \TODO{.}
 
     \item Case {\sc E-Freeze-Simple}:
-
-      \TODO{Needs to be redone.}
 
       Given: $\config{S}{\freeze{l}} \parstepsto
       \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
-      To show: $\config{\lubstore{S}{S''}}{\freeze{l}}
-      \parstepsto
-      \config{\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}}{d_1}$.
+      To show: $\config{U_S(S)}{\freeze{l}} \parstepsto
+      \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{d_1}$.
 
-      We will first show that
+      \TODO{.}
 
-      $\config{\lubstore{S}{S''}}{\freeze{l}} \parstepsto
-      \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$
-
-      and then show why this is sufficient.
-
-      We proceed by cases on $l$:
-      \begin{itemize}
-      \item $l \notin \dom{S''}$:
-
-        By assumption, $\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}
-        \neq \topS$.
-
-        By Lemma~\ref{lem:monotonicity},
-        $\leqstore{S}{\extS{S}{l}{d_1}{\frozentrue}}$.
-
-        Therefore $\lubstore{S}{S''} \neq \topS$.
-
-        Hence, by Definition~\ref{def:lubstore},
-        $(\lubstore{S}{S''})(l) = S(l)$.
-
-        From the premise of {\sc E-Freeze-Simple}, we have that
-        $S(l) = \state{d_1}{\status_1}$.
-
-        Therefore, by {\sc E-Freeze-Simple}, we have that
-
-        $\config{\lubstore{S}{S''}}{\freeze{l}}
-        \parstepsto
-        \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-
-      \item $l \in \dom{S''}$:
-
-        By assumption, $\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}
-        \neq \topS$.
-
-        By Lemma~\ref{lem:monotonicity},
-        $\leqstore{S}{\extS{S}{l}{d_1}{\frozentrue}}$.
-
-        Therefore $\lubstore{S}{S''} \neq \topS$.
-
-        Hence, by Definition~\ref{def:lubstore},
-        $(\lubstore{S}{S''})(l) = \lubp{S(l)}{S''(l)}$.
-
-        From the premise of {\sc E-Freeze-Simple}, we have that
-        $S(l) = \state{d_1}{\status_1}$.
-
-        By assumption, $\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}
-        \statuseq S$.
-
-        Therefore $\status_1 = \frozentrue$.
-
-        Therefore $(\lubstore{S}{S''})(l) =
-        \lubp{\state{d_1}{\frozentrue}}{S''(l)}$.
-
-        We proceed by cases on $S''(l)$:
-        \begin{itemize}
-        \item $S''(l) = \state{d_2}{\frozenfalse}$, where $d_2 \userleq d_1$:
-
-          By Definition~\ref{def:lubp},
-          $\lubp{\state{d_1}{\frozentrue}}{\state{d_2}{\frozenfalse}} =
-          \state{d_1}{\frozentrue}$.
-
-          Therefore $(\lubstore{S}{S''})(l) =
-          \state{d_1}{\frozentrue}$.
-
-          Therefore, by {\sc E-Freeze-Simple}, we have that
-
-          $\config{\lubstore{S}{S''}}{\freeze{l}}
-          \parstepsto
-          \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-
-        \item $S''(l) = \state{d_2}{\frozenfalse}$, where $d_2 \nuserleq d_1$:
-
-          By Definition~\ref{def:lubp},
-          $\lubp{\state{d_1}{\frozentrue}}{\state{d_2}{\frozenfalse}}
-          = \state{\top}{\frozenfalse}$.
-
-          By Definition~\ref{def:lattice-with-status-bits},
-          $\state{\top}{\frozenfalse} = \topp$.
-
-          Therefore $\lubp{S(l)}{S''(l)} = \topp$.
-
-          Therefore, by Definition~\ref{def:lubstore},
-          $\lubstore{S}{S''} = \topS$.
-
-          This is a contradiction.
-
-          Therefore,
-
-          $\config{\lubstore{S}{S''}}{\freeze{l}}
-          \parstepsto
-          \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-
-        \item $S''(l) = \state{d_2}{\frozentrue}$, where $d_2 = d_1$:
-
-          Therefore $(\lubstore{S}{S''})(l) =
-          \lubp{\state{d_1}{\frozentrue}}{\state{d_2}{\frozentrue}}$.
-
-          By Definition~\ref{def:lubp},
-          $\lubp{\state{d_1}{\frozentrue}}{\state{d_2}{\frozentrue}} =
-          \state{d_1}{\frozentrue}$.
-
-          Therefore $(\lubstore{S}{S''})(l) =
-          \state{d_1}{\frozentrue}$.
-
-          Therefore, by {\sc E-Freeze-Simple}, we have that
-
-          $\config{\lubstore{S}{S''}}{\freeze{l}}
-          \parstepsto
-          \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-
-        \item $S''(l) = \state{d_2}{\frozentrue}$, where $d_2 \neq d_1$:
-
-          By Definition~\ref{def:lubp},
-          $\lubp{\state{d_1}{\frozentrue}}{\state{d_2}{\frozentrue}}
-          = \state{\top}{\frozenfalse}$.
-
-          By Definition~\ref{def:lattice-with-status-bits},
-          $\state{\top}{\frozenfalse} = \topp$.
-
-          Therefore $\lubp{S(l)}{S''(l)} = \topp$.
-
-          Therefore, by Definition~\ref{def:lubstore},
-          $\lubstore{S}{S''} = \topS$.
-
-          This is a contradiction.
-
-          Therefore,
-
-          $\config{\lubstore{S}{S''}}{\freeze{l}}
-          \parstepsto
-          \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-        \end{itemize}
-      \end{itemize}
-
-      In each case we have shown that
-
-      $\config{\lubstore{S}{S''}}{\freeze{l}} \parstepsto
-      \config{\extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue}}{d_1}$.
-
-      Note that:
-      \begin{align*}
-        \extS{(\lubstore{S}{S''})}{l}{d_1}{\frozentrue} &=
-        \lubstore{\extS{S}{l}{d_1}{\frozentrue}}{\extS{S''}{l}{d_1}{\frozentrue}} \\
-        &= \lubstore{\lubstore{S}{\store{\storebinding{l}{d_1}{\frozentrue}}}}{\lubstore{S''}{\store{\storebinding{l}{d_1}{\frozentrue}}}} \\
-        &= \lubstore{\lubstore{S}{\store{\storebinding{l}{d_1}{\frozentrue}}}}{S''} \\
-        &= \lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}.
-      \end{align*}
-      Therefore
-      $\config{\lubstore{S}{S''}}{\freeze{l}}
-      \parstepsto
-      \config{\lubstore{\extS{S}{l}{d_1}{\frozentrue}}{S''}}{d_1}$,
-      as we were required to show.
   \end{itemize}
 \end{proof}
