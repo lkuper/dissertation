@@ -68,7 +68,45 @@
       To show: $\config{U_S(S)}{\putiexp{l}} \parstepsto
       \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{\unit}$.
 
-      \TODO{.}
+      From the premise of {\sc E-Put}, $S(l) = p_1$.
+
+      Hence $(U_S(S))(l) = p'_1$, where $p_1 \leqp p'_1$.
+
+      Next, we want to show that $u_{p_i}(p'_1) \neq \topp$.
+
+      Assume for the sake of a contradiction that $u_{p_i}(p'_1) =
+      \topp$.
+
+      Then $u_{p_i}((U_S(S))(l)) = \topp$.
+
+      Let $u_{p_j}$ be the update operation in $U_S$ that affects the
+      contents of $l$.  Hence $(U_S(S))(l) = u_{p_j}(p_1)$. Then
+      $u_{p_i}(u_{p_j}(p_1)) = \topp$.
+
+      Since update operations commute, $u_{p_j}(u_{p_i}(p_1)) =
+      \topp$.
+      
+      But then $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) = \topS$,
+      which contradicts the assumption that
+      $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$.
+
+      Hence, $u_{p_i}(p'_1) \neq \topp$.
+
+      Therefore, by {\sc E-Put}, $\config{U_S(S)}{\putiexp{l}}
+      \parstepsto
+      \config{\extSRaw{(U_S(S))}{l}{u_{p_i}(p'_1)}}{\unit}$.
+
+      Since $p'_1 = u_{p_j}(p_1)$, we have that
+      $\extSRaw{(U_S(S))}{l}{u_{p_i}(p'_1)} =
+      \extSRaw{(U_S(S))}{l}{u_{p_i}(u_{p_j}(p_1))}$, which, since
+      $u_{p_i}$ and $u_{p_j}$ commute, is equal to
+      $\extSRaw{(U_S(S))}{l}{u_{p_j}(u_{p_i}(p_1))}$.
+
+      Finally, since $u_{p_j}$ is the update operation in $U_S$ that
+      affects the contents of $l$, we have that
+      $\extSRaw{(U_S(S))}{l}{u_{p_j}(u_{p_i}(p_1))} =
+      U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})$, and so the case is
+      satisfied.
 
     \item Case {\sc E-Get}:
 
