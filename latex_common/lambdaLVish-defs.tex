@@ -43,20 +43,20 @@ We define a binary operator $\lubp{}{} \in D_p \times D_p \to D_p$ as
 follows:
   \begin{displaymath}
     \begin{array}{lcl}
-      \lubp{\state{d_1}{\frozenfalse}}{\state{d_2}{\frozenfalse}} & = & \state{\userlub{d_1}{d_2}}{\frozenfalse} \\ 
-      \lubp{\state{d_1}{\frozentrue}}{\state{d_2}{\frozentrue}} & = & \left\{
+      \lubp{\state{d_1}{\frozenfalse}}{\state{d_2}{\frozenfalse}} & \defeq & \state{\userlub{d_1}{d_2}}{\frozenfalse} \\ 
+      \lubp{\state{d_1}{\frozentrue}}{\state{d_2}{\frozentrue}} & \defeq & \left\{
                                        \begin{array}{ll}
                                          \state{d_1}{\frozentrue} & \mbox{if } d_1 = d_2 \\ 
                                          \state{\top}{\frozenfalse} & \mbox{otherwise}
                                        \end{array}
                                      \right. \\
-      \lubp{\state{d_1}{\frozenfalse}}{\state{d_2}{\frozentrue}}    & = & \left\{
+      \lubp{\state{d_1}{\frozenfalse}}{\state{d_2}{\frozentrue}}    & \defeq & \left\{
                                        \begin{array}{ll}
                                          \state{d_2}{\frozentrue} & \mbox{if } d_1 \userleq d_2 \\ 
                                          \state{\top}{\frozenfalse} & \mbox{otherwise}
                                        \end{array}
                                      \right. \\
-      \lubp{\state{d_1}{\frozentrue}}{\state{d_2}{\frozenfalse}}    & = & \left\{
+      \lubp{\state{d_1}{\frozentrue}}{\state{d_2}{\frozenfalse}}    & \defeq & \left\{
                                        \begin{array}{ll}
                                          \state{d_1}{\frozentrue} & \mbox{if } d_2 \userleq d_1 \\ 
                                          \state{\top}{\frozenfalse} & \mbox{otherwise}
@@ -145,21 +145,21 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
   follows:
   \begin{displaymath}
     \begin{array}{ll}
-      \pi(x) &= x \\
-      \pi(\unit) &= \unit \\
-      \pi(d) &= d \\
-      \pi(p) &= p \\
-      \pi(l) &= \pi(l) \\
-      \pi(P) &= P \\
-      \pi(Q) &= Q \\
-      \pi(\lam{x}{e}) &= \lam{x}{\pi(e)} \\
-      \pi(\app{e_1}{e_2}) &= \app{\pi(e_1)}{\pi(e_2)} \\
-      \pi(\getexp{e_1}{e_2}) &= \getexp{\pi(e_1)}{\pi(e_2)} \\
-      \pi(\putiexp{e}) &= \putiexp{\pi(e)} \\
-      \pi(\NEW) &= \NEW \\
-      \pi(\freeze{e}) &= \freeze{\pi(e)} \\
-      \pi(\freezeafter{e_1}{e_2}{e_3}) &= \freezeafter{\pi(e_1)}{\pi(e_2)}{\pi(e_3)} \\
-      \pi(\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{e, \dots}}{H}) &= \freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{\pi(e), \dots}}{H} \\
+      \pi(x) & \defeq x \\
+      \pi(\unit) & \defeq \unit \\
+      \pi(d) & \defeq d \\
+      \pi(p) & \defeq p \\
+      \pi(l) & \defeq \pi(l) \\
+      \pi(P) & \defeq P \\
+      \pi(Q) & \defeq Q \\
+      \pi(\lam{x}{e}) & \defeq \lam{x}{\pi(e)} \\
+      \pi(\app{e_1}{e_2}) & \defeq \app{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\getexp{e_1}{e_2}) & \defeq \getexp{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\putiexp{e}) & \defeq \putiexp{\pi(e)} \\
+      \pi(\NEW) & \defeq \NEW \\
+      \pi(\freeze{e}) & \defeq \freeze{\pi(e)} \\
+      \pi(\freezeafter{e_1}{e_2}{e_3}) & \defeq \freezeafter{\pi(e_1)}{\pi(e_2)}{\pi(e_3)} \\
+      \pi(\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{e, \dots}}{H}) & \defeq \freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{\pi(e), \dots}}{H} \\
     \end{array}
   \end{displaymath}
 \end{definition}
@@ -171,9 +171,9 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
   follows:
   \begin{displaymath}
     \begin{array}{ll}
-      \pi(\topS) &= \topS \\
+      \pi(\topS) & \defeq \topS \\
       \pi(\store{\storebindingRaw{l_1}{p_1}, \dots,
-        \storebindingRaw{l_n}{p_n}}) &=
+        \storebindingRaw{l_n}{p_n}}) & \defeq
       \store{\storebindingRaw{\pi(l_1)}{p_1}, \dots,
         \storebindingRaw{\pi(l_n)}{p_n}} \\
     \end{array}
@@ -185,7 +185,7 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 \begin{definition}[permutation (configurations)]\label{def:permutation-configuration}
   A \emph{permutation} of a configuration $\config{S}{e}$ is a function $\pi$
   defined as follows: if $\config{S}{e} = \error$, then
-  $\pi(\config{S}{e}) = \error$; otherwise, $\pi(\config{S}{e}) =
+  $\pi(\config{S}{e}) \defeq \error$; otherwise, $\pi(\config{S}{e}) \defeq
   \config{\pi(S)}{\pi(e)}$.
 \end{definition}
 }
@@ -209,8 +209,8 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
   $u_{p_i} : D_p \rightarrow D_p$ defined as follows:
   \begin{displaymath}
     \begin{array}{lcl}
-      u_{p_i}(\state{d}{\frozenfalse}) & = & \state{u_i(d)}{\frozenfalse} \\
-      u_{p_i}(\state{d}{\frozentrue}) & = & \left\{
+      u_{p_i}(\state{d}{\frozenfalse}) & \defeq & \state{u_i(d)}{\frozenfalse} \\
+      u_{p_i}(\state{d}{\frozentrue}) & \defeq & \left\{
                                        \begin{array}{ll}
                                          \state{d}{\frozentrue} & \mbox{if } u_i(d) = d \\
                                          \state{\top}{\frozenfalse} & \mbox{otherwise}

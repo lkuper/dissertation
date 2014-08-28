@@ -75,16 +75,16 @@
   follows:
   \begin{displaymath}
     \begin{array}{ll}
-      \pi(x) &= x \\
-      \pi(\unit) &= \unit \\
-      \pi(d) &= d \\
-      \pi(l) &= \pi(l) \\
-      \pi(T) &= T \\
-      \pi(\lam{x}{e}) &= \lam{x}{\pi(e)} \\
-      \pi(\app{e_1}{e_2}) &= \app{\pi(e_1)}{\pi(e_2)} \\
-      \pi(\getexp{e_1}{e_2}) &= \getexp{\pi(e_1)}{\pi(e_2)} \\
-      \pi(\putexp{e_1}{e_2}) &= \putexp{\pi(e_1)}{\pi(e_2)} \\
-      \pi(\NEW) &= \NEW \\
+      \pi(x) & \defeq x \\
+      \pi(\unit) & \defeq \unit \\
+      \pi(d) & \defeq d \\
+      \pi(l) & \defeq \pi(l) \\
+      \pi(T) & \defeq T \\
+      \pi(\lam{x}{e}) & \defeq \lam{x}{\pi(e)} \\
+      \pi(\app{e_1}{e_2}) & \defeq \app{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\getexp{e_1}{e_2}) & \defeq \getexp{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\putexp{e_1}{e_2}) & \defeq \putexp{\pi(e_1)}{\pi(e_2)} \\
+      \pi(\NEW) & \defeq \NEW \\
     \end{array}
   \end{displaymath}
   \lk{It's fine to just say that $\pi(\NEW)$ is $\NEW$; we only care
@@ -99,9 +99,9 @@
   follows:
   \begin{displaymath}
     \begin{array}{ll}
-      \pi(\topS) &= \topS \\
+      \pi(\topS) & \defeq \topS \\
       \pi(\store{\storebindingRaw{l_1}{d_1}, \dots,
-        \storebindingRaw{l_n}{d_n}}) &=
+        \storebindingRaw{l_n}{d_n}}) & \defeq
       \store{\storebindingRaw{\pi(l_1)}{d_1}, \dots,
         \storebindingRaw{\pi(l_n)}{d_n}} \\
     \end{array}
