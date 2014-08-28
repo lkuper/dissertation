@@ -165,9 +165,12 @@ Therefore, I define a \emph{store update operation} $U_S$ to be a
 function from stores to stores that operates only on the states in a
 store (that is, it cannot change location names), and that can only
 apply operations $u_i$ from the given set $U$ of update operations
-(or, more specifically, their lifted versions $u_{p_i}$).  With this
-definition in hand, we can state a more general version of the
-Independence lemma:
+(or, more specifically, their lifted versions $u_{p_i}$).
+
+\DefStoreUpdateOperation
+
+With Definition~\ref{def:store-update-operation} in hand, we can state
+a more general version of the Independence lemma:
 
 \LemGeneralizedIndependence
 \begin{proof}

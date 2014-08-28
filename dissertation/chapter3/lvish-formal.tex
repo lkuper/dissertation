@@ -99,17 +99,15 @@ a least upper bound.
 
 In order to do this, we parameterize the semantics of $\lambdaLVish$
 not only by the lattice $D$ but also by a set $U$ of \emph{update
-  operations} $u_i : D \rightarrow D$.  Each $u_i$ must meet the
-following conditions:
-\begin{itemize}
-\item $\forall d, i.     \;\; d \userleq u_i(d)$, and
-\item $\forall d, i, j.  \;\; u_i(u_j(d)) = u_j(u_i(d))$.
-\end{itemize}
-As discussed in
-Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes},
-the first of these conditions says that each update operation is
-inflationary with respect to $\userleq$, and the second condition says
-that update operations commute with each other.
+  operations}, as discussed previously in
+Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}:
+
+\DefSetOfUpdateOperations
+
+The first of the conditions in
+Definition~\ref{def:set-of-update-operations} says that each update
+operation is inflationary with respect to $\userleq$, and the second
+condition says that update operations commute with each other.
 
 If we want to encode the original least-upper-bound semantics of @put@
 using $\PUTi$, we can do so by instantiating $U$ such that there is
@@ -134,22 +132,10 @@ operation $u_i(l)$ on the contents of $l$.
 
 More specifically, since $l$ points to a state $\state{d}{\status}$
 instead of an element $d$, $\putiexp{l}$ must perform $u_{p_i}$, a
-lifted version of $u_i$ that applies to states. Each $u_{p_i}$ takes
-an element of $D_p$ as its argument and returns an element of $D_p$ as
-its result.  We define the set $U_p$ of lifted operations $u_{p_i} :
-D_p \rightarrow D_p$ as follows:
+lifted version of $u_i$ that applies to states.  Given $U$, we define
+the set $U_p$ of lifted operations as follows:
 
-  \begin{displaymath}
-    \begin{array}{lcl}
-      u_{p_i}(\state{d}{\frozenfalse}) & = & \state{u_i(d)}{\frozenfalse} \\ 
-      u_{p_i}(\state{d}{\frozentrue}) & = & \left\{
-                                       \begin{array}{ll}
-                                         \state{d}{\frozentrue} & \mbox{if } u_i(d) = d \\ 
-                                         \state{\top}{\frozenfalse} & \mbox{otherwise}
-                                       \end{array}
-                                     \right. \\
-    \end{array}
-  \end{displaymath}
+\DefSetOfStateUpdateOperations
 
 \subsection{Stores}
 
