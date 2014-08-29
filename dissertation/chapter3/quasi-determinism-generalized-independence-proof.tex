@@ -32,6 +32,11 @@
       To show: $\config{U_S(S)}{\NEW} \parstepsto
       \config{U_S(\extS{S}{l}{\bot}{\frozenfalse})}{l}$.
 
+      \TODO{This case needs fixing.  We can't have both that $l \notin
+        \dom{U_S(S)}$ and that $U_S$ is the identity on $l$.  The case
+        can be made to work, work, but we need to nail down exactly
+        what ``non-conflicting'' should mean for $U_S$.}
+
       By {\sc E-New}, we have that $\config{U_S(S)}{\NEW} \parstepsto
       \config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$, where $l'
       \notin \dom{U_S(S)}$.
