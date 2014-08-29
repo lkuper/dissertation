@@ -223,11 +223,18 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 
 \newcommand{\DefStoreUpdateOperation}{
 \begin{definition}[store update operation]\label{def:store-update-operation}
-  Given a set of state update operations $U_p$, a \emph{store update
-    operation} is a function $U_S$ from stores to stores, defined as
-  follows: $U_S(S)$ is a store such that $\dom{U_S(S)} = \dom{S}$ and,
-  for each $l \in \dom{S}$, $(U_S(S))(l) = u_{p_i}(S(l))$, where
-  $u_{p_i} \in U_p$.
+  Given a lattice $(D, \userleq, \top, \bot)$ and a set of state
+  update operations $U_p$, a \emph{store update operation} is a
+  function $U_S$ from stores to stores such that:
+  \begin{itemize}
+    \item $\dom{S} \subseteq \dom{U_S(S)}$;
+    \item for each $l \in \dom{S}$, $(U_S(S))(l) = u_{p_i}(S(l))$,
+      where $u_{p_i} \in U_p$ (that is, $U_S$ updates the contents of
+      $l$ using $u_{p_i}$); and
+    \item for each $l \in \dom{U_S(S)}$ that is not a member of
+      $\dom{S}$, $(U_S(S))(l) = \state{d}{\status}$ for some $d \in
+      D$.
+  \end{itemize}
 \end{definition}
 }
 

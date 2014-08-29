@@ -91,15 +91,14 @@ See Section~\ref{section:lattice-structure-proof}.
 \subsection{Update operations}\label{subsection:quasi-update-operations}
 
 $\lambdaLVish$ generalizes the @put@ operation of $\lambdaLVar$ to a
-family of operations $\PUTi$.  We do so in order to allow the
-generalized update operations of
+family of operations $\PUTi$, in order to allow the generalized update
+operations of
 Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}
 that are commutative and inflationary, but do not necessarily compute
-a least upper bound.
-
-In order to do this, we parameterize the semantics of $\lambdaLVish$
-not only by the lattice $D$ but also by a set $U$ of \emph{update
-  operations}, as discussed previously in
+a least upper bound.  To make this possible we parameterize
+$\lambdaLVish$ not only by the lattice $(D, \userleq, \bot, \top)$,
+but also by a set $U$ of \emph{update operations}, as discussed
+previously in
 Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}:
 
 \DefSetOfUpdateOperations
@@ -107,7 +106,9 @@ Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}:
 The first of the conditions in
 Definition~\ref{def:set-of-update-operations} says that each update
 operation is inflationary with respect to $\userleq$, and the second
-condition says that update operations commute with each other.
+condition says that update operations commute with each other.  Every
+set of update operations always implicitly contains the identity
+function.
 
 If we want to encode the original least-upper-bound semantics of @put@
 using $\PUTi$, we can do so by instantiating $U$ such that there is
@@ -136,6 +137,15 @@ lifted version of $u_i$ that applies to states.  Given $U$, we define
 the set $U_p$ of lifted operations as follows:
 
 \DefSetOfStateUpdateOperations
+
+Because every set $U$ of update operations implicitly contains the
+identity function, the same is true for the set $U_p$ of state update
+operations.  Furthermore, it is easy to show that state update
+operations commute, just as update operations do; that is, $\forall d,
+i, j.  \;\; u_{p_i}(u_{p_j}(p)) = u_{p_j}(u_{p_i}(p))$. \lk{I've done
+  the proof of this, but I'm not including it here because it seems
+  pretty obvious from the definition...if anyone wants me to actually
+  include it, then I will.}
 
 \subsection{Stores}
 
