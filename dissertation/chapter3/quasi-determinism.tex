@@ -175,7 +175,9 @@ a more general version of the Independence lemma:
 \LemGeneralizedIndependence
 \begin{proof}
   By cases on the rule of the reduction semantics by which
-  $\config{S}{e}$ steps to $\config{S'}{e'}$; see
+  $\config{S}{e}$ steps to $\config{S'}{e'}$.  The interesting cases
+  are for the {\sc E-New}, {\sc E-Put}, {\sc E-Freeze-Final}, and {\sc
+    E-Freeze-Simple} rules.  See
   Section~\ref{section:generalized-independence-proof}.
 \end{proof}
 
@@ -195,8 +197,14 @@ operations.
 The third precondition on $U_S$ has to do with freezing: the stores
 $U_S(S')$ and $S$ must be \emph{equal in status}, which means that,
 for all the locations shared between them, the status bits of those
-locations agree.  This precondition rules out interference from
-freezing.
+locations agree.  This precondition is only needed in the {\sc
+  E-Freeze-Final} and {\sc E-Freeze-Simple} cases, and it has the
+effect of ruling out interference from freezing.  Interestingly,
+though, the precondition that $U_S(S')$ and $S$ be equal in status
+does not rule out all applications of the {\sc E-Freeze-Final} and
+{\sc E-Freeze-Simple} rules, because there \emph{are} @freeze@
+operations with which update operations commute: those where the LVar
+in question is already frozen!
 
 \DefEqualStatus
 

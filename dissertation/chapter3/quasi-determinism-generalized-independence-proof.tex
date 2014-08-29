@@ -8,10 +8,9 @@
   The proof is by cases on the rule of the reduction semantics by
   which $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since
   $\config{S'}{e'} \neq \error$, we do not need to consider the {\sc
-    E-Put-Err} rule.
-
-  The assumption that $U_S(S') \statuseq S$ is only needed in the {\sc
-    E-Freeze-Final} and {\sc E-Freeze-Simple} cases.
+    E-Put-Err} rule.  The assumption that $U_S(S') \statuseq S$ is
+  only needed in the {\sc E-Freeze-Final} and {\sc E-Freeze-Simple}
+  cases.
 
   \begin{itemize}
 
@@ -233,12 +232,12 @@
       have that
       $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
             \dots}}{H}} \parstepsto
-      \config{\extS{U_S(S)}{l}{d_1}{\frozentrue}}{d_1}$.
+      \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
 
       Finally, since $u_{p_i}$ is the state update operation in $U_S$
       that affects the contents of $l$, and
       $u_{p_i}(\state{d_1}{\frozentrue}) = \state{d_1}{\frozentrue}$,
-      we have that $\extS{U_S(S)}{l}{d_1}{\frozentrue}$ is equal to
+      we have that $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
       $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case is
       satisfied.
 
@@ -250,7 +249,40 @@
       To show: $\config{U_S(S)}{\freeze{l}} \parstepsto
       \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{d_1}$.
 
-      \TODO{.}
+      From the premises of {\sc E-Freeze-Simple}, $S(l) =
+      \state{d_1}{\status_1}$.
+
+      By assumption, $U_S(\extS{S}{l}{d_1}{\frozentrue}) \statuseq S$.
+
+      Hence it must be the case that $\status_1 = \frozentrue$.
+
+      Hence $S(l) = \state{d_1}{\frozentrue}$.
+
+      Let $u_{p_i}$ be the state update operation in $U_S$ that
+      affects the contents of $l$.  Hence $(U_S(S))(l) =
+      u_{p_i}(\state{d_1}{\frozentrue})$.
+
+      We know from Definition~\ref{def:set-of-state-update-operations}
+      that $u_{p_i}(\state{d_1}{\frozentrue})$ is either
+      $\state{d_1}{\frozentrue}$ or $\state{\top}{\frozenfalse}$.
+
+      But if $u_{p_i}(\state{d_1}{\frozentrue}) =
+      \state{\top}{\frozenfalse}$, then
+      $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$, which contradicts
+      our assumption that $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq
+      \topS$.  Hence $u_{p_i}(\state{d_1}{\frozentrue}) =
+      \state{d_1}{\frozentrue}$.
+
+      Hence $(U_S(S))(l) = \state{d_1}{\frozentrue}$.  Hence, by {\sc
+        E-Freeze-Simple}, we have that $\config{U_S(S)}{\freeze{l}}
+      \parstepsto \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
+
+      Finally, since $u_{p_i}$ is the state update operation in $U_S$
+      that affects the contents of $l$, and
+      $u_{p_i}(\state{d_1}{\frozentrue}) = \state{d_1}{\frozentrue}$,
+      we have that $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
+      $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case is
+      satisfied.
 
   \end{itemize}
 \end{proof}
