@@ -37,7 +37,7 @@
       \config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$, where $l'
       \notin \dom{U_S(S)}$.
 
-      From the premise of {\sc E-New}, we have that $l \notin
+      From the side condition of {\sc E-New}, we have that $l \notin
       \dom{S}$.  Since $U_S$ does not affect location names, we have
       that $l \notin \dom{U_S(S)}$.
 
@@ -68,7 +68,7 @@
       To show: $\config{U_S(S)}{\putiexp{l}} \parstepsto
       \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{\unit}$.
 
-      From the premise of {\sc E-Put}, $S(l) = p_1$.
+      From the premises of {\sc E-Put}, $S(l) = p_1$.
 
       Hence $(U_S(S))(l) = p'_1$, where $p_1 \leqp p'_1$.
 
@@ -79,11 +79,11 @@
 
       Then $u_{p_i}((U_S(S))(l)) = \topp$.
 
-      Let $u_{p_j}$ be the update operation in $U_S$ that affects the
-      contents of $l$.  Hence $(U_S(S))(l) = u_{p_j}(p_1)$. Then
-      $u_{p_i}(u_{p_j}(p_1)) = \topp$.
+      Let $u_{p_j}$ be the state update operation in $U_S$ that
+      affects the contents of $l$.  Hence $(U_S(S))(l) =
+      u_{p_j}(p_1)$. Then $u_{p_i}(u_{p_j}(p_1)) = \topp$.
 
-      Since update operations commute, $u_{p_j}(u_{p_i}(p_1)) =
+      Since state update operations commute, $u_{p_j}(u_{p_i}(p_1)) =
       \topp$.
       
       But then $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) = \topS$,
