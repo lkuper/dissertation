@@ -32,18 +32,13 @@
       To show: $\config{U_S(S)}{\NEW} \parstepsto
       \config{U_S(\extS{S}{l}{\bot}{\frozenfalse})}{l}$.
 
-      \TODO{This case needs fixing.  We can't have both that $l \notin
-        \dom{U_S(S)}$ and that $U_S$ is the identity on $l$.  The case
-        can be made to work, work, but we need to nail down exactly
-        what ``non-conflicting'' should mean for $U_S$.}
-
       By {\sc E-New}, we have that $\config{U_S(S)}{\NEW} \parstepsto
       \config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$, where $l'
       \notin \dom{U_S(S)}$.
 
-      From the side condition of {\sc E-New}, we have that $l \notin
-      \dom{S}$.  Since $U_S$ does not affect location names, we have
-      that $l \notin \dom{U_S(S)}$.
+      By assumption, $U_S$ is non-conflicting with $\config{S}{\NEW}
+      \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
+      Therefore $l \notin \dom{U_S(S)}$.
 
       Therefore, in
       $\config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$, we
@@ -52,10 +47,11 @@
       Therefore $\config{U_S(S)}{\NEW} \parstepsto
       \config{\extS{(U_S(S))}{l}{\bot}{\frozenfalse}}{l}$.
 
-      By assumption, $U_S$ is non-conflicting with $\config{S}{\NEW}
-      \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
-      Therefore $U_S$ is the identity on
-      $\storebinding{l}{\bot}{\frozenfalse}$.
+      Also, since $U_S$ is non-conflicting with $\config{S}{\NEW}
+      \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$, we
+      have that $(U_S(\extS{S}{l}{\bot}{\frozenfalse}))(l) =
+      (\extS{S}{l}{\bot}{\frozenfalse})(l) =
+      \state{\bot}{\frozenfalse}$.
 
       Hence $\extS{(U_S(S))}{l}{\bot}{\frozenfalse} =
       U_S(\extS{S}{l}{\bot}{\frozenfalse})$.
