@@ -229,8 +229,7 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
   \begin{itemize}
     \item $\dom{S} \subseteq \dom{U_S(S)}$;
     \item for each $l \in \dom{S}$, $(U_S(S))(l) = u_{p_i}(S(l))$,
-      where $u_{p_i} \in U_p$ (that is, $U_S$ updates the contents of
-      $l$ using $u_{p_i}$); and
+      where $u_{p_i} \in U_p$; and
     \item for each $l \in \dom{U_S(S)}$ that is not a member of
       $\dom{S}$, $(U_S(S))(l) = \state{d}{\status}$ for some $d \in
       D$.
