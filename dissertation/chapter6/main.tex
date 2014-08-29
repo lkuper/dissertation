@@ -191,39 +191,20 @@ logic~\cite{OHearnLocalReasoning, ReynoldsSeparationLogic,
       {\lbrace p \rbrace ~ C ~ \lbrace q \rbrace}
       {\lbrace p * r \rbrace ~ C ~ \lbrace q * r \rbrace}
 \end{mathpar}
-Recall that $C$ is a program and $p$ and $q$ are respectively a
-precondition and postcondition on $C$.  Putting them together,
-$\lbrace p \rbrace ~ C ~ \lbrace q \rbrace$ is a specification of the
-behavior of $C$.
-
-The conclusion of the rule is written using the \emph{separating
-  conjunction} connective $*$.  The assertion $p * r$ says that $p$
-and $r$ are true and \emph{disjoint}; for instance, they might
-describe disjoint pieces of the heap.  The frame rule says that if $C$
-can run safely starting from a state satisfying $p$ and end in a state
-satisfying $q$, then it does not do any harm to have the disjoint
-property $r$ be true: $r$ will not interfere with the safe execution
-of $C$.  Furthermore, if $r$ is true to begin with, running $C$ will
-not interfere with the truth of $r$.
-
-The frame rule gets its name from the fact that $r$ is a ``frame''
-around $C$: everything that is not explicitly changed by $C$ is part
-of the frame and is inviolate.\footnote{The ``frame'' terminology was
-  originally introduced in 1969 by McCarthy and
-  Hayes~\cite{McCarthyHayesFrame}, who observed that specifying only
-  what is changed by an action does not generally allow an intelligent
-  agent to conclude that nothing else is changed; they called this
-  dilemma the \emph{frame problem}.}  O'Hearn \etal~refer to the parts
-of the heap actually used by $C$ as the "footprint" of $C$, and $r$ is
-outside of that footprint.  However, sometimes we do in fact want to
-allow some amount of ``physical'' overlap between $p$ and $r$ or
-between $q$ and $r$, while retaining ``logical'' separation.  In fact,
-the Independence lemma, since it replaces the separating conjunction
-with the least upper bound operation, allows a limited amount of
-overlap between the original store and the ``frame'' store $S''$.
-Recent work by Jensen and Birkedal on \emph{fictional separation
-  logic}~\cite{JensenBirkedalFictional} explores this idea in detail,
-generalizing separation logic to allow more sophisticated kinds of
+Recall that the separating conjunction connective $*$ says that the
+assertions it combines can be satisfied in a non-overlapping manner;
+for instance, $p * r$ is satisfied by a heap if the heap can be split
+into two non-overlapping parts satisfying $p$ and $r$, respectively.
+However, sometimes we do in fact want to allow some amount of
+``physical'' overlap between resources, while retaining ``logical'' or
+``fictional'' separation.  In fact, the Independence lemma, since it
+replaces the separating conjunction with the least upper bound
+operation, allows overlap between the original store and the ``frame''
+store $S''$; indeed, the point of LVars is that total disjointness is
+unnecessary, since updates commute.  Jensen and Birkedal's recent work
+on \emph{fictional separation logic}~\cite{JensenBirkedalFictional}
+explores the notion of fictional separation in detail, generalizing
+traditional separation logic to allow much more sophisticated kinds of
 sharing.
 
 Even more recently, Dinsdale-Young \etal~\cite{views} introduced the

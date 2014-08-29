@@ -249,15 +249,40 @@ the $\leqstore{}{}$ ordering.
 
 Figure~\ref{f:lvars-frame-rule} shows a \emph{frame rule}, due to
 O'Hearn \etal~\cite{OHearnLocalReasoning}, which captures the idea of
-\emph{local reasoning} about programs that alter state.  Here, $C$ is
-a program, and $p$ and $q$ are properties that we assert to be true
-before and after $C$ runs, respectively.  Putting them together,
-$\lbrace p \rbrace ~ C ~ \lbrace q \rbrace$ is a Hoare triple (in the
-style of Hoare logic~\cite{HoareAxiomatic}) specifying the behavior of
-$C$.  The frame rule says that, given a program $C$ with precondition
-$p$ and postcondition $q$, an assertion $r$ that is \emph{disjoint}
-with $p$ and holds before $C$ runs will continue to hold afterward.
-Moreover, the original postcondition $q$ will continue to hold.
+\emph{local reasoning} about programs that alter state.  In it, $C$ is
+a program, and $\lbrace p \rbrace ~ C ~ \lbrace q \rbrace$ is a
+\emph{Hoare triple} (in the style of Hoare
+logic~\cite{HoareAxiomatic}) specifying the behavior of $C$: it says
+that if the assertion $p$ is true before $C$ runs, then the assertion
+$q$ will be true afterwards.  For example, $p$ and $q$ might
+respectively describe the state of the heap before and after a heap
+location is updated by $C$.
+
+Given a program $C$ with precondition $p$ and postcondition $q$, the
+frame rule tells us that running $C$ starting from a state satisfying
+the precondition $p * r$ will result in a state satisfying the
+postcondition $q * r$.  These two assertions use the \emph{separating
+  conjunction} connective $*$, which combines two assertions that can
+be satisfied in a \emph{non-overlapping} manner.  For instance, the
+assertion $p * r$ is satisfied by a heap if the heap can be split into
+two non-overlapping parts satisfying $p$ and $r$, respectively.
+
+Therefore, if $C$ can run safely starting from a state satisfying $p$
+and end in a state satisfying $q$, then it does not do any harm to
+also have the disjoint property $r$ be true when $C$ runs: the truth
+of $r$ will not interfere with the safe execution of $C$.
+Furthermore, if $r$ is true to begin with, running $C$ will not
+interfere with the truth of $r$.  The frame rule gets its name from
+the fact that $r$ is a ``frame'' around $C$: everything that is not
+explicitly changed by $C$ is part of the frame and is
+inviolate.\footnote{The ``frame'' terminology was originally
+  introduced in 1969 by McCarthy and Hayes~\cite{McCarthyHayesFrame},
+  who observed that specifying only what is changed by an action does
+  not generally allow an intelligent agent to conclude that nothing
+  else is changed; they called this dilemma the \emph{frame problem}.}
+O'Hearn \etal~refer to the resources (such as heap locations) actually
+used by $C$ as the "footprint" of $C$; $r$ is an assertion about
+resources outside of that footprint.
 
 The Independence lemma establishes a similar ``frame property'' for
 $\lambdaLVar$ that captures the idea that independent effects commute
