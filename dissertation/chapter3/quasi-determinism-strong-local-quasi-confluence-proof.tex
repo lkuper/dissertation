@@ -62,13 +62,18 @@
   $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$ and
   $\config{S}{e_{b_1}} \parstepsto \config{S_b}{e_{b_2}}$.  We proceed
   by case analysis on the rule by which $\config{S}{e_{a_1}}$ steps to
-  $\config{S_a}{e_{a_2}}$.
+  $\config{S_a}{e_{a_2}}$.  Since the only way an $\error$
+  configuration can arise is by the {\sc E-Put-Err} rule, we can
+  assume in all other cases that $\conf_a \neq \error$.
 
   \begin{enumerate}
   \item Case {\sc E-Beta}: We have $S_a = S$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
+    only way an $\error$ configuration can arise is by the {\sc
+      E-Put-Err} rule, we can assume in all other cases that $\conf_b
+    \neq \error$.
     \begin{enumerate}
     \item \label{slqc-beta-beta}Case {\sc E-Beta}: We have $S_b =
       S$.
@@ -103,33 +108,32 @@
 
       The first of these follows immediately from $\config{S}{e_{b_1}}
       \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
-      the second, consider that $S_b = \extS{S}{l}{\bot}{\frozenfalse} =
-      \lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}$.  Furthermore,
-      since no locations are allocated during the transition
-      $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$, we know
-      that $\store{\storebinding{l}{\bot}{\frozenfalse}}$ is non-conflicting with
-      it, and we know that
-      $\lubstore{S_a}{\store{\storebinding{l}{\bot}{\frozenfalse}}} \neq \topS$
-      since $S_a$ is just $S$ and
-      $\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}$ cannot be
-      $\topS$.
-
-      \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+      the second, consider that $S_b = \extS{S}{l}{\bot}{\frozenfalse}
+      = U_S(S)$, where $U_S$ is the store update operation that acts
+      as the identity on the contents of all existing locations, and
+      adds the binding $\storebinding{l}{\bot}{\frozenfalse}$ if no
+      binding for $l$ exists.  Note that
+      \begin{itemize}
+      \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+        \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
+        allocated during the transition;
+        \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
+          and we know that $\conf_b \neq \error$; and
+        \item $U_S(S_a) \statuseq S$, since $U_S(S_a) = S_b$ and $S_b$
+          does not differ from $S$ in the status bits of any shared
+          locations.
+      \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{a_1}}
-      \parstepsto
-      \config{\lubstore{S_a}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{a_2}}$.
-      Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
-      By {\sc E-Eval-Ctxt}, it follows that
-      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      \config{U_S(S_a)}{e_{a_2}}$.  Hence $\config{S_b}{e_{a_1}}
+      \parstepsto \config{S_b}{e_{a_2}}$.  By {\sc E-Eval-Ctxt}, it
+      follows that $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
       \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
       show.
 
     \item \label{slqc-beta-put}Case {\sc E-Put}: 
-
-      \TODO{Finish updating this case to use $\putiexp{}$.}
 
       We have $S_b = \extSRaw{S}{l}{u_{p_i}(p_1)}$.
 
@@ -146,30 +150,33 @@
 
       The first of these follows immediately from $\config{S}{e_{b_1}}
       \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
-      the second, consider that $S_b =
-      \extSRaw{S}{l}{u_{p_i}(p_1)} =
-      \lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}$.
-      Furthermore, since no locations are allocated during the
-      transition $\config{S}{e_{a_1}} \parstepsto
-      \config{S_a}{e_{a_2}}$, we know that
-      $\store{\storebindingRaw{l}{u_{p_i}(p_1)}}$ is
-      non-conflicting with it, and we know that
-      $\lubstore{S_a}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
-      \neq \topS$ since $S_a$ is just $S$ and
-      $\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}$
-      cannot be $\topS$, since we know from the premise of {\sc E-Put}
-      that $u_{p_i}(p_1) \neq \top$.
-
-      \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+      the second, consider that $S_b = U_S(S)$, where $U_S$ is the
+      store update operation that applies $u_{p_i}$ to the contents of
+      $l$ and acts as the identity on all other locations.  Note that:
+      \begin{itemize}
+      \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+        \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
+        allocated during the transition;
+        \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
+          and we know that $\conf_b \neq \error$; and
+        \item $U_S(S_a) \statuseq S$, since $U_S(S_b) = S_b$ and $S_b$
+          does not differ from $S$ in the status bits of any shared
+          locations.  (By
+          Definition~\ref{def:set-of-state-update-operations},
+          $u_{p_i}$ can only change the status bit of a location if
+          its contents are $\state{d}{\frozentrue}$ and $u_i(d) \neq
+          d$, in which case $u_{p_i}$ changes the contents of the
+          location to $\state{\top}{\frozenfalse}$; however, that
+          cannot be the case here since then $S_b$ would be $\topS$,
+          contradicting our assumption that $\conf_b \neq \error$.)
+      \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{a_1}}
-      \parstepsto
-      \config{\lubstore{S_a}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{a_2}}$.
-      Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
-      By {\sc E-Eval-Ctxt}, it follows that
-      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      \config{U_S(S_a)}{e_{a_2}}$.  Hence $\config{S_b}{e_{a_1}}
+      \parstepsto \config{S_b}{e_{a_2}}$.  By {\sc E-Eval-Ctxt}, it
+      follows that $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
       \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
       show.
 
@@ -204,12 +211,14 @@
     \item \label{slqc-beta-freeze-final}Case {\sc E-Freeze-Final}: \TODO{}
     \item \label{slqc-beta-freeze-simple}Case {\sc E-Freeze-Simple}: \TODO{}
 
-
     \end{enumerate}
   \item Case {\sc E-New}: We have $S_a = \extS{S}{l}{\bot}{\frozenfalse}$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
+    only way an $\error$ configuration can arise is by the {\sc
+      E-Put-Err} rule, we can assume in all other cases that $\conf_b
+    \neq \error$.
     \begin{enumerate}
     \item \label{slqc-new-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-new}.
     \item \label{slqc-new-new}Case {\sc E-New}: We have $S_b = \extS{S}{l'}{\bot}{\frozenfalse}$.
@@ -516,7 +525,10 @@
     We have $S_a = \extSRaw{S}{l}{u_{p_i}(p_1)}$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
+    only way an $\error$ configuration can arise is by the {\sc
+      E-Put-Err} rule, we can assume in all other cases that $\conf_b
+    \neq \error$.
     \begin{enumerate}
     \item \label{slqc-put-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-put}.
     \item \label{slqc-put-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-put}.
@@ -692,7 +704,10 @@
     \error$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
+    only way an $\error$ configuration can arise is by the {\sc
+      E-Put-Err} rule, we can assume in all other cases that $\conf_b
+    \neq \error$.
     \begin{enumerate}
     \item \label{slqc-put-err-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-put-err}.
     \item \label{slqc-put-err-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-put-err}.
@@ -725,7 +740,10 @@
   \item Case {\sc E-Get}:
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
+    only way an $\error$ configuration can arise is by the {\sc
+      E-Put-Err} rule, we can assume in all other cases that $\conf_b
+    \neq \error$.
     \begin{enumerate}
     \item \label{slqc-get-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-get}.
     \item \label{slqc-get-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-get}.
@@ -744,7 +762,10 @@
   \item Case {\sc E-Freeze-Init}:
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
+    only way an $\error$ configuration can arise is by the {\sc
+      E-Put-Err} rule, we can assume in all other cases that $\conf_b
+    \neq \error$.
     \begin{enumerate}
     \item \label{slqc-freeze-init-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-freeze-init}.
     \item \label{slqc-freeze-init-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-freeze-init}.
@@ -762,7 +783,10 @@
   \item Case {\sc E-Spawn-Handler}:
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
+    only way an $\error$ configuration can arise is by the {\sc
+      E-Put-Err} rule, we can assume in all other cases that $\conf_b
+    \neq \error$.
     \begin{enumerate}
     \item \label{slqc-spawn-handler-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-spawn-handler}.
     \item \label{slqc-spawn-handler-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-spawn-handler}.
@@ -779,7 +803,10 @@
   \item Case {\sc E-Freeze-Final}:
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$:
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
+    only way an $\error$ configuration can arise is by the {\sc
+      E-Put-Err} rule, we can assume in all other cases that $\conf_b
+    \neq \error$.
     \begin{enumerate}
     \item \label{slqc-freeze-final-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-freeze-final}.
     \item \label{slqc-freeze-final-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-freeze-final}.
