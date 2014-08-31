@@ -57,7 +57,6 @@
   \item $\pi(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}) \ctxstepsto^j
     \config{S'}{\evalctxt{E'_a}{e_{a_2}}}$.
   \end{itemize}
-
   From the premise of {\sc E-Eval-Ctxt}, we have that
   $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$ and
   $\config{S}{e_{b_1}} \parstepsto \config{S_b}{e_{b_2}}$.  We proceed
@@ -604,123 +603,48 @@
       \extSRaw{S}{l}{u_{p_i}(p_1)}$ and $S_b =
       \extSRaw{S}{l'}{u_{p_j}(p'_1)}$, where $p'_1 = S(l')$.
 
-      Consider whether
-      $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
-      = \topS$:
-
+      Now consider whether $l = l'$:
       \begin{itemize}
-      \item
-        $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
-        \neq \topS$:
+        \item If $l \neq l'$:
 
-        Choose $S' = \lubstore{S_a}{S_b}$, $i = 1$, $j = 1$, and $\pi =
-        \id$.
+          Choose $S' =
+          \extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}$,
+          $i = 1$, $j = 1$, and $\pi = \id$.
 
-        We have to show that:
-        \begin{itemize}
-        \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-          \config{\lubstore{S_a}{S_b}}{\evalctxt{E'_b}{e_{b_2}}}$, and
-        \item $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-          \config{\lubstore{S_a}{S_b}}{\evalctxt{E'_a}{e_{a_2}}}$.
-        \end{itemize}
+          We have to show that:
+          \begin{itemize}
+          \item
+            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+            \ctxstepsto
+            \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_2}}}$,
+            and
+          \item
+            $\config{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{\evalctxt{E'_a}{e_{a_1}}}
+            \ctxstepsto
+            \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_a}{e_{a_2}}}$.
+          \end{itemize}
+          \TODO{}
 
-        For the first of these, since no locations are allocated
-        during the transition $\config{S}{e_{b_1}} \parstepsto
-        \config{S_b}{e_{b_2}}$, we know that
-        $\store{\storebindingRaw{l}{u_{p_i}(p_1)}}$ is
-        non-conflicting with it, and in this subcase, we know that
-        $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
-        \neq \topS$.
+        \item If $l = l'$:
 
-        \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+          Note that since $l = l'$, $p_1 = p'_1$ as well.
 
-        Therefore, by Lemma~\ref{lem:generalized-independence}
-        (Generalized Independence), we have that
-        $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_1}}
-        \parstepsto
-        \config{\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_2}}$.
-        By {\sc E-Eval-Ctxt}, it follows that
-        $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{\evalctxt{E'_b}{e_{b_1}}}
-        \ctxstepsto
-        \config{\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{\evalctxt{E'_b}{e_{b_2}}}$.
-        Since $\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
-        = \extSRaw{S}{l}{u_{p_i}(p_1)} = S_a$, we have that
+          Choose $S' = \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$, $i =
+          1$, $j = 1$, and $\pi = \id$.
 
-        $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-        \config{\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{\evalctxt{E'_b}{e_{b_2}}}$.
-        Furthermore, since $\config{S}{e_{b_1}} \parstepsto
-        \config{S_b}{e_{b_2}}$, by Lemma~\ref{lem:monotonicity}
-        (Monotonicity), we have that $\leqstore{S}{S_b}$, so
-        $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
-        =
-        \lubstore{S_b}{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}
-        = \lubstore{S_b}{S_a} = \lubstore{S_a}{S_b}$.  So we have that
-        $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-        \config{\lubstore{S_a}{S_b}}{\evalctxt{E'_b}{e_{b_2}}}$, as we
-        were required to show.
-
-        The argument for the second is symmetrical, with
-        $\store{\storebindingRaw{l'}{u_{p_j}(p'_1)}}$ being the
-        transition that is non-conflicting with $\config{S}{e_{a_1}}
-        \parstepsto \config{S_a}{e_{a_2}}$.
-
-      \item
-        $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
-        = \topS$:
-
-        Here we choose $\conf_c = \error$ and $\pi = \id$.  We have to
-        show that there exist $i \leq 1$ and $j \leq 1$ such that:
-        \begin{itemize}
-        \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto^i
-          \error$, and
-        \item
-          $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto^j \error$.
-        \end{itemize}
-
-        For the first of these, since no locations are allocated
-        during the transition $\config{S}{e_{b_1}} \parstepsto
-        \config{S_b}{e_{b_2}}$, we know that
-        $\store{\storebindingRaw{l}{u_{p_i}(p_1)}}$ is
-        non-conflicting with it, and in this subcase, we know that
-        $\lubstore{S_b}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
-        = \topS$.  Therefore, by (Clash),
-        \TODO{Don't use Clash.}
-        we have that
-        $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_1}}
-        \parstepsto^{i'} \error$, where $i' \leq 1$.  Since $\error$ is
-        equal to $\config{\topS}{e}$ for all expressions $e$,
-        $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_1}}
-        \parstepsto^{i'} \config{\topS}{e}$ for all $e$.
-
-        Now consider whether $i' = 1$ or $i' = 0$:
-        \begin{itemize}
-          \item If $i' = 1$, by {\sc E-Eval-Ctxt}, it follows that
-            $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{\evalctxt{E'_b}{e_{b_1}}}
-            \ctxstepsto \config{\topS}{\evalctxt{E'_b}{e}}$ for all
-            $e$.  Since $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal
-            to $\error$, and since
-            $\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}
-            = \extSRaw{S}{l}{u_{p_i}(p_1)} = S_a$, we choose $i
-            = 1$ and we have that
-            $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-            \error$, as required.
-
-          \item If $i' = 0$, we have that
-            $\config{\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}}}{e_{b_1}}
-            = \error$.  Hence
-            $\lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}} =
-            \topS$.  So, we choose $i = 0$, and since $S_a =
-            \extSRaw{S}{l}{u_{p_i}(p_1)} =
-            \lubstore{S}{\store{\storebindingRaw{l}{u_{p_i}(p_1)}}} =
-            \topS$, we have that
-            $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} = \error$, as
-            required.
-        \end{itemize}
-
-        The argument for the second is symmetrical, with
-        $\store{\storebindingRaw{l'}{u_{p_j}(p'_1)}}$ being the
-        transition that is non-conflicting with $\config{S}{e_{a_1}}
-        \parstepsto \config{S_a}{e_{a_2}}$.
+          We have to show that:
+          \begin{itemize}
+          \item
+            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+            \ctxstepsto
+            \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_b}{e_{b_2}}}$,
+            and
+          \item
+            $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{\evalctxt{E'_a}{e_{a_1}}}
+            \ctxstepsto
+            \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_a}{e_{a_2}}}$.
+          \end{itemize}
+          \TODO{}
 
       \end{itemize}
 
