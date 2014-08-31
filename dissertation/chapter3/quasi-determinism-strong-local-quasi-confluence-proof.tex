@@ -466,29 +466,37 @@
       \end{itemize}
 
       For the first of these, consider that $S_a =
-      \extS{S}{l}{\bot}{\frozenfalse} =
-      \lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}$, and that
-      $\extS{S_b}{l}{\bot}{\frozenfalse} =
-      \lubstore{S_b}{\store{\storebinding{l}{\bot}{\frozenfalse}}}$.
-      Furthermore, since no locations are allocated during the
-      transition $\config{S}{e_{b_1}} \parstepsto
-      \config{S_b}{e_{b_2}}$, we know that
-      $\store{\storebinding{l}{\bot}{\frozenfalse}}$ is non-conflicting with it.
-      We also know that
-      $\lubstore{S_b}{\store{\storebinding{l}{\bot}{\frozenfalse}}} \neq \topS$,
-      since $S_b = \extSRaw{S}{l'}{u_{p_i}(p_1)}$ and we know
-      from the premise of {\sc E-Put} that $u_{p_i}(p_1) \neq
-      \top$.
-
-      \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+      \extS{S}{l}{\bot}{\frozenfalse} = U_S(S)$, where $U_S$ is the
+      store update operation that acts as the identity on the contents
+      of all existing locations, and adds the binding
+      $\storebinding{l}{\bot}{\frozenfalse}$ if no binding for $l$
+      exists.  Note that:
+      \begin{itemize}
+      \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+        \parstepsto \config{S_b}{e_{b_2}}$, since no locations are
+        allocated during the transition;
+        \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
+          U_S(\extS{S_b}{l}{\bot}{\frozenfalse})$, and we know $S_b
+          \neq \topS$ and the addition of a new binding
+          $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
+          become $\topS$; and
+        \item $U_S(S_b) \statuseq S$, since $U_S$ adds a binding that
+          does not occur in $S$, and $S_b$ does not differ from $S$ in
+          the status bits of any shared locations.  (By
+          Definition~\ref{def:set-of-state-update-operations},
+          $u_{p_i}$ can only change the status bit of a location if
+          its contents are $\state{d}{\frozentrue}$ and $u_i(d) \neq
+          d$, in which case $u_{p_i}$ changes the contents of the
+          location to $\state{\top}{\frozenfalse}$; however, that
+          cannot be the case here since then $S_b$ would be $\topS$,
+          contradicting our assumption that $\conf_b \neq \error$.)
+      \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{\lubstore{S}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_1}}
-      \parstepsto
-      \config{\lubstore{S_b}{\store{\storebinding{l}{\bot}{\frozenfalse}}}}{e_{b_2}}$.
-      Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
-      \parstepsto
+      $\config{U_S(S)}{e_{b_1}} \parstepsto
+      \config{U_S(S_b)}{e_{b_2}}$.  Hence
+      $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
       \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.  By {\sc
         E-Eval-Ctxt}, it follows that
       $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
