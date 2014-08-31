@@ -31,9 +31,9 @@ the LVar by one, resulting in $3$.
 
 To support this alternative semantics in the LVars model, we
 generalize the model as follows.  For an LVar with lattice $(D,
-\userleq, \bot, \top)$, we can define a set of \emph{update}
-operations $u_i : D \rightarrow D$, which must meet the following two
-conditions:
+\userleq, \bot, \top)$, we can define a set of \emph{update
+  operations} $u_i : D \rightarrow D$, which must meet the following
+two conditions:
 \begin{itemize}
 \item $\forall d, i.     \;\; d \userleq u_i(d) $
 \item $\forall d, i, j.  \;\; u_i(u_j(d)) = y_j(u_i(d)) $
@@ -96,24 +96,14 @@ counters.\footnote{Unlike \il{put}, arbitrary update operations are
   writes in the LVish scheduler implementation.  I discuss this
   consideration in more detail in Section~\ref{s:lvish-internals}.}
 
-The determinism of $\lambdaLVar$ relies on the fact that the states of
-all LVars evolve monotonically with respect to their lattices, and
-that the least upper bound operation is commutative and therefore the
-order in which @put@s occur does not matter.  Together, these
-properties suffice to ensure that the threshold reads made by @get@
-operations are deterministic. The rest of a $\lambdaLVar$ program is
-purely functional, and its behavior is, in fact, a pure function of
-these @get@ observations.  Since a given family of update operations
-is also commutative and inflationary with respect to the lattice of
-the LVar they operate on, they preserve determinism.
-
 In Chapter~\ref{ch:quasi}, in addition to extending $\lambdaLVar$ to
 support the new features of \emph{freezing} and \emph{event handlers},
 I generalize the @put@ operation to allow arbitrary update operations.
-The resulting generalized language definition is therefore
-parameterized not only by an application-specific lattice, but also by
-an application-specific set of commutative and inflationary update
-operations.  Furthermore, as we will see in
+The @put@ operation becomes a family of operations $\PUTI$, with each
+corresponding to an update operation $u_i$.  The resulting generalized
+language definition is therefore parameterized not only by an
+application-specific lattice, but also by an application-specific set
+of update operations.  Furthermore, as we will see in
 Section~\ref{subsection:quasi-generalized-independence}, we will need
 to generalize the Independence lemma
 (Lemma~\ref{lem:lvars-independence}) in order to accommodate this
