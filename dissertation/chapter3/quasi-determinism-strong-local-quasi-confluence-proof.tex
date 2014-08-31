@@ -580,11 +580,16 @@
     \item \label{slqc-new-spawn-handler}Case {\sc E-Spawn-Handler}:
       Similar to case~\ref{slqc-new-beta}, since $S_a =
       \extS{S}{l}{\bot}{\frozenfalse}$ and $S_b = S$.
-    \item \label{slqc-new-freeze-final}Case {\sc E-Freeze-Final}: \TODO{}
+    \item \label{slqc-new-freeze-final}Case {\sc E-Freeze-Final}: We
+      have $S_a = \extS{S}{l}{\bot}{\frozenfalse}$ and $S_b =
+      \extS{S}{l'}{d_1}{\frozentrue}$.
+
+      \TODO{}
+
     \item \label{slqc-new-freeze-simple}Case {\sc E-Freeze-Simple}:
       Similar to case~\ref{slqc-new-freeze-final}, since $S_a =
       \extS{S}{l}{\bot}{\frozenfalse}$ and $S_b =
-      \extS{S}{l}{d_1}{\frozentrue}$.
+      \extS{S}{l'}{d_1}{\frozentrue}$.
 
     \end{enumerate}
   \item Case {\sc E-Put}: We have $S_a =
@@ -686,11 +691,15 @@
     \item \label{slqc-put-spawn-handler}Case {\sc E-Spawn-Handler}:
       Similar to case~\ref{slqc-put-beta}, since $S_a =
       \extSRaw{S}{l}{u_{p_i}(p_1)}$ and $S_b = S$.
-    \item \label{slqc-put-freeze-final}Case {\sc E-Freeze-Final}: \TODO{}
+    \item \label{slqc-put-freeze-final}Case {\sc E-Freeze-Final}: We
+      have $S_a = \extSRaw{S}{l}{u_{p_i}(p_1)}$ and $S_b =
+      \extS{S}{l'}{d_1}{\frozentrue}$.
+
+      \TODO{}
     \item \label{slqc-put-freeze-simple}Case {\sc E-Freeze-Simple}:
       Similar to case~\ref{slqc-put-freeze-final}, since $S_a =
       \extSRaw{S}{l}{u_{p_i}(p_1)}$ and $S_b =
-      \extS{S}{l}{d_1}{\frozentrue}$.
+      \extS{S}{l'}{d_1}{\frozentrue}$.
 
     \end{enumerate}
   \item Case {\sc E-Put-Err}: We have $\config{S_a}{e_{a_2}} =
@@ -730,9 +739,35 @@
       $\config{S_a}{e_{a_2}} = \error$ and $S_b = S$.
     \item \label{slqc-put-err-freeze-final}Case {\sc E-Freeze-Final}:
       We have $\config{S_a}{e_{a_2}} = \error$ and $S_b =
-      \extS{S}{l}{d_1}{\frozentrue}$.
+      \extS{S}{l}{d_1}{\frozentrue}$, and so we choose $\conf_c =
+      \error$, $i = 0$, $j = 1$, and $\pi = \id$.  We have to show
+      that:
+      \begin{itemize}
+      \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} = \error$,
+        and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto \error$.
+      \end{itemize}
 
-      \TODO{}
+      The first of these is immediately true because since
+      $\config{S_a}{e_{a_2}} = \error$, $S_a = \topS$, and so
+      $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}}$ is equal to $\error$ as
+      well.  For the second, observe that since $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$, we have by
+      Lemma~\ref{lem:monotonicity} (Monotonicity) that
+      $\leqstore{S}{S_b}$.  Therefore, since $\config{S}{e_{a_1}}
+      \parstepsto \error$, we have by
+      Lemma~\ref{lem:error-preservation} that $\config{S_b}{e_{a_1}}
+      \parstepsto \error$.  Since $\error$ is equal to
+      $\config{\topS}{e}$ for all expressions $e$,
+      $\config{S_b}{e_{a_1}} \parstepsto \config{\topS}{e}$ for all
+      $e$.  Therefore, by {\sc E-Eval-Ctxt},
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{\topS}{\evalctxt{E'_a}{e}}$ for all $e$.  Since
+      $\config{\topS}{\evalctxt{E'_a}{e}}$ is equal to $\error$, we
+      have that $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \error$, as we were required to show.
+
     \item \label{slqc-put-err-freeze-simple}Case {\sc
       E-Freeze-Simple}: Similar to
       case~\ref{slqc-put-err-freeze-final}, since $S_b =
@@ -842,14 +877,14 @@
     \item \label{slqc-freeze-final-spawn-handler}Case {\sc E-Spawn-Handler}: By symmetry with case~\ref{slqc-spawn-handler-freeze-final}.
     \item \label{slqc-freeze-final-freeze-final}Case {\sc
       E-Freeze-Final}: We have $S_a = \extS{S}{l}{d_1}{\frozentrue}$
-      and $S_b = \extS{S}{l'}{d_1}{\frozentrue}$.
+      and $S_b = \extS{S}{l'}{d'_1}{\frozentrue}$.
 
       \TODO{}
     \item \label{slqc-freeze-final-freeze-simple}Case {\sc
       E-Freeze-Simple}: Similar to
       case~\ref{slqc-freeze-final-freeze-final}, since $S_a =
       \extS{S}{l}{d_1}{\frozentrue}$ and $S_b =
-      \extS{S}{l'}{d_1}{\frozentrue}$.
+      \extS{S}{l'}{d'_1}{\frozentrue}$.
     \end{enumerate}
 
   \item Case {\sc E-Freeze-Simple}: We have $S_a =
@@ -868,7 +903,7 @@
       E-Freeze-Simple}: Similar to
       case~\ref{slqc-freeze-simple-freeze-final}, since $S_a =
       \extS{S}{l}{d_1}{\frozentrue}$ and $S_b =
-      \extS{S}{l'}{d_1}{\frozentrue}$.
+      \extS{S}{l'}{d'_1}{\frozentrue}$.
     \end{enumerate}
 
   \end{enumerate}
