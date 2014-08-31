@@ -1,4 +1,4 @@
-\begin{proof}
+S'\begin{proof}
   Suppose $\conf \ctxstepsto \conf_a$ and $\conf \ctxstepsto \conf_b$.
   We have to show that either there exist $\conf_c, i, j, \pi$ such
   that $\conf_a \ctxstepsto^i \conf_c$ and $\pi(\conf_b) \ctxstepsto^j
@@ -584,6 +584,22 @@
       have $S_a = \extS{S}{l}{\bot}{\frozenfalse}$ and $S_b =
       \extS{S}{l'}{d_1}{\frozentrue}$.
 
+      Choose $S' =
+      \extS{\extS{S}{l'}{d_1}{\frozentrue}}{l'}{d_1}{\frozentrue}$, $i
+      = i$, $j = 1$, and $\pi = \id$.
+
+      We have to show that:
+      \begin{itemize}
+      \item
+        $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
+        \ctxstepsto
+        \config{\extS{\extS{S}{l'}{d_1}{\frozentrue}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+        and
+      \item
+        $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
+        \ctxstepsto
+        \config{\extS{\extS{S}{l'}{d_1}{\frozentrue}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
+      \end{itemize}
       \TODO{}
 
     \item \label{slqc-new-freeze-simple}Case {\sc E-Freeze-Simple}:
@@ -695,7 +711,19 @@
       have $S_a = \extSRaw{S}{l}{u_{p_i}(p_1)}$ and $S_b =
       \extS{S}{l'}{d_1}{\frozentrue}$.
 
-      \TODO{}
+      Now consider whether $l = l'$:
+      \begin{itemize}
+        \item If $l \neq l'$:
+
+          \TODO{}
+
+        \item If $l = l'$:
+
+          Note that since $l = l'$, $p_1 = \state{d_1}{\frozentrue}$.
+
+          \TODO{}
+      \end{itemize}
+
     \item \label{slqc-put-freeze-simple}Case {\sc E-Freeze-Simple}:
       Similar to case~\ref{slqc-put-freeze-final}, since $S_a =
       \extSRaw{S}{l}{u_{p_i}(p_1)}$ and $S_b =
@@ -795,7 +823,20 @@
     \item \label{slqc-get-freeze-final}Case {\sc E-Freeze-Final}: We
       have $S_a = S$ and $S_b = \extS{S}{l}{d_1}{\frozentrue}$.
 
-      \TODO{}
+      Choose $S' = S_b$, $i = 1$, $j = 1$, and $\pi = \id$.
+
+      We have to show that:
+      \begin{itemize}
+      \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$, and
+      \item $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$.
+      \end{itemize}
+
+      The first of these follows immediately from $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
+      the second, \TODO{}.
+
     \item \label{slqc-get-freeze-simple}Case {\sc E-Freeze-Simple}:
       Similar to case~\ref{slqc-get-freeze-final}, since $S_a = S$ and $S_b =
       \extS{S}{l}{d_1}{\frozentrue}$.
@@ -824,7 +865,21 @@
       E-Freeze-Final}: We have $S_a = S$ and $S_b =
       \extS{S}{l}{d_1}{\frozentrue}$.
 
-      \TODO{}
+      Choose $S' = S_b$, $i = 1$, $j = 1$, and $\pi = \id$.
+
+      We have to show that:
+      \begin{itemize}
+      \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$, and
+      \item
+        $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$.
+      \end{itemize}
+
+      The first of these follows immediately from $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
+      the second, \TODO{}.
+
     \item \label{slqc-freeze-init-freeze-simple}Case {\sc
       E-Freeze-Simple}: Similar to
       case~\ref{slqc-freeze-init-freeze-final}, since $S_a = S$ and
@@ -852,7 +907,20 @@
       E-Freeze-Final}: We have $S_a = S$ and $S_b =
       \extS{S}{l}{d_1}{\frozentrue}$.
 
-      \TODO{}
+      Choose $S' = S_b$, $i = 1$, $j = 1$, and $\pi = \id$.
+
+      We have to show that:
+      \begin{itemize}
+      \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$, and
+      \item $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+        \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$.
+      \end{itemize}
+
+      The first of these follows immediately from $\config{S}{e_{b_1}}
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
+      the second, \TODO{}.
+
     \item \label{slqc-spawn-handler-freeze-simple}Case {\sc
       E-Freeze-Simple}: Similar to
       case~\ref{slqc-spawn-handler-freeze-final}, since $S_a = S$ and
@@ -879,7 +947,20 @@
       E-Freeze-Final}: We have $S_a = \extS{S}{l}{d_1}{\frozentrue}$
       and $S_b = \extS{S}{l'}{d'_1}{\frozentrue}$.
 
-      \TODO{}
+      Now consider whether $l = l'$:
+      \begin{itemize}
+        \item If $l \neq l'$:
+
+          \TODO{}
+
+        \item If $l = l'$:
+
+          Note that since $l = l'$, $d_1 = d'_1$.
+
+          \TODO{}
+      \end{itemize}
+
+
     \item \label{slqc-freeze-final-freeze-simple}Case {\sc
       E-Freeze-Simple}: Similar to
       case~\ref{slqc-freeze-final-freeze-final}, since $S_a =
