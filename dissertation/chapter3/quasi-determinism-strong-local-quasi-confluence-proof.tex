@@ -505,32 +505,37 @@
       which, since $S_a = \extS{S}{l}{\bot}{\frozenfalse}$, is what we
       were required to show.
 
-      For the second, consider that $S_b =
-      \lubstore{S}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}$
-      and $\extS{S_b}{l}{\bot}{\frozenfalse} =
-      \lubstore{\extS{S}{l}{\bot}{\frozenfalse}}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}
-      =
-      \lubstore{S_a}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}$.
-      Furthermore, since the only location allocated during the
-      transition $\config{S}{e_{a_1}} \parstepsto
-      \config{S_a}{e_{a_2}}$ is $l$, we know that
-      $\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}$ is
-      non-conflicting with it.  (We know that $l \neq l'$ because we
-      have from the premise of {\sc E-Put} that $l' \in \dom{S}$, but
-      we have from the side condition of {\sc E-New} that $l \notin
-      \dom{S}$.)  We also know that
-      $\lubstore{\extS{S}{l}{\bot}{\frozenfalse}}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}
-      \neq \topS$, since we know from the premise of {\sc E-Put} that
-      $u_{p_i}(p_1) \neq \top$.
+      For the second, let $U_S$ is the store update operation that
+      applies $u_{p_i}$ to the contents of $l'$ if it exists, and adds
+      a binding $\storebindingRaw{l'}{u_{p_i}(p_1)}$ if no binding for
+      $l'$ exists.
 
-      \TODO{Audit use of Lemma~\ref{lem:generalized-independence}.}
+      Consider that $S_b = U_S(S)$, and
+      $\extS{S_b}{l}{\bot}{\frozenfalse} =
+      \extSRaw{S_a}{l'}{u_{p_i}(p_1)} = U_S(S_a)$.  Note that:
+      \begin{itemize}
+      \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+        \parstepsto \config{S_a}{e_{a_2}}$, since the only location
+        allocated during the transition is $l$;
+      \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
+        \extSRaw{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{u_{p_i}(p_1)}$
+        and we know $S \neq \topS$ and the addition of new bindings
+        $\storebinding{l}{\bot}{\frozenfalse}$ and
+        $\storebindingRaw{l'}{u_{p_i}(p_1)}$ cannot cause it to become
+        $\topS$ (since if $u_{p_i}(p_1) = \topp$,
+        $\config{S}{e_{b_1}}$ would not have been able to step by {\sc
+          E-Put}); and
+      \item $U_S(S_a) \statuseq S$, since $U_S(S_a) =
+        \extSRaw{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{u_{p_i}(p_1)}$,
+        which does not differ from $S$ in the status bits of any
+        shared locations.
+      \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{\lubstore{S}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}}{e_{a_1}}
+      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      \config{U_S(S_a)}{e_{a_2}}$.  Hence $\config{S_b}{e_{a_1}}
       \parstepsto
-      \config{\lubstore{S_a}{\store{\storebindingRaw{l'}{u_{p_i}(p_1)}}}}{e_{a_2}}$.
-      Hence $\config{S_b}{e_{a_1}} \parstepsto
       \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{a_2}}$.  By {\sc
         E-Eval-Ctxt}, it follows that
       $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
