@@ -85,6 +85,14 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
 \end{lem}
 }
 
+\newcommand{\LemErrorPreservation}{
+\begin{lem}[Error Preservation]\label{lem:error-preservation}
+  If $\config{S}{e} \parstepsto \textup{\error}$ and
+  $\leqstore{S}{S'}$, then $\config{S'}{e} \parstepsto
+  \textup{\error}$.
+\end{lem}
+}
+
 \newcommand{\LemStrongLocalQuasiConfluence}{
 \begin{lem}[Strong Local Quasi-Confluence]\label{lem:strong-local-quasi-confluence}
  If $\conf \ctxstepsto \conf_a$ and $\conf \ctxstepsto \conf_b$, then

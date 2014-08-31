@@ -560,10 +560,9 @@
       Lemma~\ref{lem:monotonicity} (Monotonicity) that
       $\leqstore{S}{S_a}$.  Therefore, since $\config{S}{e_{b_1}}
       \parstepsto \error$, we have by
-      (Error Preservation)
-      \TODO{Don't use Error Preservation.}
-      that $\config{S_a}{e_{b_1}} \parstepsto \error$.  Since $\error$
-      is equal to $\config{\topS}{e}$ for all expressions $e$,
+      Lemma~\ref{lem:error-preservation} (Error Preservation) that
+      $\config{S_a}{e_{b_1}} \parstepsto \error$.  Since $\error$ is
+      equal to $\config{\topS}{e}$ for all expressions $e$,
       $\config{S_a}{e_{b_1}} \parstepsto \config{\topS}{e}$ for all
       $e$.  Therefore, by {\sc E-Eval-Ctxt},
       $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
@@ -667,10 +666,9 @@
       Lemma~\ref{lem:monotonicity} (Monotonicity) that
       $\leqstore{S}{S_a}$.  Therefore, since $\config{S}{e_{b_1}}
       \parstepsto \error$, we have by
-      (Error Preservation)
-      \TODO{Don't use Error Preservation.}
-      that $\config{S_a}{e_{b_1}} \parstepsto \error$.  Since $\error$
-      is equal to $\config{\topS}{e}$ for all expressions $e$,
+      Lemma~\ref{lem:error-preservation} (Error Preservation) that
+      $\config{S_a}{e_{b_1}} \parstepsto \error$.  Since $\error$ is
+      equal to $\config{\topS}{e}$ for all expressions $e$,
       $\config{S_a}{e_{b_1}} \parstepsto \config{\topS}{e}$ for all
       $e$.  Therefore, by {\sc E-Eval-Ctxt},
       $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto

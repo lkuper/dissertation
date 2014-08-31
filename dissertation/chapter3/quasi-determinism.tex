@@ -249,6 +249,30 @@ property; in fact, it is reminiscent of the generalized frame rule of
 the ``Views'' framework~\cite{views}, which I discuss in more detail
 in Section~\ref{s:related-frame-properties-and-separation-logics}.
 
+\subsection{Error Preservation}
+
+Lemma~\ref{lem:error-preservation}, Error Preservation, is the
+$\lambdaLVish$ counterpart of Lemma~\ref{lem:lvars-error-preservation}
+from Chapter~\ref{ch:lvars}.  It says that if a configuration
+$\config{S}{e}$ steps to $\error$, then evaluating $e$ in the context
+of some larger store will also result in $\error$.
+
+\LemErrorPreservation
+\begin{proof}
+  Suppose $\config{S}{e} \parstepsto \error$ and
+  $\leqstore{S}{S'}$. We are required to show that $\config{S'}{e}
+  \parstepsto \error$.
+
+  By inspection of the operational semantics, the only rule by which
+  $\config{S}{e}$ can step to $\error$ is {\sc E-Put-Err}.  Hence $e =
+  \putiexp{l}$.  From the premises of {\sc E-Put-Err}, we have that
+  $S(l) = p_1$.  Since $\leqstore{S}{S'}$, it must be the case that
+  $S'(l) = p'_1$, where $p_1 \leqp p'_1$.  Since $u_{p_i}(p_1) =
+  \topp$, we have that $u_{p_i}(p'_1) = \topp$.  Hence, by {\sc
+    E-Put-Err}, $\config{S'}{\putiexp{l}} \parstepsto \error$, as we
+  were required to show.
+\end{proof}
+
 \subsection{Quasi-Confluence}\label{subsection:quasi-quasi-confluence}
 
 Lemma~\ref{lem:strong-local-quasi-confluence} says that if a
