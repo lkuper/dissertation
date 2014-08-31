@@ -36,7 +36,7 @@ generalize the model as follows.  For an LVar with lattice $(D,
 two conditions:
 \begin{itemize}
 \item $\forall d, i.     \;\; d \userleq u_i(d) $
-\item $\forall d, i, j.  \;\; u_i(u_j(d)) = y_j(u_i(d)) $
+\item $\forall d, i, j.  \;\; u_i(u_j(d)) = u_j(u_i(d)) $
 \end{itemize}
 The first of these conditions says that each update operation is
 inflationary with respect to $\userleq$.  The second condition says
@@ -99,7 +99,7 @@ counters.\footnote{Unlike \il{put}, arbitrary update operations are
 In Chapter~\ref{ch:quasi}, in addition to extending $\lambdaLVar$ to
 support the new features of \emph{freezing} and \emph{event handlers},
 I generalize the @put@ operation to allow arbitrary update operations.
-The @put@ operation becomes a family of operations $\PUTI$, with each
+The @put@ operation becomes a family of operations $\PUTi$, with each
 corresponding to an update operation $u_i$.  The resulting generalized
 language definition is therefore parameterized not only by an
 application-specific lattice, but also by an application-specific set
@@ -156,9 +156,9 @@ writes \il{T} and then later changes its mind to \il{F}.
 The lattice induces a lub operation on pairs of states; for instance,
 the lub of $\andlv{T}{Bot}$ and $\andlv{Bot}{F}$ is $\andlv{T}{F}$,
 and the lub of $\andlv{T}{Bot}$ and $\andlv{F}{Bot}$ is \il{Top} since
-the overlapping \il{T} and \il{F} values conflict.  As usual for
-LVars, the @put@ operation updates the $\mathrm{AndLV}$'s state to the
-lub of the incoming state and the current state.
+the overlapping \il{T} and \il{F} values conflict.  The @put@
+operation updates the $\mathrm{AndLV}$'s state to the lub of the
+incoming state and the current state.
 
 We are interested in learning whether the result of our parallel
 ``and'' computation is ``true'' or ``false''.  Let's consider what
