@@ -1,6 +1,4 @@
 \begin{proof}
-  \TODO{Revise to mention permutations.}
-
   We proceed by induction on $m$.  In the base case of $m = 1$, the
   result is immediate from
   Lemma~\ref{lem:strong-local-quasi-confluence}, with $k = 1$.
@@ -12,9 +10,9 @@
 
   We are required to show that either:
   \begin{enumerate}
-    \item there exist $\conf_c, i,
-      j$ such that $\conf' \ctxstepsto^{i} \conf_c$ and $\conf'''
-      \ctxstepsto^{j} \conf_c$ and $i \leq m + 1$ and $j \leq 1$, or
+    \item there exist $\conf_c, i, j, \pi$ such that $\conf'
+      \ctxstepsto^{i} \conf_c$ and $\pi(\conf''') \ctxstepsto^{j}
+      \conf_c$ and $i \leq m + 1$ and $j \leq 1$, or
     \item there exists $k \leq m + 1$ such that $\conf' \ctxstepsto^k
       \error$, or there exists $k \leq 1$ such that $\conf'''
       \ctxstepsto^k \error$.
@@ -22,9 +20,9 @@
 
   From the induction hypothesis, we have that either:
   \begin{enumerate}
-    \item there exist $\conf_c', i',
-      j'$ such that $\conf' \ctxstepsto^{i'} \conf_c'$ and $\conf''
-      \ctxstepsto^{j'} \conf_c'$ and $i' \leq m$ and $j' \leq 1$, or
+    \item there exist $\conf_c', i', j', \pi'$ such that $\conf'
+      \ctxstepsto^{i'} \conf_c'$ and $\pi'(\conf'') \ctxstepsto^{j'}
+      \conf_c'$ and $i' \leq m$ and $j' \leq 1$, or
     \item there exists $k' \leq m$ such that $\conf'
       \ctxstepsto^{k'} \error$, or there exists $k' \leq 1$ such that
       $\conf'' \ctxstepsto^{k'} \error$.
@@ -32,44 +30,68 @@
 
   We consider these two cases in turn:
   \begin{enumerate}
-    \item There exist $\conf_c', i',
-      j'$ such that $\conf' \ctxstepsto^{i'} \conf_c'$ and $\conf''
-      \ctxstepsto^{j'} \conf_c'$ and $i' \leq m$ and $j' \leq 1$:
-
-      \lk{This gets very hairy.  I could spell things out in more
-        detail, but it's MUCH better explained with a drawing, which
-        I'm happy to do later. :)}
+    \item There exist $\conf_c', i', j', \pi'$ such that $\conf'
+      \ctxstepsto^{i'} \conf_c'$ and $\pi'(\conf'') \ctxstepsto^{j'}
+      \conf_c'$ and $i' \leq m$ and $j' \leq 1$:
 
       We proceed by cases on $j'$:
       \begin{itemize}
 
-      \item If $j' = 0$, then $\conf'' = \conf_c'$.  We can then
-        choose $\conf_c = \conf'''$ and $i = i' + 1$ and $j = 0$.
+      \item If $j' = 0$, then $\pi'(\conf'') = \conf_c'$.
 
+        Since $\conf'' \ctxstepsto \conf'''$, we have that
+        $\pi'(\conf'') \ctxstepsto \pi'(\conf''')$ by
+        Lemma~\ref{lem:permutability} (Permutability).
+
+        We can then choose $\conf_c = \pi'(\conf''')$ and $i = i' + 1$
+        and $j = 0$ and $\pi = \pi'$.  The key is that $\conf'
+        \ctxstepsto^{i'} \conf'_c = \pi'(\conf'') \ctxstepsto
+        \pi'(\conf''')$ for a total of $i' + 1$ steps.
         
       \item If $j' = 1$:
+
+        First, since $\pi'(\conf'') \ctxstepsto^{j'} \conf'_c$, then
+        by Lemma~\ref{lem:permutability} (Permutability) we have that
+        $\conf'' \ctxstepsto^{j'} \piprimeinv(\conf'_c)$.
         
-        From $\conf'' \ctxstepsto \conf'''$ and $\conf''
-        \ctxstepsto^{j'} \conf_c'$ and
+        Then, by $\conf'' \ctxstepsto^{j'} \piprimeinv(\conf'_c)$ and
+        $\conf'' \ctxstepsto \conf'''$ and
         Lemma~\ref{lem:strong-local-quasi-confluence}, one of the
         following two cases is true:
         \begin{enumerate}
-        \item There exist $\conf_c''$ and $i''$ and $j''$ such that
-          $\conf'_c \ctxstepsto^{i''} \conf_c''$ and $\conf'''
-          \ctxstepsto^{j''} \conf_c''$ and $i'' \leq 1$ and $j''
-          \leq 1$.  So we also have $\conf' \ctxstepsto^{i'}
-          \conf_c' \ctxstepsto^{i''} \conf_c''$.  In summary, we
-          pick $\conf_c = \conf_c''$ and $i = i' + i''$ and $j =
-          j''$, which is sufficient because $i = i' + i'' \leq m +
-          1$ and $j = j'' \leq 1$.
-        \item $\conf''' \ctxstepsto \error$ or $\conf'_c \ctxstepsto
-          \error$.
+        \item There exist $\conf_c''$ and $i''$ and $j''$ and $\pi''$
+          such that $\piprimeinv(\conf'_c) \ctxstepsto^{i''}
+          \conf_c''$ and $\pi''(\conf''') \ctxstepsto^{j''} \conf_c''$
+          and $i'' \leq 1$ and $j'' \leq 1$.
+
+          Since $\piprimeinv(\conf'_c) \ctxstepsto^{i''} \conf_c''$,
+          by Lemma~\ref{lem:permutability} (Permutability) we have
+          that $\conf'_c \ctxstepsto^{i''} \pi'(\conf_c'')$.
+
+          So we also have $\conf' \ctxstepsto^{i'} \conf_c'
+          \ctxstepsto^{i''} \pi'(\conf_c'')$.
+
+          Since $\pi''(\conf''') \ctxstepsto^{j''} \conf_c''$, by
+          Lemma~\ref{lem:permutability} (Permutability) we have that
+          $\pi'(\pi''(\conf''')) \ctxstepsto^{j''} \pi'(\conf_c'')$.
+
+          In summary, we pick $\conf_c = \pi'(\conf_c'')$ and $i = i' + i''$
+          and $j = j''$ and $\pi = \pi'' \circ \pi'$, which is sufficient
+          because $i = i' + i'' \leq m + 1$ and $j = j'' \leq 1$.
+
+        \item $\piprimeinv(\conf'_c) \ctxstepsto \error$ or $\conf'''
+          \ctxstepsto \error$.
 
           If $\conf''' \ctxstepsto \error$, then choosing $k = 1$
           satisfies the proof.
 
-          Otherwise, $\conf'_c \ctxstepsto \error$, therefore $\conf'
-          \ctxstepsto^{i'} \conf'_c \ctxstepsto \error$.
+          Otherwise, $\piprimeinv(\conf'_c) \ctxstepsto \error$.
+          Then, by Lemma~\ref{lem:permutability} we have that
+          $\conf'_c \ctxstepsto \pi'(\error)$.  By
+          Definition~\ref{def:permutation-configuration},
+          $\pi'(\error) = \error$, and so $\conf'_c \ctxstepsto
+          \error$. Therefore $\conf' \ctxstepsto^{i'} \conf'_c
+          \ctxstepsto \error$.
 
           Hence $\conf' \ctxstepsto^{i'+1} \error$.
 
@@ -105,13 +127,16 @@
         following two cases is true:
 
         \begin{enumerate}
-        \item There exist $\conf_c''$ and $i''$ and $j''$ such that
-          $\error \ctxstepsto^{i''} \conf_c''$ and $\conf'''
-          \ctxstepsto^{j''} \conf_c''$ and $i'' \leq 1$ and $j''
-          \leq 1$.
+        \item There exist $\conf_c''$ and $i''$ and $j''$ and $\pi''$
+          such that $\error \ctxstepsto^{i''} \conf_c''$ and
+          $\pi''(\conf''') \ctxstepsto^{j''} \conf_c''$ and $i'' \leq
+          1$ and $j'' \leq 1$.
 
           Since $\error$ cannot step, $i'' = 0$ and $\conf''_c =
           \error$.
+
+          By Definition~\ref{def:permutation-configuration},
+          $\pi''(\conf''') = \conf'''$.
 
           Hence $\conf''' \ctxstepsto^{j''} \error$.
 
