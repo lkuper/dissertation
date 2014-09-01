@@ -162,20 +162,20 @@ property in a way that will allow it to accommodate any update
 operation from the given set $U$.
 
 Therefore, I define a \emph{store update operation} $U_S$ to be a
-function from stores to stores that can add new bindings and update
-existing bindings using operations $u_i$ from the given set $U$ of
-update operations (or, more specifically, their lifted versions
-$u_{p_i}$).
+function from stores to stores that can add new bindings, update the
+contents of existing locations using operations $u_i$ from the given
+set $U$ of update operations (or, more specifically, their lifted
+versions $u_{p_i}$), or freeze the contents of existing locations.
 
 \DefStoreUpdateOperation
 
 Definition~\ref{def:store-update-operation} says that applying $U_S$
-to $S$ updates the contents of each $l \in \dom{S}$, using some
-$u_{p_i} \in U_p$.  Since the identity function is always implicitly a
-member of $U_p$, $U_S$ can act as the identity on the contents of
-locations $l \in \dom{S}$.  $U_S$ can also add new bindings to the
-store it operates on; however, it cannot change existing location
-names.
+to $S$ either updates (using some $u_{p_i} \in U_p$) or freezes the
+contents of each $l \in \dom{S}$.  Since the identity function is
+always implicitly a member of $U_p$, $U_S$ can act as the identity on
+the contents of locations $l \in \dom{S}$.  $U_S$ can also add new
+bindings to the store it operates on; however, it cannot change
+existing location names.
 
 With Definition~\ref{def:store-update-operation} in hand, we can state
 a more general version of the Independence lemma:
@@ -210,11 +210,11 @@ $\config{S}{e}$ to $\config{S'}{e'}$, then $l \notin \dom{U_S(S)}$
 The third precondition on $U_S$ has to do with freezing: $U_S$ must be
 \emph{freeze-safe} with the transition $\config{S}{e} \parstepsto
 \config{S'}{e'}$, which mean that, for any locations that change in
-status (that is, become frozen) during the transition, $U_S$ acts as
-the identity on those locations.  This precondition is only needed in
-the {\sc E-Freeze-Final} and {\sc E-Freeze-Simple} cases, and it has
-the effect of ruling out interference from freezing.  (Note that $U_S$
-need not act as the identity on the contents of locations that are
+status (that is, become frozen) during the transition, $U_S$ cannot
+update the contents of those locations.  This precondition is only
+needed in the {\sc E-Freeze-Final} and {\sc E-Freeze-Simple} cases,
+and it has the effect of ruling out interference from freezing.  (Note
+that $U_S$ need not avoid updating the contents of locations that are
 \emph{already} frozen before the transition takes place.  This
 corresponds to the fact that, if an LVar is already frozen, arbitrary
 updates to it \emph{do}, in fact, commute with freeze operations on

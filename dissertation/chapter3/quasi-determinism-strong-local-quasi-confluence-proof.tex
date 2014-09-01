@@ -216,9 +216,8 @@
       The first of these follows immediately from $\config{S}{e_{b_1}}
       \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
       the second, note that $S_b = U_S(S)$, where $U_S$ is the store
-      update operation that updates the contents of $l$ to
-      $\state{d_1}{\frozentrue}$ and acts as the identity on the
-      contents of all other locations.  Note that:
+      update operation that freezes the contents of $l$ and acts as
+      the identity on the contents of all other locations.  Note that:
       \begin{itemize}
         \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
           \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
@@ -641,9 +640,9 @@
       as we were required to show.
 
       For the second, consider that $\extS{S}{l'}{d_1}{\frozentrue} =
-      U_S(S)$, where $U_S$ is the store update operation that updates
-      the contents of $l'$ to $\state{d_1}{\frozentrue}$ and acts as
-      the identity on the contents of all other locations.  Note that:
+      U_S(S)$, where $U_S$ is the store update operation that freezes
+      the contents of $l'$ and acts as the identity on the contents of
+      all other locations.  Note that:
       \begin{itemize}
         \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
           \parstepsto \config{S_a}{e_{a_2}}$, since the only location
