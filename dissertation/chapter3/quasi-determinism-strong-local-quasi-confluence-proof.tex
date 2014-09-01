@@ -232,6 +232,9 @@
       \lk{Here in {\sc E-Beta} we could've done that with the other
         cases, too, instead of appealing to Independence...}
 
+      \TODO{See if I can redo this case using Independence, now that
+        I've tweaked the reqs for it.}
+
     \item \label{slqc-beta-freeze-simple}Case {\sc E-Freeze-Simple}:
       Similar to case~\ref{slqc-beta-freeze-final}, since $S_b =
       \extS{S}{l}{d_1}{\frozentrue}$.
@@ -583,7 +586,8 @@
       \extS{S}{l}{\bot}{\frozenfalse}$ and $S_b = S$.
     \item \label{slqc-new-freeze-final}Case {\sc E-Freeze-Final}: We
       have $S_a = \extS{S}{l}{\bot}{\frozenfalse}$ and $S_b =
-      \extS{S}{l'}{d_1}{\frozentrue}$.
+      \extS{S}{l'}{d_1}{\frozentrue}$, where $l \neq l'$ (since $l
+      \notin \dom{S}$, but $l' \in \dom{S}$).
 
       Choose $S' =
       \extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}$,
@@ -599,7 +603,7 @@
       \item
         $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
         \ctxstepsto
-        \config{\extS{\extS{S}{l'}{d_1}{\frozentrue}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
+        \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
       \end{itemize}
 
       For the first of these, consider that
@@ -623,8 +627,50 @@
           that can change in status between $S$ and $S_b$ is $l'$, and
           $U_S$ acts as the identity on $l$.
       \end{itemize}
+      Therefore, by Lemma~\ref{lem:generalized-independence}
+      (Generalized Independence), we have that
+      $\config{U_S(S)}{e_{b_1}} \parstepsto
+      \config{U_S(S_b)}{e_{b_2}}$.  Hence
+      $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
+      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{e_{b_2}}$.
+      By {\sc E-Eval-Ctxt}, it follows that
+      $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
+      \parstepsto
+      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+      as we were required to show.
 
-      \TODO{}
+      For the second, consider that $\extS{S}{l'}{d_1}{\frozentrue} =
+      U_S(S)$, where $U_S$ is the store update operation that updates
+      the contents of $l'$ to $\state{d_1}{\frozentrue}$ and acts as
+      the identity on the contents of all other locations.  Note that:
+      \begin{itemize}
+        \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+          \parstepsto \config{S_a}{e_{a_2}}$, since the only location
+          allocated during the transition is $l$, and $l \neq l'$;
+        \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
+          \extS{S_a}{l'}{d_1}{\frozentrue} =
+          \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
+          \topS$ and the addition of a new binding
+          $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
+          become $\topS$; and
+        \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+          \parstepsto \config{S_a}{e_{a_2}}$, since $S_a =
+          \extS{S}{l}{\bot}{\frozenfalse}$ and $l \notin \dom{S}$, so
+          there are no locations whose contents differ in status
+          between $S$ and $S_a$.
+      \end{itemize}
+
+      Therefore, by Lemma~\ref{lem:generalized-independence}
+      (Generalized Independence), we have that
+      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      \config{U_S(S_a)}{e_{a_2}}$.  Hence
+      $\config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{a_1}} \parstepsto
+      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{e_{a_2}}$.
+      By {\sc E-Eval-Ctxt} it follows that
+      $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
+      \parstepsto
+      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$,
+      as we were required to show.
 
     \item \label{slqc-new-freeze-simple}Case {\sc E-Freeze-Simple}:
       Similar to case~\ref{slqc-new-freeze-final}, since $S_a =
