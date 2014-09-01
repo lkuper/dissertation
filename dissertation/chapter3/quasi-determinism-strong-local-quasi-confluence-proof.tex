@@ -474,10 +474,10 @@
         \parstepsto \config{S_b}{e_{b_2}}$, since no locations are
         allocated during the transition;
       \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
-        U_S(\extS{S_b}{l}{\bot}{\frozenfalse})$, \TODO{this looks
-          wrong} and we know $S_b \neq \topS$ and the addition of a
-        new binding $\storebinding{l}{\bot}{\frozenfalse}$ cannot
-        cause it to become $\topS$; and
+        \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
+        \topS$ and the addition of a new binding
+        $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
+        become $\topS$; and
       \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}} \parstepsto
         \config{S_b}{e_{b_2}}$, since $S_b =
         \extSRaw{S}{l'}{u_{p_i}(p_1)}$ and $u_{p_i}$ does not alter
