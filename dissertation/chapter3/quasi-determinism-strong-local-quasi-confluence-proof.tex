@@ -765,22 +765,84 @@
         \item If $l = l'$:
           Note that since $l = l'$, $p_1 = p'_1$ as well.
 
-          Choose $S' = \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$, $i =
-          1$, $j = 1$, and $\pi = \id$.
-
-          We have to show that:
+          Consider whether $u_{p_i}(u_{p_j}(p_1)) = \topp$:
           \begin{itemize}
-          \item
+          \item If $u_{p_i}(u_{p_j}(p_1)) = \topp$:
+
+            Chooose $\conf_c = \error$, $i = 1$, $j = 1$, and $\pi =
+            \id$.  We have to show that:
+
+            \begin{itemize}
+            \item
+              $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+              \ctxstepsto \error$, and
+            \item
+              $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{\evalctxt{E'_a}{e_{a_1}}}
+              \ctxstepsto \error$.
+            \end{itemize}
+
+            \TODO{}
+
+          \item If $u_{p_i}(u_{p_j}(p_1)) \neq \topp$:
+
+            Choose $S' = \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$, $i =
+            1$, $j = 1$, and $\pi = \id$.
+
+            We have to show that:
+            \begin{itemize}
+            \item
+              $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+              \ctxstepsto
+              \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_b}{e_{b_2}}}$,
+              and
+            \item
+              $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{\evalctxt{E'_a}{e_{a_1}}}
+              \ctxstepsto
+              \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_a}{e_{a_2}}}$.
+            \end{itemize}
+
+            For the first of these, consider that
+            $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
+            store update operation that applies $u_{p_i}$ to the
+            contents of $l$ if it exists.  Note that:
+            \begin{itemize}
+            \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+              \parstepsto
+              \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since no
+              locations are allocated during the transition;
+            \item $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) \neq \topS$, since
+              $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
+              \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$ and we know $S \neq
+              \topS$ and $u_{p_i}(u_{p_j}(p_1)) \neq \topp$ in this
+              case;
+            \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+              \parstepsto
+              \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
+              $u_{p_j}$ does not alter the status of $p'_1$.  (By
+              Definition~\ref{def:set-of-state-update-operations},
+              $u_{p_j}$ can only change the status bit of a location if
+              its contents are $\state{d}{\frozentrue}$ and $u_j(d) \neq
+              d$, in which case $u_{p_j}$ changes the contents of the
+              location to $\state{\top}{\frozenfalse}$; however, that
+              cannot be the case here since then $u_{p_j}(p_1)$ would be
+              $\topp$, contradicting the premise of {\sc E-Put}.)
+            \end{itemize}
+
+            Therefore, by Lemma~\ref{lem:generalized-independence}
+            (Generalized Independence), we have that
+            $\config{U_S(S)}{e_{b_1}} \parstepsto
+            \config{U_S(\extSRaw{S}{l}{u_{p_j}(p_1)})}{e_{b_2}}$.
+            Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
+            \parstepsto
+            \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{e_{b_2}}$.
+            By {\sc E-Eval-Ctxt}, it follows that
             $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
             \ctxstepsto
             \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_b}{e_{b_2}}}$,
-            and
-          \item
-            $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{\evalctxt{E'_a}{e_{a_1}}}
-            \ctxstepsto
-            \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_a}{e_{a_2}}}$.
+            as we were required to show.  The argument for the second
+            is symmetrical.
+
           \end{itemize}
-          \TODO{}
 
       \end{itemize}
 
