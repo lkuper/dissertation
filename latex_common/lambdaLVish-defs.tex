@@ -237,11 +237,13 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 \end{definition}
 }
 
-\newcommand{\DefEqualStatus}{
-\begin{definition}\label{def:equal-status}
-  Two stores $S$ and $S'$ are \emph{equal in status}
-  (written $S \statuseq S'$) iff for all $l \in (\dom{S} \cap \dom{S'})$, 
-  if $S(l) = \state{d}{\status}$ and $S'(l) = \state{d'}{\status'}$, then $\status = \status'$.
+\newcommand{\DefFreezeSafe}{
+\begin{definition}[freeze-safe store update operation]\label{def:freeze-safe-store-update-operation}
+  A store update operation $U_S$ is \emph{freeze-safe} with the
+  transition $\config{S}{e} \parstepsto \config{S'}{e'}$ iff, for all
+  locations $l$ such that $S(l) = \state{d_1}{frz_1}$ and $S'(l) =
+  \state{d_2}{frz_2}$ and $frz_1 \neq frz_2$, $U_S$ acts as the
+  identity on the contents of $l$.
 \end{definition}
 }
 

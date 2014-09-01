@@ -207,41 +207,45 @@ $\config{S}{e}$ to $\config{S'}{e'}$, then $l \notin \dom{U_S(S)}$
 
 \DefNonConflictingStoreUpdateOperation
 
-The third precondition on $U_S$ has to do with freezing: the stores
-$U_S(S')$ and $S$ must be \emph{equal in status}, which means that,
-for all the locations shared between them, the status bits of those
-locations agree.  This precondition is only needed in the {\sc
-  E-Freeze-Final} and {\sc E-Freeze-Simple} cases, and it has the
-effect of ruling out interference from freezing.  Interestingly,
-though, the precondition that $U_S(S')$ and $S$ be equal in status
-does not rule out all applications of the {\sc E-Freeze-Final} and
-{\sc E-Freeze-Simple} rules, because there \emph{are} @freeze@
-operations with which update operations commute: those where the LVar
-in question is already frozen!
+The third precondition on $U_S$ has to do with freezing: $U_S$ must be
+\emph{freeze-safe} with the transition $\config{S}{e} \parstepsto
+\config{S'}{e'}$, which mean that, for any locations that change in
+status (that is, become frozen) during the transition, $U_S$ acts as
+the identity on those locations.  This precondition is only needed in
+the {\sc E-Freeze-Final} and {\sc E-Freeze-Simple} cases, and it has
+the effect of ruling out interference from freezing.  (Note that $U_S$
+need not act as the identity on the contents of locations that are
+\emph{already} frozen before the transition takes place.  This
+corresponds to the fact that, if an LVar is already frozen, arbitrary
+updates to it \emph{do}, in fact, commute with freeze operations on
+it---although those later freeze operations will have no effect, and
+updates will either have no effect or raise an error.)
 
-\DefEqualStatus
+\DefFreezeSafe
 
 The two changes we have made to the Independence lemma---the use of
-$U_S$, and the requirement that the final store be equal in status to
-$S$---are orthogonal to each other, in accordance with the fact that
-\emph{arbitrary update operations} are an orthogonal language feature
-to \emph{freezing}.  A version of $\lambdaLVish$ that had freezing,
-but retained the least-upper-bound @put@ semantics of $\lambdaLVar$,
-could use the old formulation of the Independence lemma, taking the
-least upper bound of the original stores and a frame store $S''$, but
-it would still need to require that $\lubstore{S'}{S''} \statuseq S$.
-On the other hand, a version of the language \emph{without} freezing,
-but \emph{with} arbitrary updates, would still use $U_S$ but could
-leave out the requirement that $U_S(S')$ be equal in status to $S$.  I
-make particular note of the orthogonality of freezing and arbitrary
-updates because freezing introduces quasi-determinism, while arbitrary
-updates do not.\footnote{To rigorously show that arbitrary updates
-  retain full determinism and not merely quasi-determinism, I would
-  need to define yet another language, one that generalizes \il{put}
-  to $\PUTi$ but does not introduce freezing, and then prove
-  determinism for \emph{that} language.  Instead, I hope to informally
-  convince you that the quasi-determinism in $\lambdaLVish$ comes from
-  freezing, rather than from arbitrary updates.}
+$U_S$, and the requirement that $U_S$ be freeze-safe with the
+transition in question---are orthogonal to each other, in accordance
+with the fact that \emph{arbitrary update operations} are an
+orthogonal language feature to \emph{freezing}.  A version of
+$\lambdaLVish$ that had freezing, but retained the least-upper-bound
+@put@ semantics of $\lambdaLVar$, could use the old formulation of the
+Independence lemma, taking the least upper bound of the original
+stores and a frame store $S''$, but it would still need to have a
+requirement on $S''$ to rule out interference from freezing.  On the
+other hand, a version of the language \emph{without} freezing, but
+\emph{with} arbitrary updates, would still use $U_S$ but could leave
+out the requirement that it be freeze-safe (since the requirement
+would be vacuously true anyway).  I make particular note of the
+orthogonality of freezing and arbitrary updates because freezing
+introduces quasi-determinism, while arbitrary updates do
+not.\footnote{To rigorously show that arbitrary updates retain full
+  determinism and not merely quasi-determinism, I would need to define
+  yet another language, one that generalizes \il{put} to $\PUTi$ but
+  does not introduce freezing, and then prove determinism for
+  \emph{that} language.  Instead, I hope to informally convince you
+  that the quasi-determinism in $\lambdaLVish$ comes from freezing,
+  rather than from arbitrary updates.}
 
 Finally, although it no longer uses an explicit ``frame'' store, we
 can still think of Lemma~\ref{lem:generalized-independence} as a frame

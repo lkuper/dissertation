@@ -1,16 +1,17 @@
 \begin{proof}
   Consider arbitrary $U_S$ such that $U_S$ is non-conflicting with
   $\config{S}{e} \parstepsto \config{S'}{e'}$ and $U_S(S') \neq \topS$
-  and and $U_S(S') \statuseq S$.
+  and and $U_S$ is freeze-safe with $\config{S}{e} \parstepsto
+  \config{S'}{e'}$.
 
   To show: $\config{U_S(S)}{e} \parstepsto \config{U_S(S')}{e'}$.
 
   The proof is by cases on the rule of the reduction semantics by
   which $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since
   $\config{S'}{e'} \neq \error$, we do not need to consider the {\sc
-    E-Put-Err} rule.  The assumption that $U_S(S') \statuseq S$ is
-  only needed in the {\sc E-Freeze-Final} and {\sc E-Freeze-Simple}
-  cases.
+    E-Put-Err} rule.  The assumption that $U_S$ is freeze-safe with
+  $\config{S}{e} \parstepsto \config{S'}{e'}$ is only needed in the
+  {\sc E-Freeze-Final} and {\sc E-Freeze-Simple} cases.
 
   \begin{itemize}
 
@@ -189,9 +190,6 @@
 
     \item Case {\sc E-Freeze-Final}:
 
-      \lk{This case wouldn't work but for the $U_S(S') \statuseq S$
-        requirement, which makes it a no-op freeze.}
-
       Given:
       $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
             \dots}}{H}} \parstepsto
@@ -205,42 +203,72 @@
       From the premises of {\sc E-Freeze-Final}, $S(l) =
       \state{d_1}{\status_1}$.
 
-      By assumption, $U_S(\extS{S}{l}{d_1}{\frozentrue}) \statuseq S$.
+      We have two cases to consider:
+      \begin{itemize}
+        \item $\status_1 = \frozentrue$:
 
-      Hence it must be the case that $\status_1 = \frozentrue$.
+          In this case, $S(l) = \state{d_1}{\frozentrue}$.
 
-      Hence $S(l) = \state{d_1}{\frozentrue}$.
+          Let $u_{p_i}$ be the state update operation in $U_S$ that
+          affects the contents of $l$.  Hence $(U_S(S))(l) =
+          u_{p_i}(\state{d_1}{\frozentrue})$.
 
-      Let $u_{p_i}$ be the state update operation in $U_S$ that
-      affects the contents of $l$.  Hence $(U_S(S))(l) =
-      u_{p_i}(\state{d_1}{\frozentrue})$.
+          We know from
+          Definition~\ref{def:set-of-state-update-operations} that
+          $u_{p_i}(\state{d_1}{\frozentrue})$ is either
+          $\state{d_1}{\frozentrue}$ or $\state{\top}{\frozenfalse}$.
 
-      We know from Definition~\ref{def:set-of-state-update-operations}
-      that $u_{p_i}(\state{d_1}{\frozentrue})$ is either
-      $\state{d_1}{\frozentrue}$ or $\state{\top}{\frozenfalse}$.
+          But if $u_{p_i}(\state{d_1}{\frozentrue}) =
+          \state{\top}{\frozenfalse}$, then
+          $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$, which
+          contradicts our assumption that
+          $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$.  Hence
+          $u_{p_i}(\state{d_1}{\frozentrue}) =
+          \state{d_1}{\frozentrue}$.
 
-      But if $u_{p_i}(\state{d_1}{\frozentrue}) =
-      \state{\top}{\frozenfalse}$, then
-      $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$, which contradicts
-      our assumption that $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq
-      \topS$.  Hence $u_{p_i}(\state{d_1}{\frozentrue}) =
-      \state{d_1}{\frozentrue}$.
+          Hence $(U_S(S))(l) = \state{d_1}{\frozentrue}$, and we
+          already have from the premises of {\sc E-Freeze-Final} that
+          $\forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q}
+          \Rightarrow d_2 \in H)$.  Hence, by {\sc E-Freeze-Final}, we
+          have that
+          $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+                \dots}}{H}} \parstepsto
+          \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
 
-      Hence $(U_S(S))(l) = \state{d_1}{\frozentrue}$, and we already
-      have from the premises of {\sc E-Freeze-Final} that
-      $\forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q}
-      \Rightarrow d_2 \in H)$.  Hence, by {\sc E-Freeze-Final}, we
-      have that
-      $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}} \parstepsto
-      \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
+          Finally, since $u_{p_i}$ is the state update operation in
+          $U_S$ that affects the contents of $l$, and
+          $u_{p_i}(\state{d_1}{\frozentrue}) =
+          \state{d_1}{\frozentrue}$, we have that
+          $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
+          $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case is
+          satisfied.
 
-      Finally, since $u_{p_i}$ is the state update operation in $U_S$
-      that affects the contents of $l$, and
-      $u_{p_i}(\state{d_1}{\frozentrue}) = \state{d_1}{\frozentrue}$,
-      we have that $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
-      $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case is
-      satisfied.
+        \item $\status_1 = \frozenfalse$:
+
+          By assumption, $U_S$ is freeze-safe with
+          $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+                \dots}}{H}} \parstepsto
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.  Therefore
+          $U_S$ acts as the identity on the contents of any locations
+          that change status during the transition.  Since $\status_1
+          = \frozenfalse$, the contents of $l$ change status during
+          the transition.  Therefore $U_S$ acts as the identity on the
+          contents of $l$.
+
+          Hence $(U_S(S))(l) = S(l) = \state{d_1}{\status_1}$, and we
+          already have from the premises of {\sc E-Freeze-Final} that
+          $\forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q}
+          \Rightarrow d_2 \in H)$.  Hence, by {\sc E-Freeze-Final}, we
+          have that
+          $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+                \dots}}{H}} \parstepsto
+          \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
+
+          Finally, since $U_S$ acts as the identity on the contents of
+          $l$, we have that $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is
+          equal to $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the
+          case is satisfied.
+      \end{itemize}
 
     \item Case {\sc E-Freeze-Simple}:
 
@@ -253,37 +281,63 @@
       From the premises of {\sc E-Freeze-Simple}, $S(l) =
       \state{d_1}{\status_1}$.
 
-      By assumption, $U_S(\extS{S}{l}{d_1}{\frozentrue}) \statuseq S$.
+      We have two cases to consider:
+      \begin{itemize}
+        \item $\status_1 = \frozentrue$:
 
-      Hence it must be the case that $\status_1 = \frozentrue$.
+          In this case, $S(l) = \state{d_1}{\frozentrue}$.
 
-      Hence $S(l) = \state{d_1}{\frozentrue}$.
+          Let $u_{p_i}$ be the state update operation in $U_S$ that
+          affects the contents of $l$.  Hence $(U_S(S))(l) =
+          u_{p_i}(\state{d_1}{\frozentrue})$.
 
-      Let $u_{p_i}$ be the state update operation in $U_S$ that
-      affects the contents of $l$.  Hence $(U_S(S))(l) =
-      u_{p_i}(\state{d_1}{\frozentrue})$.
+          We know from
+          Definition~\ref{def:set-of-state-update-operations} that
+          $u_{p_i}(\state{d_1}{\frozentrue})$ is either
+          $\state{d_1}{\frozentrue}$ or $\state{\top}{\frozenfalse}$.
 
-      We know from Definition~\ref{def:set-of-state-update-operations}
-      that $u_{p_i}(\state{d_1}{\frozentrue})$ is either
-      $\state{d_1}{\frozentrue}$ or $\state{\top}{\frozenfalse}$.
+          But if $u_{p_i}(\state{d_1}{\frozentrue}) =
+          \state{\top}{\frozenfalse}$, then
+          $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$, which
+          contradicts our assumption that
+          $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$.  Hence
+          $u_{p_i}(\state{d_1}{\frozentrue}) =
+          \state{d_1}{\frozentrue}$.
 
-      But if $u_{p_i}(\state{d_1}{\frozentrue}) =
-      \state{\top}{\frozenfalse}$, then
-      $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$, which contradicts
-      our assumption that $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq
-      \topS$.  Hence $u_{p_i}(\state{d_1}{\frozentrue}) =
-      \state{d_1}{\frozentrue}$.
+          Hence $(U_S(S))(l) = \state{d_1}{\frozentrue}$.  Hence, by
+          {\sc E-Freeze-Simple}, we have that
+          $\config{U_S(S)}{\freeze{l}} \parstepsto
+          \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
 
-      Hence $(U_S(S))(l) = \state{d_1}{\frozentrue}$.  Hence, by {\sc
-        E-Freeze-Simple}, we have that $\config{U_S(S)}{\freeze{l}}
-      \parstepsto \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
+          Finally, since $u_{p_i}$ is the state update operation in
+          $U_S$ that affects the contents of $l$, and
+          $u_{p_i}(\state{d_1}{\frozentrue}) =
+          \state{d_1}{\frozentrue}$, we have that
+          $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
+          $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case is
+          satisfied.
 
-      Finally, since $u_{p_i}$ is the state update operation in $U_S$
-      that affects the contents of $l$, and
-      $u_{p_i}(\state{d_1}{\frozentrue}) = \state{d_1}{\frozentrue}$,
-      we have that $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
-      $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case is
-      satisfied.
+        \item $\status_1 = \frozenfalse$:
+
+          By assumption, $U_S$ is freeze-safe with
+          $\config{S}{\freeze{l}} \parstepsto
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.  Therefore
+          $U_S$ acts as the identity on the contents of any locations
+          that change status during the transition.  Since $\status_1
+          = \frozenfalse$, the contents of $l$ change status during
+          the transition.  Therefore $U_S$ acts as the identity on the
+          contents of $l$.
+
+          Hence $(U_S(S))(l) = S(l) = \state{d_1}{\status_1}$.  Hence,
+          by {\sc E-Freeze-Simple}, we have that
+          $\config{U_S(S)}{\freeze{l}} \parstepsto
+          \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
+
+          Finally, since $U_S$ acts as the identity on the contents of
+          $l$, we have that $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is
+          equal to $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the
+          case is satisfied.
+      \end{itemize}
 
   \end{itemize}
 \end{proof}

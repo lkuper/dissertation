@@ -118,9 +118,10 @@
         allocated during the transition;
         \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
           and we know that $\conf_b \neq \error$; and
-        \item $U_S(S_a) \statuseq S$, since $U_S(S_a) = S_b$ and $S_b$
-          does not differ from $S$ in the status bits of any shared
-          locations.
+        \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+          \parstepsto \config{S_a}{e_{a_2}}$, since $S_a = S$, so
+          there are no locations whose contents differ in status
+          between them.
       \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
@@ -157,16 +158,10 @@
         allocated during the transition;
         \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
           and we know that $\conf_b \neq \error$; and
-        \item $U_S(S_a) \statuseq S$, since $U_S(S_a) = S_b$ and $S_b$
-          does not differ from $S$ in the status bits of any shared
-          locations.  (By
-          Definition~\ref{def:set-of-state-update-operations},
-          $u_{p_i}$ can only change the status bit of a location if
-          its contents are $\state{d}{\frozentrue}$ and $u_i(d) \neq
-          d$, in which case $u_{p_i}$ changes the contents of the
-          location to $\state{\top}{\frozenfalse}$; however, that
-          cannot be the case here since then $S_b$ would be $\topS$,
-          contradicting our assumption that $\conf_b \neq \error$.)
+        \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+          \parstepsto \config{S_a}{e_{a_2}}$, since $S_a = S$, so
+          there are no locations whose contents differ in status
+          between them.
       \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
@@ -291,10 +286,11 @@
             bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
             $\storebinding{l'}{\bot}{\frozenfalse}$ cannot cause it to
             become $\topS$; and
-          \item $U_S(S_b) \statuseq S$, since $U_S(S_b) =
-            \extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$,
-            which does not differ from $S$ in the status bits of any
-            shared locations.
+          \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+            \parstepsto \config{S_b}{e_{b_2}}$, since $S_b =
+            \extS{S}{l'}{\bot}{\frozenfalse}$ and $l' \notin \dom{S}$,
+            so there are no locations whose contents differ in status
+            between $S$ and $S_b$.
           \end{itemize}
 
           Therefore, by Lemma~\ref{lem:generalized-independence}
@@ -324,10 +320,11 @@
           configuration in which exactly one occurrence of $l$ has
           been renamed to a fresh location $l''$.
 
-          Let $l''$ be a location such that $l'' \notin S$ and $l''
-          \neq l$ (and hence $l'' \neq l'$, as well).  Then choose $S'
-          = \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$, $i = 1$, $j =
-          1$, and $\pi = \setof{(l, l'')}$.
+          Let $l''$ be a location such that $l'' \notin \dom{S}$ and
+          $l'' \neq l$ (and hence $l'' \neq l'$, as well).  Then
+          choose $S' =
+          \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$,
+          $i = 1$, $j = 1$, and $\pi = \setof{(l, l'')}$.
 
           Either
           $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{\pi(e_{a_2})}}$
@@ -378,11 +375,12 @@
             bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
             $\storebinding{l''}{\bot}{\frozenfalse}$ cannot cause it
             to become $\topS$; and
-          \item $U_S(\extS{S}{l''}{\bot}{\frozenfalse}) \statuseq S$,
-            since $U_S(\extS{S}{l''}{\bot}{\frozenfalse}) =
-            \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$,
-            which does not differ from $S$ in the status bits of any
-            shared locations.
+          \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+            \parstepsto
+            \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$,
+            since $l'' \notin \dom{S}$, so there are no locations
+            whose contents differ in status between $S$ and
+            $\extS{S}{l''}{\bot}{\frozenfalse}$.
           \end{itemize}
 
           Therefore, by Lemma~\ref{lem:generalized-independence}
@@ -423,10 +421,11 @@
             bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
             $\storebinding{l''}{\bot}{\frozenfalse}$ cannot cause it
             to become $\topS$; and
-          \item $U_S(S_a) \statuseq S$, since $U_S(S_a) =
-            \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$,
-            which does not differ from $S$ in the status bits of any
-            shared locations.
+          \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+            \parstepsto \config{S_a}{e_{a_2}}$, since $S_a =
+            \extS{S}{l}{\bot}{\frozenfalse}$ and $l \notin \dom{S}$,
+            so there are no locations whose contents differ in status
+            between $S$ and $S_a$.
           \end{itemize}
 
           Therefore, by Lemma~\ref{lem:generalized-independence}
@@ -474,21 +473,22 @@
       \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
         \parstepsto \config{S_b}{e_{b_2}}$, since no locations are
         allocated during the transition;
-        \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
-          U_S(\extS{S_b}{l}{\bot}{\frozenfalse})$, and we know $S_b
-          \neq \topS$ and the addition of a new binding
-          $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
-          become $\topS$; and
-        \item $U_S(S_b) \statuseq S$, since $U_S$ adds a binding that
-          does not occur in $S$, and $S_b$ does not differ from $S$ in
-          the status bits of any shared locations.  (By
-          Definition~\ref{def:set-of-state-update-operations},
-          $u_{p_i}$ can only change the status bit of a location if
-          its contents are $\state{d}{\frozentrue}$ and $u_i(d) \neq
-          d$, in which case $u_{p_i}$ changes the contents of the
-          location to $\state{\top}{\frozenfalse}$; however, that
-          cannot be the case here since then $S_b$ would be $\topS$,
-          contradicting our assumption that $\conf_b \neq \error$.)
+      \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
+        U_S(\extS{S_b}{l}{\bot}{\frozenfalse})$, \TODO{this looks
+          wrong} and we know $S_b \neq \topS$ and the addition of a
+        new binding $\storebinding{l}{\bot}{\frozenfalse}$ cannot
+        cause it to become $\topS$; and
+      \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}} \parstepsto
+        \config{S_b}{e_{b_2}}$, since $S_b =
+        \extSRaw{S}{l'}{u_{p_i}(p_1)}$ and $u_{p_i}$ does not alter
+        the status of $p_1$.  (By
+        Definition~\ref{def:set-of-state-update-operations}, $u_{p_i}$
+        can only change the status bit of a location if its contents
+        are $\state{d}{\frozentrue}$ and $u_i(d) \neq d$, in which
+        case $u_{p_i}$ changes the contents of the location to
+        $\state{\top}{\frozenfalse}$; however, that cannot be the case
+        here since then $S_b$ would be $\topS$, contradicting our
+        assumption that $\conf_b \neq \error$.)
       \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
@@ -524,10 +524,11 @@
         $\topS$ (since if $u_{p_i}(p_1) = \topp$,
         $\config{S}{e_{b_1}}$ would not have been able to step by {\sc
           E-Put}); and
-      \item $U_S(S_a) \statuseq S$, since $U_S(S_a) =
-        \extSRaw{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{u_{p_i}(p_1)}$,
-        which does not differ from $S$ in the status bits of any
-        shared locations.
+      \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}} \parstepsto
+        \config{S_a}{e_{a_2}}$, since $S_a =
+        \extS{S}{l}{\bot}{\frozenfalse}$ and $l \notin \dom{S}$, so
+        there are no locations whose contents differ in status between
+        $S$ and $S_a$.
       \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
@@ -585,21 +586,44 @@
       \extS{S}{l'}{d_1}{\frozentrue}$.
 
       Choose $S' =
-      \extS{\extS{S}{l'}{d_1}{\frozentrue}}{l'}{d_1}{\frozentrue}$, $i
-      = i$, $j = 1$, and $\pi = \id$.
+      \extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}$,
+      $i = i$, $j = 1$, and $\pi = \id$.
 
       We have to show that:
       \begin{itemize}
       \item
         $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
         \ctxstepsto
-        \config{\extS{\extS{S}{l'}{d_1}{\frozentrue}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+        \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
         and
       \item
         $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
         \ctxstepsto
         \config{\extS{\extS{S}{l'}{d_1}{\frozentrue}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
       \end{itemize}
+
+      For the first of these, consider that
+      $\extS{S}{l}{\bot}{\frozenfalse} = U_S(S)$, where $U_S$ is the
+      store update operation that acts as the identity on the contents
+      of all existing locations, and adds the binding
+      $\storebinding{l}{\bot}{\frozenfalse}$ if no binding for $l$
+      exists.  Note that:
+      \begin{itemize}
+        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+          \parstepsto \config{S_b}{e_{b_2}}$, since no locations are
+          allocated during the transition;
+        \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
+          \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
+          \topS$ and the addition of a new binding
+          $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
+          become $\topS$; and
+        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+          \parstepsto \config{S_b}{e_{b_2}}$, since $S_b =
+          \extS{S}{l'}{d_1}{\frozentrue}$ and so the only location
+          that can change in status between $S$ and $S_b$ is $l'$, and
+          $U_S$ acts as the identity on $l$.
+      \end{itemize}
+
       \TODO{}
 
     \item \label{slqc-new-freeze-simple}Case {\sc E-Freeze-Simple}:
