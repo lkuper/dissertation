@@ -418,19 +418,20 @@ keep the semantics a bit more faithful to the implementation.
   different ways: $\conf = \config{S}{\evalctxt{E_a}{e_{a_1}}} =
   \config{S}{\evalctxt{E_b}{e_{b_1}}}$, where $\evalctxt{E_a}{e_{a_1}}
   = \evalctxt{E_b}{e_{b_1}}$, but $E_a$ and $E_b$ may differ and
-  $e_{a_1}$ and $e_{b_1}$ may differ.  We can then apply the
-  Lemma~\ref{lem:lvars-locality} (Locality) lemma; at a high level, it
-  shows that $e_{a_1}$ and $e_{b_1}$ can step independently within
+  $e_{a_1}$ and $e_{b_1}$ may differ.  We can then apply the Locality
+  lemma (Lemma~\ref{lem:lvars-locality}); at a high level, it shows
+  that $e_{a_1}$ and $e_{b_1}$ can be evaluated independently within
   their contexts.
 
   The proof is then by a double case analysis on the rule of the
-  reduction semantics by which $e_{a_1}$ steps and by which $e_{b_1}$
-  steps.  In order to combine the results of the two steps, the proof
-  makes use of Lemma~\ref{lem:lvars-independence} (Independence).  The
-  most interesting case is that in which both expressions step by the
-  {\sc E-New} rule and they allocate locations with the same name.  In
-  that case, we can use Lemma~\ref{lem:lvars-permutability}
-  (Permutability) to rename locations so as not to conflict.  See
+  reduction semantics by which $\config{S}{e_{a_1}}$ steps and by
+  which $\config{S}{e_{b_1}}$ steps.  In order to combine the results
+  of the two steps, the proof makes use of the Independence lemma
+  (Lemma~\ref{lem:lvars-independence}).  The most interesting case is
+  that in which both steps are by the {\sc E-New} rule and they
+  allocate locations with the same name.  In that case, we can use the
+  Permutability lemma (Lemma~\ref{lem:lvars-permutability}) to rename
+  locations so as not to conflict.  See
   Section~\ref{section:lvars-strong-local-confluence-proof}.
 \end{proof}
 

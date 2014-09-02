@@ -13,12 +13,22 @@ same configuration (up to a permutation on locations), or one of them
 is $\error$.  As with the determinism proof for $\lambdaLVar$ that I
 give in Section~\ref{s:lvars-proof}, quasi-determinism follows from a
 series of supporting lemmas.  The basic structure of the proof follows
-that of the $\lambdaLVar$ determinism proof closely.  Unlike for
-$\lambdaLVar$, though, for $\lambdaLVish$ I do not need to prove a
-Clash lemma (\eg, Lemma~\ref{lem:lvars-clash}) or an Error
-Preservation lemma (\eg, Lemma~\ref{lem:lvars-error-preservation}).
-Those lemmas are unnecessary here because quasi-determinism is a
-weaker property than determinism.
+that of the $\lambdaLVar$ determinism proof closely.  However, instead
+of the Independence property that I show for $\lambdaLVar$
+(Lemma~\ref{lem:lvars-independence}), I prove a more general property,
+Generalized Independence (Lemma~\ref{lem:generalized-independence}),
+that accounts for the presence of both freezing and arbitrary update
+operations in $\lambdaLVish$.  Also, in the setting of $\lambdaLVish$,
+the Strong Local Confluence property
+(Lemma~\ref{lem:lvars-strong-local-confluence}) becomes Strong Local
+\emph{Quasi-}Confluence
+(Lemma~\ref{lem:strong-local-quasi-confluence}), which allows the
+possibility of an $\error$ result, and the quasi-confluence lemmas
+that follow, Strong One-sided Quasi-Confluence
+(Lemma~\ref{lem:strong-one-sided-quasi-confluence}), Strong
+Quasi-Confluence (Lemma~\ref{lem:lvars-strong-confluence}), and
+Quasi-Confluence (Lemma~\ref{lem:lvars-confluence}), all follow this
+pattern as well.
 
 \subsection{Permutations and permutability}\label{subsection:quasi-permutations}
 
@@ -306,11 +316,29 @@ arbitrary numbers of steps.
 
 \LemStrongLocalQuasiConfluence
 \begin{proof}
-  Similar to the proof of
-  Lemma~\ref{lem:lvars-strong-local-confluence} (Strong Local
-  Confluence for $\lambdaLVar$); see
-  Section~\ref{section:strong-local-quasi-confluence-proof}.
-  \TODO{Update description here once the proof is done.}
+  As in the proof of Strong Local Confluence for $\lambdaLVar$
+  (Lemma~\ref{lem:lvars-strong-local-confluence}), since the original
+  configuration $\conf$ can step in two different ways, its expression
+  decomposes into redex and context in two different ways: $\conf =
+  \config{S}{\evalctxt{E_a}{e_{a_1}}} =
+  \config{S}{\evalctxt{E_b}{e_{b_1}}}$, where $\evalctxt{E_a}{e_{a_1}}
+  = \evalctxt{E_b}{e_{b_1}}$, but $E_a$ and $E_b$ may differ and
+  $e_{a_1}$ and $e_{b_1}$ may differ.  We can then apply the
+  Lemma~\ref{lem:locality} (Locality) lemma; at a high level, it shows
+  that $e_{a_1}$ and $e_{b_1}$ can be evaluated independently within
+  their contexts.
+
+  The proof is then by a double case analysis on the rule of the
+  reduction semantics by which $\config{S}{e_{a_1}}$ steps and by
+  which $\config{S}{e_{b_1}}$ steps.  In order to combine the results
+  of the two steps, the proof makes use of the Generalized
+  Independence lemma~\ref{lem:generalized-independence}.  In almost
+  every case, there does exist a $\conf_c$ to which $\conf_a$ and
+  $\conf_b$ both step; the only cases in which we need to resort to
+  the $\error$ possibility are those in one step is by {\sc E-Put} and
+  the other is by {\sc E-Freeze-Final} or {\sc E-Freeze-Simple}---that
+  is, the situations in which a write-after-freeze error is possible.
+  See Section~\ref{section:strong-local-quasi-confluence-proof}.
 \end{proof}
 
 \LemStrongOneSidedQuasiConfluence
