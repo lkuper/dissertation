@@ -114,10 +114,18 @@ Section~\ref{subsection:lvars-confluence}.\footnote{For another
 
 \subsection{Internal determinism of the reduction semantics}
 
-\lk{I'm leaving this section in for the time being, but I don't
-  actually use this fact anywhere yet!  Could I have used it to
-  simplify the proof of Lemma~\ref{lem:lvars-strong-local-confluence}
-  or something?}
+\lk{According to Neel, I need this ``internal determinism'' fact in
+  order to prove Lemma~\ref{lem:lvars-strong-local-confluence}, to
+  handle the special (easy) case where $E_a = E_b$ and $e_{a_1} =
+  e_{b_1}$ (the interesting case is where they're different).  But I
+  don't believe that I actually need it, because
+  Lemma~\ref{lem:lvars-strong-local-confluence} doesn't \emph{require}
+  that they be different; it still applies if they're the same.  I'm
+  checking with Neel about this, but I think that this fact is
+  actually unnecessary.  If I'm right, I'll get rid of this
+  subsection.  If I'm wrong, then I need to not only keep it but also
+  prove a similar property for $\lambdaLVish$ in the next chapter.
+  So, I hope I'm right. :)}
 
 My goal is to show that $\lambdaLVar$ is deterministic according to
 the definition of \emph{observable determinism} that I gave in
