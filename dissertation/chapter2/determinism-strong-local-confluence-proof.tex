@@ -252,10 +252,10 @@
           configuration in which exactly one occurrence of $l$ has
           been renamed to a fresh location $l''$.
 
-          Let $l''$ be a location such that $l'' \notin S$ and $l''
-          \neq l$ (and hence $l'' \neq l'$, as well).  Then choose $S'
-          = \extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}$, $i = 1$, $j =
-          1$, and $\pi = \setof{(l, l'')}$.
+          Let $l''$ be a location such that $l'' \notin \dom{S}$ and
+          $l'' \neq l$ (and hence $l'' \neq l'$, as well).  Then
+          choose $S' = \extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}$, $i
+          = 1$, $j = 1$, and $\pi = \setof{(l, l'')}$.
 
           Either
           $\config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_a}{\pi(e_{a_2})}}$
@@ -316,8 +316,8 @@
           \extSRaw{S}{l}{\bot}$, we have that $\pi(S_b) =
           \extSRaw{S}{l''}{\bot}$.  Also, since $l$ does not occur in
           $e_{a_1}$, we have that $\pi(\evalctxt{E'_a}{e_{a_1}}) =
-          \evalctxt{(\pi(E'_a))}{e_{a_1}}$.  Hence we have to show that
-
+          \evalctxt{(\pi(E'_a))}{e_{a_1}}$.  Hence we have to show
+          that
           $\config{\extSRaw{S}{l''}{\bot}}{\evalctxt{(\pi(E'_a))}{e_{a_1}}}
           \ctxstepsto
           \config{\extSRaw{\extSRaw{S}{l''}{\bot}}{l}{\bot}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
