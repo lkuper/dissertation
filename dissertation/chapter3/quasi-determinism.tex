@@ -253,6 +253,21 @@ property; in fact, it is reminiscent of the generalized frame rule of
 the ``Views'' framework~\cite{views}, which I discuss in more detail
 in Section~\ref{s:related-frame-properties-and-separation-logics}.
 
+\subsection{Generalized Clash}
+
+The Generalized Clash lemma, Lemma~\ref{lem:generalized-clash}, is
+similar to the Generalized Independence lemma, but handles the case
+where $U_S(S') = \topS$.  It establishes that, in that case,
+$\config{U_S(S)}{e}$ steps to $\error$.
+
+\LemGeneralizedClash
+\begin{proof}
+  By cases on the rule of the reduction semantics by which
+  $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since $\config{S'}{e'}
+  \neq \error$, we do not need to consider the {\sc E-Put-Err} rule.
+  See Section~\ref{section:clash-proof}.
+\end{proof}
+
 \subsection{Error Preservation}
 
 Lemma~\ref{lem:error-preservation}, Error Preservation, is the

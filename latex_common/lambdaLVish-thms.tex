@@ -85,6 +85,25 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
 \end{lem}
 }
 
+\newcommand{\LemGeneralizedClash}{
+\begin{lem}[Generalized Clash]\label{lem:generalized-clash}
+  If $\config{S}{e} \parstepsto \config{S'}{e'}$ (where
+  $\config{S'}{e'} \neq \textup{\error}$), then we have that:
+
+  $\config{U_S(S)}{e} \parstepsto \error$,
+
+  where $U_S$ is a store update operation meeting the following conditions:
+  \begin{itemize}
+    \item $U_S$ is non-conflicting with $\config{S}{e} \parstepsto \config{S'}{e'}$,
+    \item $U_S(S') = \topS$, and
+    \item $U_S$ is freeze-safe with $\config{S}{e} \parstepsto \config{S'}{e'}$.
+  \end{itemize}
+  \TODO{Figure out exactly what the statement of this should be.
+    Maybe it should be $\config{U_S(S)}{e} \parstepsto^i \error$,
+    where $i \leq 1$.}
+\end{lem}
+}
+
 \newcommand{\LemErrorPreservation}{
 \begin{lem}[Error Preservation]\label{lem:error-preservation}
   If $\config{S}{e} \parstepsto \textup{\error}$ and
