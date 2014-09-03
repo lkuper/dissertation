@@ -68,12 +68,13 @@ are no longer limited to IVars).  Just as with monad-par, the LVish
 before @runPar@ can return.  Also, as before, we have @new@, @put@,
 and @get@ operations that respectively create, update, and read from
 @num@.  However, these operations now have LVar semantics: the @put@
-operation performs a least-upper-bound write, and the @get@ operation
-performs a threshold read, where the threshold set is implicitly the
-set of all @Int@s.  We do not need to explicitly write down the
-threshold set in the code; rather, it is the obligation of the
-@Data.LVar.IVar@ module to provide operations (@put@ and @get@) that
-have the semantic effect of least-upper-bound writes and threshold
+operation computes a lub (with respect to a lattice like that of
+Figure~\ref{f:lvars-example-lattices}(b), except including all the
+@Int@s), and the @get@ operation performs a threshold read, where the
+threshold set is implicitly the set of all @Int@s.  We do not need to
+explicitly write down the threshold set in the code; rather, it is the
+obligation of the @Data.LVar.IVar@ module to provide operations (@put@
+and @get@) that have the semantic effect of lub writes and threshold
 reads (as I touched on earlier in
 Section~\ref{subsection:lvars-the-model-versus-reality}).
 

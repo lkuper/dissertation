@@ -122,14 +122,10 @@ determinism result.
 The main technical result of this chapter is a proof of determinism
 for $\lambdaLVar$ (Section~\ref{s:lvars-proof}).  The key lemma,
 Independence (Section~\ref{subsection:lvars-independence}), gives a
-kind of \emph{frame property} for LVar computations: very roughly, if
-a computation takes an LVar from state $d$ to $d'$, then it would take
-the same LVar from the state $\userlub{d}{d_F}$ to
-$\userlub{d'}{d_F}$.  The Independence lemma captures the commutative
-effects of LVar computations.  Interestingly, such a property
-would \emph{not} hold in a typical language with shared mutable state,
-but holds in the setting of $\lambdaLVar$ because of the monotonic
-semantics of LVars and their @put@/@get@ interface.
+kind of \emph{frame property} that captures the commutative effects of
+LVar computations.  Such a property would \emph{not} hold in a typical
+language with shared mutable state, but holds in the setting of
+$\lambdaLVar$ because of the semantics of @put@ and @get@.
 
 Finally, in Section~\ref{s:lvars-generalizing}, I consider some
 alternative semantics for the @put@ and @get@ operations that

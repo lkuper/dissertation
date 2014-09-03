@@ -37,8 +37,8 @@ has \emph{fork-join} semantics: it launches concurrent subcomputations
 $e_1, e_2, \dots$ whose executions arbitrarily interleave, but must
 all complete before $\mathit{body}$ runs.  The @put@ operation is
 defined in terms of the application-specific lattice of LVar states:
-it updates the LVar to the \emph{least upper bound} of its current
-state and the new state being written.
+it updates the LVar to the \emph{least upper bound} (lub) of its
+current state and the new state being written.
 
 \begin{figure}
 \centering
@@ -56,24 +56,23 @@ state and the new state being written.
 If $\mathit{lv}$'s lattice is the $\leq$ ordering on positive
 integers, as shown in Figure~\ref{f:lvars-example-lattices}(a), then
 $\mathit{lv}$'s state will always be $\max(3, 2) = 3$ by the time
-$\GET~\mathit{lv}$ runs, since the least upper bound of two positive
-integers $n_1$ and $n_2$ is $\max(n_1, n_2)$.  Therefore
-\ref{e:lvar-example-1} will deterministically evaluate to $3$,
-regardless of the order in which the two @put@ operations occurred.
+$\GET~\mathit{lv}$ runs, since the lub of two positive integers $n_1$
+and $n_2$ is $\max(n_1, n_2)$.  Therefore \ref{e:lvar-example-1} will
+deterministically evaluate to $3$, regardless of the order in which
+the two @put@ operations occurred.
 
 On the other hand, if $\mathit{lv}$'s lattice is that shown in
-Figure~\ref{f:lvars-example-lattices}(b), in which the least upper
-bound of any two distinct positive integers is $\top$, then
-\ref{e:lvar-example-1} will deterministically raise an exception,
-indicating that conflicting writes to $\mathit{lv}$ have occurred.
-This exception is analogous to the ``multiple @put@'' error raised
-upon multiple writes to an IVar.  Unlike with a traditional IVar,
-though, multiple writes of the \emph{same} value (say,
-\putexp{\mathit{lv}}{3} and \putexp{\mathit{lv}}{3}) will \emph{not}
-raise an exception, because the least upper bound of any positive
-integer and itself is that integer---corresponding to the fact that
-multiple writes of the same value do not allow any nondeterminism to
-be observed.
+Figure~\ref{f:lvars-example-lattices}(b), in which the lub of any two
+distinct positive integers is $\top$, then \ref{e:lvar-example-1} will
+deterministically raise an exception, indicating that conflicting
+writes to $\mathit{lv}$ have occurred.  This exception is analogous to
+the ``multiple @put@'' error raised upon multiple writes to an IVar.
+Unlike with a traditional IVar, though, multiple writes of the
+\emph{same} value (say, \putexp{\mathit{lv}}{3} and
+\putexp{\mathit{lv}}{3}) will \emph{not} raise an exception, because
+the lub of any positive integer and itself is that
+integer---corresponding to the fact that multiple writes of the same
+value do not allow any nondeterminism to be observed.
 
 \subsection{Threshold reads}
 
@@ -205,8 +204,8 @@ threshold sets that make sense for a given data structure without ever
 explicitly constructing them.
 
 To put it another way, operations on a data structure exposed as an
-LVar must have the \emph{semantic effect} of a least upper bound for
-writes or a threshold for reads, but none of this need be visible to
-clients (or even written explicitly in the code).  Any data structure
-API that provides such a semantics is guaranteed to provide
-deterministic concurrent communication.
+LVar must have the \emph{semantic effect} of a lub for writes or a
+threshold for reads, but none of this need be visible to clients (or
+even written explicitly in the code).  Any data structure API that
+provides such a semantics is guaranteed to provide deterministic
+concurrent communication.

@@ -121,13 +121,12 @@ of CvRDTs to LVars.  We have taken a few steps in this direction---in
 fact, supporting the aforementioned commutative and inflationary
 updates is actually a step toward making LVars more like CvRDTs, since
 CvRDTs have always allowed arbitrary inflationary and commutative
-writes to individual replicas (the least-upper-bound operation is only
-used when replicas' states are \emph{merged} with one another).  But
-the LVars model could further benefit from applying techniques
-pioneered by CvRDTs to support data structures that allow seemingly
-non-monotonic updates, such as counters that support decrements as
-well as increments and sets that support removals as well as
-additions.
+writes to individual replicas (the lub operation is only used when
+replicas' states are \emph{merged} with one another).  But the LVars
+model could further benefit from applying techniques pioneered by
+CvRDTs to support data structures that allow seemingly non-monotonic
+updates, such as counters that support decrements as well as
+increments and sets that support removals as well as additions.
 
 Finally, a huge remaining difference between LVars and CvRDTs is that
 in the LVars model, we do not have to contend with replication!  The

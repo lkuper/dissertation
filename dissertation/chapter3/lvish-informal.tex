@@ -203,8 +203,8 @@ is guaranteed to produce a deterministic result.\footnote{In the LVish
   library, the \lstinline|Par| type constructor is the monad in which
   LVar computations run; see Chapter~\ref{ch:lvish} for details.}  It
 works by creating a fresh @Set@ LVar (corresponding to a lattice whose
-elements are sets, with set union as least upper bound), and seeding
-it with the starting node.
+elements are sets, with set union as lub), and seeding it with the
+starting node.
 
 The @freezeSetAfter@ function implements a set-specific variant of the
 freeze-after pattern I described above.  It combines freezing and

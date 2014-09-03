@@ -124,11 +124,10 @@ is, $\config{\lubstore{S}{S''}}{e} \parstepsto
 $S''$.
 
 For $\lambdaLVish$, we need to establish a similar frame property.
-However, since we have generalized from the least-upper-bound writes
-of the @put@ operation in Chapter~\ref{ch:lvars} to the arbitrary
-update operations discussed in
-Section~\ref{subsection:quasi-update-operations}, we also need to
-generalize our frame property.  In fact, the original
+However, since we have generalized from the lub writes of the @put@
+operation in Chapter~\ref{ch:lvars} to the arbitrary update operations
+discussed in Section~\ref{subsection:quasi-update-operations}, we also
+need to generalize our frame property.  In fact, the original
 Lemma~\ref{lem:lvars-independence} does not hold for $\lambdaLVish$ in
 general.  As an example, consider an LVar whose states form a lattice
 $\bot < 0 < 1 < \top$.  Consider the transition
@@ -165,11 +164,11 @@ What went wrong here?  The problem is that, as previously discussed in
 Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes},
 lub operations do not necessarily commute with arbitrary update
 operations.  In $\lambdaLVar$, where the only ``update operation'' is
-a least-upper-bound write performed via @put@, it is fine that the
-Independence lemma uses a lub operation to frame $S''$ onto the
-transition. For $\lambdaLVish$, though, we need to state our frame
-property in a way that will allow it to accommodate any update
-operation from the given set $U$.
+a lub write performed via @put@, it is fine that the Independence
+lemma uses a lub operation to frame $S''$ onto the transition. For
+$\lambdaLVish$, though, we need to state our frame property in a way
+that will allow it to accommodate any update operation from the given
+set $U$.
 
 Therefore, I define a \emph{store update operation} $U_S$ to be a
 function from stores to stores that can add new bindings, update the
@@ -238,24 +237,23 @@ $U_S$, and the requirement that $U_S$ be freeze-safe with the
 transition in question---are orthogonal to each other, in accordance
 with the fact that \emph{arbitrary update operations} are an
 orthogonal language feature to \emph{freezing}.  A version of
-$\lambdaLVish$ that had freezing, but retained the least-upper-bound
-@put@ semantics of $\lambdaLVar$, could use the old formulation of the
-Independence lemma, taking the least upper bound of the original
-stores and a frame store $S''$, but it would still need to have a
-requirement on $S''$ to rule out interference from freezing.  On the
-other hand, a version of the language \emph{without} freezing, but
-\emph{with} arbitrary updates, would still use $U_S$ but could leave
-out the requirement that it be freeze-safe (since the requirement
-would be vacuously true anyway).  I make particular note of the
-orthogonality of freezing and arbitrary updates because freezing
-introduces quasi-determinism, while arbitrary updates do
-not.\footnote{To rigorously show that arbitrary updates retain full
-  determinism and not merely quasi-determinism, I would need to define
-  yet another language, one that generalizes \il{put} to $\PUTi$ but
-  does not introduce freezing, and then prove determinism for
-  \emph{that} language.  Instead, I hope to informally convince you
-  that the quasi-determinism in $\lambdaLVish$ comes from freezing,
-  rather than from arbitrary updates.}
+$\lambdaLVish$ that had freezing, but retained the lub semantics of
+@put@ in $\lambdaLVar$, could use the old formulation of the
+Independence lemma, taking the lub of the original stores and a frame
+store $S''$, but it would still need to have a requirement on $S''$ to
+rule out interference from freezing.  On the other hand, a version of
+the language \emph{without} freezing, but \emph{with} arbitrary
+updates, would still use $U_S$ but could leave out the requirement
+that it be freeze-safe (since the requirement would be vacuously true
+anyway).  I make particular note of the orthogonality of freezing and
+arbitrary updates because freezing introduces quasi-determinism, while
+arbitrary updates do not.\footnote{To rigorously show that arbitrary
+  updates retain full determinism and not merely quasi-determinism, I
+  would need to define yet another language, one that generalizes
+  \il{put} to $\PUTi$ but does not introduce freezing, and then prove
+  determinism for \emph{that} language.  Instead, I hope to informally
+  convince you that the quasi-determinism in $\lambdaLVish$ comes from
+  freezing, rather than from arbitrary updates.}
 
 Finally, although it no longer uses an explicit ``frame'' store, we
 can still think of Lemma~\ref{lem:generalized-independence} as a frame
@@ -275,7 +273,7 @@ $\config{U_S(S)}{e}$ steps to $\error$.
   By cases on the rule of the reduction semantics by which
   $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since $\config{S'}{e'}
   \neq \error$, we do not need to consider the {\sc E-Put-Err} rule.
-  See Section~\ref{section:clash-proof}.
+  See Section~\ref{section:generalized-clash-proof}.
 \end{proof}
 
 \subsection{Error Preservation}

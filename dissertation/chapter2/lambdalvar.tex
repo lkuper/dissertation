@@ -46,8 +46,8 @@ returns $\unit$, the unit value.  The {\sc E-Put-Err} rule applies
 when a @put@ to a location would take its state to $\top$; in that
 case, the semantics steps to $\error$.  The incompatibility of the
 threshold set argument to @get@ is enforced in the {\sc E-Get} rule by
-the $\incomp{T}$ premise, which requires that the least upper bound of
-any two distinct elements in $T$ must be $\top$.\footnote{Although
+the $\incomp{T}$ premise, which requires that the lub of any two
+distinct elements in $T$ must be $\top$.\footnote{Although
   $\incomp{T}$ is given as a premise of the {\sc E-Get} reduction rule
   (suggesting that it is checked at runtime), as I noted earlier in
   Section~\ref{subsection:lvars-the-model-versus-reality}, in a real

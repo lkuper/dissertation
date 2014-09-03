@@ -1,11 +1,5 @@
-\newcommand{\DefStability}{
-  \begin{definition}[Stable Configurations]
-    A configuration $\config{S}{e}$ is \emph{stable} if the free locations of $e$ are a subset of $\dom{S}$. 
-  \end{definition}
-}
-
 \newcommand{\DefLatticeWithStatusBits}{
-\begin{definition}\label{def:lattice-with-status-bits}
+\begin{definition}[lattice with status bits]\label{def:lattice-with-status-bits}
 Suppose $(D, \userleq, \bot, \top)$ is a lattice.  We define an
 operation $\Freeze{D, \userleq, \bot, \top} \defeq (D_p, \leqp, \botp,
 \topp)$ as follows:
@@ -38,7 +32,7 @@ operation $\Freeze{D, \userleq, \bot, \top} \defeq (D_p, \leqp, \botp,
 }
 
 \newcommand{\DefLubP}{
-\begin{definition}\label{def:lubp}
+\begin{definition}[lub of states, $\lambdaLVish$]\label{def:lubp}
 We define a binary operator $\lubp{}{} \in D_p \times D_p \to D_p$ as
 follows:
   \begin{displaymath}
@@ -69,14 +63,14 @@ follows:
 
 
 \newcommand{\DefStore}{
-\begin{definition}\label{def:store}
+\begin{definition}[store, $\lambdaLVish$]\label{def:store}
 A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 - \setof{\topp})$, or the distinguished element $\topS$.
 \end{definition}
 }
 
 \newcommand{\DefEqStore}{
-\begin{definition}\label{def:eqstore}
+\begin{definition}[equality of stores, $\lambdaLVish$]\label{def:eqstore}
   Two stores $S$ and $S'$ are \emph{equal} iff:
   \begin{enumerate}
     \item $S = \topS$ and $S' = \topS$, or
@@ -87,7 +81,7 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 }
 
 \newcommand{\DefLeqStore}{
-\begin{definition}\label{def:leqstore}
+\begin{definition}[store ordering, $\lambdaLVish$]\label{def:leqstore}
   A store $S$ is \emph{less than or equal to} a store $S'$ (written
   $\leqstore{S}{S'}$) iff:
   \begin{itemize}
@@ -99,9 +93,9 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 }
 
 \newcommand{\DefLubStore}{
-\begin{definition}\label{def:lubstore}
+\begin{definition}[lub of stores, $\lambdaLVish$]\label{def:lubstore}
 
-  The \emph{least upper bound (lub)} of two stores $S_1$ and $S_2$ (written
+  The lub of two stores $S_1$ and $S_2$ (written
   $\lubstore{S_1}{S_2}$) is defined as follows:
 
   \begin{itemize}
@@ -126,7 +120,7 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 }
 
 \newcommand{\DefPermutation}{
-\begin{definition}[permutation]\label{def:permutation}
+\begin{definition}[permutation, $\lambdaLVish$]\label{def:permutation}
   A \emph{permutation} is a function $\pi : \Loc \rightarrow \Loc$
   such that:
   \begin{enumerate}
@@ -140,7 +134,7 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 }
 
 \newcommand{\DefPermutationExpression}{
-\begin{definition}[permutation (expressions)]\label{def:permutation-expression}
+\begin{definition}[permutation of an expression, $\lambdaLVish$]\label{def:permutation-expression}
   A \emph{permutation} of an expression $e$ is a function $\pi$ defined as
   follows:
   \begin{displaymath}
@@ -166,7 +160,7 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 }
 
 \newcommand{\DefPermutationStore}{
-\begin{definition}[permutation (stores)]\label{def:permutation-store}
+\begin{definition}[permutation of a store, $\lambdaLVish$]\label{def:permutation-store}
   A \emph{permutation} of a store $S$ is a function $\pi$ defined as
   follows:
   \begin{displaymath}
@@ -182,11 +176,11 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 }
 
 \newcommand{\DefPermutationConfiguration}{
-\begin{definition}[permutation (configurations)]\label{def:permutation-configuration}
-  A \emph{permutation} of a configuration $\config{S}{e}$ is a function $\pi$
-  defined as follows: if $\config{S}{e} = \error$, then
-  $\pi(\config{S}{e}) \defeq \error$; otherwise, $\pi(\config{S}{e}) \defeq
-  \config{\pi(S)}{\pi(e)}$.
+\begin{definition}[permutation of a configuration, $\lambdaLVish$]\label{def:permutation-configuration}
+  A \emph{permutation} of a configuration $\config{S}{e}$ is a
+  function $\pi$ defined as follows: if $\config{S}{e} = \error$, then
+  $\pi(\config{S}{e}) \defeq \error$; otherwise, $\pi(\config{S}{e})
+  \defeq \config{\pi(S)}{\pi(e)}$.
 \end{definition}
 }
 

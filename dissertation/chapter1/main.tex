@@ -153,33 +153,27 @@ deterministic-by-construction parallel programming that allows a more
 general form of communication between tasks than previously existing
 guaranteed-deterministic models allowed.  LVars generalize IVars and
 are so named because the states an LVar can take on are elements of an
-application-specific \emph{lattice}.\footnote{As I will explain in
-  Chapter~\ref{ch:lvars}, what I am calling a ``lattice'' here really
-  need only be a \emph{bounded join-semilattice} augmented with a
-  greatest element $\top$.}  This application-specific lattice
-determines the semantics of the @put@ and @get@ operations that
-comprise the interface to LVars (which I will explain in detail in
-Chapter~\ref{ch:lvars}):
+application-specific \emph{lattice}.  This application-specific
+lattice determines the semantics of the @put@ and @get@ operations
+that comprise the interface to LVars (which I will explain in detail
+in Chapter~\ref{ch:lvars}):
 \begin{itemize}
-\item The @put@ operation can only change an LVar's state in a way
-  that is \emph{monotonically increasing} with respect to the lattice,
-  because it takes the least upper bound of the current state and the
-  new state.
+\item The @put@ operation can only make the state of an LVar ``grow''
+  with respect to the lattice, because it updates the LVar to the
+  \emph{least upper bound} of the current state and the new state.
 \item The @get@ operation allows only limited observations of the
-  state of an LVar.  It requires the user to specify a \emph{threshold
-    set} of minimum values that can be read from the LVar, where every
-  two elements in the threshold set must have the lattice's greatest
-  element $\top$ as their least upper bound.  A call to @get@ blocks until the
-  LVar in question reaches a (unique) value in the threshold set, then
-  unblocks and returns that value.
+  contents of an LVar.  It requires the user to specify a
+  \emph{threshold set} of minimum values that can be read from the
+  LVar, where every two elements in the threshold set must have the
+  lattice's greatest element $\top$ as their least upper bound.  A
+  call to @get@ blocks until the LVar in question reaches a (unique)
+  value in the threshold set, then unblocks and returns that value.
 \end{itemize}
 Together, least-upper-bound writes via @put@ and threshold reads via
 @get@ yield a deterministic-by-construction programming model.  That
 is, a program in which @put@ and @get@ operations on LVars are the
 only side effects will have the same observable result in spite of
-parallel execution and schedule nondeterminism.  \lk{Maybe I don't
-  need the next sentence at all; maybe it's covered by the
-  ``organization'' bullet points below.} As we will see in
+parallel execution and schedule nondeterminism.  As we will see in
 Chapter~\ref{ch:lvars}, no-shared-state parallelism, data-flow
 parallelism and single-assignment parallelism are all subsumed by the
 LVars programming model, and as we will see in
@@ -329,8 +323,8 @@ enforcing \emph{eventual consistency}~\cite{vogels-ec} of replicated
 objects in a distributed system.  In particular, \emph{state-based} or
 \emph{convergent} replicated data types, abbreviated as
 \emph{CvRDTs}~\cite{crdts, crdts-tr}, leverage the mathematical
-properties of join-semilattices to guarantee that all replicas of an
-object (for instance, in a distributed database) eventually agree.
+properties of lattices to guarantee that all replicas of an object
+(for instance, in a distributed database) eventually agree.
 
 Although CvRDTs are provably eventually consistent, queries of CvRDTs
 (unlike threshold reads of LVars) nevertheless allow inconsistent

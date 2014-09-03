@@ -15,7 +15,7 @@ operation to allow arbitrary \emph{update operations} (previously
 described in
 Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}),
 which are inflationary and commutative, but do not necessarily compute
-a least upper bound.
+a lub.
 
 \subsection{Lattices}
 
@@ -27,13 +27,13 @@ greatest.  The $\bot$ element represents the initial ``empty'' state
 of every LVar, while $\top$ represents the ``error'' state that would
 result from conflicting updates to an LVar.  The partial order
 $\userleq$ represents the order in which an LVar may take on states.
-It induces a binary \emph{least upper bound} (lub) operation
-$\userlub{}{}$ on the elements of $D$.  Every two elements of $D$ must
-have a least upper bound in $D$.  Formally, this makes $(D, \userleq,
-\bot, \top)$ a \emph{bounded join-semilattice} with a designated
-greatest element $\top$; I continue to use ``lattice'' as shorthand,
-and I use $D$ as a shorthand for the entire 4-tuple $(D, \userleq,
-\bot, \top)$ when its meaning is clear from the context.
+It induces a binary lub operation $\userlub{}{}$ on the elements of
+$D$.  Every two elements of $D$ must have a lub in $D$.  Formally,
+this makes $(D, \userleq, \bot, \top)$ a \emph{bounded
+  join-semilattice} with a designated greatest element $\top$; I
+continue to use ``lattice'' as shorthand, and I use $D$ as a shorthand
+for the entire 4-tuple $(D, \userleq, \bot, \top)$ when its meaning is
+clear from the context. \lk{Hm, do I actually do that?}
 
 \subsection{Freezing}
 
@@ -68,8 +68,8 @@ Informally:
 Adding status bits to each element (except $\top$) of the lattice $(D,
 \userleq, \bot, \top)$ results in a new lattice $(D_p, \leqp, \botp,
 \topp)$.  (The $p$ stands for pair, since elements of this new lattice
-are pairs $\state{d}{\status}$.) I write $\lubp{}{}$ for the least
-upper bound operation that $\leqp$ induces.
+are pairs $\state{d}{\status}$.) I write $\lubp{}{}$ for the lub
+operation that $\leqp$ induces.
 Definitions~\ref{def:lattice-with-status-bits} and \ref{def:lubp} and
 Lemmas~\ref{lem:partition-of-Dp} and~\ref{lem:lattice-structure}
 formalize this notion.
@@ -95,10 +95,9 @@ family of operations $\PUTi$, in order to allow the generalized update
 operations of
 Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}
 that are commutative and inflationary, but do not necessarily compute
-a least upper bound.  To make this possible we parameterize
-$\lambdaLVish$ not only by the lattice $(D, \userleq, \bot, \top)$,
-but also by a set $U$ of \emph{update operations}, as discussed
-previously in
+a lub.  To make this possible we parameterize $\lambdaLVish$ not only
+by the lattice $(D, \userleq, \bot, \top)$, but also by a set $U$ of
+\emph{update operations}, as discussed previously in
 Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}:
 
 \DefSetOfUpdateOperations
@@ -110,21 +109,20 @@ condition says that update operations commute with each other.  Every
 set of update operations always implicitly contains the identity
 function.
 
-If we want to encode the original least-upper-bound semantics of @put@
-using $\PUTi$, we can do so by instantiating $U$ such that there is
-one $u_i$ for each element $d_i$ of the lattice $D$, and defining
-$u_i(d)$ to be $\userlub{d}{d_i}$.  On the other hand, if $D$ is a
-lattice of natural numbers and we want increment-only counters, we can
+If we want to encode the original lub semantics of @put@ using
+$\PUTi$, we can do so by instantiating $U$ such that there is one
+$u_i$ for each element $d_i$ of the lattice $D$, and defining $u_i(d)$
+to be $\userlub{d}{d_i}$.  On the other hand, if $D$ is a lattice of
+natural numbers and we want increment-only counters, we can
 instantiate $U$ to be a singleton set $\setof{ u }$ where $u(d) = d +
 1$.  (As described in
 Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes},
 we could also have a set of update operations $\{ u_{(+1)}, u_{(+2)},
 \dots \}$, where $u_{(+1)}(d)$ increments $d$'s contents by one,
 $u_{(+2)}(d)$ increments by two, and so on.) Update operations are
-therefore general enough to express least-upper-bound writes as well
-as non-idempotent increments.  (When a write is specifically a
-least-upper-bound write, I will continue to use the notation @put@,
-without the subscript.)
+therefore general enough to express lub writes as well as
+non-idempotent increments.  (When a write is specifically a lub write,
+I will continue to use the notation @put@, without the subscript.)
 
 In $\lambdaLVish$, the @put@ operation took two arguments, a location
 $l$ and a lattice element $d$.  The $\PUTi$ operations take a location

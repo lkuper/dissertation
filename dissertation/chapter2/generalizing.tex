@@ -13,15 +13,14 @@ retaining the determinism of the model.
 
 In the LVars model as presented in this chapter so far, the only way
 for the state of an LVar to evolve over time is through a series of
-least-upper-bound updates resulting from @put@ operations.
-Unfortunately, this way of updating an LVar provides no efficient way
-to model, for instance, an atomically incremented counter that
-occupies one memory location.  Consider an LVar based on the lattice
-of Figure~\ref{f:lvars-example-lattices}(c).  Under the
-least-upper-bound semantics of @put@, if two independent writes each
-take the LVar's contents from, say, $1$ to $2$, then after both
-writes, its contents will be $2$, because @put@ takes the maximum of
-the previous value and the current value.  Although this semantics is
+@put@ operations.  Unfortunately, this way of updating an LVar
+provides no efficient way to model, for instance, an atomically
+incremented counter that occupies one memory location.  Consider an
+LVar based on the lattice of Figure~\ref{f:lvars-example-lattices}(c).
+Under the lub semantics of @put@, if two independent writes each take
+the LVar's contents from, say, $1$ to $2$, then after both writes, its
+contents will be $2$, because @put@ takes the maximum of the previous
+value and the current value.  Although this semantics is
 deterministic, it is not the desired semantics for every application.
 Instead, we might want each write to \emph{increment} the contents of
 the LVar by one, resulting in $3$.
@@ -59,22 +58,22 @@ updates must not be observable.\footnote{Of course, commutativity of
 In fact, the @put@ operation meets the above two conditions, and
 therefore can be viewed as a special case of an update operation that,
 in addition to being inflationary and commutative, also happens to
-compute a least upper bound.  However, when generalizing LVars to
-support update operations, we must keep in mind that least-upper-bound
-@put@ operations do not necessarily mix with arbitrary update
-operations on the same LVar.  For example, consider a set of update
-operations $\{ u_{(+1)}, u_{(+2)}, \dots \}$ for atomically
-incrementing a counter represented by a natural number LVar, with a
-lattice ordered by the usual $\leq$ on natural numbers.  The
-$u_{(+1)}$ operation increments the counter by one, $u_{(+2)}$
-increments it by two, and so on.  It is easy to see that these
-operations commute.  However, a @put@ of $4$ and a $u_{(+1)}$ do not
-commute: if we start with an initial state of $0$ and the @put@ occurs
-first, then the state of the LVar changes to $4$ since $\max(0, 4) =
-4$, and the subsequent $u_{(+1)}$ updates it to $5$.  But if the
-$u_{(+1)}$ happens first, then the final state of the LVar will be
-$\max(1, 4) = 4$.  Furthermore, multiple distinct families of update
-operations only commute among themselves and cannot be combined.
+compute a lub.  However, when generalizing LVars to support update
+operations, we must keep in mind that @put@ operations do not
+necessarily mix with arbitrary update operations on the same LVar.
+For example, consider a set of update operations $\{ u_{(+1)},
+u_{(+2)}, \dots \}$ for atomically incrementing a counter represented
+by a natural number LVar, with a lattice ordered by the usual $\leq$
+on natural numbers.  The $u_{(+1)}$ operation increments the counter
+by one, $u_{(+2)}$ increments it by two, and so on.  It is easy to see
+that these operations commute.  However, a @put@ of $4$ and a
+$u_{(+1)}$ do not commute: if we start with an initial state of $0$
+and the @put@ occurs first, then the state of the LVar changes to $4$
+since $\max(0, 4) = 4$, and the subsequent $u_{(+1)}$ updates it to
+$5$.  But if the $u_{(+1)}$ happens first, then the final state of the
+LVar will be $\max(1, 4) = 4$.  Furthermore, multiple distinct
+families of update operations only commute among themselves and cannot
+be combined.
 
 In practice, the author of a particular LVar data structure must
 choose which update operations that data structure should provide, and
@@ -265,12 +264,10 @@ $Q$ and $R$ in a given threshold set:
 In our $\mathrm{AndLV}$ example, there are two distinct activation
 sets, so if we let $Q = \setof{ \andlv{T}{T} }$ and $R = \setof{
   \andlv{F}{Bot}, \andlv{Bot}{F}, \andlv{F}{T}, \andlv{T}{F},
-  \andlv{F}{F} }$, the least upper bound of $\andlv{T}{T}$ and $r$
-must be \il{Top}, where $r$ is any element of $R$.  We can easily
-verify that this is the case.  Furthermore, since the lattice of
-states that an $\mathrm{AndLV}$ can take on is finite, the join
-function can be verified to compute a least upper bound.
-
+  \andlv{F}{F} }$, the lub of $\andlv{T}{T}$ and $r$ must be \il{Top},
+where $r$ is any element of $R$.  We can easily verify that this is
+the case.
+``
 To illustrate why we need pairwise incompatibility to be defined this
 way, consider the following (illegal) ``threshold set'' that does not
 meet the pairwise incompatibility criterion:

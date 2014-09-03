@@ -100,23 +100,23 @@ a copy of the state for each mutator, using a deterministic ``merge
 function'' for resolving conflicts in local copies at join points.
 
 In CR, variables can be annotated as being shared between a ``joiner''
-thread and a ``joinee'' thread.  Unlike the least-upper-bound writes
-of LVars, CR merge functions are \emph{not} necessarily commutative;
-indeed, the default CR merge function is ``joiner wins''.  Determinism
-is enforced by the programming model allowing the programmer to
-specify which of two writing threads should prevail, regardless of the
-order in which those writes arrive, and the states that a shared
-variable can take on need not form a lattice.  Still, semilattices
-turn up in the metatheory of CR: in particular, Burckhardt and
+thread and a ``joinee'' thread.  Unlike the lub writes of LVars, CR
+merge functions are \emph{not} necessarily commutative; indeed, the
+default CR merge function is ``joiner wins''.  Determinism is enforced
+by the programming model allowing the programmer to specify which of
+two writing threads should prevail, regardless of the order in which
+those writes arrive, and the states that a shared variable can take on
+need not form a lattice.  Still, semilattices turn up in the
+metatheory of CR: in particular, Burckhardt and
 Leijen~\cite{semantics-concurrent-revisions} show that revision
 diagrams are semilattices, and that therefore, for any two vertices in
 a CR revision diagram, there exists a \emph{greatest common ancestor}
 state that can be used to determine what changes each side has
 made---an interesting duality with the LVars model (in which any two
-LVar states have a least upper bound).
+LVar states have a lub).
 
 Although versioned variables in CR could model lattice-based data
-structures---if they used least upper bound as their merge function
+structures---if they used the lub operation as their merge function
 for conflicts---the programming model nevertheless differs from the
 LVars model in that effects only become visible at the end of parallel
 regions, as opposed to the asynchronous communication within parallel
@@ -198,11 +198,11 @@ into two non-overlapping parts satisfying $p$ and $r$, respectively.
 However, sometimes we do in fact want to allow some amount of
 ``physical'' overlap between resources, while retaining ``logical'' or
 ``fictional'' separation.  In fact, the Independence lemma, since it
-replaces the separating conjunction with the least upper bound
-operation, allows overlap between the original store and the ``frame''
-store $S''$; indeed, the point of LVars is that total disjointness is
-unnecessary, since updates commute.  Jensen and Birkedal's recent work
-on \emph{fictional separation logic}~\cite{JensenBirkedalFictional}
+replaces the separating conjunction with the lub operation, allows
+overlap between the original store and the ``frame'' store $S''$;
+indeed, the point of LVars is that total disjointness is unnecessary,
+since updates commute.  Jensen and Birkedal's recent work on
+\emph{fictional separation logic}~\cite{JensenBirkedalFictional}
 explores the notion of fictional separation in detail, generalizing
 traditional separation logic to allow much more sophisticated kinds of
 sharing.

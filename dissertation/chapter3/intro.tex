@@ -5,15 +5,15 @@ which information is added (and hence the \emph{order} in which it is
 added) is not observable.  A paradigmatic example is a set that
 supports insertion but not removal, but there are many others.  In the
 LVars model, all shared data structures (called LVars) are monotonic,
-and the states that an LVar can take on form a
-\emph{lattice}.  Writes to an LVar must correspond to a least upper
-bound operation in the lattice, which means that they monotonically
-increase the information in the LVar, and that they commute with one
-another.  But commuting writes are not enough to guarantee
-determinism: if a read can observe whether or not a concurrent write
-has happened, then it can observe differences in scheduling.  So, in
-the LVars model, the answer to the question ``has a write occurred?''
-(\ie, is the LVar above a certain lattice value?)  is always
+and the states that an LVar can take on form a \emph{lattice}.  Writes
+to an LVar must correspond to a lub operation in the lattice, which
+means that they monotonically increase the information in the LVar,
+and that they commute with one another.  But commuting writes are not
+enough to guarantee determinism: if a read can observe whether or not
+a concurrent write has happened, then it can observe differences in
+scheduling.  So, in the LVars model, the answer to the question ``has
+a write occurred?''  (\ie, is the LVar above a certain lattice value?)
+is always
 \emph{yes}; the reading thread will block until the LVar's contents
 reach a desired threshold.  In a monotonic data structure, the absence
 of information is transient---another thread could add that

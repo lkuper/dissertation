@@ -42,11 +42,11 @@ greatest element $\top$.  That is, $D$ has the following structure:
   state that results from conflicting updates to an LVar.
 \item $D$ comes equipped with a partial order $\userleq$, where $\bot
   \userleq d \userleq \top$ for all $d \in D$.
-\item Every pair of elements in $D$ has a least upper bound (lub),
-  written $\sqcup$.  Intuitively, the existence of a lub for every two
-  elements in $D$ means that it is possible for two subcomputations to
-  independently update an LVar, and then deterministically merge the
-  results by taking the lub of the resulting two states.
+\item Every pair of elements in $D$ has a lub, written $\sqcup$.
+  Intuitively, the existence of a lub for every two elements in $D$
+  means that it is possible for two subcomputations to independently
+  update an LVar, and then deterministically merge the results by
+  taking the lub of the resulting two states.
 \end{itemize}
 We can specify all these components as a 4-tuple $(D, \userleq, \bot,
 \top)$ where $D$ is a set, $\userleq$ is a partial order on the
@@ -88,11 +88,11 @@ and another writes $1$ to an IVar (in arbitrary order), the second of
 the two writes would result in an error because $2 \sqcup 1 = \top$.
 
 In the lattice of Figure~\ref{f:lvars-example-lattices}(a), on the
-other hand, the $\top$ state is unreachable, because the least upper
-bound of any two writes is just the maximum of the two.  If one thread
-writes $2$ and another writes $1$, the resulting state will be $2$,
-since $2 \sqcup 1 = 2$.  Here, the unreachability of $\top$ models the
-fact that no conflicting updates can occur to the LVar.
+other hand, the $\top$ state is unreachable, because the lub of any
+two writes is just the maximum of the two.  If one thread writes $2$
+and another writes $1$, the resulting state will be $2$, since $2
+\sqcup 1 = 2$.  Here, the unreachability of $\top$ models the fact
+that no conflicting updates can occur to the LVar.
 
 \subsection{Stores}\label{subsection:lvars-stores}
 
@@ -108,10 +108,7 @@ the LVars are drawn from the same lattice $D$.\footnote{In practice,
   principle be encoded using a sum construction, so this modeling
   choice is just to keep the presentation simple.}
 
-\begin{definition}\label{def:lvars-store}
-A \emph{store} is either a finite partial mapping $S : \Loc \fmap
-(D-\lbrace \top \rbrace)$, or the distinguished element $\topS$.
-\end{definition}
+\LVarsDefStore
 
 I use the notation $\extSRaw{S}{l}{d}$ to denote extending $S$ with a
 binding from $l$ to $d$.  If $l \in \dom{S}$, then $\extSRaw{S}{l}{d}$
@@ -120,11 +117,10 @@ extension.  Another way to denote a store is by explicitly writing out
 all its bindings, using the notation
 $\store{\storebindingRaw{l_1}{d_1}, \dots,
   \storebindingRaw{l_n}{d_n}}$.  The state space of stores forms a
-bounded join-semilattice augmented with a greatest element, just as
-$D$ does, with the empty store $\bot_S$ as its least element and
-$\topS$ as its greatest element.  It is straightforward to lift the
-$\userleq$ and $\sqcup$ operations defined on elements of $D$ to the
-level of stores:
+lattice, just as $D$ does, with the empty store $\bot_S$ as its least
+element and $\topS$ as its greatest element.  It is straightforward to
+lift the $\userleq$ and $\sqcup$ operations defined on elements of $D$
+to the level of stores:
 
 \LVarsDefLeqStore
 
@@ -157,10 +153,10 @@ by mutable references:
   initial state is $\bot$, and returns the location $l$ of that LVar
   (\ie, a pointer to the LVar).
 \item @put@ takes a pointer to an LVar and a new state and updates the
-  LVar's state to the \emph{least upper bound} of the current state
-  and the new state, potentially pushing the state of the LVar upward
-  in the lattice.  Any update that would take the state of an LVar to
-  $\top$ results in an error.
+  LVar's state to the lub of the current state and the new state,
+  potentially pushing the state of the LVar upward in the lattice.
+  Any update that would take the state of an LVar to $\top$ results in
+  an error.
 \item @get@ performs a blocking ``threshold'' read that allows limited
   observations of the state of an LVar.  It takes a pointer to an LVar
   and a \emph{threshold set} $T$, which is a non-empty subset of $D$

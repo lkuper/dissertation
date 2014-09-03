@@ -343,14 +343,13 @@ quiescence are resumed.
 
 \subsection{Discussion: leveraging idempotency}\label{subsection:lvish-discussion-leveraging-idempotency}
 
-While I have emphasized the commutativity of least upper bounds, they
-also provide another important property: \emph{idempotence}, meaning
-that $\userlub{d}{d} = d$ for any element $d$.  In LVar terms,
-repeated (least-upper-bound) @put@s or @freeze@s have no effect, and
-so, in an LVish program that restricts itself to least-upper-bound
-@put@s (instead of arbitrary update operations, which are not
-necessarily idempotent), the result is that $e; e$ behaves the same as
-$e$ for any LVish expression $e$.
+While I have emphasized the commutativity of the lub operation, it
+also has another important property: \emph{idempotence}, meaning that
+$\userlub{d}{d} = d$ for any element $d$.  In LVar terms, repeated
+@put@s or @freeze@s have no effect, and so, in an LVish program that
+restricts itself to @put@s (instead of arbitrary update operations,
+which are not necessarily idempotent), the result is that $e; e$
+behaves the same as $e$ for any LVish expression $e$.
 
 Idempotence has already been recognized as a useful property for
 work-stealing scheduling~\cite{idempotent}: if the scheduler is

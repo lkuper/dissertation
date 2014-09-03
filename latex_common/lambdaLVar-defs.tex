@@ -1,5 +1,12 @@
+\newcommand{\LVarsDefStore}{
+\begin{definition}[store, $\lambdaLVar$]\label{def:lvars-store}
+  A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D
+  - \setof{\top})$, or the distinguished element $\topS$.
+\end{definition}
+}
+
 \newcommand{\LVarsDefEqStore}{
-\begin{definition}[equality of stores]\label{def:lvars-eqstore}
+\begin{definition}[equality of stores, $\lambdaLVar$]\label{def:lvars-eqstore}
   Two stores $S$ and $S'$ are \emph{equal} iff:
   \begin{enumerate}
     \item $S = \topS$ and $S' = \topS$, or
@@ -10,7 +17,7 @@
 }
 
 \newcommand{\LVarsDefLeqStore}{
-\begin{definition}[store ordering]\label{def:lvars-leqstore}
+\begin{definition}[store ordering, $\lambdaLVar$]\label{def:lvars-leqstore}
   A store $S$ is \emph{less than or equal to} a store $S'$ (written
   $\leqstore{S}{S'}$) iff:
   \begin{itemize}
@@ -30,10 +37,10 @@
 }
 
 \newcommand{\LVarsDefLubStore}{
-\begin{definition}[least upper bound of stores]\label{def:lvars-lubstore}
+\begin{definition}[lub of stores, $\lambdaLVar$]\label{def:lvars-lubstore}
 
-  The \emph{least upper bound} of two stores $S_1$ and $S_2$ (written
-  $\lubstore{S_1}{S_2}$) is defined as follows:
+  The lub of stores $S_1$ and $S_2$ (written $\lubstore{S_1}{S_2}$) is
+  defined as follows:
   
   \begin{itemize}
   \item $\lubstore{S_1}{S_2} = \topS$ iff there exists some $l \in
@@ -56,7 +63,7 @@
 }
 
 \newcommand{\LVarsDefPermutation}{
-\begin{definition}[permutation]\label{def:lvars-permutation}
+\begin{definition}[permutation, $\lambdaLVar$]\label{def:lvars-permutation}
   A \emph{permutation} is a function $\pi : \Loc \rightarrow \Loc$
   such that:
   \begin{enumerate}
@@ -70,9 +77,9 @@
 }
 
 \newcommand{\LVarsDefPermutationExpression}{
-\begin{definition}[permutation (expressions)]\label{def:lvars-permutation-expression}
-  A \emph{permutation} of an expression $e$ is a function $\pi$ defined as
-  follows:
+\begin{definition}[permutation of an expression, $\lambdaLVar$]\label{def:lvars-permutation-expression}
+  A \emph{permutation} of an expression $e$ is a function $\pi$
+  defined as follows:
   \begin{displaymath}
     \begin{array}{ll}
       \pi(x) & \defeq x \\
@@ -94,7 +101,7 @@
 }
 
 \newcommand{\LVarsDefPermutationStore}{
-\begin{definition}[permutation (stores)]\label{def:lvars-permutation-store}
+\begin{definition}[permutation of a store, $\lambdaLVar$]\label{def:lvars-permutation-store}
   A \emph{permutation} of a store $S$ is a function $\pi$ defined as
   follows:
   \begin{displaymath}
@@ -110,7 +117,7 @@
 }
 
 \newcommand{\LVarsDefPermutationConfiguration}{
-\begin{definition}[permutation (configurations)]\label{def:lvars-permutation-configuration}
+\begin{definition}[permutation of a configuration, $\lambdaLVar$]\label{def:lvars-permutation-configuration}
   A \emph{permutation} of a configuration $\config{S}{e}$ is a function $\pi$
   defined as follows: if $\config{S}{e} = \error$, then
   $\pi(\config{S}{e}) = \error$; otherwise, $\pi(\config{S}{e}) =
