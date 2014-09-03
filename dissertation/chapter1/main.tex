@@ -181,9 +181,15 @@ Section~\ref{s:lvish-disjoint}, imperative disjoint parallel updates
 are compatible with LVars as well.  Furthermore, as I show in
 Section~\ref{s:lvars-generalizing}, we can generalize the behavior of
 the @put@ and @get@ operations while retaining determinism: we can
-generalize @put@ from least-upper-bound writes to non-idempotent (but
-still inflationary and commutative) writes, and we can generalize the
-@get@ operation to allow a more general form of threshold reads.
+generalize from the least-upper-bound @put@ operation to a family of
+arbitrary \emph{update operations} that are not necessarily idempotent
+(but are still inflationary and commutative), and we can generalize
+the @get@ operation to allow a more general form of threshold reads.
+The first of these generalizations, from @put@ to arbitrary
+inflationary and commutative updates, turns out to be particularly
+useful to programming with LVars; I formally extend the model to
+include it in Chapter~\ref{ch:quasi}, and in Chapter~\ref{ch:lvish} I
+show how it is useful in practice.
 
 \section{Quasi-deterministic and event-driven programming with LVars}\label{s:intro-quasi}
 
@@ -309,10 +315,10 @@ make use of handlers and freezing:
   comparing sets of phylogenetic trees that relies heavily on a
   parallel tree-edit distance algorithm~\cite{hashrf}.  In addition to
   handlers and freezing, the PhyBin application crucially relies on
-  the aforementioned ability to perform non-idempotent (but
-  inflationary and commutative) writes to LVars (in contrast to
-  least-upper-bound writes discussed above, which are idempotent as
-  well as inflationary and commutative).
+  the aforementioned ability to perform arbitrary inflationary and
+  commutative updates on LVars (in contrast to the @put@ operation
+  discussed above, which are idempotent as well as inflationary and
+  commutative).
 \end{itemize}
 
 \section{Deterministic threshold queries of distributed data structures}\label{s:intro-cvrdts}
@@ -369,12 +375,12 @@ The rest of this dissertation supports my thesis as follows:
     define $\lambdaLVar$, a call-by-value parallel calculus with a
     store of LVars that support least-upper-bound @put@ and threshold
     @get@ operations. In Chapter~\ref{ch:quasi}, I extend
-    $\lambdaLVar$ to add support for event handlers and the @freeze@
-    operation, calling the resulting language $\lambdaLVish$.
-    Appendix~\ref{app:plt-redex} contains runnable versions of
-    $\lambdaLVar$ and $\lambdaLVish$ implemented using the PLT Redex
-    semantics engineering system~\cite{redex-book} for interactive
-    experimentation.
+    $\lambdaLVar$ to add support for arbitrary update operations,
+    event handlers, and the @freeze@ operation, calling the resulting
+    language $\lambdaLVish$.  Appendix~\ref{app:plt-redex} contains
+    runnable versions of $\lambdaLVar$ and $\lambdaLVish$ implemented
+    using the PLT Redex semantics engineering system~\cite{redex-book}
+    for interactive experimentation.
 
   \item \emph{general}: In Chapter~\ref{ch:lvars}, I show how
     previously existing deterministic parallel programming models
@@ -389,17 +395,15 @@ The rest of this dissertation supports my thesis as follows:
 
   \item \emph{quasi-deterministic}: In Chapter~\ref{ch:quasi}, I
     define quasi-determinism and give a proof of quasi-determinism for
-    $\lambdaLVish$, which adds the @freeze@ operation and event
-    handlers to the $\lambdaLVar$ language of Chapter~\ref{ch:lvars}.
-    $\lambdaLVish$ also generalizes the language from allowing only
-    least-upper-bound writes to allowing arbitrary inflationary and
-    commutative writes.
+    $\lambdaLVish$, which adds arbitrary update operations, the
+    @freeze@ operation, and event handlers to the $\lambdaLVar$
+    language of Chapter~\ref{ch:lvars}.
 
   \item \emph{practical}: In Chapter~\ref{ch:lvish}, I describe the
-    LVish Haskell library, which is based on the LVars programming
-    model, and demonstrate how it is used for practical programming
-    with the two case studies described above, including performance
-    results.
+    interface and implementation of the LVish Haskell library, which
+    is based on the LVars programming model, and demonstrate how it is
+    used for practical programming with the two case studies described
+    above, including performance results.
 
   \item \emph{distributed programming}: In
     Chapter~\ref{ch:distributed}, I show how LVar-style threshold
