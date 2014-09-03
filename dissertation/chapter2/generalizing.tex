@@ -17,8 +17,8 @@ for the state of an LVar to evolve over time is through a series of
 provides no efficient way to model, for instance, an atomically
 incremented counter that occupies one memory location.  Consider an
 LVar based on the lattice of Figure~\ref{f:lvars-example-lattices}(c).
-Under the lub semantics of @put@, if two independent writes each take
-the LVar's contents from, say, $1$ to $2$, then after both writes, its
+Under the semantics of @put@, if two independent writes each take the
+LVar's contents from, say, $1$ to $2$, then after both writes, its
 contents will be $2$, because @put@ takes the maximum of the previous
 value and the current value.  Although this semantics is
 deterministic, it is not the desired semantics for every application.
@@ -87,9 +87,9 @@ However, \emph{composing} LVars that support different families of
 update operations is fine.  For example, an LVar could represent a
 monotonically growing collection (which supports @put@) of counter
 LVars, where each counter is itself monotonically increasing and
-supports only increment.  Indeed, the PhyBin case study described in
-Section~\ref{s:lvish-phybin} uses just such a collection of
-counters.\footnote{Unlike \il{put}, arbitrary update operations are
+supports only increment.  Indeed, the PhyBin case study that I
+describe in Section~\ref{s:lvish-phybin} uses just such a collection
+of counters.\footnote{Unlike \il{put}, arbitrary update operations are
   not idempotent, which means that in order to support arbitrary
   update operations we must be careful not to assume idempotency of
   writes in the LVish scheduler implementation.  I discuss this
@@ -98,13 +98,13 @@ counters.\footnote{Unlike \il{put}, arbitrary update operations are
 In Chapter~\ref{ch:quasi}, in addition to extending $\lambdaLVar$ to
 support the new features of \emph{freezing} and \emph{event handlers},
 I generalize the @put@ operation to allow arbitrary update operations.
-The @put@ operation becomes a family of operations $\PUTi$, with each
-corresponding to an update operation $u_i$.  The resulting generalized
-language definition is therefore parameterized not only by an
-application-specific lattice, but also by an application-specific set
-of update operations.  Furthermore, as we will see in
-Section~\ref{subsection:quasi-generalized-independence}, we will need
-to generalize the Independence lemma
+More precisely, I replace the @put@ operation with a set of operations
+$\PUTi$, with each corresponding to an update operation $u_i$.  The
+resulting generalized language definition is therefore parameterized
+not only by an application-specific lattice, but also by an
+application-specific set of update operations.  Furthermore, as we
+will see in Section~\ref{subsection:quasi-generalized-independence},
+we will need to generalize the Independence lemma
 (Lemma~\ref{lem:lvars-independence}) in order to accommodate this
 change to the language.
 
@@ -113,7 +113,7 @@ change to the language.
   serious about showing that update is deterministic and not merely
   quasi-deterministic, I would do this more modularly: I would
   actually present another version of the $\lambdaLVar$ language here,
-  with \il{put} replaced with update, and then re-do the determinism
+  with \il{put} replaced with $\PUTi$, and then re-do the determinism
   proof for it, instead of just lumping it into the quasi-determinism
   result in the next chapter.  If I did that, though, then this
   section would be big enough to justify being its own chapter.  I'm

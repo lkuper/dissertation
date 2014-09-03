@@ -15,14 +15,14 @@ model.\footnote{Haskell is often advertised as a purely functional
 programming language, that is, one without side effects, but it is
 perhaps more useful to think of it as a language that gets other
 effects out of the way so that one can add one's own effects!}  In the
-case of the basic LVars model, those effects are @put@ and @get@
-operations on LVars. \lk{Should we say that both \lstinline|put|
-and \lstinline|get| are effects, or just \lstinline|put|?}
-Implementing the LVars model as a Haskell library makes it possible to
-provide compile-time guarantees about determinism and
-quasi-determinism, because programs written using the library run in a
-particular monad and can therefore only perform the side effects that
-we choose to sanction.
+case of the basic LVars model of Chapter~\ref{ch:lvars}, those effects
+are @put@ and @get@ operations on LVars; Chapter~\ref{ch:quasi} adds
+the @freeze@ operation and arbitrary update operations.  Implementing
+the LVars model as a Haskell library makes it possible to provide
+compile-time guarantees about determinism and quasi-determinism,
+because programs written using the library run in a particular monad
+and can therefore only perform the side effects that we choose to
+sanction.
 
 Another reason why the existing @Par@ monad is an appealing starting
 point for a practical implementation of LVars is that it allows

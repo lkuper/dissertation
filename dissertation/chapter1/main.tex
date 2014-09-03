@@ -181,7 +181,7 @@ Section~\ref{s:lvish-disjoint}, imperative disjoint parallel updates
 are compatible with LVars as well.  Furthermore, as I show in
 Section~\ref{s:lvars-generalizing}, we can generalize the behavior of
 the @put@ and @get@ operations while retaining determinism: we can
-generalize from the least-upper-bound @put@ operation to a family of
+generalize from the least-upper-bound @put@ operation to a set of
 arbitrary \emph{update operations} that are not necessarily idempotent
 (but are still inflationary and commutative), and we can generalize
 the @get@ operation to allow a more general form of threshold reads.
@@ -226,7 +226,7 @@ model that make such computations possible:
   learning both positive and negative information about it, without
   blocking.  Therefore, LVar programs that use @freeze@ are \emph{not}
   guaranteed to be deterministic, because they could
-  nondeterministically raise an exception depending on how @put@ and
+  nondeterministically raise an exception depending on how writes and
   @freeze@ operations are scheduled.  However, such programs satisfy
   \emph{quasi-determinism}: all executions that produce a final value
   produce the \emph{same} final value.
@@ -280,7 +280,7 @@ indexed with a deterministic effect level is not allowed to use
 determinism or quasi-determinism guarantee.  Furthermore, if a
 @freeze@ is guaranteed to be the \emph{last} effect that occurs in a
 computation, then it is impossible for that @freeze@ to race with a
-@put@, ruling out the possibility of a run-time @put@-after-@freeze@
+write, ruling out the possibility of a run-time write-after-freeze
 exception.  LVish exposes a @runParThenFreeze@ operation that captures
 this ``freeze-last'' idiom and has a deterministic effect level.
 
@@ -317,7 +317,7 @@ make use of handlers and freezing:
   handlers and freezing, the PhyBin application crucially relies on
   the aforementioned ability to perform arbitrary inflationary and
   commutative updates on LVars (in contrast to the @put@ operation
-  discussed above, which are idempotent as well as inflationary and
+  discussed above, which is idempotent as well as inflationary and
   commutative).
 \end{itemize}
 

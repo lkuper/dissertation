@@ -19,8 +19,8 @@ who are clients of these data structures.  Only the application
 writers receive a \mbox{(quasi-)determinism} guarantee; an author of a
 data structure is responsible for ensuring that the states their data
 structure can take on correspond to the elements of a lattice, and
-that the exposed interface to it corresponds to some use of @put@,
-@get@, @freeze@, and event handlers.
+that the exposed interface to it corresponds to some use of update
+operations, @get@, @freeze@, and event handlers.
 
 Thus, our library is focused primarily on \emph{lattice-generic}
 infrastructure: the @Par@ monad itself, a thread scheduler, support

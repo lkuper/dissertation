@@ -8,7 +8,9 @@
   idempotence here.  (Also, increment-only counters (which were the
   whole motivation for generalizing \il{put} in the first place)
   aren't atomistic, either!  But at least the ``Leveraging atoms''
-  stuff doesn't \emph{require} lattices to be atomistic.)}
+  stuff doesn't \emph{require} lattices to be atomistic.)  Also, the
+  material on \il{putLV} probably needs to be significantly revised
+  and updated to be able to account for non-idempotent writes.}
 
 In this section, I describe the internals of the LVish library,
 including how the library represents LVars and @Par@ computations
@@ -31,7 +33,7 @@ collections.
 In general, the LVish primitives allow arbitrarily large queries and
 updates to an LVar.  But for an atomistic lattice, the corresponding
 data structure usually exposes operations that work at the atom level,
-semantically limiting @put@s to atoms, @get@s to threshold sets of
+semantically limiting writes to atoms, @get@s to threshold sets of
 atoms, and event sets to sets of atoms.  For example, the lattice of
 finite maps is atomistic, with atoms consisting of all singleton maps
 (\ie, all key/value pairs).  The interface to a finite map usually
@@ -45,8 +47,8 @@ atomistic lattices by associating LVars with a set of \emph{deltas}
 are essentially just the atoms---for a set lattice, a delta is an
 element; for a map, a key/value pair.  Deltas provide a compact way to
 represent a change to the lattice, allowing us to easily and
-efficiently communicate such changes between @put@s and
-@gets@/handlers.
+efficiently communicate such changes between writes and
+@get@s/handlers.
 
 \lk{Someone who is more familiar with the current state of LVish than
   I am should audit the next few sections and make sure it's still
@@ -174,7 +176,7 @@ writers:
 where @lookup@ imperatively looks up a key in the underlying map.
 
 The challenge in implementing @getLV@ is the possibility that a
-\emph{concurrent} @put@ will push the LVar over the threshold.  To
+\emph{concurrent} write will push the LVar over the threshold.  To
 cope with such races, @getLV@ employs a somewhat pessimistic strategy:
 before doing anything else, it enrolls a listener on the LVar that
 will be triggered on any subsequent updates.  If an update passes the
@@ -199,6 +201,10 @@ tradeoff, but as we will see below, idempotence plays an
 \emph{essential} role in the analogous situation for handlers.
 
 \subsection{Putting and freezing}
+
+\TODO{I think this section needs to be updated to accommodate
+  non-idempotent writes, but I need some help in figuring out what to
+  say.}
 
 \begin{figure}
   \singlespacing
@@ -401,8 +407,7 @@ writes.  For example, an increment-only counter might have an
 \doublespacing
 
 \lk{This is from the PLDI paper, but shouldn't it also have \il{NoPut}
-  as a constraint?  Also, do we assume\il{HasPut} and \il{NoBump} by
-  default?}
+  as a constraint?}
 
 \lk{There should really be more in this section about how the
   information provided by \il{HasBump} or \il{NoBump}, etc., is
