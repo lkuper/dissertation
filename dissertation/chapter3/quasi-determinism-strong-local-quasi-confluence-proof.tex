@@ -20,13 +20,29 @@
   $\evalctxt{E_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_1}}$, but $E_a$ and
   $E_b$ may differ and $e_{a_1}$ and $e_{b_1}$ may differ.
 
-  Since $\config{S}{\evalctxt{E_a}{e_{a_1}}} \ctxstepsto
+  First, consider the possibility that $E_a = E_b$ (and $e_{a_1} =
+  e_{b_1}$).  Since $\config{S}{\evalctxt{E_a}{e_{a_1}}} \ctxstepsto
+  \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$ by {\sc E-Eval-Ctxt} and
+  $\config{S}{\evalctxt{E_b}{e_{b_1}}} \ctxstepsto
+  \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$ by {\sc E-Eval-Ctxt}, we have
+  from the premise of {\sc E-Eval-Ctxt} that $\config{S}{e_{a_1}}
+  \parstepsto \config{S_a}{e_{a_2}}$ and $\config{S}{e_{b_1}}
+  \parstepsto \config{S_b}{e_{b_2}}$.  But then, since $e_{a_1} =
+  e_{b_1}$, by Internal Determinism
+  (Lemma~\ref{lem:internal-determinism}) there is a permutation $\pi'$
+  such that $\config{S_a}{e_{a_2}} = \pi'(\config{S_b}{e_{b_2}})$.
+  Then we can satisfy the proof by choosing $\conf_c =
+  \config{S_a}{e_{a_2}}$ and $i = 0$ and $j = 0$ and $\pi = \pi'$.
+
+  The rest of this proof deals with the more interesting case in which
+  $E_a \neq E_b$ (and $e_{a_1} \neq e_{b_1}$).  Since
+  $\config{S}{\evalctxt{E_a}{e_{a_1}}} \ctxstepsto
   \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$ and
   $\config{S}{\evalctxt{E_b}{e_{b_1}}} \ctxstepsto
   \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$ and $\evalctxt{E_a}{e_{a_1}}
-  = \evalctxt{E_b}{e_{b_1}}$, we have from Lemma~\ref{lem:locality}
-  (Locality) that there exist evaluation contexts $E'_a$ and $E'_b$
-  such that:
+  = \evalctxt{E_b}{e_{b_1}}$, where $E_a \neq E_b$, we have from
+  Lemma~\ref{lem:locality} (Locality) that there exist evaluation
+  contexts $E'_a$ and $E'_b$ such that:
 
   \begin{itemize}
   \item $\evalctxt{E'_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_2}}$, and
@@ -35,12 +51,10 @@
   \evalctxt{E'_b}{e_{b_2}}$.
   \end{itemize}
 
-  \TODO{Audit this prose when the proof is done.}
-  In some of the cases that follow, we will show that $\conf_a
-  \ctxstepsto \error$ or that $\conf_b \ctxstepsto \error$.  In
-  others, we will choose $\conf_c = \error$.  In most cases, however,
-  our approach will be to show that there exist $S', i, j, \pi$ such
-  that:
+  In some of the cases that follow, we will choose $\conf_c = \error$,
+  and in some we will prove that one of $\conf_a$ or $\conf_b$ steps
+  to $\error$.  In most cases, however, our approach will be to show
+  that there exist $S', i, j, \pi$ such that:
   \begin{itemize}
   \item $\config{S_a}{\evalctxt{E_a}{e_{a_2}}} \ctxstepsto^i
     \config{S'}{\evalctxt{E'_a}{e_{a_2}}}$, and

@@ -33,7 +33,7 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
 }
 
 \newcommand{\LemPermutability}{
-\begin{lem}[Permutability]\label{lem:permutability}
+\begin{lem}[Permutability, $\lambdaLVish$]\label{lem:permutability}
   For any finite permutation $\pi$,
   \begin{enumerate}
   \item \label{thm:quasi-permutable-reduction-transitions} $\conf
@@ -46,14 +46,21 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
 \end{lem}
 }
 
+\newcommand{\LemInternalDeterminism}{
+\begin{lem}[Internal Determinism, $\lambdaLVish$]\label{lem:internal-determinism}
+  If $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$, then
+  there is a permutation $\pi$ such that $\conf' = \pi(\conf'')$.
+\end{lem}
+}
+
 \newcommand{\LemLocality}{
-\begin{lem}[Locality]\label{lem:locality}
+\begin{lem}[Locality, $\lambdaLVish$]\label{lem:locality}
   If $\config{S}{\evalctxt{E_1}{e_1}} \ctxstepsto
   \config{S_1}{\evalctxt{E_1}{e'_1}}$ and
   $\config{S}{\evalctxt{E_2}{e_2}} \ctxstepsto
   \config{S_2}{\evalctxt{E_2}{e'_2}}$ and $\evalctxt{E_1}{e_1} =
-  \evalctxt{E_2}{e_2}$, then there exist evaluation contexts $E'_1$
-  and $E'_2$ such that:
+  \evalctxt{E_2}{e_2}$, where $E_1 \neq E_2$, then there exist
+  evaluation contexts $E'_1$ and $E'_2$ such that:
   \begin{itemize}
   \item $\evalctxt{E'_1}{e_1} = \evalctxt{E_2}{e'_2}$, and
   \item $\evalctxt{E'_2}{e_2} = \evalctxt{E_1}{e'_1}$, and
@@ -63,7 +70,7 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
 }
 
 \newcommand{\LemMonotonicity}{
-\begin{lem}[Monotonicity]\label{lem:monotonicity}
+\begin{lem}[Monotonicity, $\lambdaLVish$]\label{lem:monotonicity}
   If $\config{S}{e} \parstepsto \config{S'}{e'}$,
   then $\leqstore{S}{S'}$.
 \end{lem}
@@ -105,7 +112,7 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
 }
 
 \newcommand{\LemErrorPreservation}{
-\begin{lem}[Error Preservation]\label{lem:error-preservation}
+\begin{lem}[Error Preservation, $\lambdaLVish$]\label{lem:error-preservation}
   If $\config{S}{e} \parstepsto \textup{\error}$ and
   $\leqstore{S}{S'}$, then $\config{S'}{e} \parstepsto
   \textup{\error}$.

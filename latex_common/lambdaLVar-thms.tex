@@ -1,5 +1,5 @@
 \newcommand{\LVarsLemPermutability}{
-\begin{lem}[Permutability]\label{lem:lvars-permutability}
+\begin{lem}[Permutability, $\lambdaLVar$]\label{lem:lvars-permutability}
   For any finite permutation $\pi$,
   \begin{enumerate}
   \item \label{thm:permutable-reduction-transitions} $\conf
@@ -12,14 +12,14 @@
 }
 
 \newcommand{\LVarsLemInternalDeterminism}{
-\begin{lem}[Internal Determinism of the Reduction Semantics]\label{lem:lvars-internal-determinism}
+\begin{lem}[Internal Determinism, $\lambdaLVar$]\label{lem:lvars-internal-determinism}
   If $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$, then
   there is a permutation $\pi$ such that $\conf' = \pi(\conf'')$.
 \end{lem}
 }
 
 \newcommand{\LVarsLemLocality}{
-\begin{lem}[Locality]\label{lem:lvars-locality}
+\begin{lem}[Locality, $\lambdaLVar$]\label{lem:lvars-locality}
   If $\config{S}{\evalctxt{E_1}{e_1}} \ctxstepsto
   \config{S_1}{\evalctxt{E_1}{e'_1}}$ and
   $\config{S}{\evalctxt{E_2}{e_2}} \ctxstepsto
@@ -35,7 +35,7 @@
 }
 
 \newcommand{\LVarsLemMonotonicity}{
-\begin{lem}[Monotonicity]\label{lem:lvars-monotonicity}
+\begin{lem}[Monotonicity, $\lambdaLVar$]\label{lem:lvars-monotonicity}
   If $\config{S}{e} \parstepsto \config{S'}{e'}$, then
   $\leqstore{S}{S'}$.
 \end{lem}
@@ -64,16 +64,8 @@
 \end{lem}
 }
 
-\newcommand{\LemStorePartition}{
-\begin{lem}[Store Partition]\label{lem:store-partition}
-  Let $S$ and $S'$ be stores.  Then, for all $l_i$ such that $S(l_i)
-  \mylt S'(l_i)$, there exists $S''$ such that
-  $\eqstore{S'}{\extS{S''}{l_i}{S'(l_i)}}$ and $\myltstore{S''}{S'}$.
-\end{lem}
-}
-
 \newcommand{\LVarsLemErrorPreservation}{
-\begin{lem}[Error Preservation]\label{lem:lvars-error-preservation}
+\begin{lem}[Error Preservation, $\lambdaLVar$]\label{lem:lvars-error-preservation}
   If $\config{S}{e} \parstepsto \textup{\error}$ and $\leqstore{S}{S'}$, then
   $\config{S'}{e} \parstepsto \textup{\error}$.
 \end{lem}
@@ -125,12 +117,12 @@
   exists $\pi$ such that $\conf' = \pi(\conf'')$.
 \end{thm}
 \begin{proof}
-  We have from Lemma~\ref{lem:lvars-confluence} that there exists
-  $\conf_c$ and $\pi$ such that $\conf' \ctxstepsto^* \conf_c$ and
-  $\pi(\conf'') \ctxstepsto^* \conf_c$.  Since $\conf'$ cannot step,
-  we must have $\conf' = \conf_c$.
+  We have from Confluence (Lemma~\ref{lem:lvars-confluence}) that
+  there exists $\conf_c$ and $\pi$ such that $\conf' \ctxstepsto^*
+  \conf_c$ and $\pi(\conf'') \ctxstepsto^* \conf_c$.  Since $\conf'$
+  cannot step, we must have $\conf' = \conf_c$.
 
-  By Lemma~\ref{lem:lvars-permutability} (Permutability), $\conf''$
+  By Permutability (Lemma~\ref{lem:lvars-permutability}), $\conf''$
   can step iff $\pi(\conf'')$ can step, so since $\conf''$ cannot
   step, $\pi(\conf'')$ cannot step either.
 

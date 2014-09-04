@@ -112,20 +112,7 @@ Section~\ref{subsection:lvars-confluence}.\footnote{For another
   an otherwise deterministic setting, see
   Krishnaswami~\cite{simple-frp}.}
 
-\subsection{Internal determinism of the reduction semantics}
-
-\lk{According to Neel, I need this ``internal determinism'' fact in
-  order to prove Lemma~\ref{lem:lvars-strong-local-confluence}, to
-  handle the special (easy) case where $E_a = E_b$ and $e_{a_1} =
-  e_{b_1}$ (the interesting case is where they're different).  But I
-  don't believe that I actually need it, because
-  Lemma~\ref{lem:lvars-strong-local-confluence} doesn't \emph{require}
-  that they be different; it still applies if they're the same.  I'm
-  checking with Neel about this, but I think that this fact is
-  actually unnecessary.  If I'm right, I'll get rid of this
-  subsection.  If I'm wrong, then I need to not only keep it but also
-  prove a similar property for $\lambdaLVish$ in the next chapter.
-  So, I hope I'm right. :)}
+\subsection{Internal Determinism}
 
 My goal is to show that $\lambdaLVar$ is deterministic according to
 the definition of \emph{observable determinism} that I gave in
@@ -173,14 +160,16 @@ expression, for instance) to be evaluated in parallel.
 But, if we leave aside evaluation contexts for the moment (we'll
 return to them in the following section) and focus on only the rules
 of the reduction semantics in
-Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}, we see that there
-is only one rule by which a given configuration can step, and only one
-configuration to which it can step.  The exception is the {\sc E-New}
-rule, which nondeterministically allocates locations and returns
-pointers to them---but we can account for this by saying that the
-reduction semantics is internally deterministic up to a permutation on
+Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}, we see that, if a
+given configuration can step by the reduction semantics, then there is
+only one rule by which it can step, and only one configuration to
+which it can step.  The exception is the {\sc E-New} rule, which
+nondeterministically allocates locations and returns pointers to
+them---but we can account for this by saying that the reduction
+semantics is internally deterministic up to a permutation on
 locations.  Lemma~\ref{lem:lvars-internal-determinism} formalizes this
-claim.
+claim, which we will later use in the proof of Strong Local Confluence
+(Lemma~\ref{lem:lvars-strong-local-confluence}).
 
 \LVarsLemInternalDeterminism
 \begin{proof}
@@ -418,20 +407,23 @@ keep the semantics a bit more faithful to the implementation.
   different ways: $\conf = \config{S}{\evalctxt{E_a}{e_{a_1}}} =
   \config{S}{\evalctxt{E_b}{e_{b_1}}}$, where $\evalctxt{E_a}{e_{a_1}}
   = \evalctxt{E_b}{e_{b_1}}$, but $E_a$ and $E_b$ may differ and
-  $e_{a_1}$ and $e_{b_1}$ may differ.  We can then apply the Locality
-  lemma (Lemma~\ref{lem:lvars-locality}); at a high level, it shows
-  that $e_{a_1}$ and $e_{b_1}$ can be evaluated independently within
-  their contexts.
+  $e_{a_1}$ and $e_{b_1}$ may differ.  In the special case where $E_a
+  = E_b$, the result follows by Internal Determinism
+  (Lemma~\ref{lem:lvars-internal-determinism}).
 
-  The proof is then by a double case analysis on the rule of the
-  reduction semantics by which $\config{S}{e_{a_1}}$ steps and by
-  which $\config{S}{e_{b_1}}$ steps.  In order to combine the results
-  of the two steps, the proof makes use of the Independence lemma
-  (Lemma~\ref{lem:lvars-independence}).  The most interesting case is
-  that in which both steps are by the {\sc E-New} rule and they
-  allocate locations with the same name.  In that case, we can use the
-  Permutability lemma (Lemma~\ref{lem:lvars-permutability}) to rename
-  locations so as not to conflict.  See
+  If $E_a \neq E_b$, we can apply the Locality lemma
+  (Lemma~\ref{lem:lvars-locality}); at a high level, it shows that
+  $e_{a_1}$ and $e_{b_1}$ can be evaluated independently within their
+  contexts.  The proof is then by a double case analysis on the rules
+  of the reduction semantics by which $\config{S}{e_{a_1}}$ steps and
+  by which $\config{S}{e_{b_1}}$ steps.  In order to combine the
+  results of the two independent steps, the proof makes use of the
+  Independence lemma (Lemma~\ref{lem:lvars-independence}).  The most
+  interesting case is that in which both steps are by the {\sc E-New}
+  rule and they allocate locations with the same name.  In that case,
+  we can use the Permutability lemma
+  (Lemma~\ref{lem:lvars-permutability}) to rename locations so as not
+  to conflict.  See
   Section~\ref{section:lvars-strong-local-confluence-proof}.
 \end{proof}
 
