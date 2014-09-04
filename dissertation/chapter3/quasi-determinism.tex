@@ -197,9 +197,9 @@ Definition~\ref{def:store-update-operation} says that applying $U_S$
 to $S$ either updates (using some $u_{p_i} \in U_p$) or freezes the
 contents of each $l \in \dom{S}$.  Since the identity function is
 always implicitly a member of $U_p$, $U_S$ can act as the identity on
-the contents of locations $l \in \dom{S}$.  $U_S$ can also add new
-bindings to the store it operates on; however, it cannot change
-existing location names.
+the contents of locations.  $U_S$ can also add new bindings to the
+store it operates on; however, it cannot change existing location
+names.
 
 With Definition~\ref{def:store-update-operation} in hand, we can state
 a more general version of the Independence lemma:
@@ -371,7 +371,7 @@ arbitrary numbers of steps.
 
 \LemQuasiConfluence
  
-\subsection{Quasi-determinism theorem}\label{subsection:quasi-quasi-determinism}
+\subsection{Quasi-Determinism}\label{subsection:quasi-quasi-determinism}
 
 The Quasi-Determinism theorem, Theorem~\ref{thm:quasi-determinism}, is
 a straightforward result of Lemma~\ref{lem:quasi-confluence}.  It says
