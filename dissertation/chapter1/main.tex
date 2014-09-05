@@ -399,11 +399,19 @@ The rest of this dissertation supports my thesis as follows:
     @freeze@ operation, and event handlers to the $\lambdaLVar$
     language of Chapter~\ref{ch:lvars}.
 
-  \item \emph{practical}: In Chapter~\ref{ch:lvish}, I describe the
-    interface and implementation of the LVish Haskell library, which
-    is based on the LVars programming model, and demonstrate how it is
-    used for practical programming with the two case studies described
-    above, including performance results.
+  \item \emph{practical} and \emph{parallel}: In
+    Chapter~\ref{ch:lvish}, I describe the interface and
+    implementation of the LVish Haskell library, which is based on the
+    LVars programming model, and demonstrate how it is used for
+    practical programming with the two case studies described above,
+    including performance results on parallel hardware.\lk{I threw in
+      ``parallel'' here because I wasn't counting it under any of the
+      other bullets.  Parallelism is a resource; we have a ``parallel
+      language semantics'' in the sense that it's a semantics that
+      gives the scheduler lots of purchase to schedule it onto
+      parallel hardware, and the only proof of that is in the pudding.
+      So I'm not sure where else to support the claim of parallelism
+      but here.}
 
   \item \emph{distributed programming}: In
     Chapter~\ref{ch:distributed}, I show how LVar-style threshold
