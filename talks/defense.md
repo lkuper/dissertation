@@ -1,5 +1,14 @@
 # Lattice-based Data Structures for Deterministic Parallel and Distributed Programming
 
+TODO:
+
+  * Figure out if roadmap thesis slides are in the right places
+  * Add material on PhyBin
+  * Add material on the proof
+  * Add stuff about arbitrary update operations
+  * See if there's a cute illustration for distributed stuff I can use
+  * Clean up the ending; add future work?
+
 ## Abstract
 
 Deterministic-by-construction parallel programming models guarantee that programs have the same observable behavior on every run, promising freedom from bugs caused by schedule nondeterminism.  To make that guarantee, though, they must sharply restrict sharing of state between parallel tasks, usually either by disallowing sharing entirely or by restricting it to one type of data structure, such as single-assignment locations.
