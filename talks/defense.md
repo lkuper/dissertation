@@ -1,14 +1,5 @@
 # Lattice-based Data Structures for Deterministic Parallel and Distributed Programming
 
-TODO:
-
-  * Figure out if roadmap thesis slides are in the right places
-  * Add material on PhyBin
-  * Add material on the proof
-  * Add stuff about arbitrary update operations
-  * See if there's a cute illustration for distributed stuff I can use
-  * Clean up the ending; add future work?
-
 ## Abstract
 
 Deterministic-by-construction parallel programming models guarantee that programs have the same observable behavior on every run, promising freedom from bugs caused by schedule nondeterminism.  To make that guarantee, though, they must sharply restrict sharing of state between parallel tasks, usually either by disallowing sharing entirely or by restricting it to one type of data structure, such as single-assignment locations.
@@ -41,9 +32,11 @@ And this thesis serves as a road map for my talk.
 
 First up, I'm going to explain what I mean by "deterministic", what I mean by "parallel programming", and what I mean by "deterministic parallel programming".  And I'm going to talk about some of the existing approaches to the problem of deterministic parallel programming.
 
-Then I'm going to explain what I mean by lattice-based data structures, and as part of that, we'll see how they generalize those existing approaches that I'll cover.  Lattice-based data structures are called LVars for short, and we'll see why they're called that in a little while.  I'll also show what we've done to prove that the LVars programming model is deterministic.
+Then I'm going to explain what I mean by lattice-based data structures, and as part of that, we'll see how they generalize those existing approaches that I'll cover.  Lattice-based data structures are called LVars for short, and we'll see why they're called that in a little while.
 
-I'm going to introduce the idea of quasi-determinism, which means "determinism modulo errors", as I'll explain later on.  I'll show how we incorporate this idea in the LVars programming model, why it's an interesting property, and how we prove that the programming model is quasi-deterministic.
+I'm going to introduce the idea of quasi-determinism, which means "determinism modulo errors", as I'll explain later on.  I'll show how we incorporate this idea in the LVars programming model, and why it's such an interesting property.
+
+To support these claims of determinism and quasi-determinism, I actually have to prove that those properties are true.  So I'm going to sketch out for you how I proved that our two flavors of the LVars programming model are deterministic and quasi-deterministic, respectively.
 
 Then, to support my claim of practicality, we're going to look at some real problems that we've solved using the LVars programming model.  I have two case studies to show you.
 
@@ -123,55 +116,63 @@ So, in this next part of the talk, I'm going to explain just what LVars are and 
 
 ## (cart again)
 
-Let's look back at the nondeterministic version of our shopping cart program.  We can see that it's guilty of the sin of doing multiple writes to the same shared memory location.  Ruling out programs that do that has been the foundation of a significant body of work on deterministic parallel programming, and a particularly prominent example of that is *IVars*, which are memory locations that can only be written to once, and for which reads block until a write has arrived.
+Let's look back at the nondeterministic version of our shopping cart program.  We can see that it's doing multiple writes to the same shared memory location.  Ruling out programs that do that has been the foundation of a significant body of work on deterministic parallel programming, and a particularly prominent example of that is *IVars*, which are memory locations that can only be written to once, and for which reads block until a write has arrived.
 
 So, in an IVar-based language, you wouldn't be able to write a program with a nondeterminism bug like this; in fact, the combination of single writes and blocking reads ensures determinism for programs in which all communication happens through IVars.  And IVars show up all over the place.  They're in the Concurrent Collections system from Intel for doing deterministic parallelism; they're in the Akka library for dataflow programming in Scala; they've even been implemented in hardware.  And they're very useful!
 
-But, on second thought, is this program really so sinful?  Even though these threads both write to the same IORef, notice that neither one really clobbers the other's state; instead, it *builds on* the other's state.  In fact, these first two threads' updates commute, and so it's fine for them to run in arbitrary order.  The nondeterminism is only introduced when the IORef is *read*, and we accidentally observe an intermediate state before both threads have gotten a chance to write.
+But, on second thought, is this program really so bad?  Even though these threads both write to the same IORef, notice that neither one really clobbers the other's state; instead, it *builds on* the other's state.  In fact, these first two threads' updates commute, and so it's fine for them to run in arbitrary order.  The nondeterminism is only introduced when the IORef is *read*, and we accidentally observe an intermediate state before both threads have gotten a chance to write.
 
 So, what if we could take inspiration from IVars, loosening the single-write restriction but keeping a form of blocking read that would prevent the order of updates from being observed?  That's what LVars do.
 
-Like IVars, _LVars_ are locations that can be shared among multiple threads.  Unlike IVars, though, it's fine to write to an LVar multiple times, with the caveat that with each write, the LVar's contents must _stay the same or grow bigger_ with respect to an application-specific lattice.  In fact, this is guaranteed to be the case because when you write to an LVar, its contents are updated to the _least upper bound_ of the previous value and the new value.
+Like IVars, *LVars* are locations that can be shared among multiple threads.  Unlike IVars, though, it's fine to write to an LVar multiple times, with a couple of caveats.  First of all, writes have to be *commutative*; they can happen in arbitrary order.  So, for instance, it doesn't matter whether we write the `Book` or the `Shoes` first.  Second, writes have to be *inflationary*: with every write, the LVar's contents have to *stay the same or grow bigger* with respect to an application-specific lattice of states.  And finally, reads have to be what we call *threshold reads*, which I'll talk about in a moment.
 
 ## (the littlest LVar)
 
-A good first example of an LVar is, in fact, an IVar!  So let's look at how that works.  Here we have a lattice representing the states that a natural-number-valued IVar can take on.  The bottom element of the lattice represents the "empty" state of the IVar.  The elements `0`, `1`, `2`, and so on represent each of the possible "full" states.  Finally, the top element of the lattice represents the error state that results from incompatible writes.  We can see that the least upper bound of any two _different_ "full" states (say, `3` and `4`, for instance) is top, and this corresponds to the fact that if we tried to write both of those values, we'd get an error, as we'd expect.  But the least upper bound of any element and _itself_ is just that element,  and this matches our intuition that repeated writes of the same value to an IVar shouldn't break determinism.
+A good first example of an LVar is, in fact, an IVar!  So let's look at how that works.  Here we have a lattice representing the states that a natural-number-valued IVar can take on.  The bottom element of the lattice represents the "empty" state of the IVar.  The elements `0`, `1`, `2`, and so on represent each of the possible "full" states.  Finally, the top element of the lattice represents the error state that results from incompatible writes.
 
-So, the lattice-based semantics of LVars is a natural fit for IVars; in fact, _IVars turn out to be a special case of LVars_.  And in fact the lattice-based version is strictly more expressive -- that is, you can write strictly more deterministic programs with IVars implemented using this lattice-based semantics as opposed to traditional IVars, because the lattice-based ones support repeated writes of the same value without raising a run-time error.
+Any time you write to this LVar, its contents are updated to what's called the *least upper bound* of the previous state and the new state.  By the least upper bound, we mean the smallest state that's at least as big as both the previous state and the new state.  The least upper bound operation satisfies our criteria for writes -- it's both commutative and inflationary.
 
-But, now that we can do multiple least-upper-bound writes, IVars are just the beginning; and now we can have LVars whose states correspond to all kinds of lattices.  So. next, let's consider how to represent our shopping cart with LVars, and in so doing, I'll also explain how threshold reads work.
+We can see that the least upper bound of any two *different* "full" states (say, `3` and `4`, for instance) is top, and this corresponds to the fact that if we tried to write both of those values, we'd get an error, as we'd expect.  But the least upper bound of any element and *itself* is just that element,  and this matches our intuition that repeated writes of the same value to an IVar shouldn't break determinism.
 
-## (threshold reads from a shopping cart)
+So, the lattice-based semantics of LVars is a natural fit for IVars; in fact, *IVars turn out to be a special case of LVars*.  And in fact the lattice-based version is strictly more expressive -- that is, you can write strictly more deterministic programs with IVars implemented using this lattice-based semantics as opposed to traditional IVars, because the lattice-based ones support repeated writes of the same value without raising a run-time error.
 
-***THIS ONE NEEDS TO BE SCROLLED.***
+But, now that we can do multiple commutative and inflationary writes, IVars are just the beginning; and now we can have LVars whose states correspond to all kinds of lattices.  So next, let's look at a slightly different lattice and a slightly different program.
 
-How can we use an LVar to represent our shopping cart?  Well, what are the states that a cart can be in?  It can be empty, and we'll call that the bottom state of the lattice; it could have one copy of the book, or two, or so on; or one pair of the shoes, or two pairs, or so on; or it could have both in some combination.  We also have the top state, which is, again, the state that represents an error.
+[TODO: add an explanation of threshold reads on this slide]
 
-So let's walk through another program that adds things to our cart and look at how the state of this LVar changes as we add things to the cart.  Our LVar is initialized with the bottom state, and that's where we start out.  Next, we fork a couple of threads, each of which does a write.  These threads can run in arbitrary order.  Let's suppose that the Shoes thread runs first, and then the state of my LVar will change appropriately.  Next, the other thread runs, and this time, it so happens that I want two copies of the book, so I can give one to my officemate. Our LVar moves up into the appropriate state.
+## (a counter LVar)
 
-Now suppose the writes happened in the other order.  Then, starting out at bottom again, we'd first go to a state where the cart has the two books, but not the shoes.  Because each of these writes will take the least upper bound of the old state and the new state, it doesn't matter which order they happen in; we'll end up in the same place either way.
+[TODO: make a slide that uses `incr`; write this section]
 
-Now let's try doing a read.  What we want to do, is, given a key, get the value associated with that key -- in this case, we want to know how many copies of the Book are in my cart.
+Now, in this code, the `incr` and `get` operations I'm using have to respect the properties that I expect of LVar read and write operations.  The `incr` expression has to be commutative and inflationary, and the `get` operation has to do a threshold read.
 
-We mentioned earlier that IVar reads are blocking reads -- if you try to read from an IVar before it's been filled in, you won't be able to.  But when it is filled in, your read will unblock and you'll be able to see the exact, complete contents of the IVar.
+That was the proof obligation on me when I implemented the Counter data type.  But I didn't have to think about threshold sets or commutative and inflationary writes when I wrote this client code; all I had to do was use what the library gave me.
 
-With LVars, this is where we return to that notion of observability that I mentioned earlier. I see it as a determinism-preserving tradeoff: LVars are a generalization of IVars that let you do multiple monotonic assignment in exchange for having to make more limited observations of the contents of the lattice.  So how do these limited observations work?
+So in general, the proof obligation on someone who wants to implement a new LVar type is that they have to make sure that their writes are actually commtative and inflationary, and they have to make sure that whatever operations they provide to read from the LVar can be expressed in terms of threshold sets.  If they meet those obligations, then determinism is guaranteed in client code.
 
-Well, LVar reads are also blocking -- so if we tried to look up the number of copies of the book before there were any, then our attempted read would block until some number of copies appeared.  But, as we can see from the lattice, there are two possible states that the LVar might be in at the time that that read unblocks: it might also know about the shoes by now, or it might not.
+So, now we've seen a couple of examples of things you can do with LVars.  But, with what I've shown so far, there are a lot of things you can't do.  Let's consider what they are.
 
-If our read were allowed to distinguish between these two states, then that would break determinism.  So, instead, LVar reads are what we call "threshold reads".  We designate a subset of elements in the lattice that serve as a threshold, such that if the actual state of the LVar reaches a point at or above any of those elements, then the read can unblock and return a result.  
+## (what you can't do)
 
-However, the result that it returns is *not* going to be the exact LVar state, but just the element of the threshold set that the exact state is currently at or above.  So, regardless of whether the `Shoes` are there yet, this operation will return a deterministic result.
+Recall that our original problem was that we wanted to look at our shopping cart and see the contents of it.  With threshold reads, we can sort of do that; we can threshold on the appearance of a particular key and find out what value it points to.  But what if we want to see the whole cart?  And this is a general problem: what if we want to see the exact, complete contents of an LVar?
 
-One thing that helps in understanding threshold sets is to visualize the threshold set as a tripwire going across the lattice.  The LVar's state moves up in the lattice, and eventually it may cross the tripwire.  At that point, we're allowed to unblock and return a result.  But the result will be the same on every run, regardless of the timing of when we cross the tripwire.
+What if we want to iterate over the contents an LVar?  Maybe it's a container type, like a set or a map, and we want to do something to each element of it.
 
-In order for this behavior to be deterministic, there has to be a _unique_ element of the threshold set that the actual state of the lattice is at or above.  We ensure this by requiring that the threshold set be _pairwise incompatible_, meaning that for every two elements in the threshold set, their least upper bound is Top.
+What if we want to find out whether something is *not* in an LVar?
 
-Now, in this code, I'm using one of the map types from our LVar library, and the map interface only provides read operations that can be expressed in terms of pairwise-incompatible threshold sets.  That was the proof obligation on us when we implemented that library.  But I didn't have to think about threshold sets when I wrote this client code; all I had to do was use what the library gave me.
+And finally, what if we want to react to writes that we weren't expecting?  We can't effectively threshold on something unless we know it's going to be written eventually.
 
-So in general, the proof obligation on someone who wants to implement a new LVar type is that they have to make sure that their writes actually compute a least upper bound, and they have to make sure that whatever operations they provide to read from the LVar can be expressed in terms of threshold sets.  If they meet those obligations, then determinism is guaranteed in client code.
+So next I'm going to talk about how we extend the LVars model to make it so that we *can* do all these things.  We accomplish this with the addition of three language features: which are called handlers, quiescence, and freezing.
 
-So, that's how least-upper-bound writes and threshold reads work, and that's about half the story with LVars.  So, next let's look at a problem that's traditionally been a challenge for deterministic parallel programming models, and we'll use that to motivate the rest of the story.
+## (freeze after writing)
+
+The key idea is that once all the writes to an LVar are over with, we can *freeze* it, making it so that it can no longer change, and then we can look at its exact, complete contents in a safe way, without having to do a threshold read.  This idea of freezing is what really makes interesting programming possible with LVars.
+
+We called our POPL paper "Freeze After Writing", but another way to put it is "freeze before reading".  In other words, write whenever you want, just make sure that you're done with all the writes before you read.  But how do we enforce freezing, and what happens if we mess up and we accidentally write once we've started reading?
+
+## (roadmap)
+
+Those questions bring me to the next part of the talk, where I'm going to cover quasi-deterministic parallel programming.  I'm going to introduce this through an example problem that's hard to solve using just the threshold reads that we've seen so far.
 
 ## (challenge: parallel graph traversal)
 
@@ -179,7 +180,7 @@ All right, so let's say we have a directed graph, like this one, and let's consi
 
 Ordinarily, the algorithm for doing this might go something like the following: we mark the start node as seen.  Then we look at all its neighbors, perhaps launching a thread for each one, and for each neighbor, we check to see if it's marked as having been seen.  If so, then that thread is done; if not, then we mark it as seen, and then launch a thread for each of its neighbors.  This continues until all the reachable nodes have been seen.
 
-As we traverse the graph, the set of nodes that we've seen grows monotonically, and we continue adding the neighbors of seen nodes to that set until the set reaches a fixed point.  Because this algorithm involves a monotonically growing data structure, it would seem at first glance to be a great match for the LVars model -- we could use an LVar to represent the set of seen nodes, with set union as least upper bound.  Unfortunately, we can't express this algorithm using only the threshold reads that I described, because there's no way to check if a node has been seen or not.  And, without that test, we won't know when to stop looking for new nodes.
+As we traverse the graph, the set of nodes that we've seen grows monotonically, and we continue adding the neighbors of seen nodes to that set until the set reaches a fixed point.  Because this algorithm involves a monotonically growing data structure, it would seem at first glance to be a great match for the LVars model -- we could use an LVar to represent the set of seen nodes, which can only grow.  Unfortunately, we can't express this algorithm using only the threshold reads that I described, because there's no way to check if a node has been seen or not.  And, without that test, we won't know when to stop looking for new nodes.
 
 ## (events and event handlers)
 
@@ -233,7 +234,13 @@ It happened to be in this program that there was a one-to-one relationship, one 
 
 So if you want to have a combined freeze and quiesce operation, it would have to take that handler pool as an argument as well.  And a freeze that just takes an LVar argument is the most general thing because sometimes you want to freeze something even when no handlers are involved -- like with the shopping cart, maybe you want to freeze and return the cart contents, but there were no handlers involved.  Having said that, in the LVish calculus for which we prove determinism there are actually two freezes: there's simple freeze that just takes an LVar argument, and there's a construct called "freeze-after" that combines registering a handler with an LVar, starting the computation off (say, by inserting that first starting node in the set), quiescing the computation, and finally freezing it.  And in our library we actually provide a bunch of combinators that bring together these different pieces.  So the way I wrote it here, with explicitly quiescing and then freezing -- I wouldn't have had to do it that way.
 
+## (roadmap)
+
+[TODO: figure out what to say here -- something about the part of the proof that I'm going to talk about.]
+
 ## (proof)
+
+[TODO: revise this; probably focus on determinism]
 
 So how do we prove this property?  Well, the key to getting to quasi-determinism is that we prove a local confluence lemma, which says that if we start from that starting configuration sigma and we can step in two different ways from it, then there exists some third configuration sigma_c that those two, sigma_a and sigma_b, can each step to in no more than one step.  Actually, this property is really "local quasi-confluence" which means that either this is true, or one of sigma_a and sigma_b steps to error.  I've actually left out all the error cases in this picture, both for quasi-determinism and for quasi-confluence, to keep it simple, but the error cases are actually straightforward, and this case is where all the action is.
 
@@ -260,6 +267,8 @@ So do do that we needed to prove a property that we call "Independence" that cap
 In the real proof, there are some side conditions on what S-double-prime can be, in particular to rule out interference from freezing.  But this is what's going on at a high level.
 
 ## (frame rule)
+
+[TODO: revise this]
 
 So, to give an idea of why this independence property we had to show is interesting, I put it up here next to what's known as the frame property, or frame rule, from separation logic, which is one of the really cool developments in program verification over the last fifteen years or so.
 
@@ -327,27 +336,17 @@ But in terms of parallelism, it did pretty similarly to the blur benchmark -- so
 
 So we did succeed in our goal of making programs go faster.
 
+[TODO: update this part]
+
 And, finally, I don't have time to cover it in this talk, but we did another case study for parallelizing an existing Haskell program, in this case it was a bioinformatics application that did phylogenetic tree binning, which involved comparing the tree edit distance between every pair of trees in a set of hundreds or thousands of phylogenetic trees.  And we got a respectable speedup on this, too, and it's in our paper that's appearing at PLDI in June and I'm happy to talk more about it later if you want.
 
-## (landscape again)
+## (roadmap)
 
-So, to return to our landscape of deterministic parallel programming, where do LVars and LVish fit in?  Actually, they're all across this landscape.  We've got the pure functional core, on which Haskell is based, and so we can do this pure task parallelism.  We can do single-assignment programming, of course, because IVars are a special case of LVars, and I'll even put two checkmarks here to show that not only can we do this, we can generalize it.
+[TODO: figure out what to say here about distsys]
 
-And because LVars generalize to arbitrary lattices, we can use LVars to express Kahn process networks, because we can use LVars to represent a lattice of channel histories with a prefix ordering.  And, in addition to all this stuff we've discovered a new space of quasi-deterministic programs.
+## (distributed systems)
 
-So all this is stuff you can do in the currently released LVish library of today.
-
-And, the one thing left is disjoint imperative parallelism, but, as of recently, we've been able to fit that our model as well.  The trick to doing this is by applying what we call a StateT transformer to the Par monad that will let us thread some state through, and at a fork the state has to be either split or duplicated.
-
-So if we're splitting a vector like this one, the Haskell type system is powerful enough to ensure at compile time that neither of the child computations can access the original complete vector.  And this is also in our PLDI paper, and it's in our not-yet-released version of LVish which we plan to release in the next couple months.
-
-## (parallel and distributed)
-
-So, we've been talking about parallel programming all this time, and we've made some headway.  But where does this leave us with our other giant problem of programming distributed systems?  Now that we've developed this whole framework of LVars, how can that help?...
-
-## (distributed)
-
-...Well, I have a few ideas, and so I want to wrap up by talking about those.
+[TODO: figure out what to say here]
 
 ## (eventual consistency)
 
@@ -369,6 +368,10 @@ The Dynamo paper doesn't mention lattices at all, but later on, Marc Shapiro and
 
 ## (two styles of CRDTs)
 
+[TODO: see if there's a cute illustration I can use]
+
+[TODO: revise this; I probably don't need to go into detail about this.  Instead, just hit the high points of chapter 5.]
+
 Now, as a brief digression, it turns out that there are two styles of specifying CRDTs.
 
 The style I was just talking about is called the "convergent" or "state-based" style, and these are what are known as CvRDTs.  To specify a CvRDT, you specify the states that a replica can take on, and you specify a join operation on states, so that set of states together with that operation form a lattice, and a replica can converge with a remote replica by taking the join of its local state and the remote replica's state.
@@ -378,6 +381,8 @@ There's also another style, which is called the "commutative" or "operation-base
 The cool thing about these state-based and op-based styles is that they're equivalent -- if you have a CRDT specified in one style then there's a general way to construct one specified in the other style, and vice versa.  Having said that, in our work we just look at CvRDTs because they're the most obviously similar to LVars.
 
 ## (LVars vs. CvRDTs)
+
+[TODO: revise this]
 
 ***THIS ONE NEEDS TO BE SCROLLED.***
 
@@ -393,24 +398,24 @@ But what we can do is bring the strong points of LVars to CvRDTs, and vice versa
 
 The other thing we're proposing is adding general inflationary updates to LVars beyond least-upper-bound writes.  And this is frankly something that we should have done long ago, because we're already supporting this in our Haskell library, and it's important for applications that need things like monotonically incremented counters.  So we need to show that this is actually deterministic.  The challenge here is that the inflationary update operations you pick have to commute with each other, and this might mean that you can't do ordinary least-upper-bound anymore -- for instance, it doesn't commute with increment.  So you have to be careful with what you allow.  But we always had to make sure to pick a set of commutative write operations -- it's just that, before, that set had one thing in it, and it was least upper bound.  Now we're generalizing that.
 
-## (parallel/distributed again)
+## (landscape again)
 
-So, to wrap up, we've talked about two giant problems, programming parallel systems and programming distributed systems; I showed you LVars, which are a lattice-based approach to parallel programming that's guaranteed deterministic at the language level, and then we talked about their relationship with CvRDTs from the distributed systems world and our first steps toward bringing LVars and CvRDTs together.
+[TODO: revise to bring up to date a bit]
 
-## (finally, the map)
+So, to return to our landscape of deterministic parallel programming, where do LVars and LVish fit in?  Actually, they're all across this landscape.  We've got the pure functional core, on which Haskell is based, and so we can do this pure task parallelism.  We can do single-assignment programming, of course, because IVars are a special case of LVars, and I'll even put two checkmarks here to show that not only can we do this, we can generalize it.
 
-And, finally, to return to our map, we can see that LVars and LVish are applicable all across the landscape of deterministic parallel programming.
+And because LVars generalize to arbitrary lattices, we can use LVars to express Kahn process networks, because we can use LVars to represent a lattice of channel histories with a prefix ordering.  And, in addition to all this stuff we've discovered a new space of quasi-deterministic programs.
 
-We can do pure functional parallelism;
+So all this is stuff you can do in the currently released LVish library of today.
 
-we can do single-assignment, and then some;
+And, the one thing left is disjoint imperative parallelism, but, as of recently, we've been able to fit that our model as well.  The trick to doing this is by applying what we call a StateT transformer to the Par monad that will let us thread some state through, and at a fork the state has to be either split or duplicated.
 
-we can do KPNs;
-
-as of recently, we can do imperative disjoint parallelism;
-
-and we've staked out a new class of quasi-deterministic parallel programs.
+So if we're splitting a vector like this one, the Haskell type system is powerful enough to ensure at compile time that neither of the child computations can access the original complete vector.  And this is also in our PLDI paper, and it's in our not-yet-released version of LVish which we plan to release in the next couple months.
 
 And, eventually, we'll have threshold-readable CvRDTs and we'll have distributed LVish, and in that case we'll have LVars not only across the landscape but also in the cloud!
+
+## (final slide)
+
+[TODO: figure out what I can say to sum up -- something about unifying abstractions!]
 
 That's all I've got -- thank you very much, and I'm happy to take questions.
