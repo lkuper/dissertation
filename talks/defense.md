@@ -23,41 +23,39 @@ Finally, I show how LVar-style threshold reads apply to the setting of *converge
 
 Good afternoon!  Thanks for being here.  I'm Lindsey Kuper, and in this talk, I'm going to tell you about my dissertation work on lattice-based data structures for deterministic parallel and distributed programming.
 
-I want to start by motivating why we're all here.  Why are we here?  Why are you here?  Well, if you're my mom and dad, you're here because I'm your daughter.  But most of us are here because we study computer science.  So, if you're here, chances are you're aware of, and maybe even interested in, two very big problems.
+I want to start by motivating why we're all here.  Why are we here?  Why are you here?  Well, if you're my mom and dad, you're here because I'm your daughter.  But most of us are here because we study computer science.  So, if you're here, chances are you're aware of, and maybe even interested in, two big problems in CS.
 
 ## (parallel systems; distributed systems)
 
-Those problems are, first, how do we effectively program parallel systems?  How do we write programs in such a way that they run on multiple processors, go fast, and behave the way we want them to?
+Those problems are, first, how do we effectively program parallel systems?  That is, how do we write programs in such a way that they run on multiple processors, and hence go fast, and yet still compute correctly?
 
-And, second, how do we effectively program distributed systems?  How do we write programs in such a way that they run, correctly, on networked computers around the world?
+And, second, how do we effectively program distributed systems?  That is, how do we write programs in such a way that they run, correctly, across a network, that's subject to network partitions and other kinds of failures?
 
-And different formalisms and indeed different branches of CS have been developed to deal with these giant problems, so it's useful to try to find unifying abstractions -- and this is really what motivates me, trying to find unifying abstractions for programming -- and perhaps make progress on both.
-
-And that's what my dissertation work is about: I've developed what I call lattice-based data structures, and... 
+And different formalisms and perhaps even different subfields of CS have been developed to deal with these two big problems.  So, it's useful to try to find unifying abstractions that can perhaps help us understand and make progress on both of these problems -- and this is really what motivates me: trying to find unifying abstractions for programming.  So to that end, my dissertation work is about what I call lattice-based data structures, and... 
 
 ## (my thesis; a roadmap of sorts)
 
-...my thesis is that lattice-based data structures are a general and practical foundation for deterministic and quasi-deterministic parallel and distributed programming.
+...my thesis is that lattice-based data structures are a general and practical unifying abstraction for deterministic and quasi-deterministic parallel and distributed programming.
 
-And this thesis serves as a road map for the talk.
+And this thesis serves as a road map for my talk.
 
-First, I'm going to explain what I mean by "deterministic", and what I mean by deterministic parallel programming", and I'm going to talk about some of the existing approaches to the problem of deterministic parallel programming.
+First up, I'm going to explain what I mean by "deterministic", what I mean by "parallel programming", and what I mean by "deterministic parallel programming".  And I'm going to talk about some of the existing approaches to the problem of deterministic parallel programming.
 
-Then I'm going to explain what I mean by lattice-based data structures, and as part of that, we'll see how they generalize those existing approaches that I mentioned.  I call these LVars for short, and you'll see why they're called that in a little while.  I'll also show what we've done to prove that the LVars programming model is deterministic.
+Then I'm going to explain what I mean by lattice-based data structures, and as part of that, we'll see how they generalize those existing approaches that I'll cover.  Lattice-based data structures are called LVars for short, and we'll see why they're called that in a little while.  I'll also show what we've done to prove that the LVars programming model is deterministic.
 
-I'm going to introduce the idea of quasi-determinism, which is a word I made up, and which we can think of as "determinism modulo errors".  I'll show how we incorporate this idea in the LVars programming model, why it's an interesting property, and how we prove that the programming model is quasi-deterministic.
+I'm going to introduce the idea of quasi-determinism, which means "determinism modulo errors", as I'll explain later on.  I'll show how we incorporate this idea in the LVars programming model, why it's an interesting property, and how we prove that the programming model is quasi-deterministic.
 
-Then, to support my claim of practicality, we're going to look some real problems that we've solved using the LVars programming model.
+Then, to support my claim of practicality, we're going to look at some real problems that we've solved using the LVars programming model.  I have two case studies to show you.
 
-And finally, I'm going to show how the LVars approach applies not only to parallel programming but also in the setting of distributed programming, in particular, to distributed replicated data structures.
+Most of the talk is going to focus on parallel programming, but finally I'm going to show how the LVars approach applies in the setting of distributed programming, in particular, to distributed replicated data structures.
 
-To begin with, though, let's talk about parallel programming...
+To begin with, let's talk about parallel programming...
 
 ## (deterministic parallel programming)
 
-...in particular about deterministic parallel programming.  What do I mean by that?
+...and, in particular, about deterministic parallel programming.  What do I mean by that?
 
-Broadly, by parallel programming I mean writing programs in such a way that they can take advantage of parallel hardware to go faster.  By deterministic parallel programming we mean, doing that, but in such a way that the observable results of our program are always the same.  This idea of observability is important, and it'll come up again, but first, so to give some intuition for what deterministic parallelism is about, I want to tell a story.
+Broadly, by parallel programming I mean writing programs in such a way that they can take advantage of parallel hardware to go faster.  By deterministic parallel programming we mean, doing that, but in such a way that the observable results of our program are always the same.  This idea of observability is important, and it'll come up again, but first, so to give some intuition for what deterministic parallelism is about, I'm going to tell a story.  This is one that many of you have heard before.  I like to tell it at parties.  So if you've heard it, bear with me!
 
 ## (a shopping trip)
 
@@ -73,49 +71,55 @@ Well, then suppose I want to look at the contents of my cart, and suppose that t
 
 So, what do you think the contents of my cart are going to be?  What does `p` evaluate to?
 
-Well, I tried running this code myself a little while ago, in parallel on my trusty two-core laptop with -N2, and I ran this program a few hundred times, just to be sure.  And the answer seems to be...
+Well, I tried running this code myself, and I ran it on parallel hardware, here on my two-core laptop in fact, with the -N2 option enabled so it would use those two cores.  and I ran this program a few hundred times, just to see what would happen.  And the answer seems to be...
 
 ## (result of running program)
 
-...it depends.  Well, the first answer is both the Book and the Shoes, but sometimes it's just the Shoes, and every now and then it's just the Book.  So, this is a nondeterministic parallel program, and that seems less than ideal.  
+...it depends.  Well, the first answer I got was both the Book and the Shoes, but sometimes I just got the Shoes, and every now and then I just got the Book.  So, this is a nondeterministic parallel program.  That is, when I look at my shopping cart, what I see is subject to the whims of the language runtime system, and how it chooses to schedule the addition of items to my cart. And that seems less than ideal.
 
-It would be nice if I could be assured that what I see when I look at my shopping cart isn't subject to the whims of the language runtime and how it chooses to schedule the addition of items to my cart.
+## (we have to tame sharing)
+
+This happened because our program has two tasks that are sharing state with each other.  That is, they're both writing to the same shared data structure.  But it recently occurred to me that "shared" state is kind of a misnomer.  Sharing is a nice thing to do, right?  Sharing is caring!  But these tasks aren't so much *sharing* as fighting viciously over a piece of state.  If we want determinism, we have to learn to share nicely.
 
 ## (back to same program again)
 
-Now, if all we wanted to do was fix the undersynchronization bugs in *this* particular program, then we could do that.  We'd have to put in more synchronization barriers.  In this case, we'd probably have to return something from each of the first two async calls, wait for those actions to finish, and only then do the read.
+Now, if all we wanted to do was fix the nondeterminism in *this* particular program, then we could do that.  We could say, well, the problem is that the program is undersynchronized.  We'd have to put in more synchronization barriers.  In this case, we'd probably have to return something from each of the first two async calls, wait for those actions to finish, and only then do the read.
 
 And, again, this isn't unique to Haskell; this process is similar for other languages, and I would bet that a lot of us have had to do this kind of thing at some point in our lives.  And then we'd be sure to see both of the items we put in our cart.
 
-But, rather than fixing individual programs in an ad-hoc way like this, what we would really like to do is come up with a programming *model* such that all programs written in the model are guaranteed to be deterministic.
+But, rather than fixing individual programs in an ad-hoc way like this, what we would really like to do is come up with a programming *model* such that all programs written in the model are guaranteed to be deterministic -- in which all programs are guaranteed to share nicely.
 
 ## (side-by-side comparison)
 
-In other words, this program -- now that I've fixed it -- *is* deterministic, but not because of any guarantee given us by the programming model; it's deterministic because we put the synchronization barriers in the right places.  By comparison, and to give you an preview of where we're headed, a version of the same program written using the LVars programming model is deterministic by construction.
+In other words, this program -- now that I've fixed it -- *is* deterministic, but not because of any guarantee given us by the programming model; it's deterministic because we put the synchronization barriers in the right places.  By comparison, and to give you an preview of where we're headed, a version of the same program written using the LVars programming model that I'm presenting in this talk is deterministic by construction.
 
-So what does it mean for a program to be deterministic by construction?  Well, it means that the program was written in a guaranteed-deterministic language, one in which deterministic programs are the only programs that can be expressed.  There has been a lot of work done on this over the years and decades, some by people in this room.  So before we get into what LVars are, let's take a moment to survey the landscape of deterministic-by-construction parallel programming.
+So what does it mean for a program to be deterministic by construction?  Well, it means that the program was written in a language in which deterministic programs are the only programs that can be expressed.  There has been a lot of work done on this over the years and decades.  So before I get into what LVars are, let's take a moment to survey the landscape of deterministic-by-construction parallel programming.
 
 ## (the landscape)
 
-One of the classic examples of a guaranteed-deterministic parallel language, of course, is pure functional programming.  Because programs don't have side effects, any two independent expressions can evaluate simultaneously without affecting the eventual value of the program.
+One of the classic examples of a guaranteed-deterministic parallel language, of course, is pure functional programming.  Because programs don't have side effects, any two independent expressions can evaluate simultaneously without it changing the eventual value of the program.  With these programs, we don't really have to ask if they share nicely, because they have no shared state at all.
 
-And I'm using the lambda calculus as representative of this category, and Haskell belongs here as well, if you're not using IORefs and things like that.  But the key characteristic is lack of side effects, or, in other words, immutability.  So, things like array languages where you manipulate immutable arrays go in this category too, as well as things like operations on parallel arrays in River Trail.
+I'm using the lambda calculus as representative of this category, and Haskell belongs here as well, if you're not using IORefs and things like that.  But the key characteristic is lack of side effects, or, in other words, immutability.  So, things like array languages where you manipulate immutable arrays go in this category too.  Starting next week I'm going to be working on River Trail, which adds parallel immutable arrays to JavaScript, and that also falls into this category.
 
-Much later, in the early 1970s, there was work on data-flow models, and in particular Kahn process networks.  These allow message-passing computations in which separate processes can communicate with each other only through blocking FIFO channels, exposing pipeline parallelism.
+Beginning in the early 1970s, there was work on dataflow models, and in particular Kahn process networks.  These allow message-passing computations in which separate processes can communicate with each other only through blocking FIFO channels, exposing pipeline parallelism.  So with these we get deterministic programming in a dataflow style.
 
-Around the same time, we saw single-assignment languages, in which parallel computations can share state, but those shared variables can be mutated only once, to initialize them.  Starting in the 80s, these single-assignment structures became known as IStructures, or IVars, and these are the foundation for things like the Intel Concurrent Collections library, or CnC.  And I'm going to talk more about single-assignment in a minute.
+Closely related to those are single-assignment languages, in which parallel computations can share state, but those shared variables can be mutated only once, to initialize them.  Starting in the 80s, these single-assignment structures became known as IStructures, or IVars, and these are the foundation for things like the Intel Concurrent Collections library, or CnC.  And I'm going to talk more about single-assignment in a minute.
 
-And finally, more recently we've seen permissions systems and type systems that make it possible for imperative programs to mutate state in parallel, while guaranteeing that the same state isn't accessed simultaneously by multiple threads.  And DPJ, or Deterministic Parallel Java, which Tatiana has worked on, is a good example of this approach.
+And finally, more recently we've seen permissions systems and type systems that make it possible for imperative programs to mutate state in parallel, while guaranteeing that the same state isn't accessed simultaneously by multiple threads.  And DPJ, or Deterministic Parallel Java, is the prototypical example of this approach, which I call imperative disjoint parallelism, and it's yet another way of enforcing nice sharing.
 
-So we've got a bunch of flags planted in the ground here, and at first appearance, they all describe rather different mechanisms for exposing parallelism and for ensuring determinism.
+So we've got a bunch of points on the landscape here, and at first appearance, they all describe rather different mechanisms for exposing parallelism and for ensuring determinism.
 
 But, as we uncover these various points in the space, what have we learned about the space as a whole?  Do we know the underlying principles behind these points, or how to unify or generalize them?  It would be nice if we could, because a lot of these mechanisms are fairly narrow.
 
 Now, it might be fine if we just had a big toolkit of unrelated choices, and we just picked the right one for the job as needed, but what do we do when we want to implement an application that has multiple parallelizable kernels that span different points in this space?  For instance, what if we have an application that uses data-flow pipeline parallelism but also does disjoint parallel mutation of a store?
 
-So the question is, can we generalize and unify these points?  And the answer is, yes!  KPNs and single-assignment both fit nicely into the LVars programming model that I'm going to talk about, and, all four of these turn out to be compatible.  *And*, we can even generalize further, beyond what I've shown here.
+So the question is, can we generalize and unify these points in the space?
 
-So, what are LVars and how do they work?
+## (roadmap)
+
+And the answer is, yes!  All of those points in the space are either subsumed by, or are compatible with, the LVars programming model that I'm going to talk about, because LVars are a general unifying abstraction for deterministic parallel programming.  *And*, LVars can in fact even generalize further, beyond what we saw on the map.
+
+So, in this next part of the talk, I'm going to explain just what LVars are and how they work.
 
 ## (cart again)
 
