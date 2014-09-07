@@ -24,7 +24,7 @@ First up, I'm going to explain what I mean by "deterministic", what I mean by "p
 
 Then I'm going to explain what I mean by lattice-based data structures, and as part of that, we'll see how they generalize those existing approaches that I'll cover.  Lattice-based data structures are called LVars for short, and we'll see why they're called that in a little while.
 
-I'm going to introduce the idea of quasi-determinism, which means "determinism modulo errors", as I'll explain later on.  I'll show how we incorporate this idea in the LVars programming model, and why it's such an interesting property.
+I'm going to introduce the idea of quasi-determinism, which is a term we made up, and to a first approximation it means "determinism modulo exceptions".  It's actually better than that; it's determinism modulo a particular kind of exception.  I'll show how we incorporate this idea in the LVars programming model, and why it's useful.
 
 To support these claims of determinism and quasi-determinism, I actually have to prove that those properties are true.  So I'm going to sketch out for you how I proved that our two flavors of the LVars programming model are deterministic and quasi-deterministic, respectively.
 
@@ -120,8 +120,6 @@ And finally, LVar reads have to be what we call *threshold reads*, which I'll ta
 
 ## (13. the littlest LVar)
 
-***THIS ONE NEEDS TO BE SCROLLED.***
-
 A good first example of an LVar is, in fact, an IVar!  So let's look at how that works.  Here we have a lattice representing the states that a natural-number-valued IVar can take on.  The bottom element of the lattice represents the "empty" state of the IVar.  The elements `0`, `1`, `2`, and so on represent each of the possible "full" states.  Finally, the top element of the lattice represents the error state that results from incompatible writes.
 
 Any time you write to this LVar, its contents are updated to what's called the *least upper bound* of the previous state and the new state.  By the least upper bound, we mean the smallest state that's at least as big as both the previous state and the new state.  The least upper bound operation satisfies our criteria for writes -- it's both commutative and inflationary.
@@ -144,9 +142,15 @@ But, now that we can do multiple writes, we can do a lot more than this.  So nex
 
 ## (14. a counter LVar)
 
-[TODO: write this section]
+This time we have a lattice that represents the states that a natural-number-valued counter can take on.
 
-So, now we've seen a couple of examples of things you can do with LVars.  But, with what I've shown so far, there are a lot of things you can't do.  Let's consider what they are.
+Notice that I've got a couple of increment operations here, `incr1` and `incr42`.  `incr1`, of course, increments the counter once, and `incr42` increments it forty-two times.  Of course, you could write `incr42` in terms of `incr1`, but for the sake of argument, let's say incrementing the counter by forty-two is something we have to do a lot, so it's built in.  There are a couple of things to note here.  First of all, all operations are increment operations.  So they're all inflationary with respect to the lattice, which is just the usual order that we put natural numbers in.  Second, they commute with each other -- that is, if you do an incr1 and then an incr42, the result will always be the same as if you'd done incr42 and then incr1.  So, these are also legal LVar operations.  Notice that they don't compute a least upper bound, like the `put` operation did.  `put` took an argument and then computed the least upper bound of the current LVar contents and its argument -- but these operations don't take an argument, so there's nothing to compute a least upper bound with.  But that's fine -- they're commutative and inflationary, and that's all we require.
+
+OK, then what about reading from this LVar?  Reads have to correspond to threshold sets, and again, a threshold set has to be _pairwise incompatible_, so the least upper bound of every two elements of the threshold set has to be top.  Well, the only way to make that happen in this lattice is to make the threshold set a singleton set.  So with this lattice, when we do a threshold read, the only question we're allowed to ask is, have the contents of the LVar reached a certain point yet?  The read will block until the answer to that question is "yes", and then it'll unblock.
+
+By the way, threshold reads can get more complicated than this, and in fact in my dissertation, I have a more general formulation of threshold reads that allows you to express some more interesting programs.  But this is the basic idea.
+
+So, now we've seen a couple of examples of things you can do with LVars.  But, with what I've shown so far, there are also a lot of things you can't do.  Let's consider what they are.
 
 ## (15. what you can't do)
 
@@ -168,7 +172,7 @@ We called our POPL paper "Freeze After Writing", but another way to put it is "f
 
 ## (17. road map)
 
-Those questions bring me to the next part of the talk, where I'm going to introduce the concept of quasi-deterministic parallel programming.  I'm going to explain this through an example problem that's hard to solve using just the threshold reads that we've seen so far, and that motivates the need for handlers, quiesence, and freezing.
+Those questions bring me to the next part of the talk, where I'm going to introduce the concept of quasi-deterministic parallel programming.  I'm going to explain this through an example problem that's hard to solve using just the threshold reads that we've seen so far, and that motivates the need for handlers, quiescence, and freezing.
 
 ## (18. challenge: parallel graph traversal)
 
@@ -248,23 +252,23 @@ So we can use this nice idea of non-interference of disjoint memory, and use it 
 
 ## (24. road map)
 
-But, back here on earth where we actually have to write programs, what does this give us?  How is this useful?  So next I'm going to talk about how we put LVars into practice and what practical gains we can realize using LVars -- in other words, we're going to see how to make programs go faster.
+But, back here on earth where we actually have to write programs, what does this give us?  How is this useful?  So next I'm going to talk about how we put LVars into practice and what practical gains we can realize with them.  That brings me to the library that we've created for programming with LVars, which we couldn't resist calling...
 
 ## (25. the LVish library)
 
-[TODO: rewrite a bit here]
+..."LVish"!  All of the code examples I've showed in this talk are written with the LVish library.
 
-..."LVish"!  All of the code examples I've been showing are written with the LVish library.
+When you're using LVish, you write what are called `Par` computations, short for "parallel", and and it's only inside a `Par` computation that LVar operations are allowed to run.
 
-When you're using LVish, you write what are called `Par` computations, short for "parallel", and and it's only inside a `Par` computation that LVar operations are allowed to run.  When you run a `Par` computation, it's dynamically scheduled by a work-stealing scheduler that's part of our library.  The scheduler implementation is interesting in its own right, and we discuss it more in our paper, but for now all I want to say is that these are lightweight, library-level threads; we didn't have to change anything about the underlying run-time system.
+When you run a `Par` computation, it's dynamically scheduled by a work-stealing scheduler that's part of our library.  The scheduler implementation is interesting in its own right, but for now all I want to say is that these are lightweight, library-level threads; we didn't have to change anything about the underlying run-time system.
 
-Nothing about the LVars model is specific to Haskell, but because we did implement it in Haskell we were able to do some fun tricks.  One of those is that `Par` computations are parameterized by an *effect level*, which allows for fine-grained specification of the effects that a given computation is allowed to perform.  The effect level is the first type parameter to the Par type.  So, for instance, this computation is indexed with a `Det` effect level, for deterministic.  And because of that, if I tried to do a `freeze` inside this computation, it would raise a type error.  So, the *type* of an LVish computation reflects its determinism or quasi-determinism guarantee.
+Nothing about the LVars model is specific to Haskell, but because we did implement it in Haskell we're able to do some cool things.  One of those is that `Par` computations are parameterized by what we call an *effect signature*, which allows for fine-grained specification of the effects that a given computation is allowed to perform.  The effect signature is the first type parameter to the Par type, and you can apply constraints to that type parameter.  So, for instance, here's our shopping cart program written using LVish.  This computation is allowed to perform `put` operations, becauase its effect level has the `HasPut` typeclass constraint.   But it's not allowed to do, say, `freeze` operations.  And because of that, if I tried to do a `freeze` inside this computation, it would raise a type error.  So, the *type* of an LVish computation can reflect its determinism or quasi-determinism guarantee.
 
-And the other cool trick is this `runParThenFreeze` operation that LVish provides, which runs a `Par` computation and then returns a frozen LVar at the end of it, after an implicit global barrier.  When you run an LVish computation with `runParThenFreeze`, then you don't have to manually `freeze` the LVar yourself, which means you don't have to manually `quiesce`, either.  So, for instance, this is a `Par` computation that only does writes and then returns, so it can have a deterministic effect level, but if we run that computation with `runParThenFreeze`, and we'll have a deterministic program that always shows us the complete contents of the cart, because of that implicit barrier.
+The other cool feature is this `runParThenFreeze` operation that LVish provides, which runs a `Par` computation and then returns a frozen LVar at the end of it, after an implicit global barrier.  What this means, is that when you run an LVish computation with `runParThenFreeze`, then you don't have to manually `freeze` the LVar yourself, which means you don't have to manually `quiesce`, either.  So, for instance, this is a `Par` computation that actually only does writes and then returns, so it can be fully deterministic, but if we run that computation with `runParThenFreeze`, because of that implicit barrier, we'll have a deterministic program that still always shows us the complete contents of our cart, because of that implicit barrier.
 
-The LVish library also provides a bunch of data structures: IVars, IStructures, sets, maps, and so on, including some efficient lock-free implementations of sets and maps.  And, in addition to the provided ones, users can implement their own LVar types, and the library provides some handy stuff to facilitate that.
+The LVish library also provides a bunch of data structures: IVars, IStructures, sets, maps, and so on, including some very nice lock-free implementations of sets and maps that scale well as  we add cores.  And, in addition to the provided ones, users can implement their own LVar types, and the library provides some handy stuff to facilitate that.
 
-And you can install it today!
+And you can install it today!  There's a version released on Hackage, but it's a bit old, so if you want to try out all the stuff that I've covered here, in particular the effect signatures, and you don't want to wait for us to do the next release, then you can find it on github as well.
 
 ## (26. deterministic parallel programming)
 
@@ -276,11 +280,9 @@ So that's the kind of problem that our dynamic work-stealing scheduler for LVish
 
 ## (27. k-CFA)
 
-[TODO: maybe tweak this and add more material from my diss?]
+So this begins with a story.  Two years ago, I was at a conference, ICFP 2012 in Copenhagen, and I got into a conversation about potential applications for LVars with Matt Might, who does static analysis.  Unsurprisingly, he said, "Oh, you should definitely apply LVars to static analysis."
 
-So this begins with a story.  Two years ago, I was at a conference, ICFP 2012 in Copenhagen, and I got into a conversation with Matt Might about potential applications for LVars, and, he happens to be a static analysis researcher, so unsurprisingly, he said, "You should definitely apply LVars to static analysis."
-
-So, Matt suggested that we could use LVars to parallelize a *k*-CFA static program analysis.  The idea of *k*-CFA is to explore a graph of abstract states of a program, with the goal of discovering the flow of control in the program without actually having to run it.  And, this is a picture of one of those abstract state transition graphs, showing the abstract states and the transitions between them, from one of his papers.  Now, if I recall correctly, this is for a toy 9-line program, so as you can imagine the state transition graphs for realistic programs are much larger.
+So, Matt suggested that we could use LVars to parallelize a *k*-CFA static program analysis.  The idea of *k*-CFA is to explore a graph of abstract states of a program, with the goal of discovering the flow of control in the program without actually having to run it.  And, this is a picture of one of those abstract state transition graphs, showing the abstract states and the transitions between them, from one of his papers.  Now, this is for a toy 9-line program from one of Matt's papers, so as you can imagine the state transition graphs for realistic programs are much larger.
 
 Well, it turned out, once I started looking into it, that the algorithm relied on detecting quiescence in a fixpoint computation, just as in the simpler graph traversal that I showed before.   So, once we had support for quiescence and freezing, we were able to sit down and implement *k*-CFA in LVish.  In particular, what we did was port a pure Haskell version of the *k*-CFA analysis to a parallel version using LVish.
 
@@ -288,21 +290,21 @@ So at that point, we were able to run our parallel implementation of k-CFA on on
 
 There are really three things that are interesting about these results.
 
-First, the program we were parallelizing was a pure functional, idiomatic Haskell program.  There was a lot of potential for parallelism in it.  But functional programming didn't really serve them well because there was tons of allocation and copying data around.  So, just being able to have shared mutable data structures, even though they're only mutable in the extremely restricted and determinism-preserving way that LVish allows, that by itself gave us an up to 20x speedup, even just on one core.
+First, the program we were parallelizing was a pure functional, idiomatic Haskell program.  There was a lot of potential for parallelism in it.  But functional programming didn't really serve them well because there was tons of allocation and copying data around.  So, just being able to have shared mutable data structures, even though they're only mutable in the extremely restricted and determinism-preserving way that LVish allows, that by itself gave us an up to 25x speedup, *just on one core*.
 
-Well, that was exciting, and then we turned on parallelization.  So here's what we saw.
+Well, that was exciting, and then we turned on multiple cores.  So here's what we saw.
 
-We implemented a version of this benchmark called "blur" from the *k*-CFA paper that I mentioned.  The blue line here shows what a linear parallel speedup would look like as we add cores, and the green line is how we did.  So we ended up getting a little more than an 8x speedup on 12 cores.
+We implemented a version of a benchmark called "blur" from the *k*-CFA paper that I mentioned.  The blue line here shows what a linear parallel speedup would look like as we add cores, and the green line is how the blur benchmark did.  So we ended up getting a little more than an 8x speedup on 12 cores.
 
-The last thing to point out is that we actually implemented this algorithm using two different LVar data structures that the LVish library provides.  We did it with our lock-free concurrent set based on skip lists, and we also tried it  with our reference implementation of a set, which is basically just a pure Haskell data structure wrapped in an LVar, and that's what the yellow line is.
+Now, notice that this line is labelel "blur (lock-free)".  The last thing to point out is that we actually implemented two versions of the *k*-CFA algorithm using two different LVar data structures that the LVish library provides.  We did it with our lock-free set based on concurrent skip lists, and we also tried it with our reference implementation of a set, which is just a pure Haskell set wrapped in a mutable container, and that's what the yellow line is.  They provide the same API, but their scaling characteristice are different.
 
-Now, yellow is normalized to the same baseline as green, for the single-core version.  Notice that it does a little better up to four cores or so, but then it stops scaling.
+Now, the results in yellow --- that is, for the pure version, are normalized to the same baseline as the results in green for the single-core version.  Notice that the pure version does a little better up to four cores or so, but then it stops scaling, while the lock-free version keeps scaling up to twelve cores.
 
-The really interesting point here is not that it helps to use a good, efficient, concurrent data structure, because although that's true, we already knew that.  The interesting point is that there's nothing about using LVish that precludes using these efficient concurrent data structures.  Anything that has the semantics of an LVar is fine for the determinism guarantee.  So you don't have to give up that guarantee if you want to use a fancy data structure.
+The interesting point here is not that it helps to use a nice, efficient, concurrent lock-free data structure, because although that's true, we already knew that.  The interesting point is that there's nothing about using LVish that precludes using these efficient concurrent data structures.  Anything that presents the interface of an LVar is fine.  So you don't have to give up your determinism guarantee if you want to use a fancy data structure.  In fact, part of the point of LVish is to make it possible for parallel programs ot make use of lock-free data structures while still retaining the determinism guarantee of LVars.
 
-We also did one other benchmark, and this is on a program called "notChain", which is just a long chain of 300 "not" functions, "not not not not" et cetera, which was particularly designed to negate the benefits of our sharing approach.  And, indeed, that one didn't get anything close to the 20x speedup from sharing; I don't think there was any speedup at all.
+We also did one other benchmark, and this is on a program called "notChain", which is just a long chain of 300 "not" functions, "not not not not" et cetera, which was particularly designed to negate the benefits of our sharing approach.  And, indeed, that one didn't get anything like that 25x speedup that "blur" got as a result of sharing; I don't think there was any speedup from sharing at all.
 
-But in terms of parallelism, it did pretty similarly to the blur benchmark -- so, as you can see, the lock-free version managed to get a respectable speedup -- around 7x on 12 cores, and the version with the reference implementation of a set did about the same as the other benchmark did.
+But in terms of speedup as a result of parallelism, notChain did pretty similarly to the blur benchmark -- so, as you can see, the lock-free version managed to get a respectable speedup -- around 7x on 12 cores, and the pure version did about the same as the other benchmark did.
 
 So we did succeed in our goal of making programs go faster.
 
@@ -346,21 +348,17 @@ The Dynamo paper doesn't mention lattices at all, but later on, Marc Shapiro and
 
 ## (33. landscape again)
 
-[TODO: make the checkmarks build...]
-
-[TODO: revise to bring up to date a bit]
-
 So, to return to our landscape of deterministic parallel programming, where do LVars and LVish fit in?  Actually, they're all across this landscape.  We've got the pure functional core, on which Haskell is based, and so we can do this pure task parallelism.  We can do single-assignment programming, of course, because IVars are a special case of LVars, and I'll even put two checkmarks here to show that not only can we do this, we can generalize it.
 
 And because LVars generalize to arbitrary lattices, we can use LVars to express Kahn process networks, because we can use LVars to represent a lattice of channel histories with a prefix ordering.  And, in addition to all this stuff we've discovered a new space of quasi-deterministic programs.
 
-So all this is stuff you can do in the currently released LVish library of today.
+So all this is stuff you can do in the current release of LVish.
 
-And, the one thing left is disjoint imperative parallelism, but, as of recently, we've been able to fit that our model as well.  The trick to doing this is by applying what we call a StateT transformer to the Par monad that will let us thread some state through, and at a fork the state has to be either split or duplicated.
+And, the one thing left is disjoint imperative parallelism, but, as of recently, we've been able to fit that into our model as well.  The trick to doing this is by applying what we call a transformer to Par computations that will let us thread some state through, and at a fork the state has to be either split or duplicated.
 
-So if we're splitting a vector like this one, the Haskell type system is powerful enough to ensure at compile time that neither of the child computations can access the original complete vector.  And this is also in our PLDI paper, and it's in our not-yet-released version of LVish which we plan to release in the next couple months.
+So, using that approach, say, to split a vector like this one and then fork computations that operate on each part of it, the Haskell type system is powerful enough to ensure at compile time that neither of the forked computations can access the original complete vector.  This is in our PLDI paper, and it's in our not-yet-released version of LVish.
 
-And, eventually, we'll have threshold-readable CvRDTs and we'll have distributed LVish, and in that case we'll have LVars not only across the landscape but also in the cloud!
+And, I've shown how we can bring LVar-style threshold reads to the setting of convergent replicated data types in distributed cloud storage systems.  And so we can have LVars not only across the landscape but also in the cloud!  (By the way, people are actually working on implementing this -- ask me about it later.)
 
 ## (34. final slide)
 
