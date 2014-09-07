@@ -136,7 +136,7 @@ composition.  Therefore, we seek a general, broadly-applicable model
 for deterministic parallel programming that is not tied to a
 particular data structure.
 
-\section{Lattice-based, monotonic data structures as a basis for deterministic parallelism}\label{s:intro-monotonic}
+\section{Monotonic data structures as a basis for deterministic parallelism}\label{s:intro-monotonic}
 
 In KPNs and other data-flow models, communication takes place over
 blocking FIFO queues with ever-increasing \emph{channel histories},
@@ -147,16 +147,14 @@ structures to which information can only be added and never removed,
 and for which the timing of updates is not observable---emerge as a
 common theme of guaranteed-deterministic programming models.
 
-In this dissertation, I show that \emph{lattice-based} data
-structures, or \emph{LVars}, are the foundation for a model of
-deterministic-by-construction parallel programming that allows a more
-general form of communication between tasks than previously existing
-guaranteed-deterministic models allowed.  LVars generalize IVars and
-are so named because the states an LVar can take on are elements of an
-application-specific \emph{lattice}.  This application-specific
-lattice determines the semantics of the @put@ and @get@ operations
-that comprise the interface to LVars (which I will explain in detail
-in Chapter~\ref{ch:lvars}):
+In this dissertation, I show that taking \emph{lattice-based} data
+structures, or \emph{LVars}, offer a general approach to deterministic
+parallel programming that takes monotonicity as a starting point. The
+states an LVar can take on are elements of an application-specific
+\emph{lattice}.  This application-specific lattice determines the
+semantics of the @put@ and @get@ operations that comprise the
+interface to LVars (which I will explain in detail in
+Chapter~\ref{ch:lvars}):
 \begin{itemize}
 \item The @put@ operation can only make the state of an LVar ``grow''
   with respect to the lattice, because it updates the LVar to the
@@ -185,11 +183,11 @@ generalize from the least-upper-bound @put@ operation to a set of
 arbitrary \emph{update operations} that are not necessarily idempotent
 (but are still inflationary and commutative), and we can generalize
 the @get@ operation to allow a more general form of threshold reads.
-The first of these generalizations, from @put@ to arbitrary
-inflationary and commutative updates, turns out to be particularly
-useful to programming with LVars; I formally extend the model to
-include it in Chapter~\ref{ch:quasi}, and in Chapter~\ref{ch:lvish} I
-show how it is useful in practice.
+Generalizing from @put@ to arbitrary inflationary and commutative
+updates turns out to be a particularly useful extension to the LVars
+model; I formally extend the model to support these update operations
+in Chapter~\ref{ch:quasi}, and in Chapter~\ref{ch:lvish} I discuss how
+update operations are useful in practice.
 
 \section{Quasi-deterministic and event-driven programming with LVars}\label{s:intro-quasi}
 
@@ -364,11 +362,13 @@ avoiding unnecessary synchronization.
 With the above background, I can state my thesis:\lk{This format
   ripped off from Josh Dunfield.}
 \begin{quote}
-  Lattice-based data structures are a general and practical foundation
-  for deterministic and quasi-deterministic parallel and distributed
-  programming.
+  Lattice-based data structures are a general and practical unifying
+  abstraction for deterministic and quasi-deterministic parallel and
+  distributed programming.
 \end{quote}
-The rest of this dissertation supports my thesis as follows:
+\lk{Changed from ``foundation'' to ``unifying abstraction'' --
+  otherwise it's the same as in my proposal.}  The rest of this
+dissertation supports my thesis as follows:
 \begin{itemize}
   \item \emph{Lattice-based data structures}: In
     Chapter~\ref{ch:lvars}, I formally define LVars and use them to

@@ -4,10 +4,12 @@
 mechanism for deterministic parallel programming.  An IVar is a
 \emph{single-assignment} variable \cite{Tesler-1968} with a blocking
 read semantics: an attempt to read an empty IVar will block until the
-IVar has been filled with a value.  LVars are a generalization of
-IVars: unlike IVars, which can only be written to once, LVars allow
-multiple writes, so long as those writes are monotonically increasing
-with respect to an application-specific lattice of states.
+IVar has been filled with a value.  The ``I'' in IVar stands for
+``immutable'': an IVar can only be written to once, and thereafter its
+contents cannot change.  LVars are a generalization of IVars: an LVar
+allows multiple writes, but only so long as those writes are
+monotonically increasing with respect to an application-specific
+lattice of states.
 
 Consider a program (written in a hypothetical language) in which two
 parallel computations write to an LVar $\mathit{lv}$, with one thread

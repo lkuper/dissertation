@@ -7,7 +7,7 @@ programming model takes monotonicity as a starting point and
 generalizes single assignment to monotonic multiple assignment,
 parameterized by a lattice.  The LVars model, and the accompanying
 LVish library, support my claim that lattice-based data structures are
-a general and practical foundation for deterministic and
+a general and practical unifying abstracton for deterministic and
 quasi-deterministic parallel and distributed programming.
 
 \section{Remapping the deterministic parallel landscape}
@@ -50,9 +50,11 @@ programming landscape that we mapped out in Chapter~\ref{ch:intro}:
     in Section~\ref{s:lvish-disjoint}.
 \end{itemize}
 In addition to subsuming or accommodating all these existing points on
-the landscape, the LVars model identifies a new point on the map: a
-\emph{quasi-deterministic} programming model, allowing programs that
-perform \emph{freezing} and are deterministic modulo exceptions.  The
+the landscape, we have identified a new class of
+\emph{quasi-deterministic} programs and developed a programming model
+that supports quasi-determinism by construction.  A
+quasi-deterministic model allows programs that perform \emph{freezing}
+and are deterministic modulo write-after-freeze exceptions.  The
 ability to freeze and read the exact contents of an LVar greatly
 increases the expressiveness of the LVars model, especially when used
 in conjunction with event handlers.  Furthermore, we can regain full
@@ -71,7 +73,7 @@ supported the general inflationary, commutative writes of
 Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}
 well before the notion had been formalized in $\lambdaLVish$.
 Moreover, even for the parts of the LVish library that \emph{are}
-fully accounted for in the model, we do not have proof that the LVish
+fully accounted for in the model, we do not have proof that the
 library is a faithful implementation of the formal LVars model.
 
 Although it is unlikely that this game of catch-up can ever be won, an
