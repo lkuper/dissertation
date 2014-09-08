@@ -320,8 +320,6 @@ Recall that effectively programming distributed systems means writing programs i
 
 ## (30. eventual consistency)
 
-[TODO: maybe revise this?]
-
 Because network partitions can occur, and because nodes in the network can fail, one of the hallmarks of distributed programming is *replication*: we have data that's replicated across a number of physical locations.  So, as if it wasn't hard enough just to deal with our shopping cart when it's just running on my laptop, imagine if it's replicated in data centers around the world, as it almost certainly actually is.
 
 Ideally, the system would be consistent, meaning that every replica always sees the same information, but in practice, it isn't going to be, because that goal is in tension with our desire for the system to be highly available, for both reading and writing.  And as if those weren't bad enough, we also have to deal with parts of the network catching on fire and being unable to talk to each other from time to time.
@@ -334,17 +332,13 @@ Well, there's been a lot of work done on this, but there's one particular quotat
 
 ## (31. Dynamo, CRDTs, joining forces)
 
-[TODO: maybe revise this?]
+...is from this paper on Dynamo, which is Amazon's distributed key-value cloud storage system, and this quotation has to do with application-specific mechanisms for resolving conflicts between replicas.  The idea here is that, for instance, if you want to implement a shopping cart, and two replicas disagree on what's in the cart, then you can plug in a conflict resolution operation that combines them in some intelligent way, rather than just going with the one that wrote last.
 
-...happens to be from the Dynamo paper, on Amazon's distributed key-value cloud storage system, and this quotation has to do with application-specific mechanisms for resolving conflicts between replicas.  The idea here is that, for instance, if you want to implement a shopping cart, and two replicas disagree on what's in the cart, then you can plug in a conflict resolution operation that combines them in some intelligent way, rather than just going with the one that wrote last.
+What's interesting to me is that the Dynamo paper doesn't mention lattices at all, but later on, some other researchers, looking for a theoretical basis for systems like Dynamo, came up with what they called convergent replicated data types, or CvRDTs.  These are based on the idea that, if we can define an lattice for the states that an object in the data store can be in, then replicas of that object that differ can merge with one another in a deterministic way, because that application-specific conflict resolution operation is just least upper bound.  Sounds familiar!
 
-The Dynamo paper doesn't mention lattices at all, but later on, Marc Shapiro and collaborators came up with what they called conflict-free replicated data types, or CRDTs.  These are based on the idea that, if we can define an lattice for the states that an object in the data store can be in, then replicas of that object that differ can merge with one another in a deterministic way, because that application-specific conflict resolution operation is just least upper bound.  Sounds familiar!
+## (32. threshold-readable CvRDTs)
 
-## (32. TODO)
-
-[TODO: see if there's a cute illustration I can use]
-
-[TODO: talk about this; just hit the high points of chapter 5.]
+[TODO: talk about this; just hit the high points of chapter 5: what the determinism result is; replicas *don't* have to agree in order for threshold queries to be deterministic.  Maybe add something earlier about how it's impractical to expect replicas to ever actually agree?]
 
 ## (33. landscape again)
 
