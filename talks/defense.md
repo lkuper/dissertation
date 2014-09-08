@@ -320,25 +320,25 @@ Recall that effectively programming distributed systems means writing programs i
 
 ## (30. eventual consistency)
 
-Because network partitions can occur, and because nodes in the network can fail, one of the hallmarks of distributed programming is *replication*: we have data that's replicated across a number of physical locations.  So, as if it wasn't hard enough just to deal with our shopping cart when it's just running on my laptop, imagine if it's replicated in data centers around the world, as it almost certainly actually is.
+Because network partitions can occur, and because nodes in the network can fail, it's typical for distributed systems to *replicate* their data across a number of physical locations.  So, as if it wasn't hard enough just to deal with adding items to my shopping cart when the code is just running on my laptop, imagine if my shopping cart is replicated in data centers around the world, as it certainly actually is.
 
-Ideally, the system would be consistent, meaning that every replica always sees the same information, but in practice, it isn't going to be, because that goal is in tension with our desire for the system to be highly available, for both reading and writing.  And as if those weren't bad enough, we also have to deal with parts of the network catching on fire and being unable to talk to each other from time to time.
+What properties do we want to have be true of such a system?  Ideally, the system would be consistent, meaning that every replica always sees the same information, but in practice, it isn't going to be, because that goal is in tension with our desire for the system to be highly available, for both reading and writing.  And as if those weren't bad enough, we also have to deal with parts of the network catching on fire and being unable to talk to each other from time to time.
 
 Well, the CAP theorem from distributed systems tells us that if we want to be robust to the inevitable network partitions, we have to compromise on at least one of consistency or availability.  And if we need to have high availability, we sacrifice strong consistency for what's known as eventual consistency, in which replicas may not always agree, and the only guarantee is that they'll eventually come to agree.
 
 But that leaves us with another problem, which is, how are we going to get all replicas to agree?  If replicas differ, how do we know which one is right?
 
-Well, there's been a lot of work done on this, but there's one particular quotation I wanted to share which...
+We could just update them all to the one that's most recently written, but that's not such a great idea, because even if we could figure out which one is most recently written, which is itself a hard problem in distributed systems, that might not be the semantics we want.  There's a quotation I want to share...
 
 ## (31. Dynamo, CRDTs, joining forces)
 
-...is from this paper on Dynamo, which is Amazon's distributed key-value cloud storage system, and this quotation has to do with application-specific mechanisms for resolving conflicts between replicas.  The idea here is that, for instance, if you want to implement a shopping cart, and two replicas disagree on what's in the cart, then you can plug in a conflict resolution operation that combines them in some intelligent way, rather than just going with the one that wrote last.
+...which is from the paper on Dynamo, which is Amazon's distributed key-value cloud storage system.  This quotation has to do with application-specific mechanisms for resolving conflicts between replicas.  The idea here is that, for instance, if you want to implement a shopping cart, and two replicas disagree on what's in the cart, then you can use a conflict resolution method that combines their contents in some intelligent way, rather than just going with the one that was most recently written.
 
-What's interesting to me is that the Dynamo paper doesn't mention lattices at all, but later on, some other researchers, looking for a theoretical basis for systems like Dynamo, came up with what they called convergent replicated data types, or CvRDTs.  These are based on the idea that, if we can define an lattice for the states that an object in the data store can be in, then replicas of that object that differ can merge with one another in a deterministic way, because that application-specific conflict resolution operation is just least upper bound.  Sounds familiar!
+This was a very influential paper.  It's a very systems-y paper, there's not really any math in it.  But then, a couple of years later, some other people, looking for a theoretical basis for systems like this, came up with what they called convergent replicated data types, or CvRDTs.  These are based on the idea that, if we can define an lattice for the states that an object in the data store can be in, then replicas of that object that differ can merge with one another in a deterministic way, because that conflict resolution method is just the least upper bound operation in the lattice.  Sounds familiar!
 
 ## (32. threshold-readable CvRDTs)
 
-[TODO: talk about this; just hit the high points of chapter 5: what the determinism result is; replicas *don't* have to agree in order for threshold queries to be deterministic.  Maybe add something earlier about how it's impractical to expect replicas to ever actually agree?]
+So, because CvRDTs are already a close cousin to LVars, what we did was bring LVar-style threshold reads to the setting of CvRDTs.  This is nice because it gives us a deterministic way to query the contents of CvRDTs.  It's also nice because we can do it without the replicas necessarily agreeing.  If you want to know whether the book is in the cart, you can ask a bunch of replicas whether it's there.  The query will block until it appears at one of them.  That's all you need to know.  Now, maybe there's other stuff in the cart, or maybe there isn't, but you don't have to care.  This is convenient, because recall that eventual consistency means "if updates stop arriving, replicas will eventually agree."  But in practice, updates never stop arriving.  Updates never stop arriving!  So we want to be able to make deterministic queries even when replicas disagree, and threshold queries give us a way to do that.
 
 ## (33. landscape again)
 
@@ -352,7 +352,7 @@ And, the one thing left is disjoint imperative parallelism, but, as of recently,
 
 So, using that approach, say, to split a vector like this one and then fork computations that operate on each part of it, the Haskell type system is powerful enough to ensure at compile time that neither of the forked computations can access the original complete vector.  This is in our PLDI paper, and it's in our not-yet-released version of LVish.
 
-And, I've shown how we can bring LVar-style threshold reads to the setting of convergent replicated data types in distributed cloud storage systems.  And so we can have LVars not only across the landscape but also in the cloud!  (By the way, people are actually working on implementing this -- ask me about it later.)
+And, I've shown how we can bring LVar-style threshold reads to the setting of convergent replicated data types in distributed cloud storage systems.  And so we can have LVars not only across the landscape but also in the cloud!  (By the way, I've been talking to people who are working on implementing this -- ask me about it later.)
 
 ## (34. final slide)
 
