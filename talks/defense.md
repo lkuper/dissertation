@@ -1,8 +1,12 @@
 # Lattice-based Data Structures for Deterministic Parallel and Distributed Programming
 
+These are the crib notes for my dissertation defense talk.
+
 ## (1. title; intro)
 
 Good afternoon!  Thanks for being here.  I'm Lindsey Kuper, and in this talk, I'm going to tell you about my dissertation work on lattice-based data structures for deterministic parallel and distributed programming.
+
+And the drawings in this talk were done by my talented friend Jason Reed.
 
 I want to start by motivating why we're all here.  Why are we here?  Why are you here?  Well, if you're my mom and dad, you're here because I'm your daughter.  But most of us are here because we study computer science.  So, if you're here, chances are you're aware of, and maybe even interested in, two big problems in CS.
 
@@ -12,7 +16,7 @@ Those problems are, first, how do we effectively program parallel systems?  That
 
 And, second, how do we effectively program distributed systems?  That is, how do we write programs in such a way that they run, correctly, across a network, that's subject to network partitions and other kinds of failures?
 
-And different formalisms and perhaps even different subfields of CS have been developed to deal with these two big problems.  So, it's useful to try to find unifying abstractions that can perhaps help us understand and make progress on both of these problems -- and this is really what motivates me: trying to find unifying abstractions for programming.  So to that end, my dissertation work is about what I call lattice-based data structures, and... 
+And different formalisms, and, one could argue, perhaps even different subfields of CS have been developed to deal with these two big problems.  So, it's useful to try to find unifying abstractions that can perhaps help us understand and make progress on both of these problems -- and this is really what motivates me: trying to find unifying abstractions for programming.  So to that end, my dissertation work is about what I call lattice-based data structures, and... 
 
 ## (3. my thesis; a road map)
 
@@ -262,19 +266,19 @@ When you're using LVish, you write what are called `Par` computations, short for
 
 When you run a `Par` computation, it's dynamically scheduled by a work-stealing scheduler that's part of our library.  The scheduler implementation is interesting in its own right, but for now all I want to say is that these are lightweight, library-level threads; we didn't have to change anything about the underlying run-time system.
 
-Nothing about the LVars model is specific to Haskell, but because we did implement it in Haskell we're able to do some cool things.  One of those is that `Par` computations are parameterized by what we call an *effect signature*, which allows for fine-grained specification of the effects that a given computation is allowed to perform.  The effect signature is the first type parameter to the Par type, and you can apply constraints to that type parameter.  So, for instance, here's our shopping cart program written using LVish.  This computation is allowed to perform `put` operations, becauase its effect level has the `HasPut` typeclass constraint.   But it's not allowed to do, say, `freeze` operations.  And because of that, if I tried to do a `freeze` inside this computation, it would raise a type error.  So, the *type* of an LVish computation can reflect its determinism or quasi-determinism guarantee.
+Nothing about the LVars model is specific to Haskell, but because we did implement it in Haskell we're able to do some cool things.  One of those is that `Par` computations are parameterized by what we call an *effect signature*, which allows for fine-grained specification of the effects that a given computation is allowed to perform.  The effect signature is the first type parameter to the Par type, and you can apply constraints to that type parameter.  So, for instance, here's our shopping cart program written using LVish.  This computation is allowed to perform `put` operations, because its effect level has the `HasPut` type class constraint.   But it's not allowed to do, say, `freeze` operations.  And because of that, if I tried to do a `freeze` inside this computation, it would raise a type error.  So, the *type* of an LVish computation can reflect its determinism or quasi-determinism guarantee.
 
 The other cool feature is this `runParThenFreeze` operation that LVish provides, which runs a `Par` computation and then returns a frozen LVar at the end of it, after an implicit global barrier.  What this means, is that when you run an LVish computation with `runParThenFreeze`, then you don't have to manually `freeze` the LVar yourself, which means you don't have to manually `quiesce`, either.  So, for instance, this is a `Par` computation that actually only does writes and then returns, so it can be fully deterministic, but if we run that computation with `runParThenFreeze`, because of that implicit barrier, we'll have a deterministic program that still always shows us the complete contents of our cart, because of that implicit barrier.
 
 The LVish library also provides a bunch of data structures: IVars, IStructures, sets, maps, and so on, including some very nice lock-free implementations of sets and maps that scale well as  we add cores.  And, in addition to the provided ones, users can implement their own LVar types, and the library provides some handy stuff to facilitate that.
 
-And you can install it today!  There's a version released on Hackage, but it's a bit old, so if you want to try out all the stuff that I've covered here, in particular the effect signatures, and you don't want to wait for us to do the next release, then you can find it on github as well.
+And you can install it today!  There's a version released on Hackage, but it's a bit old, so if you want to try out all the stuff that I've covered here, in particular the effect signatures, and you don't want to wait for us to do the next release, then you can find it on GitHub as well.
 
 ## (26. deterministic parallel programming)
 
 Now, the goal of parallel programming is to write programs in such a way that they can be scheduled onto multiple cores in order to make them go faster.  And, so far I've been talking about determinism, but all of this is for naught unless we actually *can* make programs go faster!  So let's see how we're doing on that.
 
-First I want to mention that what we want out of deterministic parallel programming models in general is that they produce predictable results, in spite of the unpredictable ways in which parallel tasks are scheduled.  Now, there are some parallel algorithms for which this isn't such a big deal, because you can actually predict scheduling in advance.  If you're doing something like, say, a data-parallel operation on every entry in a thousand-by-a-thousand matrix, then you have a million independent parallel tasks, and you just divide those million tasks evenly by the number of processors you've got.  But it's harder if the parallel algorithm you want to implement is a so-called "irregular" parallel algorithm, where the amount of potential parallelism in the problem depends on the input.  Take our parallel graph traversal, for instance.  How much potential parallelism is there to exploit in that problem?  Well, we have no idea in advance.  We don't find out until we're actually in the graph, stepping through it, seeing what the outdegree of nodes are and launching tasks to handle the nodes they point to.  So, for that kind of problem, because we don't even know how many tasks we'll have to do until we're doing them, they have to be dynamically scheduled.
+First I want to mention that what we want out of deterministic parallel programming models in general is that they produce predictable results, in spite of the unpredictable ways in which parallel tasks are scheduled.  Now, there are some parallel algorithms for which this isn't such a big deal, because you can actually predict scheduling in advance.  If you're doing something like, say, a data-parallel operation on every entry in a thousand-by-a-thousand matrix, then you have a million independent parallel tasks, and you just divide those million tasks evenly by the number of processors you've got.  But it's harder if the parallel algorithm you want to implement is a so-called "irregular" parallel algorithm, where the amount of potential parallelism in the problem depends on the input.  Take our parallel graph traversal, for instance.  How much potential parallelism is there to exploit in that problem?  Well, we have no idea in advance.  We don't find out until we're actually in the graph, stepping through it, seeing what the out-degree of nodes are and launching tasks to handle the nodes they point to.  So, for that kind of problem, because we don't even know how many tasks we'll have to do until we're doing them, they have to be dynamically scheduled.
 
 So that's the kind of problem that our dynamic work-stealing scheduler for LVish is capable of  doing really well on.  Well, it turns out that there are lots of problems like that, and as a case study, we used the LVish library to parallelize one of them.
 
@@ -296,11 +300,11 @@ Well, that was exciting, and then we turned on multiple cores.  So here's what w
 
 We implemented a version of a benchmark called "blur" from the *k*-CFA paper that I mentioned.  The blue line here shows what a linear parallel speedup would look like as we add cores, and the green line is how the blur benchmark did.  So we ended up getting a little more than an 8x speedup on 12 cores.
 
-Now, notice that this line is labelel "blur (lock-free)".  The last thing to point out is that we actually implemented two versions of the *k*-CFA algorithm using two different LVar data structures that the LVish library provides.  We did it with our lock-free set based on concurrent skip lists, and we also tried it with our reference implementation of a set, which is just a pure Haskell set wrapped in a mutable container, and that's what the yellow line is.  They provide the same API, but their scaling characteristice are different.
+Now, notice that this line is labeled "blur (lock-free)".  The last thing to point out is that we actually implemented two versions of the *k*-CFA algorithm using two different LVar data structures that the LVish library provides.  We did it with our lock-free set based on concurrent skip lists, and we also tried it with our reference implementation of a set, which is just a pure Haskell set wrapped in a mutable container, and that's what the yellow line is.  They provide the same API, but their scaling characteristics are different.
 
 Now, the results in yellow --- that is, for the pure version, are normalized to the same baseline as the results in green for the single-core version.  Notice that the pure version does a little better up to four cores or so, but then it stops scaling, while the lock-free version keeps scaling up to twelve cores.
 
-The interesting point here is not that it helps to use a nice, efficient, concurrent lock-free data structure, because although that's true, we already knew that.  The interesting point is that there's nothing about using LVish that precludes using these efficient concurrent data structures.  Anything that presents the interface of an LVar is fine.  So you don't have to give up your determinism guarantee if you want to use a fancy data structure.  In fact, part of the point of LVish is to make it possible for parallel programs ot make use of lock-free data structures while still retaining the determinism guarantee of LVars.
+The interesting point here is not that it helps to use a nice, efficient, concurrent lock-free data structure, because although that's true, we already knew that.  The interesting point is that there's nothing about using LVish that precludes using these efficient concurrent data structures.  Anything that presents the interface of an LVar is fine.  So you don't have to give up your determinism guarantee if you want to use a fancy data structure.  In fact, part of the point of LVish is to make it possible for parallel programs to make use of lock-free data structures while still retaining the determinism guarantee of LVars.
 
 We also did one other benchmark, and this is on a program called "notChain", which is just a long chain of 300 "not" functions, "not not not not" et cetera, which was particularly designed to negate the benefits of our sharing approach.  And, indeed, that one didn't get anything like that 25x speedup that "blur" got as a result of sharing; I don't think there was any speedup from sharing at all.
 
@@ -342,7 +346,7 @@ So, because CvRDTs are already a close cousin to LVars, what we did was bring LV
 
 ## (33. landscape again)
 
-So, to return to our landscape of deterministic parallel programming, where do LVars and LVish fit in?  Actually, they're all across this landscape.  We've got the pure functional core, on which Haskell is based, and so we can do this pure task parallelism.  We can do single-assignment programming, of course, because IVars are a special case of LVars, and I'll even put two checkmarks here to show that not only can we do this, we can generalize it.
+So, to return to our landscape of deterministic parallel programming, where do LVars and LVish fit in?  Actually, they're all across this landscape.  We've got the pure functional core, on which Haskell is based, and so we can do this pure task parallelism.  We can do single-assignment programming, of course, because IVars are a special case of LVars, and I'll even put two check marks here to show that not only can we do this, we can generalize it.
 
 And because LVars generalize to arbitrary lattices, we can use LVars to express Kahn process networks, because we can use LVars to represent a lattice of channel histories with a prefix ordering.  And, in addition to all this stuff we've discovered a new space of quasi-deterministic programs.
 
@@ -352,11 +356,13 @@ And, the one thing left is disjoint imperative parallelism, but, as of recently,
 
 So, using that approach, say, to split a vector like this one and then fork computations that operate on each part of it, the Haskell type system is powerful enough to ensure at compile time that neither of the forked computations can access the original complete vector.  This is in our PLDI paper, and it's in our not-yet-released version of LVish.
 
-And, I've shown how we can bring LVar-style threshold reads to the setting of convergent replicated data types in distributed cloud storage systems.  And so we can have LVars not only across the landscape but also in the cloud!  (By the way, I've been talking to people who are working on implementing this -- ask me about it later.)
+And, finally, I've shown how we can bring LVar-style threshold reads to the setting of convergent replicated data types in distributed cloud storage systems.  And so we can have LVars not only across the landscape but also in the cloud!  (By the way, I've been talking to people who are working on implementing this -- ask me about it later.)
 
 ## (34. final slide)
 
 So, to sum up, lattice-based data structures are a general and practical unifying abstraction for deterministic and quasi-deterministic parallel and distributed programming.
+
+I want to say thanks to a few people specifically: my advisor, of course, Ryan Newton; my committee, Amr Sabry, Larry Moss, and Chung-chieh Shan; and my collaborators Aaron Turon and Neel Krishnaswami, and Sam Tobin-Hochstadt, all of whom might as well be committee members also, so this was truly a group effort.
 
 And this is where you can go to read a draft of my dissertation and give feedback!
 
