@@ -6,7 +6,7 @@ nbrs :: Graph -> NodeLabel -> Set NodeLabel
 -- nodes left to process.
 bf_traverse :: Graph -> Set NodeLabel -> Set NodeLabel -> Set NodeLabel
 bf_traverse g seen nu = 
-  if nu == S.empty 
+  if nu == empty 
   then seen
   else let seen'  = union seen nu
            allNbr = parFold union (parMap (nbrs g) nu)
@@ -15,5 +15,5 @@ bf_traverse g seen nu =
 
 -- Next we traverse the connected component, starting with the vertex
 -- `profile0':
-ccmp = bf_traverse profiles S.empty     profile0Sing
+ccmp = bf_traverse profiles empty (singleton profile0)
 result = parMap analyze ccmp
