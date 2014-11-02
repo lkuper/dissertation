@@ -68,8 +68,7 @@ possibilities include:
   Haskell~\cite{dph, dph-status} or the River Trail API for
   JavaScript~\cite{river-trail}, each of which extend existing
   languages with \emph{parallel array} data types and (observably)
-  pure operations on them.  \lk{Does it make sense to say that DPH is
-    observably pure?  It does mutate arrays.}
+  pure operations on them.
 
 \item \emph{Data-flow parallelism.}  In \emph{Kahn process networks}
   (KPNs)~\cite{Kahn-1974}, as well as in the more restricted
@@ -107,10 +106,7 @@ possibilities include:
 
 \item \emph{Imperative disjoint parallelism.}  Finally, yet another
   approach to guaranteeing determinism is to ensure that the state
-  accessed by concurrent threads is \emph{disjoint}.\lk{This is the
-    first place I've used the word ``concurrent''.  Should I explain
-    concurrency vs. parallelism in a footnote or something?  Is it
-    even a useful distinction in this context?}  Sophisticated
+  accessed by concurrent threads is \emph{disjoint}.  Sophisticated
   permissions systems and type systems make it possible for imperative
   programs to mutate state in parallel, while guaranteeing that the
   same state is not accessed simultaneously by multiple threads.  I
