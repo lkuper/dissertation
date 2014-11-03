@@ -74,15 +74,17 @@ possibilities include:
   (KPNs)~\cite{Kahn-1974}, as well as in the more restricted
   \emph{synchronous data flow} systems~\cite{Lee-sdn}, a network of
   independent ``computing stations'' communicate with each other
-  through first-in, first-out (FIFO) queues, or \emph{channels}.
-  Reading data out of such a FIFO queue is a \emph{blocking}
-  operation: once an attempt to read has started, a computing station
-  cannot do anything else until the data to be read is available.
-  Each station computes a sequential, monotonic function from the
-  \emph{history} of its input channels (\ie, the input it has received
-  so far) to the history of its output channels (the output it has
-  produced so far).  KPNs are the basis for deterministic
-  stream-processing languages such as StreamIt~\cite{streamit-asplos}.
+  through first-in, first-out (FIFO) queues, or \emph{channels}.  In
+  this model, each computing station is a task, and channels are the
+  only means of sharing state between tasks.  Furthermore, reading
+  data from a channel queue is a \emph{blocking} operation: once an
+  attempt to read has started, a computing station cannot do anything
+  else until the data to be read is available.  Each station computes
+  a sequential, monotonic function from the \emph{history} of its
+  input channels (\ie, the input it has received so far) to the
+  history of its output channels (the output it has produced so far).
+  KPNs are the basis for deterministic stream-processing languages
+  such as StreamIt~\cite{streamit-asplos}.
 
 \item \emph{Single-assignment parallelism.}  In parallel
   \emph{single-assignment} languages, ``full/empty'' bits are
@@ -298,12 +300,10 @@ make use of handlers and freezing:
   flow of values to expressions in a program.  The $k$-CFA algorithm
   proceeds in two phases: first, it explores a graph of \emph{abstract
     states} of the program; then, it summarizes the results of the
-  first phase.  Using LVish, these two phases can be pipelined in a
-  manner similar to the pipelined breadth-first graph traversal
-  described above; moreover, the original graph exploration phase can
-  be internally parallelized.  I contrast the LVish implementation
-  with the original sequential implementation and give performance
-  results.
+  first phase.  Using LVish, these two phases can be pipelined;
+  moreover, the original graph exploration phase can be internally
+  parallelized.  I contrast the LVish implementation with the original
+  sequential implementation and give performance results.
 \item Second, I describe using LVish to parallelize
   \emph{PhyBin}~\cite{PhyBin}, a bioinformatics application for
   comparing sets of phylogenetic trees that relies heavily on a
