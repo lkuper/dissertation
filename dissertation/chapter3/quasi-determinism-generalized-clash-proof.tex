@@ -22,7 +22,7 @@
     \config{S}{\subst{e}{x}{v}}$.
 
     To show: $\config{U_S(S)}{\app{(\lam{x}{e})}{v}} \parstepsto
-    \error$.
+    \error$, where $i \leq 1$.
 
     By assumption, $U_S(S') = \topS$.  Since $S' = S$, it must be the
     case that $U_S(S') = U_S(S) = \topS$.
@@ -35,29 +35,79 @@
 
   \item Case {\sc E-New}:
 
+    Given: $\config{S}{\NEW} \parstepsto
+    \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
+
+    To show: $\config{U_S(S)}{\NEW} \parstepsto^i \error$, where $i
+    \leq 1$.
+
     \TODO{.}
 
   \item Case {\sc E-Put}:
+
+    Given: $\config{S}{\putiexp{l}} \parstepsto
+    \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}$.
+
+    To show: $\config{U_S(S)}{\putiexp{l}} \parstepsto^i \error$,
+    where $i \leq 1$.
 
     \TODO{.}
 
   \item Case {\sc E-Get}:
 
+    Given: $\config{S}{\getexp{l}{P}} \parstepsto \config{S}{p_2}$.
+
+    To show: $\config{U_S(S)}{\getexp{l}{P}} \parstepsto^i \error$,
+    where $i \leq 1$.
+
     \TODO{.}
 
   \item Case {\sc E-Freeze-Init}:
+
+    Given: $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto
+    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
+
+    To show: $\config{U_S(S)}{\freezeafter{l}{Q}{\lam{x}{e}}}
+    \parstepsto^i \error$, where $i \leq 1$.
 
     \TODO{.}
 
   \item Case {\sc E-Spawn-Handler}:
 
+    Given:
+
+    $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}} \parstepsto
+    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+          e, \dots}}{\{d_2\}\cup H}}$.
+
+    To show:
+
+    $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}} \parstepsto^i \error$, where $i \leq 1$.
+
     \TODO{.}
 
   \item Case {\sc E-Freeze-Final}:
 
+    Given:
+    $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+          \dots}}{H}} \parstepsto
+    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+
+    To show:
+    $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+          \dots}}{H}} \parstepsto^i \error$, where $i \leq 1$.
+
     \TODO{.}
 
   \item Case {\sc E-Freeze-Simple}:
+
+    Given: $\config{S}{\freeze{l}} \parstepsto
+    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+
+    To show: $\config{U_S(S)}{\freeze{l}} \parstepsto^i \error$,
+    where $i \leq 1$.
 
     \TODO{.}
 
