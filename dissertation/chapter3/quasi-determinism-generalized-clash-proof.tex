@@ -4,7 +4,8 @@
   and and $U_S$ is freeze-safe with $\config{S}{e} \parstepsto
   \config{S'}{e'}$.
 
-  To show: $\config{U_S(S)}{e} \parstepsto \error$.
+  To show: There exists $i \leq 1$ such that $\config{U_S(S')}{e}
+  \parstepsto^i \error$.
 
   The proof is by cases on the rule of the reduction semantics by
   which $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since
@@ -13,5 +14,52 @@
   $\config{S}{e} \parstepsto \config{S'}{e'}$ is only needed in the
   {\sc E-Freeze-Final} and {\sc E-Freeze-Simple} cases.
 
-  \TODO{Prove me.}
+  \begin{itemize}
+
+  \item Case {\sc E-Beta}:
+
+    Given: $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto
+    \config{S}{\subst{e}{x}{v}}$.
+
+    To show: $\config{U_S(S)}{\app{(\lam{x}{e})}{v}} \parstepsto
+    \error$.
+
+    By assumption, $U_S(S') = \topS$.  Since $S' = S$, it must be the
+    case that $U_S(S') = U_S(S) = \topS$.
+
+    Hence, by the definition of $\error$,
+    $\config{U_S(S)}{\app{(\lam{x}{e})}{v}} = \error$.
+
+    Hence $\config{U_S(S)}{\app{(\lam{x}{e})}{v}} \parstepsto^i
+    \error$, with $i = 0$.
+
+  \item Case {\sc E-New}:
+
+    \TODO{.}
+
+  \item Case {\sc E-Put}:
+
+    \TODO{.}
+
+  \item Case {\sc E-Get}:
+
+    \TODO{.}
+
+  \item Case {\sc E-Freeze-Init}:
+
+    \TODO{.}
+
+  \item Case {\sc E-Spawn-Handler}:
+
+    \TODO{.}
+
+  \item Case {\sc E-Freeze-Final}:
+
+    \TODO{.}
+
+  \item Case {\sc E-Freeze-Simple}:
+
+    \TODO{.}
+
+  \end{itemize}
 \end{proof}
