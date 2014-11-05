@@ -41,7 +41,41 @@
     To show: $\config{U_S(S)}{\NEW} \parstepsto^i \error$, where $i
     \leq 1$.
 
-    \TODO{.}
+    By {\sc E-New}, $\config{U_S(S)}{\NEW} \parstepsto
+    \config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$, where $l'
+    \notin \dom{U_S(S)}$.
+
+    By assumption, $U_S$ is non-conflicting with $\config{S}{\NEW}
+    \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
+    Therefore $l \notin \dom{U_S(S)}$.
+
+    Therefore, in
+    $\config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$, we
+    can $\alpha$-rename $l'$ to $l$.
+
+    Therefore $\config{U_S(S)}{\NEW} \parstepsto
+    \config{\extS{(U_S(S))}{l}{\bot}{\frozenfalse}}{l}$.
+
+    Also, since $U_S$ is non-conflicting with $\config{S}{\NEW}
+    \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$, we
+    have that $(U_S(\extS{S}{l}{\bot}{\frozenfalse}))(l) =
+    (\extS{S}{l}{\bot}{\frozenfalse})(l) =
+    \state{\bot}{\frozenfalse}$.
+
+    Hence $\extS{(U_S(S))}{l}{\bot}{\frozenfalse} =
+    U_S(\extS{S}{l}{\bot}{\frozenfalse})$.
+
+    Therefore $\config{U_S(S)}{\NEW} \parstepsto
+    \config{U_S(\extS{S}{l}{\bot}{\frozenfalse})}{l}$.
+
+    By assumption, $U_S(\extS{S}{l}{\bot}{\frozenfalse}) = \topS$.
+
+    Therefore $\config{U_S(S)}{\NEW} \parstepsto \config{\topS}{l}$.
+
+    Hence, by the definition of $\error$, $\config{U_S(S)}{\NEW}
+    \parstepsto \error$.
+
+    Hence $\config{U_S(S)}{\NEW} \parstepsto^i \error$, with $i = 1$.
 
   \item Case {\sc E-Put}:
 
