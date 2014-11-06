@@ -85,7 +85,26 @@
     To show: $\config{U_S(S)}{\putiexp{l}} \parstepsto^i \error$,
     where $i \leq 1$.
 
-    \TODO{.}
+    \lk{Not totally sure this is the best way to organize it.  Need to
+      sit down with some paper...}
+
+    We proceed by cases on $U_S(S)$:
+
+    \begin{itemize}
+
+      \item $U_S(S) = \topS$:
+
+        In this case, by the definition of $\error$,
+        $\config{U_S(S)}{\putiexp{l}} = \error$.
+
+        Hence $\config{U_S(S)}{\putiexp{l}}
+        \parstepsto^i \error$, with $i = 0$.
+
+      \item $U_S(S) \neq \topS$:
+
+        \TODO{.}
+
+    \end{itemize}
 
   \item Case {\sc E-Get}:
 
@@ -132,7 +151,15 @@
     $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
           \dots}}{H}} \parstepsto^i \error$, where $i \leq 1$.
 
-    \TODO{.}
+    By assumption, $U_S(S) = \topS$.
+
+    Hence, by the definition of $\error$,
+    $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}} = \error$.
+
+    Hence
+    $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}} \parstepsto^i \error$, with $i = 0$.
 
   \item Case {\sc E-Freeze-Final}:
 
