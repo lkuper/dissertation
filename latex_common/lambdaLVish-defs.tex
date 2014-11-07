@@ -239,8 +239,8 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 \begin{definition}[freeze-safe store update operation]\label{def:freeze-safe-store-update-operation}
   A store update operation $U_S$ is \emph{freeze-safe} with the
   transition $\config{S}{e} \parstepsto \config{S'}{e'}$ iff, for all
-  locations $l$ such that $S(l) = \state{d_1}{frz_1}$ and $S'(l) =
-  \state{d_2}{frz_2}$ and $frz_1 \neq frz_2$, $U_S$ does not update
+  locations $l$ such that $S(l) = \state{d_1}{\status_1}$ and $S'(l) =
+  \state{d_2}{\status_2}$ and $\status_1 \neq \status_2$, $U_S$ does not update
   the contents of $l$ (that is, it either freezes the contents of $l$
   or acts as the identity on the contents of $l$).
 \end{definition}
