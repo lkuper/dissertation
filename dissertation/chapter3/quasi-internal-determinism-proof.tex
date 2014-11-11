@@ -3,88 +3,116 @@
   The proof is by cases on the rule by which $\conf$ steps to
   $\conf'$.
 
-  \TODO{This is copypasta from $\lambdaLVar$; update me for
-    $\lambdaLVish$.}
-
   \begin{itemize}
 
-    \item Case {\sc E-Beta}:
+  \item Case {\sc E-Beta}:
 
-      Given:
-      $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \config{S}{\subst{e}{x}{v}}$,
-      and $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \conf''$.
+    \TODO{This is copypasta from $\lambdaLVar$; update me for
+      $\lambdaLVish$.}
 
-      To show: There exists a $\pi$ such that
-      $\config{S}{\subst{e}{x}{v}} = \pi(\conf'')$.
+    Given:
+    $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \config{S}{\subst{e}{x}{v}}$,
+    and $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \conf''$.
 
-      By inspection of the operational semantics, the only reduction
-      rule by which $\config{S}{\app{(\lam{x}{e})}{v}}$ can step is
-      {\sc E-Beta}.  Hence $\conf'' = \config{S}{\subst{e}{x}{v}}$,
-      and the case is satisfied by choosing $\pi$ to be the identity
-      function.
+    To show: There exists a $\pi$ such that
+    $\config{S}{\subst{e}{x}{v}} = \pi(\conf'')$.
 
-      \item Case {\sc E-New}: 
+    By inspection of the operational semantics, the only reduction
+    rule by which $\config{S}{\app{(\lam{x}{e})}{v}}$ can step is
+    {\sc E-Beta}.  Hence $\conf'' = \config{S}{\subst{e}{x}{v}}$,
+    and the case is satisfied by choosing $\pi$ to be the identity
+    function.
 
-      Given:
-      $\config{S}{\NEW} \parstepsto \config{\extSRaw{S}{l}{\bot}}{l}$,
-      and $\config{S}{\NEW} \parstepsto \conf''$.
+  \item Case {\sc E-New}:
 
-      To show: There exists a $\pi$ such that $\config{S}{\NEW}
-      = \pi(\conf'')$.
+    \TODO{This is copypasta from $\lambdaLVar$; update me for
+      $\lambdaLVish$.}
 
-      By inspection of the operational semantics, the only reduction
-      rule by which $\config{S}{\NEW}$ can step is {\sc E-New}.  Hence
-      $\conf'' = \config{\extSRaw{S}{l'}{\bot}}{l'}$.  Since, by the
-      side condition of {\sc E-New}, neither $l$ nor $l'$ occur in
-      $\dom{S}$, the case is satisfied by choosing $\pi$ to be the
-      permutation that maps $l'$ to $l$ and is the identity on every
-      other element of $\Loc$.
+    Given:
+    $\config{S}{\NEW} \parstepsto \config{\extSRaw{S}{l}{\bot}}{l}$,
+    and $\config{S}{\NEW} \parstepsto \conf''$.
 
-      \item Case {\sc E-Put}:
+    To show: There exists a $\pi$ such that $\config{S}{\NEW}
+    = \pi(\conf'')$.
 
-      Given:
-      $\config{S}{\putexp{l}{d_2}} \parstepsto \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$,
-      and $\config{S}{\putexp{l}{d_2}} \parstepsto \conf''$.
+    By inspection of the operational semantics, the only reduction
+    rule by which $\config{S}{\NEW}$ can step is {\sc E-New}.  Hence
+    $\conf'' = \config{\extSRaw{S}{l'}{\bot}}{l'}$.  Since, by the
+    side condition of {\sc E-New}, neither $l$ nor $l'$ occur in
+    $\dom{S}$, the case is satisfied by choosing $\pi$ to be the
+    permutation that maps $l'$ to $l$ and is the identity on every
+    other element of $\Loc$.
 
-      To show: There exists a $\pi$ such that
-      $\config{S}{\putexp{l}{d_2}} = \pi(\conf'')$.
+  \item Case {\sc E-Put}:
 
-      By inspection of the operational semantics, and since
-      $\userlub{d_1}{d_2} \neq \top$ (from the premise of {\sc
+    \TODO{This is copypasta from $\lambdaLVar$; update me for
+      $\lambdaLVish$.}
+
+    Given:
+    $\config{S}{\putexp{l}{d_2}} \parstepsto \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$,
+    and $\config{S}{\putexp{l}{d_2}} \parstepsto \conf''$.
+
+    To show: There exists a $\pi$ such that
+    $\config{S}{\putexp{l}{d_2}} = \pi(\conf'')$.
+
+    By inspection of the operational semantics, and since
+    $\userlub{d_1}{d_2} \neq \top$ (from the premise of {\sc
       E-Put}), the only reduction rule by which
-      $\config{S}{\putexp{l}{d_2}}$ can step is {\sc E-Put}.  Hence
-      $\conf'' = \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$,
-      and the case is satisfied by choosing $\pi$ to be the identity
-      function.
+    $\config{S}{\putexp{l}{d_2}}$ can step is {\sc E-Put}.  Hence
+    $\conf'' = \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$,
+    and the case is satisfied by choosing $\pi$ to be the identity
+    function.
 
-      \item Case {\sc E-Put-Err}:
+  \item Case {\sc E-Put-Err}:
 
-      Given: $\config{S}{\putexp{l}{d_2}} \parstepsto \error$, and
-      $\config{S}{\putexp{l}{d_2}} \parstepsto \conf''$.
+    \TODO{This is copypasta from $\lambdaLVar$; update me for
+      $\lambdaLVish$.}
 
-      To show: There exists a $\pi$ such that
-      $\config{S}{\putexp{l}{d_2}} = \pi(\conf'')$.
+    Given: $\config{S}{\putexp{l}{d_2}} \parstepsto \error$, and
+    $\config{S}{\putexp{l}{d_2}} \parstepsto \conf''$.
 
-      By inspection of the operational semantics, and since
-      $\userlub{d_1}{d_2} = \top$ (from the premise of {\sc
+    To show: There exists a $\pi$ such that
+    $\config{S}{\putexp{l}{d_2}} = \pi(\conf'')$.
+
+    By inspection of the operational semantics, and since
+    $\userlub{d_1}{d_2} = \top$ (from the premise of {\sc
       E-Put-Err}), the only reduction rule by which
-      $\config{S}{\putexp{l}{d_2}}$ can step is {\sc E-Put-Err}.
-      Hence $\conf'' = \error$, and the case is satisfied by choosing
-      $\pi$ to be the identity function.
+    $\config{S}{\putexp{l}{d_2}}$ can step is {\sc E-Put-Err}.
+    Hence $\conf'' = \error$, and the case is satisfied by choosing
+    $\pi$ to be the identity function.
 
-      \item Case {\sc E-Get}:
+  \item Case {\sc E-Get}:
 
-      Given: $\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}$,
-      and $\config{S}{\getexp{l}{T}} \parstepsto \conf''$.
+    \TODO{This is copypasta from $\lambdaLVar$; update me for
+      $\lambdaLVish$.}
 
-      To show: There exists a $\pi$ such that
-      $\config{S}{\getexp{l}{T}} = \pi(\conf'')$.
+    Given: $\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}$,
+    and $\config{S}{\getexp{l}{T}} \parstepsto \conf''$.
 
-      By inspection of the operational semantics, the only reduction
-      rule by which $\config{S}{\putexp{l}{d_2}}$ can step is {\sc
+    To show: There exists a $\pi$ such that
+    $\config{S}{\getexp{l}{T}} = \pi(\conf'')$.
+
+    By inspection of the operational semantics, the only reduction
+    rule by which $\config{S}{\putexp{l}{d_2}}$ can step is {\sc
       E-Get}.  Hence $\conf'' = \config{S}{d_2}$, and the case is
-      satisfied by choosing $\pi$ to be the identity
-      function.
+    satisfied by choosing $\pi$ to be the identity
+    function.
+
+  \item Case {\sc E-Freeze-Init}:
+
+    \TODO{.}
+
+  \item Case {\sc E-Spawn-Handler}:
+
+    \TODO{.}
+
+  \item Case {\sc E-Freeze-Final}:
+
+    \TODO{.}
+
+  \item Case {\sc E-Freeze-Simple}:
+
+    \TODO{.}
 
   \end{itemize}
 \end{proof}
