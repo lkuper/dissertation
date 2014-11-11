@@ -85,9 +85,10 @@
     To show: $\config{U_S(S)}{\putiexp{l}} \parstepsto^{i'} \error$,
     where $i' \leq 1$.
 
+    Consider whether $U_S(S) = \topS$:
     \begin{itemize}
 
-      \item $U_S(S) = \topS$:
+      \item If $U_S(S) = \topS$:
 
         In this case, by the definition of $\error$,
         $\config{U_S(S)}{\putiexp{l}} = \error$.
@@ -95,7 +96,7 @@
         Hence $\config{U_S(S)}{\putiexp{l}}
         \parstepsto^{i'} \error$, with $i' = 0$.
 
-      \item $U_S(S) \neq \topS$:
+      \item If $U_S(S) \neq \topS$:
 
         Since $U_S(S) \neq \topS$, we know that $S \neq \topS$.  Also,
         from the premises of {\sc E-Put}, we have that $u_{p_i}(p_1)
@@ -196,19 +197,50 @@
 
     To show:
     $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-          \dots}}{H}} \parstepsto^i \error$, where $i \leq 1$.
+          \dots}}{H}} \parstepsto^{i'} \error$, where $i' \leq 1$.
 
-    \TODO{.}
+    Consider whether $U_S(S) = \topS$:
+    \begin{itemize}
+
+    \item If $U_S(S) = \topS$:
+
+      In this case, by the definition of $\error$,
+      $\config{U_S(S)}{\freeze{l}} = \error$.
+
+      Hence $\config{U_S(S)}{\freeze{l}}
+      \parstepsto^{i'} \error$, with $i' = 0$.
+
+    \item If $U_S(S) \neq \topS$:
+
+      \TODO{.}
+
+    \end{itemize}
 
   \item Case {\sc E-Freeze-Simple}:
 
     Given: $\config{S}{\freeze{l}} \parstepsto
     \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
-    To show: $\config{U_S(S)}{\freeze{l}} \parstepsto^i \error$,
-    where $i \leq 1$.
+    To show: $\config{U_S(S)}{\freeze{l}} \parstepsto^{i'} \error$,
+    where $i' \leq 1$.
 
-    \TODO{.}
+    Consider whether $U_S(S) = \topS$:
+    \begin{itemize}
+
+    \item If $U_S(S) = \topS$:
+
+      In this case, by the definition of $\error$,
+      $\config{U_S(S)}{\freeze{l}} = \error$.
+
+      Hence $\config{U_S(S)}{\freeze{l}}
+      \parstepsto^{i'} \error$, with $i' = 0$.
+
+    \item If $U_S(S) \neq \topS$:
+
+      \TODO{.}
+
+    \end{itemize}
 
   \end{itemize}
+
 \end{proof}
