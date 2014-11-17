@@ -26,8 +26,8 @@
       $\config{S}{\NEW} \parstepsto \config{\extSRaw{S}{l}{\bot}}{l}$,
       and $\config{S}{\NEW} \parstepsto \conf''$.
 
-      To show: There exists a $\pi$ such that $\config{S}{\NEW}
-      = \pi(\conf'')$.
+      To show: There exists a $\pi$ such that
+      $\config{\extSRaw{S}{l}{\bot}}{l} = \pi(\conf'')$.
 
       By inspection of the operational semantics, the only reduction
       rule by which $\config{S}{\NEW}$ can step is {\sc E-New}.  Hence
@@ -44,7 +44,8 @@
       and $\config{S}{\putexp{l}{d_2}} \parstepsto \conf''$.
 
       To show: There exists a $\pi$ such that
-      $\config{S}{\putexp{l}{d_2}} = \pi(\conf'')$.
+      $\config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit} =
+      \pi(\conf'')$.
 
       By inspection of the operational semantics, and since
       $\userlub{d_1}{d_2} \neq \top$ (from the premise of {\sc
@@ -60,7 +61,7 @@
       $\config{S}{\putexp{l}{d_2}} \parstepsto \conf''$.
 
       To show: There exists a $\pi$ such that
-      $\config{S}{\putexp{l}{d_2}} = \pi(\conf'')$.
+      $\error = \pi(\conf'')$.
 
       By inspection of the operational semantics, and since
       $\userlub{d_1}{d_2} = \top$ (from the premise of {\sc
@@ -74,14 +75,13 @@
       Given: $\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}$,
       and $\config{S}{\getexp{l}{T}} \parstepsto \conf''$.
 
-      To show: There exists a $\pi$ such that
-      $\config{S}{\getexp{l}{T}} = \pi(\conf'')$.
+      To show: There exists a $\pi$ such that $\config{S}{d_2} =
+      \pi(\conf'')$.
 
       By inspection of the operational semantics, the only reduction
-      rule by which $\config{S}{\putexp{l}{d_2}}$ can step is {\sc
-      E-Get}.  Hence $\conf'' = \config{S}{d_2}$, and the case is
-      satisfied by choosing $\pi$ to be the identity
-      function.
+      rule by which $\config{S}{\getexp{l}{T}}$ can step is {\sc
+        E-Get}.  Hence $\conf'' = \config{S}{d_2}$, and the case is
+      satisfied by choosing $\pi$ to be the identity function.
 
   \end{itemize}
 \end{proof}
