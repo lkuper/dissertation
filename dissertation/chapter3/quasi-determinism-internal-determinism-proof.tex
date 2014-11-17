@@ -80,17 +80,52 @@
 
   \item Case {\sc E-Freeze-Init}:
 
+    Given: $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto
+    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$,
+    and $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto \conf''$.
+
+    To show: There exists a $\pi$ such that
+    $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}
+    = \pi(\conf'').$
+
     \TODO{.}
 
   \item Case {\sc E-Spawn-Handler}:
+
+    Given: $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}} \parstepsto
+    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+          e, \dots}} {\{d_2\}\cup H}}$, and
+    $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}} \parstepsto \conf''$.
+
+    To show: There exists a $\pi$ such that
+    $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+          e, \dots}} {\{d_2\}\cup H}} = \pi(\conf'').$
 
     \TODO{.}
 
   \item Case {\sc E-Freeze-Final}:
 
+    Given: $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+          \dots}}{H}} \parstepsto
+    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
+    $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+          \dots}}{H}} \parstepsto \conf''$.
+
+    To show: There exists a $\pi$ such that
+    $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} = \pi(\conf'').$
+
     \TODO{.}
 
   \item Case {\sc E-Freeze-Simple}:
+
+    Given: $\config{S}{\freeze{l}} \parstepsto
+    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
+    $\config{S}{\freeze{l}} \parstepsto \conf''$.
+
+    To show: There exists a $\pi$ such that
+    $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} = \pi(\conf'').$
 
     \TODO{.}
 
