@@ -1,4 +1,10 @@
 \begin{proof}
+  Suppose $\config{S}{e} \parstepsto \config{S'}{e'}$, where
+  $\config{S'}{e'} \neq \error$.
+
+  \TODO{Add a ``suppose'' statement like this to all the proofs that
+    need it.}
+
   Consider arbitrary $U_S$ such that $U_S$ is non-conflicting with
   $\config{S}{e} \parstepsto \config{S'}{e'}$ and $U_S(S') = \topS$
   and $U_S$ is freeze-safe with $\config{S}{e} \parstepsto
@@ -239,12 +245,33 @@
 
     \item If $U_S(S) \neq \topS$:
 
-      \TODO{.}
+      Since $U_S(S) \neq \topS$ and $\extS{S}{l}{d_1}{\frozentrue}
+      \neq \topS$, but $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$,
+      it must be $U_S$'s action on the contents of $l$ in
+      $\extS{S}{l}{d_1}{\frozentrue}$ that updates
+      $\extS{S}{l}{d_1}{\frozentrue}$ to $\topS$.  Since the contents
+      of $l$ in $\extS{S}{l}{d_1}{\frozentrue}$ are
+      $\state{d_1}{\frozentrue}$, it must not be the case that $S(l) =
+      \state{d_1}{\frozentrue}$, because otherwise, $U_S(S)$ would be
+      $\topS$.  Therefore $S(l) = \state{d_1}{\frozenfalse}$.
 
-      \lk{This case can't occur.  Leads to a contradiction.}
+      Let $u_{p_i}$ be the state update operation in $U_S$ that
+      updates the contents of $l$.  Hence
+      $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$.
 
+      Recall that $U_S$ is freeze-safe with $\config{S}{\freeze{l}}
+      \parstepsto \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.  By
+      Definition~\ref{def:freeze-safe-store-update-operation}, then,
+      since the contents of $l$ change in status during the transition
+      from $\config{S}{\freeze{l}}$ to
+      $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, we know that
+      $U_S$ either freezes the contents of $l$ (having no other effect
+      on them), or it acts as the identity on the contents of $l$.
+      Hence $(U_S(\extS{S}{l}{d_1}{\frozentrue}))(l) =
+      \state{d_1}{\frozentrue}$.  But this is a contradiction since
+      $(U_S(\extS{S}{l}{d_1}{\frozentrue}))(l) =
+      u_{p_i}(\state{d_1}{\frozentrue}) = \topp$.  Hence this case
+      cannot occur.
     \end{itemize}
-
   \end{itemize}
-
 \end{proof}
