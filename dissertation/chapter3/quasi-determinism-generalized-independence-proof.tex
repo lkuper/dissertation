@@ -1,10 +1,10 @@
 \begin{proof}
-  Consider arbitrary $U_S$ such that $U_S$ is non-conflicting with
-  $\config{S}{e} \parstepsto \config{S'}{e'}$ and $U_S(S') \neq \topS$
-  and $U_S$ is freeze-safe with $\config{S}{e} \parstepsto
-  \config{S'}{e'}$.
-
-  To show: $\config{U_S(S)}{e} \parstepsto \config{U_S(S')}{e'}$.
+  Suppose $\config{S}{e} \parstepsto \config{S'}{e'}$, where
+  $\config{S'}{e'} \neq \error$.  Consider arbitrary $U_S$ such that
+  $U_S$ is non-conflicting with $\config{S}{e} \parstepsto
+  \config{S'}{e'}$ and $U_S(S') \neq \topS$ and $U_S$ is freeze-safe
+  with $\config{S}{e} \parstepsto \config{S'}{e'}$.  We are required
+  to show that $\config{U_S(S)}{e} \parstepsto \config{U_S(S')}{e'}$.
 
   The proof is by cases on the rule of the reduction semantics by
   which $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since

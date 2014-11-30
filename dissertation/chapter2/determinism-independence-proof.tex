@@ -1,9 +1,9 @@
 \begin{proof}
-  Consider arbitrary $S''$ such that $S''$ is non-conflicting with
-  $\config{S}{e} \parstepsto \config{S'}{e'}$ and $\lubstore{S'}{S''}
-  \neq \topS$.
-
-  To show: $\config{\lubstore{S}{S''}}{e} \parstepsto
+  Suppose $\config{S}{e} \parstepsto \config{S'}{e'}$, where
+  $\config{S'}{e'} \neq \error$.  Consider arbitrary $S''$ such that
+  $S''$ is non-conflicting with $\config{S}{e} \parstepsto
+  \config{S'}{e'}$ and $\lubstore{S'}{S''} \neq \topS$.  We are
+  required to show that $\config{\lubstore{S}{S''}}{e} \parstepsto
   \config{\lubstore{S'}{S''}}{e'}$.
 
   The proof is by cases on the rule of the reduction semantics by

@@ -1,4 +1,10 @@
 \begin{proof}
+  Suppose that $\conf \ctxstepsto^n \conf'$ and $\conf \ctxstepsto^m
+  \conf''$, where $1 \leq n$ and $1 \leq m$.  We have to show that
+  there exist $\conf_c, i, j, \pi$ such that $\conf' \ctxstepsto^i
+  \conf_c$ and $\pi(\conf'') \ctxstepsto^j \conf_c$ and $i \leq m$ and
+  $j \leq n$.
+
   We proceed by induction on $n$.  In the base case of $n = 1$, the
   result is immediate from
   Lemma~\ref{lem:lvars-strong-one-sided-confluence}.

@@ -1,9 +1,9 @@
 \begin{proof}
-  Consider arbitrary $S''$ such that $S''$ is non-conflicting with
-  $\config{S}{e} \parstepsto \config{S'}{e'}$ and $\lubstore{S'}{S''}
-  = \topS$.
-
-  To show: There exists $i \leq 1$ such that
+  Suppose $\config{S}{e} \parstepsto \config{S'}{e'}$, where
+  $\config{S'}{e'} \neq \error$. Consider arbitrary $S''$ such that
+  $S''$ is non-conflicting with $\config{S}{e} \parstepsto
+  \config{S'}{e'}$ and $\lubstore{S'}{S''} = \topS$. We are required
+  to show that there exists $i \leq 1$ such that
   $\config{\lubstore{S}{S''}}{e} \parstepsto^i \error$.
 
   The proof is by cases on the rule of the reduction semantics by

@@ -1,5 +1,21 @@
 \begin{proof}
-~\begin{enumerate}
+Suppose that $(D, \userleq, \bot, \top)$ is a lattice and $(D_p,
+\leqp, \botp, \topp) = \Freeze{D, \userleq, \bot, \top}$.  In order to
+show that $(D_p, \leqp, \botp, \topp)$ is a lattice, we have to show
+that:
+\begin{enumerate}
+  \item $\leqp$ is a partial order over $D_p$.
+
+  \item Every nonempty finite subset of $D_p$ has a lub.
+
+  \item $\botp$ is the least element of $D_p$.
+
+  \item $\topp$ is the greatest element of $D_p$.
+\end{enumerate}
+
+We prove each of these properties in turn:
+
+\begin{enumerate}
 \item $\leqp$ is a partial order over $D_p$.
 
 To show this, we need to show that $\leqp$ is reflexive, transitive,

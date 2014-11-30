@@ -1,4 +1,15 @@
 \begin{proof}
+  Suppose $\conf \ctxstepsto \conf'$ and $\conf \ctxstepsto^m
+  \conf''$, where $1 \leq m$.  We are required to show that either:
+  \begin{enumerate}
+    \item there exist $\conf_c, i, j, \pi$ such that $\conf'
+      \ctxstepsto^i \conf_c$ and $\pi(\conf'') \ctxstepsto^j \conf_c$
+      and $i \leq m$ and $j \leq 1$, or
+    \item there exists $k \leq m$ such that $\conf' \ctxstepsto^k
+      \textup{\error}$, or there exists $k \leq 1$ such that $\conf''
+      \ctxstepsto^k \textup{\error}$.
+  \end{enumerate}
+
   We proceed by induction on $m$.  In the base case of $m = 1$, the
   result is immediate from
   Lemma~\ref{lem:strong-local-quasi-confluence}, with $k = 1$.
@@ -7,16 +18,6 @@
   \ctxstepsto \conf'''$ and suppose the lemma holds for $m$.
 
   We show that it holds for $m + 1$, as follows.
-
-  We are required to show that either:
-  \begin{enumerate}
-    \item there exist $\conf_c, i, j, \pi$ such that $\conf'
-      \ctxstepsto^{i} \conf_c$ and $\pi(\conf''') \ctxstepsto^{j}
-      \conf_c$ and $i \leq m + 1$ and $j \leq 1$, or
-    \item there exists $k \leq m + 1$ such that $\conf' \ctxstepsto^k
-      \error$, or there exists $k \leq 1$ such that $\conf'''
-      \ctxstepsto^k \error$.
-  \end{enumerate}
 
   From the induction hypothesis, we have that either:
   \begin{enumerate}
