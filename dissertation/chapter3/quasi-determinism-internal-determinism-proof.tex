@@ -89,7 +89,12 @@
     $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}
     = \pi(\conf'').$
 
-    \TODO{.}
+    By inspection of the operational semantics, the only reduction
+    rule by which $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}}$ can
+    step is {\sc E-Freeze-Init}.  Hence $\conf'' =
+    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$,
+    and the case is satisfied by choosing $\pi$ to be the identity
+    function.
 
   \item Case {\sc E-Spawn-Handler}:
 
@@ -104,7 +109,18 @@
     $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
           e, \dots}} {\{d_2\}\cup H}} = \pi(\conf'').$
 
-    \TODO{.}
+    By inspection of the operational semantics, the only reduction
+    rule by which
+    $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}}$ can step is {\sc E-Spawn-Handler}.  (It cannot
+    step by {\sc E-Freeze-Final}, because we have from the premises of
+    {\sc E-Spawn-Handler} that $d_2 \userleq d_1$ and $d_2 \in Q$ and
+    $d_2 \notin H$, and for the premises of {\sc E-Freeze-Final} to
+    hold, we would need that for all $d_2$, if $d_2 \userleq d_1$ and
+    $d_2 \in Q$, then $d_2 \in H$.)  Hence $\conf'' =
+    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+          e, \dots}} {\{d_2\}\cup H}}$, and the case is satisfied by
+    choosing $\pi$ to be the identity function.
 
   \item Case {\sc E-Freeze-Final}:
 
@@ -117,7 +133,17 @@
     To show: There exists a $\pi$ such that
     $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} = \pi(\conf'').$
 
-    \TODO{.}
+    By inspection of the operational semantics, the only reduction
+    rule by which
+    $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+          \dots}}{H}}$ can step is {\sc E-Freeze-Final}.  (It cannot
+    step by {\sc E-Spawn-Handler}, because we have from the premises
+    of {\sc E-Freeze-Final} that, for all $d_2$, if $d_2 \userleq d_1$
+    and $d_2 \in Q$, then $d_2 \in H$, and for the premises of {\sc
+      E-Spawn-Handler} to hold, we would need that $d_2 \userleq d_1$
+    and $d_2 \in Q$ and $d_2 \notin H$.)  Hence $\conf'' =
+    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and the case is
+    satisfied by choosing $\pi$ to be the identity function.
 
   \item Case {\sc E-Freeze-Simple}:
 
@@ -128,7 +154,11 @@
     To show: There exists a $\pi$ such that
     $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} = \pi(\conf'').$
 
-    \TODO{.}
+    By inspection of the operational semantics, the only reduction
+    rule by which $\config{S}{\freeze{l}}$ can step is {\sc
+      E-Freeze-Simple}.  Hence $\conf'' =
+    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and the case is
+    satisfied by choosing $\pi$ to be the identity function.
 
   \end{itemize}
 \end{proof}
