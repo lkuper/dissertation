@@ -795,8 +795,71 @@
               \ctxstepsto \error$.
             \end{itemize}
 
-            \TODO{Type up the proof for this.  Relies on
-              Lemma~\ref{lem:generalized-clash} (Generalized Clash)}.
+            For the first of these, consider that
+            $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
+            store update operation that applies $u_{p_i}$ to the
+            contents of $l$ if it exists.  Note that:
+            \begin{itemize}
+            \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+              \parstepsto
+              \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
+              \TODO{reason};
+            \item $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) = \topS$, since
+              $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
+              \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$ and we know
+              $u_{p_i}(u_{p_j}(p_1)) = \topp$ in this case;
+            \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+              \parstepsto
+              \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
+              \TODO{reason}.
+            \end{itemize}
+
+            Therefore, by Lemma~\ref{lem:generalized-clash}
+            (Generalized Clash), we have that there exists $i' <= 1$
+            such that $\config{U_S(S)}{e_{b_1}} \parstepsto^{i'}
+            \error$.  Hence
+            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
+            \parstepsto^{i'} \error$.
+
+            \TODO{symmetric argument for other side.}
+
+            Therefore, by Lemma~\ref{lem:generalized-clash}
+            (Generalized Clash), we have that there exists $j' <= 1$
+            such that $\config{U_S(S)}{e_{a_1}} \parstepsto^{j'}
+            \error$.  Hence
+            $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{a_1}}
+            \parstepsto^{j'} \error$.
+
+            We have that $i' <= 1$ and $j' <= 1$.  If $i' = 0$, we
+            would have $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
+            = \config{S_a}{e_{b_1}} = \error$.  So we would have $S_a
+            = \topS$ by the defintion of $\error$, but then we would
+            have $\conf_a = \error$, a contradiction.  Therefore $i' =
+            1$.
+
+            Similarly, if $j' = 0$, we would have
+            $\config{U_S(S)}{e_{a_1}} = \config{S_b}{e_{a_1}} =
+            \error$.  So we would have $S_b = \topS$ by the definition
+            of $\error$, but then we would have $\conf_b = \error$, a
+            contradiction.  Hence $j' = 1$.
+
+            Therefore we have
+            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
+            \parstepsto \error$ and
+            $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{a_1}}
+            \parstepsto \error$.
+
+            Since $\error = \config{\topS}{e}$ for all $e$, we have
+            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
+            \parstepsto \config{\topS}{e}$ for all $e$.  So, by {\sc
+              E-Eval-Ctxt}, we have that
+            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+            \parstepsto \config{\topS}{\evalctxt{E'_b}{e}}$ for all
+            $e$.  Hence
+            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+            \parstepsto \error$.
+
+            \TODO{Symmetric for the other.}
 
           \item If $u_{p_i}(u_{p_j}(p_1)) \neq \topp$:
 
