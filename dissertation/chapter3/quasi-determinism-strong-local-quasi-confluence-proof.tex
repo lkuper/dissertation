@@ -811,42 +811,30 @@
             \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
               \parstepsto
               \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
-              \TODO{reason}.
+              $u_{p_j}$ does not alter the status of $p_1$.  (By
+              Definition~\ref{def:set-of-state-update-operations},
+              $u_{p_j}$ can only change the status bit of a location if
+              its contents are $\state{d}{\frozentrue}$ and $u_j(d) \neq
+              d$, in which case $u_{p_j}$ changes the contents of the
+              location to $\state{\top}{\frozenfalse}$; however, that
+              cannot be the case here since then $u_{p_j}(p_1)$ would be
+              $\topp$, contradicting the premise of {\sc E-Put}.)
             \end{itemize}
 
             Therefore, by Lemma~\ref{lem:generalized-clash}
-            (Generalized Clash), we have that there exists $i' <= 1$
+            (Generalized Clash), we have that there exists $i' \leq 1$
             such that $\config{U_S(S)}{e_{b_1}} \parstepsto^{i'}
             \error$.  Hence
             $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
             \parstepsto^{i'} \error$.
 
-            \TODO{symmetric argument for other side.}
-
-            Therefore, by Lemma~\ref{lem:generalized-clash}
-            (Generalized Clash), we have that there exists $j' <= 1$
-            such that $\config{U_S(S)}{e_{a_1}} \parstepsto^{j'}
-            \error$.  Hence
-            $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{a_1}}
-            \parstepsto^{j'} \error$.
-
-            We have that $i' <= 1$ and $j' <= 1$.  If $i' = 0$, we
-            would have $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
-            = \config{S_a}{e_{b_1}} = \error$.  So we would have $S_a
-            = \topS$ by the defintion of $\error$, but then we would
+            If $i' = 0$, we would have
+            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}} =
+            \config{S_a}{e_{b_1}} = \error$.  So we would have $S_a =
+            \topS$ by the defintion of $\error$, but then we would
             have $\conf_a = \error$, a contradiction.  Therefore $i' =
-            1$.
-
-            Similarly, if $j' = 0$, we would have
-            $\config{U_S(S)}{e_{a_1}} = \config{S_b}{e_{a_1}} =
-            \error$.  So we would have $S_b = \topS$ by the definition
-            of $\error$, but then we would have $\conf_b = \error$, a
-            contradiction.  Hence $j' = 1$.
-
-            Therefore we have
+            1$, and so we have
             $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
-            \parstepsto \error$ and
-            $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{a_1}}
             \parstepsto \error$.
 
             Since $\error = \config{\topS}{e}$ for all $e$, we have
@@ -857,9 +845,9 @@
             \parstepsto \config{\topS}{\evalctxt{E'_b}{e}}$ for all
             $e$.  Hence
             $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
-            \parstepsto \error$.
+            \parstepsto \error$.  The argument for the second is
+            symmetrical.
 
-            \TODO{Symmetric for the other.}
 
           \item If $u_{p_i}(u_{p_j}(p_1)) \neq \topp$:
 
