@@ -958,7 +958,24 @@
       \begin{itemize}
         \item If $l \neq l'$:
 
-          \TODO{}
+          Choose $S' =
+          \extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}$,
+          $i = 1$, $j = 1$, and $\pi = \id$.
+
+          We have to show that:
+          \begin{itemize}
+          \item
+            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+            \ctxstepsto
+            \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+            and
+          \item
+            $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
+            \ctxstepsto
+            \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
+          \end{itemize}
+
+          \TODO{Finish this case.}
 
         \item If $l = l'$:
 
