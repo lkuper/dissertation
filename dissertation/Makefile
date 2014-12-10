@@ -3,12 +3,19 @@ LATEX := xelatex
 UNAME := $(shell uname)
 SOURCES := $(wildcard *.tex *.bib) $(wildcard */*.tex) $(wildcard */figures/*.pdf) $(wildcard */code/*) $(wildcard ../latex_common/*.tex)
 TEX_SOURCES := $(wildcard *.tex) $(wildcard */*.tex) $(wildcard ../latex_common/*.tex)
+JFP_NAME := jfp
 
 $(NAME).pdf: $(SOURCES)
 	$(LATEX) $(NAME).tex
 	bibtex $(NAME)
 	$(LATEX) $(NAME).tex
 	$(LATEX) $(NAME).tex
+
+$(JFP_NAME).pdf: $(SOURCES)
+	$(LATEX) $(JFP_NAME).tex
+	bibtex $(JFP_NAME)
+	$(LATEX) $(JFP_NAME).tex
+	$(LATEX) $(JFP_NAME).tex
 
 #-----------------------------------------------
 # These targets actually change the build state:
@@ -51,4 +58,4 @@ ifeq ($(UNAME), Linux)
 endif
 
 clean:
-	rm -f *.blg *.bbl *.brf *.aux *.log $(NAME).pdf *.out *.toc chapter*/main.aux
+	rm -f *.blg *.bbl *.brf *.aux *.log $(NAME).pdf $(JFP_NAME).pdf *.out *.toc chapter*/main.aux

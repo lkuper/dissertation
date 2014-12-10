@@ -1,0 +1,109 @@
+\NeedsTeXFormat{LaTeX2e}
+
+\RequirePackage{amsmath}
+\documentclass{../latex_common/jfp1}
+
+\usepackage{color}
+\usepackage[backref=page]{hyperref}
+\usepackage{graphicx}
+\usepackage{stmaryrd}
+\usepackage{listings}
+\usepackage{lscape}
+\usepackage{setspace}
+
+\let\oldsection\section
+\let\oldsubsection\subsection
+\let\oldsubsubsection\subsubsection
+\renewcommand{\chapter}[1]{\oldsection{#1}}
+\renewcommand{\section}[1]{\oldsubsection{#1}}
+\renewcommand{\subsection}[1]{\oldsubsubsection{#1}}
+
+% Stuff needed for typesetting lambdaLVish and its metatheory
+\input{../latex_common/lang}
+\input{../latex_common/metatheory}
+
+% For typesetting inference rules
+\usepackage{../latex_common/mathpartir}
+
+% Syntax and semantics of lambdaLVar and lambdaLVish
+\input{../latex_common/lambdaLVar-definition}
+\input{../latex_common/lambdaLVish-definition}
+
+% Definitions, lemmas, theorems
+\input{../latex_common/lambdaLVar-defs}
+\input{../latex_common/lambdaLVar-thms}
+
+\input{../latex_common/lambdaLVish-defs}
+\input{../latex_common/lambdaLVish-thms}
+
+% Editing marks
+\input{../latex_common/editingmarks}
+
+%%% Formatting of definitions, theorems, etc.
+\newtheorem{lem}{Lemma}[section]
+\newtheorem{cor}{Corollary}[section]
+\newtheorem{thm}{Theorem}[section]
+
+% Defining some extra theoremstyle stuff for documents that need it
+% (i.e., non-LNCS-style documents)
+%\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{remark}{Remark}[section]
+
+% Other presentational stuff
+\input{../latex_common/style}
+
+% Specific to amsthm
+\newenvironment{proofsketch}[1][\proofname]{\proof[#1]\mbox{}}{\endproof}
+
+% Ignore badness
+\renewcommand{\doublespacing}{}
+
+% Use the @ symbol for simple inline code within prose:
+\lstMakeShortInline[]@
+
+% Seutup for hyperref.
+\hypersetup{
+    pdftitle={LVars: Lattice-based Data Structures for Deterministic Parallel Programming},
+    pdfauthor={Lindsey Kuper \etal},
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+}
+
+\title{LVars: Lattice-based Data Structures for Deterministic Parallel Programming}
+
+\author[L. Kuper, A. Turon, N. R. Krishnaswami, and R. R. Newton]
+       {LINDSEY KUPER\\
+          Intel Labs, Santa Clara, CA, USA\\
+        \and\ AARON TURON\\
+          Mozilla Research, San Francisco, CA, USA\\
+        \and\ NEELAKANTAN R. KRISHNASWAMI\\
+          University of Birmingham, Birmingham, UK\\
+        \and\ RYAN R. NEWTON\\
+        Indiana University, Bloomington, IN, USA}
+
+\begin{document}
+
+\label{firstpage}
+
+\maketitle
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+\input{chapter1/main}
+%% \input{chapter2/main}
+%% \input{chapter3/main}
+\input{chapter4/main}
+\input{chapter6/main}
+\input{chapter7/main}
+
+\bibliographystyle{../latex_common/jfp}
+\newcommand{\myname}[0]{Lindsey Kuper}
+\bibliography{../latex_common/refs,../latex_common/lkuper}
+
+\end{document}
