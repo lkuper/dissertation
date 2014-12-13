@@ -29,9 +29,9 @@ FIFO channels that implement a Kahn process network, whereas
 instantiating $\lambdaLVar$ with a lattice with one ``empty'' state
 and multiple ``full'' states (where $\forall{i}.\; \mathit{empty} <
 \mathit{full_i}$) results in a parallel single-assignment language
-with a store of IVars, as we saw in Chapter~\ref{ch:lvars}.  Hence
+with a store of IVars, as we saw in \either{Chapter}{Section}~\ref{ch:lvars}.  Hence
 LVars provide a framework for generalizing and unifying these two
-existing approaches to deterministic parallelism.  In this chapter, I
+existing approaches to deterministic parallelism.  In this \either{chapter}{section}, \either{I}{we}
 describe some more recent contributions to the literature, and how the
 LVars model relates to them.
 
@@ -125,11 +125,33 @@ of traditional lock-free data structures for representing versioned
 variables.
 
 \section{Conflict-free replicated data types}
+\ifdefined\JOURNAL
 
+Shapiro~\etal's \emph{conflict-free replicated data types}
+(CRDTs)~\cite{crdts,crdts-tr} provide a simple mathematical framework
+for reasoning about and enforcing the \emph{eventual consistency} of
+replicated objects in a distributed system.  Lattice-based CRDTs,
+known as \emph{convergent replicated data types} or CvRDTs, view
+replica states as elements of a lattice and replica conflict
+resolution as the lattice's join operation.  As with LVars, the
+contents of a CvRDT data structure can only grow with respect to the
+given lattice.  Although LVars and CvRDTs were developed
+independently, both models leverage the mathematical properties of
+join-semilattices to ensure that a property of the model
+holds---determinism in the case of LVars; eventual consistency in the
+case of CvRDTs.  However, with CvRDTs (unlike with LVars), it is
+possible to observe inconsistent \emph{intermediate} states of
+replicated shared objects, and high availability requires that reads
+return a value immediately, even if that value is stale.  Our work on
+equipping CvRDTs with LVar-style threshold reads (which would allow
+for deterministic reads at the price of high availability) is
+ongoing~\cite{joining-wodet}.  \fi
+
+\ifdefined\DISSSERTATION
 In Chapter~\ref{ch:distributed}, I presented a way to equip
 lattice-based distributed data structures with LVar-style threshold
 reads, resulting in a way to make deterministic \emph{threshold
-  queries} of them.  My is based on Shapiro \etal's work on
+  queries} of them.  My approach is based on Shapiro \etal's work on
 conflict-free replicated data types (CRDTs) \cite{crdts,crdts-tr} and
 in particular their work on the lattice-based formulation of CRDTs,
 called \emph{convergent replicated data types} or CvRDTs, which I
@@ -150,6 +172,7 @@ contribution that I make by adding threshold queries to CvRDTs is to
 establish lattice-based data structures as a unifying formal
 foundation for both eventually consistent and strongly consistent
 queries.
+\fi
 
 \section{Bloom and Bloom$^L$}
 
@@ -160,7 +183,7 @@ guarantees eventual consistency for distributed data collections that
 are updated monotonically.  The initial formulation of
 Bloom~\cite{bloom-cidr} had a notion of monotonicity based on set
 inclusion, which is analogous to the store ordering relation in the
-(IVar-based) Featherweight CnC system that I described in
+(IVar-based) Featherweight CnC system that \either{I}{we} described in
 Section~\ref{subsection:lvars-monotonic-store-growth}.  Later, Conway
 \etal~\cite{blooml} generalized Bloom to a more flexible
 lattice-parameterized system, Bloom$^L$, in a manner analogous to the
@@ -223,7 +246,7 @@ post-conditions in the conclusion of the rule:
 In this formulation of the rule, the ``frame'' is an abstract piece of
 knowledge that is not violated by the execution of $C$.  The
 Generalized Independence lemma
-(Lemma~\ref{lem:generalized-independence}) that I describe in
+(Lemma~\ref{lem:generalized-independence}) that \either{I}{we} describe in
 Section~\ref{subsection:quasi-generalized-independence}, which extends
 the Independence lemma to handle arbitrary update operations, is
 reminiscent of this generalized frame rule.

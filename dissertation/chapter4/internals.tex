@@ -12,11 +12,11 @@
   material on \il{putLV} probably needs to be significantly revised
   and updated to be able to account for non-idempotent writes.}
 
-In this section, I describe the internals of the LVish library,
+In this section, \either{I}{we} describe the internals of the LVish library,
 including how the library represents LVars and @Par@ computations
 internally and how it implements lattice-generic functions for
 writing, reading, and freezing LVars, as well as registering handlers
-with and quiescing LVars.  First, though, I discuss a semantic
+with and quiescing LVars.  First, though, \either{I}{we} discuss a semantic
 observation about lattices that our implementation makes use of.
 
 \subsection{Leveraging atoms}\label{subsection:lvish-leveraging-atoms}
@@ -149,7 +149,7 @@ in writing operations with @get@ semantics.  In addition to an LVar,
 it takes two \emph{threshold functions} as arguments, one for global
 state and one for deltas.\footnote{In this sense, the way that
   threshold reads are implemented in LVish of is in fact quite close
-  to the semantic notion of \emph{threshold functions} that I
+  to the semantic notion of \emph{threshold functions} that \either{I}{we}
   described in
   Section~\ref{subsection:lvars-generalizing-from-threshold-sets-to-threshold-functions}.}
 The \emph{global threshold} @gThresh@ is used to initially check
@@ -349,7 +349,7 @@ quiescence are resumed.
 
 \subsection{Discussion: leveraging idempotency}\label{subsection:lvish-discussion-leveraging-idempotency}
 
-While I have emphasized the commutativity of the lub operation, it
+While \either{I}{we} have emphasized the commutativity of the lub operation, it
 also has another important property: \emph{idempotence}, meaning that
 $\userlub{d}{d} = d$ for any element $d$.  In LVar terms, repeated
 @put@s or @freeze@s have no effect, and so, in an LVish program that

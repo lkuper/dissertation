@@ -1,4 +1,4 @@
-We want the programming model of Chapters~\ref{ch:lvars}
+We want the programming model of \either{Chapters}{Sections}~\ref{ch:lvars}
 and~\ref{ch:quasi} to be realizable in practice.  If the determinism
 guarantee offered by LVars is to do us any good, however, we need to
 add LVars to a programming environment that is already deterministic.
@@ -15,8 +15,8 @@ model.\footnote{Haskell is often advertised as a purely functional
 programming language, that is, one without side effects, but it is
 perhaps more useful to think of it as a language that gets other
 effects out of the way so that one can add one's own effects!}  In the
-case of the basic LVars model of Chapter~\ref{ch:lvars}, those effects
-are @put@ and @get@ operations on LVars; Chapter~\ref{ch:quasi} adds
+case of the basic LVars model of \either{Chapter}{Section}~\ref{ch:lvars}, those effects
+are @put@ and @get@ operations on LVars; \either{Chapter}{Section}~\ref{ch:quasi} adds
 the @freeze@ operation and arbitrary update operations.  Implementing
 the LVars model as a Haskell library makes it possible to provide
 compile-time guarantees about determinism and quasi-determinism,
@@ -39,26 +39,26 @@ GHC or its run-time system.
 \lk{Ugh, I hate roadmap paragraphs, and this is just about the worst of
 all time. Maybe I can make this better.}
 
-In this chapter, I describe the \emph{LVish} library, a Haskell
+In this \either{chapter}{section}, \either{I}{we} describe the \emph{LVish} library, a Haskell
 library for practical deterministic and quasi-deterministic parallel
-programming with LVars.  We have already had a taste of what it is
+programming with LVars.  We have already seen a taste of what it is
 like to use the LVish library; Section~\ref{s:quasi-informal} gave an
-example of an LVish Haskell program.  Here, I go on to give a
+example of an LVish Haskell program.  Here, \either{I}{we} go on to give a
 systematic introduction to the LVish library.  First, in
-Section~\ref{s:lvish-big-picture}, I discuss the library at a high
-level.  Then, in Section~\ref{s:lvish-api}, I describe the LVish API,
-and I discuss the parallel breadth-first traversal of
+Section~\ref{s:lvish-big-picture}, \either{I}{we} discuss the library at a high
+level.  Then, in Section~\ref{s:lvish-api}, \either{I}{we} describe the LVish API,
+and \either{I}{we} discuss the parallel breadth-first traversal of
 Section~\ref{s:quasi-informal} in more detail.  In
-Section~\ref{s:lvish-disjoint}, I discuss how LVish
+Section~\ref{s:lvish-disjoint}, \either{I}{we} discuss how LVish
 supports \emph{imperative disjoint parallelism} (in the style of
 DPJ~\cite{dpj-oopsla}) alongside LVars, which we accomplish using a
-monad transformer, @ParST@.  In Section~\ref{s:lvish-internals}, I
+monad transformer, @ParST@.  In Section~\ref{s:lvish-internals}, \either{I}{we}
 describe how the LVish library itself is implemented.  Finally, in
-Sections~\ref{s:lvish-k-cfa} and~\ref{s:lvish-phybin}, I present two
+Sections~\ref{s:lvish-k-cfa} and~\ref{s:lvish-phybin}, \either{I}{we} present two
 case studies of parallelizing existing Haskell programs by porting
-them to LVish.  First, in Section~\ref{s:lvish-k-cfa}, I describe
+them to LVish.  First, in Section~\ref{s:lvish-k-cfa}, \either{I}{we} describe
 using LVish to parallelize a control-flow analysis ($k$-CFA)
-algorithm.  Second, in Section~\ref{s:lvish-phybin}, I describe using
+algorithm.  Second, in Section~\ref{s:lvish-phybin}, \either{I}{we} describe using
 LVish to parallelize
 \emph{PhyBin}, a bioinformatics application that relies heavily on a
 (parallelizable) tree-edit distance algorithm.

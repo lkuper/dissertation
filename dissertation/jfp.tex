@@ -2,6 +2,7 @@
 
 \RequirePackage{amsmath}
 \documentclass{../latex_common/jfp1}
+\bibliographystyle{../latex_common/jfp}
 
 % This is the journal article, not the dissertation
 \newcommand{\JOURNAL}{}
@@ -100,15 +101,15 @@
 \end{abstract}
 
 \input{chapter1/main}
-%% \input{chapter2/main}
-%% \input{chapter3/main}
+\input{chapter2/main}
+\input{chapter3/main}
 \input{chapter4/main}
 \input{chapter6/main}
 \input{chapter7/main}
 
-\bibliographystyle{../latex_common/jfp}
-%% FIXME: this won't work; I might have to get rid of the ``myname'' stuff.
-\newcommand{\myname}[0]{Kuper}
+% Put this bak the way it was before typesetting refs.
+\renewcommand{\section}{\oldsection}
+
 \bibliography{../latex_common/refs,../latex_common/lkuper}
 
 \end{document}
