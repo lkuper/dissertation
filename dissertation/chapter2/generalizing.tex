@@ -5,13 +5,13 @@ their accompanying @new@/@put@/@get@ operations) to an existing
 deterministic parallel language (the $\lambda$-calculus) preserves
 determinism.  But it is not the case that the @put@ and @get@
 operations are \emph{the most general} determinism-preserving
-operations on LVars.  In this section, I consider some alternative
+operations on LVars.  In this section, \either{I}{we} consider some alternative
 semantics for @put@ and @get@ that generalize their behavior while
 retaining the determinism of the model.
 
 \subsection{Generalizing from least-upper-bound writes to inflationary, commutative writes}\label{subsection:lvars-generalizing-from-least-upper-bound-writes}
 
-In the LVars model as presented in this chapter so far, the only way
+In the LVars model as presented in this \either{chapter}{section} so far, the only way
 for the state of an LVar to evolve over time is through a series of
 @put@ operations.  Unfortunately, this way of updating an LVar
 provides no efficient way to model, for instance, an atomically
@@ -41,7 +41,7 @@ The first of these conditions says that each update operation is
 inflationary with respect to $\userleq$.  The second condition says
 that update operations commute with each other.  These two conditions
 correspond to the two informal criteria that we set forth for
-monotonic data structures at the beginning of this chapter: the
+monotonic data structures at the beginning of this \either{chapter}{section}: the
 requirement that updates be inflationary corresponds to the fact that
 monotonic data structures can only ``grow'', and the requirement that
 updates be commutative corresponds to the fact that the order of
@@ -78,8 +78,8 @@ be combined.
 In practice, the author of a particular LVar data structure must
 choose which update operations that data structure should provide, and
 it is the data structure author's responsibility to ensure that they
-commute.  For example, the LVish Haskell library (which I discuss in
-Chapter~\ref{ch:lvish}) provides a set data structure,
+commute.  For example, the LVish Haskell library (which \either{I}{we} discuss in
+\either{Chapter}{Section}~\ref{ch:lvish}) provides a set data structure,
 @Data.LVar.Set@, that supports only @put@, whereas the counter data
 structure @Data.LVar.Counter@ supports only increments; an attempt to
 call @put@ on a @Counter@ would be ruled out by the type system.
@@ -87,18 +87,18 @@ However, \emph{composing} LVars that support different families of
 update operations is fine.  For example, an LVar could represent a
 monotonically growing collection (which supports @put@) of counter
 LVars, where each counter is itself monotonically increasing and
-supports only increment.  Indeed, the PhyBin case study that I
+supports only increment.  Indeed, the PhyBin case study that \either{I}{we}
 describe in Section~\ref{s:lvish-phybin} uses just such a collection
 of counters.\footnote{Unlike \il{put}, arbitrary update operations are
   not idempotent, which means that in order to support arbitrary
   update operations we must be careful not to assume idempotency of
-  writes in the LVish scheduler implementation.  I discuss this
+  writes in the LVish scheduler implementation.  \either{I}{We} discuss this
   consideration in more detail in Section~\ref{s:lvish-internals}.}
 
-In Chapter~\ref{ch:quasi}, in addition to extending $\lambdaLVar$ to
+In \either{Chapter}{Section}~\ref{ch:quasi}, in addition to extending $\lambdaLVar$ to
 support the new features of \emph{freezing} and \emph{event handlers},
-I generalize the @put@ operation to allow arbitrary update operations.
-More precisely, I replace the @put@ operation with a set of operations
+\either{I}{we} generalize the @put@ operation to allow arbitrary update operations.
+More precisely, \either{I}{we} replace the @put@ operation with a set of operations
 $\PUTi$, with each corresponding to an update operation $u_i$.  The
 resulting generalized language definition is therefore parameterized
 not only by an application-specific lattice, but also by an
@@ -128,7 +128,7 @@ Certain deterministic computations are difficult to express using the
 definition of threshold sets presented in
 Section~\ref{subsection:lvars-communication-primitives}.  For
 instance, consider an LVar that stores the result of a parallel
-logical ``and'' operation on two Boolean inputs.  I'll call this data
+logical ``and'' operation on two Boolean inputs.  \either{I'll}{We'll} call this data
 structure an $\mathrm{AndLV}$, and its two inputs the \emph{left} and
 \emph{right} inputs, respectively.
 
@@ -311,6 +311,7 @@ which is a legal threshold set under the activation-set-based
 semantics, but has the same behavior as the old, non-short-circuiting
 version.
 
+\ifdefined\DISSERTATION
 I use the activation-set-based formulation of threshold sets in
 Chapter~\ref{ch:distributed}, where I bring threshold reads to the
 setting of replicated, distributed data structures.  I prove that
@@ -323,6 +324,7 @@ them particularly suited to the distributed setting; either the
 original formulation of threshold sets or the even more general
 \emph{threshold functions} I discuss in the following section would
 have worked as well.
+\fi
 
 \subsection{Generalizing from threshold sets to threshold functions}\label{subsection:lvars-generalizing-from-threshold-sets-to-threshold-functions}
 
