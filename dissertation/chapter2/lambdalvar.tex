@@ -49,7 +49,7 @@ threshold set argument to @get@ is enforced in the {\sc E-Get} rule by
 the $\incomp{T}$ premise, which requires that the lub of any two
 distinct elements in $T$ must be $\top$.\footnote{Although
   $\incomp{T}$ is given as a premise of the {\sc E-Get} reduction rule
-  (suggesting that it is checked at runtime), as I noted earlier in
+  (suggesting that it is checked at runtime), as \either{I}{we} noted earlier in
   Section~\ref{subsection:lvars-the-model-versus-reality}, in a real
   implementation of LVars threshold sets need not have any runtime
   representation, nor do they need to be written explicitly in the
@@ -64,7 +64,7 @@ context determines where evaluation can occur; in $\lambdaLVar$, the
 order of evaluation is nondeterministic (that is, a given expression
 can generally reduce in more than one way), and so it is generally
 \emph{not} the case that an expression has a unique decomposition into
-redex and context.\footnote{In fact, my motivation for splitting the
+redex and context.\footnote{In fact, \either{my}{our} motivation for splitting the
   operational semantics into a reduction semantics and a context
   semantics is to isolate the nondeterminism of the context semantics,
   which simplifies the determinism proof of
@@ -94,30 +94,26 @@ observable.
 
 $\lambdaLVar$ has a call-by-value semantics: arguments must be fully
 evaluated before function application ($\beta$-reduction, via the {\sc
-  E-Beta} rule) can occur.  I exploit this property to define a
+  E-Beta} rule) can occur.  \either{I}{We} exploit this property to define a
 syntactic sugar @let par@ for \emph{parallel composition}, which
 computes two subexpressions $e_1$ and $e_2$ in parallel before
 computing $e_3$:
 
+\TODO{Make the typesetting less awful here.}
+
 \singlespacing
 \begin{displaymath}
-\begin{minipage}[b]{2in}
-  \begin{equation*}
-\begin{split}
+\begin{minipage}[b]{1.5in}
+\begin{align*}
 & \LETPAR ~x = e_1 \\ 
 & \letparspace ~y = e_2 \\
-& \letspace \IN~e_3 
-\end{split}
-\end{equation*}
-\end{minipage}
-\begin{minipage}[b]{1in}
-\centering
-$\defeq$
+& \letspace \IN~e_3
+\end{align*}
 \end{minipage}
 \begin{minipage}[b]{2in}
-\begin{equation*}
-  \app{(\app{(\lam{x}{(\lam{y}{e_3})})}{e_1})}{e_2}
-\end{equation*}
+\[
+  \quad \defeq \quad\quad \app{(\app{(\lam{x}{(\lam{y}{e_3})})}{e_1})}{e_2}
+\]
 \end{minipage}
 \end{displaymath}
 \doublespacing

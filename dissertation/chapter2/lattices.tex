@@ -1,9 +1,9 @@
 \section{Lattices, stores, and determinism}\label{s:lvars-lattices}
 
-As a minimal substrate for LVars, I introduce $\lambdaLVar$, a
+As a minimal substrate for LVars, \either{I}{we} introduce $\lambdaLVar$, a
 parallel call-by-value $\lambda$-calculus extended with a \emph{store}
 and with communication primitives @put@ and @get@ that operate on data
-in the store.  The class of programs that I am interested in modeling
+in the store.  The class of programs that \either{I am}{we are} interested in modeling
 with $\lambdaLVar$ are those with explicit effectful operations on
 shared data structures, in which parallel subcomputations may
 communicate with each other via the @put@ and @get@ operations.
@@ -21,7 +21,7 @@ $D$, so long as that sequence respects the partial order---that is, so
 long as updates to the LVar (made via the @put@ operation) are
 \emph{inflationary} with respect to $\userleq$.  Moreover, the @get@
 operation allows only limited observations of the LVar's state.  In
-this section, I discuss how lattices and stores work in $\lambdaLVar$
+this section, \either{I}{we} discuss how lattices and stores work in $\lambdaLVar$
 and explain how the semantics of @put@ and @get@ together enforce
 determinism in $\lambdaLVar$ programs.
 
@@ -51,7 +51,7 @@ greatest element $\top$.  That is, $D$ has the following structure:
 We can specify all these components as a 4-tuple $(D, \userleq, \bot,
 \top)$ where $D$ is a set, $\userleq$ is a partial order on the
 elements of $D$, $\bot$ is the least element of $D$ according to
-$\userleq$, and $\top$ is the greatest.  However, I use $D$ as a
+$\userleq$, and $\top$ is the greatest.  However, \either{I}{we} use $D$ as a
 shorthand for the entire 4-tuple $(D, \userleq, \bot, \top)$ when its
 meaning is clear from the context.
 
@@ -104,13 +104,13 @@ Although each LVar in a program has its own state, the states of all
 the LVars are drawn from the same lattice $D$.\footnote{In practice,
   different LVars in a program might have different state spaces (and,
   in the LVish Haskell library that I will present in
-  Chapter~\ref{ch:lvish}, they do).  Multiple lattices can in
+  \either{Chapter}{Section}~\ref{ch:lvish}, they do).  Multiple lattices can in
   principle be encoded using a sum construction, so this modeling
   choice is just to keep the presentation simple.}
 
 \LVarsDefStore
 
-I use the notation $\extSRaw{S}{l}{d}$ to denote extending $S$ with a
+\either{I}{We} use the notation $\extSRaw{S}{l}{d}$ to denote extending $S$ with a
 binding from $l$ to $d$.  If $l \in \dom{S}$, then $\extSRaw{S}{l}{d}$
 denotes an update to the existing binding for $l$, rather than an
 extension.  Another way to denote a store is by explicitly writing out
@@ -137,7 +137,7 @@ By Definition~\ref{def:lvars-lubstore}, if $\userlub{d_1}{d_2} =
 $\lubstore{\store{\storebindingRaw{l}{d_1}}}{\store{\storebindingRaw{l}{d_2}}}
 = \topS$.  Notice that a store containing a binding
 $\storebindingRaw{l}{\top}$ can never arise during the execution of a
-$\lambdaLVar$ program, because (as I will show in
+$\lambdaLVar$ program, because (as \either{I}{we} will show in
 Section~\ref{s:lvars-lambdalvar}) an attempted write that would take
 the state of $l$ to $\top$ would raise an error before the write can
 occur.
@@ -188,9 +188,9 @@ a combination of the two would not pass.
 The requirement that the elements of a threshold set be pairwise
 incompatible limits the expressivity of threshold sets.  In fact, it
 is a stronger requirement than we need to ensure determinism.  Later
-on, in Section~\ref{s:lvars-generalizing}, I will explain how to
+on, in Section~\ref{s:lvars-generalizing}, \either{I}{we} will explain how to
 generalize the definition of threshold sets to make more programs
-expressible.  For now, I will proceed with the simpler definition
+expressible.  For now, \either{I}{we} will proceed with the simpler definition
 above.
 
 \subsection{Monotonic store growth and determinism}\label{subsection:lvars-monotonic-store-growth}
@@ -227,7 +227,7 @@ under Definition~\ref{def:lvars-leqstore-cnc}.  That is, in
 $\lambdaLVar$ an LVar could take on the state $d_1$ followed by $d_2$,
 which would not be possible in Featherweight CnC.
 
-I establish in Section~\ref{s:lvars-proof} that $\lambdaLVar$ remains
+\either{I}{We} establish in Section~\ref{s:lvars-proof} that $\lambdaLVar$ remains
 deterministic despite the relatively weak $\leqstore{}{}$ relation
 given in Definition~\ref{def:lvars-leqstore}.  The keys to maintaining
 determinism are the blocking semantics of the @get@ operation and the

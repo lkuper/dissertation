@@ -15,6 +15,8 @@ Consider a program (written in a hypothetical language) in which two
 parallel computations write to an LVar $\mathit{lv}$, with one thread
 writing the value $2$ and the other writing $3$:
 
+\TODO{Fix the ridiculous whitespace with these examples.}
+
 \singlespacing
 \begin{equation}
 \begin{split}
@@ -182,7 +184,7 @@ risk of nondeterminism because the elements of the threshold set are
 \emph{pairwise incompatible} with respect to $\mathit{lv}$'s lattice:
 informally, since the second entry of $\mathit{lv}$ can only be
 written once, no more than one state from the set $\setof{(\bot, 0),
-  (\bot, 1), \dots}$ can ever be reached.  (I formalize this
+  (\bot, 1), \dots}$ can ever be reached.  (\either{I}{We} formalize this
 incompatibility requirement in
 Section~\ref{subsection:lvars-communication-primitives}.)
 
@@ -197,8 +199,8 @@ the process of being initialized by a constructor.
 
 The use of explicit threshold sets in the LVars model should be
 understood as a mathematical modeling technique, \emph{not} an
-implementation approach or practical API.  The LVish library (which I
-will discuss in Chapter~\ref{ch:lvish}) provides an unsafe @getLV@
+implementation approach or practical API.  The LVish library (which \either{I}{we}
+will discuss in \either{Chapter}{Section}~\ref{ch:lvish}) provides an unsafe @getLV@
 operation to the authors of LVar data structure libraries, who can
 then make operations like @getFst@ and @getSnd@ available as a safe
 interface for application writers, implicitly baking in the particular

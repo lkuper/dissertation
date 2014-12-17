@@ -1,21 +1,21 @@
 \section{Proof of determinism for $\lambdaLVar$}\label{s:lvars-proof}
 
-The main technical result of this chapter is a proof of determinism
+The main technical result of this \either{chapter}{section} is a proof of determinism
 for the $\lambdaLVar$ language.  The determinism theorem says that if
 two executions starting from a given configuration $\conf$ terminate
 in configurations $\conf'$ and $\conf''$, then $\conf'$ and $\conf''$
-are the same configuration, up to a permutation on locations.  (I
+are the same configuration, up to a permutation on locations.  (\either{I}{We}
 discuss permutations in more detail below, in
 Section~\ref{subsection:lvars-permutations}.)
 
-In order to prove determinism for $\lambdaLVar$, I first prove several
+In order to prove determinism for $\lambdaLVar$, \either{I}{we} first prove several
 supporting lemmas.  Lemma~\ref{lem:lvars-permutability}
 (Permutability) deals with location names, and
 Lemma~\ref{lem:lvars-locality} (Locality) establishes a useful
 property for dealing with expressions that decompose into redex and
 context in multiple ways.  After that point, the structure of the
 proof is similar to that of the proof of determinism for Featherweight
-CnC given by Budimli\'c \etal~\cite{CnC}.  I reuse the naming
+CnC given by Budimli\'c \etal~\cite{CnC}.  \either{I}{We} reuse the naming
 conventions of Budimli\'c \etal~for
 Lemmas~\ref{lem:lvars-monotonicity} (Monotonicity),
 \ref{lem:lvars-independence} (Independence), \ref{lem:lvars-clash}
@@ -36,6 +36,11 @@ Lemmas~\ref{lem:lvars-monotonicity} through
 of the determinism proof does not need to deal specifically with the
 semantics of LVars, lattices, or the store, and instead deals only
 with execution steps at a high level.
+
+\ifdefined\JOURNAL
+For most of the supporting lemmas, we only give the statements of the
+lemmas here; their proofs appear in~\cite{lvars-dissertation}.
+\fi
 
 \subsection{Permutations and permutability}\label{subsection:lvars-permutations}
 
@@ -83,13 +88,14 @@ that will be useful to us shortly.
 
 \LVarsDefPermutationConfiguration
 
-With these definitions in place, I can prove
+With these definitions in place, \either{I}{we} can prove
 Lemma~\ref{lem:lvars-permutability}, which says that the names of
 locations in a configuration do not affect whether or not that
 configuration can take a step: a configuration $\conf$ can step to
 $\conf'$ exactly when $\pi(\conf)$ can step to $\pi(\conf')$.
 
 \LVarsLemPermutability
+\ifdefined\DISSERTATION
 \begin{proof}
   See Section~\ref{section:lvars-permutability-proof}.  The forward
   direction of part~\ref{thm:permutable-reduction-transitions} is by
@@ -102,6 +108,7 @@ $\conf'$ exactly when $\pi(\conf)$ can step to $\pi(\conf')$.
   Part~\ref{thm:permutable-context-transitions} of the proof builds on
   part~\ref{thm:permutable-reduction-transitions}.
 \end{proof}
+\fi
 
 Because the names of locations in a configuration do not affect
 whether it can step, we can rename locations as needed, which will be
@@ -114,9 +121,9 @@ Section~\ref{subsection:lvars-confluence}.\footnote{For another
 
 \subsection{Internal Determinism}
 
-My goal is to show that $\lambdaLVar$ is deterministic according to
-the definition of \emph{observable determinism} that I gave in
-Chapter~\ref{ch:intro}---that is, that a $\lambdaLVar$ program always
+\either{My}{Our} goal is to show that $\lambdaLVar$ is deterministic according to
+the definition of \emph{observable determinism} that \either{I}{we} gave in
+\either{Chapter}{Section}~\ref{ch:intro}---that is, that a $\lambdaLVar$ program always
 evaluates to the same value.  In the context of $\lambdaLVar$, a
 ``program'' can be understood as a configuration, and a ``value'' can
 be understood as a configuration that cannot step, either because the
@@ -132,10 +139,10 @@ a configuration takes the same sequence of steps on the way to
 reaching its value at the end of every run, and in fact, the
 $\lambdaLVar$ operational semantics does not have that property.
 Borrowing terminology from
-Blelloch~\etal~\cite{blelloch-internally-deterministic}, I will use
+Blelloch~\etal~\cite{blelloch-internally-deterministic}, \either{I}{we} will use
 the term \emph{internally deterministic} to describe a program that
 does, in fact, take the same sequence of steps on every
-run.\footnote{I am using ``internally deterministic'' in a more
+run.\footnote{\either{I am}{We are} using ``internally deterministic'' in a more
   specific way than Blelloch~\etal: they define an internally
   deterministic program to be one for which the \emph{trace} of the
   program is the same on every run, where a trace is a directed
@@ -172,12 +179,14 @@ claim, which we will later use in the proof of Strong Local Confluence
 (Lemma~\ref{lem:lvars-strong-local-confluence}).
 
 \LVarsLemInternalDeterminism
+\ifdefined\DISSERTATION
 \begin{proof}
   Straightforward by cases on the rule of the reduction semantics by
   which $\conf$ steps to $\conf'$; the only interesting case is for
   the {\sc E-New} rule.  See
   Section~\ref{section:lvars-internal-determinism-proof}.
 \end{proof}
+\fi
 
 \subsection{Locality}
 
@@ -200,10 +209,12 @@ its context, the expression $e_1$ will be left alone.
 Lemma~\ref{lem:lvars-locality} formalizes this claim.
 
 \LVarsLemLocality
+\ifdefined\DISSERTATION
 \begin{proof}
   \TODO{Add short description here once the proof is done.} See
   Section~\ref{section:lvars-locality-proof}.
 \end{proof}
+\fi
 
 \subsection{Monotonicity}
 
@@ -212,12 +223,14 @@ the $\parstepsto$ relation, the store can only grow with respect to
 the $\leqstore{}{}$ ordering.
 
 \LVarsLemMonotonicity
+\ifdefined\DISSERTATION
 \begin{proof}
   Straightforward by cases on the rule of the reduction semantics by
   which $\config{S}{e}$ steps to $\config{S'}{e'}$. The interesting
   cases are for the {\sc E-New} and {\sc E-Put} rules.  See
   Section~\ref{section:lvars-monotonicity-proof}.
 \end{proof}
+\fi
 
 \subsection{Independence}\label{subsection:lvars-independence}
 
@@ -236,9 +249,9 @@ the $\leqstore{}{}$ ordering.
           {\config{\lubstore{S}{S''}}{e} \parstepsto \config{\lubstore{S'}{S''}}{e'}}
     \end{mathpar}
   \caption{Comparison of O'Hearn~\etal's frame
-    rule~\cite{OHearnLocalReasoning} and a simplified version of the
-    Independence lemma.  The separating conjunction connective $*$ in
-    the frame rule requires that its arguments be disjoint; the
+    rule~\protect\cite{OHearnLocalReasoning} and a simplified version
+    of the Independence lemma.  The separating conjunction connective
+    $*$ in the frame rule requires that its arguments be disjoint; the
     Independence lemma uses the $\lubstore{}{}$ operation in place of
     $*$.}
   \label{f:lvars-frame-rule}
@@ -307,6 +320,7 @@ by allocation.
 \LVarsDefNonConflicting
 
 \LVarsLemIndependence
+\ifdefined\DISSERTATION
 \begin{proof}
   By cases on the rule of the reduction semantics by which
   $\config{S}{e}$ steps to $\config{S'}{e'}$. The interesting cases
@@ -315,6 +329,7 @@ by allocation.
     E-Put-Err} rule.  See
   Section~\ref{section:lvars-independence-proof}.
 \end{proof}
+\fi
 
 \subsection{Clash}
 
@@ -324,6 +339,7 @@ Independence lemma, but handles the case where $\lubstore{S'}{S''} =
 $\config{\lubstore{S}{S''}}{e}$ steps to $\error$.
 
 \LVarsLemClash
+\ifdefined\DISSERTATION
 \begin{proof}
   By cases on the rule of the reduction semantics by which
   $\config{S}{e}$ steps to $\config{S'}{e'}$. As with
@@ -332,6 +348,7 @@ $\config{\lubstore{S}{S''}}{e}$ steps to $\error$.
   \neq \error$, we do not need to consider the {\sc E-Put-Err} rule.
   See Section~\ref{section:lvars-clash-proof}.
 \end{proof}
+\fi
 
 \subsection{Error Preservation}
 
@@ -341,6 +358,7 @@ evaluating $e$ in the context of some larger store will also result in
 $\error$.
 
 \LVarsLemErrorPreservation
+\ifdefined\DISSERTATION
 \begin{proof}
   Suppose $\config{S}{e} \parstepsto \error$ and
   $\leqstore{S}{S'}$. We are required to show that $\config{S'}{e}
@@ -355,6 +373,7 @@ $\error$.
   \top$.  Hence, by {\sc E-Put-Err}, $\config{S'}{\putexp{l}{d_2}}
   \parstepsto \error$, as we were required to show.
 \end{proof}
+\fi
 
 \subsection{Confluence}\label{subsection:lvars-confluence}
 
@@ -375,7 +394,7 @@ then get a property like Lemma~\ref{lem:lvars-strong-local-confluence}
 as an immediate consequence of the diamond property, by choosing $i =
 j = 1$.  But a true diamond property with exactly one step ``on each
 side of the diamond'' is stronger than we need here, and, in fact,
-does not hold for $\lambdaLVar$; so, instead, I prove the weaker ``at
+does not hold for $\lambdaLVar$; so, instead, \either{I}{we} prove the weaker ``at
 most one step'' property directly.
 
 Second, Budimli\'c \etal~do not have to deal with permutations in
@@ -395,12 +414,13 @@ part of the metatheory of $\lambdaLVar$.
 Taking the approach of Featherweight CnC, and therefore avoiding
 allocation entirely, would simplify both the $\lambdaLVar$ language
 and its determinism proof.  On the other hand, when programming with
-the LVish Haskell library of Chapter~\ref{ch:lvish}, one does have to
+the LVish Haskell library of \either{Chapter}{Section}~\ref{ch:lvish}, one does have to
 explicitly create and allocate new LVars by calling the equivalent of
 $\NEW$, and so by modeling the $\NEW$ operation in $\lambdaLVar$, we
 keep the semantics a bit more faithful to the implementation.
 
 \LVarsLemStrongLocalConfluence
+\ifdefined\DISSERTATION
 \begin{proof}
   Since the original configuration $\conf$ can step in two different
   ways, its expression decomposes into redex and context in two
@@ -426,18 +446,23 @@ keep the semantics a bit more faithful to the implementation.
   to conflict.  See
   Section~\ref{section:lvars-strong-local-confluence-proof}.
 \end{proof}
+\fi
 
 \LVarsLemStrongOneSidedConfluence
+\ifdefined\DISSERTATION
 \begin{proof}
   By induction on $m$; see
   Section~\ref{section:lvars-strong-one-sided-confluence-proof}.
 \end{proof}
+\fi
 
 \LVarsLemStrongConfluence
+\ifdefined\DISSERTATION
 \begin{proof}
   By induction on $n$; see
   Section~\ref{section:lvars-strong-confluence-proof}.
 \end{proof}
+\fi
 
 \LVarsLemConfluence
 
@@ -450,7 +475,7 @@ is a direct result of Lemma~\ref{lem:lvars-confluence}:
 
 \subsection{Discussion: termination}
 
-I have followed Budimli\'c \etal~\cite{CnC} in treating
+\either{I}{We} have followed Budimli\'c \etal~\cite{CnC} in treating
 \emph{determinism} separately from the issue of \emph{termination}.
 Yet one might legitimately be concerned that in $\lambdaLVar$, a
 configuration could have both an infinite reduction path and one that
@@ -465,7 +490,7 @@ However, Theorem~\ref{thm:lvars-determinism} has nothing to say about
 \emph{livelocks}, in which a program reduces infinitely.  It would be
 desirable to have a \emph{consistent termination} property which would
 guarantee that if one run of a given $\lambdaLVar$ program terminates
-with a non-$\error$ result, then every run will.  I conjecture (but do
+with a non-$\error$ result, then every run will.  \either{I}{We} conjecture (but do
 not prove) that such a consistent termination property holds for
 $\lambdaLVar$.  Such a property could be paired with
 Theorem~\ref{thm:lvars-determinism} to guarantee that if one run of a

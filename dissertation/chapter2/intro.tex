@@ -46,7 +46,7 @@ tolerate nondeterministic thread interleavings.  In such a setting,
 although the order in which side-effecting operations occur can differ
 on multiple runs, a program will always produce the same observable
 result.\footnote{There are many ways to define what is observable
-  about a program. As noted in Chapter~\ref{ch:intro}, I define the
+  about a program. As noted in \either{Chapter}{Section}~\ref{ch:intro}, \either{I}{we} define the
   observable behavior of a program to be the value to which it
   evaluates.}
 
@@ -74,24 +74,24 @@ monotonicity.  Yet systems like StreamIt, CnC, and monad-par emerge
 independently, without recognition of their common basis.  Moreover,
 since each one of these programming models is based on a single type
 of shared data structure, they lack \emph{generality}: IVars or FIFO
-streams alone cannot support all producer/consumer applications, as I
+streams alone cannot support all producer/consumer applications, as \either{I}{we}
 discuss in Section~\ref{s:lvars-motivation}.
 
 Instead of limiting ourselves to a single type of shared data
 structure, though, we can take the more general notion of monotonic
 data structures as the basis for a new deterministic parallel
-programming model.  In this chapter, I show how to generalize IVars
+programming model.  In this \either{chapter, I}{section, we} show how to generalize IVars
 to \emph{LVars}, thus named because the states an LVar can take on are
 elements of an application-specific \emph{lattice}.\footnote{This
 ``lattice'' need only be a \emph{bounded join-semilattice} augmented
 with a greatest element $\top$, in which every two elements have a
 least upper bound but not necessarily a greatest lower bound; see
-Section~\ref{subsection:lvars-lattices}.  For brevity, I use the term
+Section~\ref{subsection:lvars-lattices}.  For brevity, \either{I}{we} use the term
 ``lattice'' in place of ``bounded join-semilattice with a designated
 greatest element'' throughout this dissertation.}  This
 application-specific lattice determines the semantics of the @put@ and
-@get@ operations that comprise the interface to LVars (which I will
-explain in detail in the sections that follow): the @put@ operation
+@get@ operations that comprise the interface to LVars (which \either{I}{we} will
+explain in detail in \either{the sections that follow}{the rest of this section}): the @put@ operation
 takes the least upper bound of the current state and the new state
 with respect to the lattice, and the @get@ operation performs
 a \emph{threshold read} that blocks until a lower bound in the lattice
@@ -99,7 +99,7 @@ is reached.
 
 Section~\ref{s:lvars-examples} introduces the concept of LVars through
 a series of examples.  Then, in Sections~\ref{s:lvars-lattices}
-and~\ref{s:lvars-lambdalvar} I formally define $\lambdaLVar$, a
+and~\ref{s:lvars-lambdalvar} \either{I}{we} formally define $\lambdaLVar$, a
 deterministic parallel calculus with shared state, based on the
 call-by-value $\lambda$-calculus.  The $\lambdaLVar$ language is
 general enough to subsume existing deterministic parallel languages
@@ -119,7 +119,7 @@ optimized concurrent data structure implementation; we need not
 rewrite the world's data structures to leverage the $\lambdaLVar$
 determinism result.
 
-The main technical result of this chapter is a proof of determinism
+The main technical result of this \either{chapter}{section} is a proof of determinism
 for $\lambdaLVar$ (Section~\ref{s:lvars-proof}).  The key lemma,
 Independence (Section~\ref{subsection:lvars-independence}), gives a
 kind of \emph{frame property} that captures the commutative effects of
@@ -127,10 +127,10 @@ LVar computations.  Such a property would \emph{not} hold in a typical
 language with shared mutable state, but holds in the setting of
 $\lambdaLVar$ because of the semantics of @put@ and @get@.
 
-Finally, in Section~\ref{s:lvars-generalizing}, I consider some
+Finally, in Section~\ref{s:lvars-generalizing}, \either{I}{we} consider some
 alternative semantics for the @put@ and @get@ operations that
 generalize their behavior while retaining the determinism of the
-original semantics: I generalize the @put@ operation from
-least-upper-bound writes to inflationary, commutative writes, and I
+original semantics: \either{I}{we} generalize the @put@ operation from
+least-upper-bound writes to inflationary, commutative writes, and \either{I}{we}
 generalize the @get@ operation to allow a more general form of
 threshold reads.

@@ -110,12 +110,12 @@ shared among tasks, including sets and graphs, so long as that data
 structure grows monotonically.  Consumers of the data structure may
 execute as soon as data is available, enabling pipelining, but may
 only observe irrevocable, monotonic properties of it. This is possible
-with a programming model based on LVars.  In the rest of this chapter,
-I will formally introduce LVars and the $\lambdaLVar$ language and
+with a programming model based on LVars.  In the rest of this \either{chapter}{section},
+\either{I}{we} will formally introduce LVars and the $\lambdaLVar$ language and
 give a proof of determinism for $\lambdaLVar$.  Then, in
-Chapter~\ref{ch:quasi}, I will extend the basic LVars model with
+\either{Chapter}{Section}~\ref{ch:quasi}, \either{I}{we} will extend the basic LVars model with
 additional features that make it easier to implement parallel graph
-traversal algorithms and other fixpoint computations, and I will
+traversal algorithms and other fixpoint computations, and \either{I}{we} will
 return to @bf_traverse@ and show how to implement a version of it
 using LVars that makes pipelining possible and truly satisfies the
 above specification.
