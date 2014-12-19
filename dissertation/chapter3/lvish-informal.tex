@@ -31,7 +31,7 @@ lattice.  The expression
 
 registers a handler for $\mathit{lv}$ that executes the callback
 function $\lam{x}{\putexp{\mathit{lv}}{x+1}}$ for each odd number that
-$\mathit{lv}$ is at or above.  When \ref{e:lvish-example-1} is
+$\mathit{lv}$ is at or above.  When \eref{e:lvish-example-1} is
 finished evaluating, $\mathit{lv}$ will contain the smallest even
 number that is at or above what its original value was.  For instance,
 if $\mathit{lv}$ originally contains $4$, the callback function will
@@ -70,7 +70,7 @@ the addition of @addHandler@):
 \end{equation}
 \doublespacing
 
-Can~\ref{e:lvish-example-2} ever block?  If a callback only executed
+Can~\eref{e:lvish-example-2} ever block?  If a callback only executed
 for events that arrived after its handler was registered, or only for
 the largest event in its event set that had occurred, then the
 example would be nondeterministic: it would block, or not, depending
@@ -78,7 +78,7 @@ on how the handler registration was interleaved with the
 \termfont{put}s.  By instead executing a handler's callback once for
 \emph{each and every} element in its event set below or at the LVar's
 value, we guarantee quasi-determinism---and, for
-\ref{e:lvish-example-2}, guarantee the result of $2$.
+\eref{e:lvish-example-2}, guarantee the result of $2$.
 
 The power of event handlers is most evident for lattices that model
 collections, such as sets.  For example, if we are working with

@@ -62,13 +62,13 @@ If $\mathit{lv}$'s lattice is the $\leq$ ordering on positive
 integers, as shown in Figure~\ref{f:lvars-example-lattices}(a), then
 $\mathit{lv}$'s state will always be $\max(3, 2) = 3$ by the time
 $\GET~\mathit{lv}$ runs, since the lub of two positive integers $n_1$
-and $n_2$ is $\max(n_1, n_2)$.  Therefore \ref{e:lvar-example-1} will
+and $n_2$ is $\max(n_1, n_2)$.  Therefore \eref{e:lvar-example-1} will
 deterministically evaluate to $3$, regardless of the order in which
 the two @put@ operations occurred.
 
 On the other hand, if $\mathit{lv}$'s lattice is that shown in
 Figure~\ref{f:lvars-example-lattices}(b), in which the lub of any two
-distinct positive integers is $\top$, then \ref{e:lvar-example-1} will
+distinct positive integers is $\top$, then \eref{e:lvar-example-1} will
 deterministically raise an exception, indicating that conflicting
 writes to $\mathit{lv}$ have occurred.  This exception is analogous to
 the ``multiple @put@'' error raised upon multiple writes to an IVar.
@@ -85,7 +85,7 @@ However, merely ensuring that writes to an LVar are monotonically
 increasing is not enough to ensure that programs behave
 deterministically.  Consider again the lattice of
 Figure~\ref{f:lvars-example-lattices}(a) for $\mathit{lv}$, but
-suppose we change \ref{e:lvar-example-1} to allow the @get@ operation
+suppose we change \eref{e:lvar-example-1} to allow the @get@ operation
 to be interleaved with the two @put@s:
 
 \singlespacing
@@ -101,7 +101,7 @@ to be interleaved with the two @put@s:
 \doublespacing
 
 Since the two @put@s and the @get@ can be scheduled in any order,
-\ref{e:lvar-example-2} is nondeterministic: $x$ might be either $2$ or
+\eref{e:lvar-example-2} is nondeterministic: $x$ might be either $2$ or
 $3$, depending on the order in which the LVar effects occur.
 Therefore, to maintain determinism, LVars put an extra restriction on
 the @get@ operation.  Rather than allowing @get@ to observe the exact
@@ -115,7 +115,7 @@ allowed to unblock and return.  When the threshold has been reached,
 instead, the (unique) element of the threshold set that has been
 reached or surpassed.
 
-We can make \ref{e:lvar-example-2} behave deterministically by passing
+We can make \eref{e:lvar-example-2} behave deterministically by passing
 a threshold set argument to @get@:
 
 \singlespacing
@@ -189,7 +189,7 @@ written once, no more than one state from the set $\setof{(\bot, 0),
 incompatibility requirement in
 Section~\ref{subsection:lvars-communication-primitives}.)
 
-In the case of \ref{e:lvar-example-4}, $\getsndexp{\mathit{lv}}$ may
+In the case of \eref{e:lvar-example-4}, $\getsndexp{\mathit{lv}}$ may
 unblock and return $(\bot, 4)$ any time after the second entry of
 $\mathit{lv}$ has been written, regardless of whether the first entry
 has been written yet.  It is therefore possible to use LVars to safely
