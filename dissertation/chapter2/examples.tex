@@ -86,7 +86,7 @@ However, merely ensuring that writes to an LVar are monotonically
 increasing is not enough to ensure that programs behave
 deterministically.  Consider again the lattice of
 Figure~\ref{f:lvars-example-lattices}(a) for $\mathit{lv}$, but
-suppose we change \eref{e:lvar-example-1} to allow the @get@ operation
+suppose we change \eref{e:lvar-example-1} to allow a direct @read@ of the LVar
 to be interleaved with the two @put@s:
 
 \singlespacing
@@ -94,18 +94,19 @@ to be interleaved with the two @put@s:
 \begin{split}
 & \LETPAR ~\_ = \putexp{\mathit{lv}}{3} \\
 &  \letparspace ~\_ = \putexp{\mathit{lv}}{2} \\
-&  \letparspace ~x = \GET~\mathit{lv} \\
+&  \letparspace ~x = \texttt{read}~\mathit{lv} 
+    ~~~~~~\textcolor{darkgreen}{\texttt{-- Not allowed!}}\\
 &  \letspace \IN~x
 \end{split}
 \label{e:lvar-example-2}
 \end{equation}
 \doublespacing
 
-Since the two @put@s and the @get@ can be scheduled in any order,
+Since the two @put@s and the @read@ can be scheduled in any order,
 \eref{e:lvar-example-2} is nondeterministic: $x$ might be either $2$ or
 $3$, depending on the order in which the LVar effects occur.
-Therefore, to maintain determinism, LVars put an extra restriction on
-the @get@ operation.  Rather than allowing @get@ to observe the exact
+Therefore, to maintain determinism, LVars allow only blocking, restricted @get@
+operations.  Rather than allowing @get@ to observe the exact
 value of the LVar, it can only observe that the LVar has reached one
 of a specified set of \emph{lower bound} states.  This set of lower
 bounds, which we provide as an extra argument to @get@, is called a
@@ -116,8 +117,8 @@ allowed to unblock and return.  When the threshold has been reached,
 instead, the (unique) element of the threshold set that has been
 reached or surpassed.
 
-We can make \eref{e:lvar-example-2} behave deterministically by passing
-a threshold set argument to @get@:
+We can then change \eref{e:lvar-example-2} to behave deterministically using 
+@get@ with a threshold set:
 
 \singlespacing
 \begin{equation}
@@ -131,7 +132,7 @@ a threshold set argument to @get@:
 \end{equation}
 \doublespacing
 
-For instance, suppose we choose the singleton set $\setof{3}$ as the
+Here we chose the singleton set $\setof{3}$ as the
 threshold set.  Since $\mathit{lv}$'s value can only increase with
 time, we know that once it is at least $3$, it will remain at or above
 $3$ forever; therefore the program will deterministically evaluate to
