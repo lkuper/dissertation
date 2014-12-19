@@ -2,8 +2,8 @@
 
 What applications motivate going beyond IVars and FIFO streams?
 Consider applications in which independent subcomputations contribute
-information to shared mutable data structures that change
-monotonically.  Hindley-Milner type inference is one example: in a
+results to shared mutable data structures.  
+Hindley-Milner type inference is one example: in a
 parallel type-inference algorithm, each type variable monotonically
 acquires information through unification (which can be represented as
 a lattice). Likewise, in control-flow analysis, the \emph{set} of
@@ -32,9 +32,10 @@ This is a challenge problem for deterministic-by-construction parallel
 programming: existing parallel solutions (such as, for instance, the
 parallel breadth-first graph traversal implementation from the
 Parallel Boost Graph Library~\cite{bfs-pbgl}) often traverse the
-connected component in a nondeterministic order (even though the
-outcome of the program---that is, the final connected component---is
-deterministic), and IVars and streams provide no obvious aid.  For
+connected component in a nondeterministic order---even though the
+outcome of the program, that is, the final connected component, is
+deterministic.  Neither IVars nor streams provide a way 
+to orchestrate this traversal.  For
 example, IVars cannot accumulate sets of visited nodes, nor can they
 be used as ``mark bits'' on visited nodes, since they can only be
 written once and not tested for emptiness.  Streams, on the other
@@ -63,10 +64,10 @@ connected component reachable from a starting vertex.  Nodes at
 distance one from the starting vertex are discovered---and set-unioned
 into the connected component---before nodes of distance two are
 considered.  Level-synchronization is a popular strategy for parallel
-breadth-first graph traversal (in fact, the aforementioned
+breadth-first graph traversal.  (In fact, the aforementioned
 implementation from the Parallel Boost Graph Library~\cite{bfs-pbgl}
-uses level-synchronization), although it necessarily sacrifices some
-parallelism for determinism: parallel tasks cannot continue
+uses level-synchronization.)  Although it necessarily sacrifices some
+parallelism: parallel tasks cannot continue
 discovering nodes in the component before synchronizing with all other
 tasks at a given distance from the start.
 
@@ -98,9 +99,12 @@ ready.  Still, at the granularity of the individual level-sets, the
 problem would remain: within each level-set, one would not be able to
 launch all instances of @analyze@ and asynchronously use those results
 that finished first.  Moreover, we would still have to contend with
-the previously-mentioned difficulty of separating producers and
-consumers when expressing producer-consumer computations when using
-pure programming with futures~\cite{monad-par}.
+the problem~\cite{monad-par} that pure programming with futures 
+has in separating the scheduling of producers and consumers.
+
+% the previously-mentioned difficulty of separating producers and
+% consumers when expressing producer-consumer computations when using
+% pure programming with futures~\cite{monad-par}.
 
 \subsection{An LVar-based solution}
 
