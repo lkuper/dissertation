@@ -1,6 +1,6 @@
 \section{LVars by example}\label{s:lvars-examples}
 
-\emph{IVars} \cite{IStructures, id, CnC, monad-par} are a well-known
+\emph{IVars} \cite{IStructures, id, monad-par} are a well-known
 mechanism for deterministic parallel programming.  An IVar is a
 \emph{single-assignment} variable \cite{Tesler-1968} with a blocking
 read semantics: an attempt to read an empty IVar will block until the
@@ -11,7 +11,7 @@ allows multiple writes, but only so long as those writes are
 monotonically increasing with respect to an application-specific
 lattice of states.
 
-Consider a program (written in a hypothetical language) in which two
+Consider a program in which two
 parallel computations write to an LVar $\mathit{lv}$, with one thread
 writing the value $2$ and the other writing $3$:
 
@@ -40,8 +40,9 @@ respectively, and the expression
 has \emph{fork-join} semantics: it launches concurrent subcomputations
 $e_1, e_2, \dots$ whose executions arbitrarily interleave, but must
 all complete before $\mathit{body}$ runs.  The @put@ operation is
-defined in terms of the application-specific lattice of LVar states:
-it updates the LVar to the \emph{least upper bound} (lub) of its
+defined in terms of the corresponding lattice of LVar states; it
+% , which can even be application-specific. @put@ 
+updates the LVar to the \emph{least upper bound} (lub) of its
 current state and the new state being written.
 
 \begin{figure}
