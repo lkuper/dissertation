@@ -5,6 +5,9 @@ SOURCES := $(wildcard *.tex *.bib) $(wildcard */*.tex) $(wildcard */figures/*.pd
 TEX_SOURCES := $(wildcard *.tex) $(wildcard */*.tex) $(wildcard ../latex_common/*.tex)
 JFP_NAME := jfp
 
+quick:
+	pdflatex jfp
+
 $(NAME).pdf: $(SOURCES)
 	$(LATEX) $(NAME).tex
 	bibtex $(NAME)
