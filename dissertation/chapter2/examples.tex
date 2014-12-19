@@ -15,8 +15,8 @@ Consider a program in which two
 parallel computations write to an LVar $\mathit{lv}$, with one thread
 writing the value $2$ and the other writing $3$:
 
-\TODO{Fix the ridiculous whitespace with these examples.}
-
+% \TODO{Fix the ridiculous whitespace with these examples.}
+\vspace{-8mm}
 \singlespacing
 \begin{equation}
 \begin{split}
@@ -28,9 +28,10 @@ writing the value $2$ and the other writing $3$:
 \end{equation}
 \doublespacing
 
-Here, @put@ and @get@ are operations that write and read LVars,
+Here, @put@ and @get@ write and read LVars,
 respectively, and the expression
-
+%
+\vspace{-8mm}
 \singlespacing
 \begin{displaymath}
 \letparexp{x_1}{e_1}{x_2}{e_2;~\dots}{\mathit{body}}
