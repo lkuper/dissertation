@@ -202,10 +202,12 @@ the process of being initialized by a constructor.
 
 The use of explicit threshold sets in the LVars model should be
 understood as a mathematical modeling technique, \emph{not} an
-implementation approach or practical API.  The LVish library (which \either{I}{we}
-will discuss in \either{Chapter}{Section}~\ref{ch:lvish}) provides an unsafe @getLV@
-operation to the authors of LVar data structure libraries, who can
-then make operations like @getFst@ and @getSnd@ available as a safe
+implementation approach or practical API.  The core of the LVish library (which \either{I}{we}
+will discuss in \either{Chapter}{Section}~\ref{ch:lvish}) provides 
+unsafe 
+% @getLV@
+operations to the authors of LVar data structure libraries, who can
+then export operations like @getFst@ and @getSnd@ as a safe
 interface for application writers, implicitly baking in the particular
 threshold sets that make sense for a given data structure without ever
 explicitly constructing them.
