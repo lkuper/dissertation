@@ -175,7 +175,9 @@ parallelism and single-assignment parallelism are all subsumed by the
 LVars programming model, and as we will see in
 Section~\ref{s:lvish-disjoint}, imperative disjoint parallel updates
 are compatible with LVars as well.  Furthermore, as \either{I}{we} show in
-Section~\ref{s:lvars-generalizing}, we can generalize the behavior of
+Section~\ref{s:lvars-generalizing}, 
+\ifdefined\DISSERTATION
+we can generalize the behavior of
 the @put@ and @get@ operations while retaining determinism: we can
 generalize from the least-upper-bound @put@ operation to a set of
 arbitrary \emph{update operations} that are not necessarily idempotent
@@ -186,6 +188,18 @@ updates turns out to be a particularly useful extension to the LVars
 model; \either{I}{we} formally extend the model to support these update operations
 in \either{Chapter}{Section}~\ref{ch:quasi}, and in \either{Chapter}{Section}~\ref{ch:lvish} \either{I}{we} discuss how
 update operations are useful in practice.
+\fi
+\ifdefined\JOURNAL
+we can generalize from the least-upper-bound @put@ operation to a set
+of arbitrary \emph{update operations} that are not necessarily
+idempotent (but are still inflationary and commutative), while
+retaining determinism.  This generalization turns out to be a
+particularly useful extension to the LVars model; \either{I}{we}
+formally extend the model to support such arbitrary update operations
+in \either{Chapter}{Section}~\ref{ch:quasi}, and in
+\either{Chapter}{Section}~\ref{ch:lvish} \either{I}{we} discuss how
+update operations are useful in practice.
+\fi
 
 \section{Quasi-deterministic and event-driven programming with LVars}\label{s:intro-quasi}
 

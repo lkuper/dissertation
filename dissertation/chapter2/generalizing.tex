@@ -1,5 +1,12 @@
+\ifdefined\DISSERTATION
 \section{Generalizing the \il{put} and \il{get} operations}\label{s:lvars-generalizing}
+\fi
 
+\ifdefined\JOURNAL
+\section{Generalizing from least-upper-bound writes to inflationary, commutative writes}\label{s:lvars-generalizing}
+\fi
+
+\ifdefined\DISSERTATION
 The determinism result for $\lambdaLVar$ shows that adding LVars (with
 their accompanying @new@/@put@/@get@ operations) to an existing
 deterministic parallel language (the $\lambda$-calculus) preserves
@@ -10,6 +17,7 @@ semantics for @put@ and @get@ that generalize their behavior while
 retaining the determinism of the model.
 
 \subsection{Generalizing from least-upper-bound writes to inflationary, commutative writes}\label{subsection:lvars-generalizing-from-least-upper-bound-writes}
+\fi
 
 In the LVars model as presented in this \either{chapter}{section} so far, the only way
 for the state of an LVar to evolve over time is through a series of
@@ -122,6 +130,7 @@ change to the language.
   update.  I hope that this is OK!  (There's a footnote about this in
   Section~\ref{subsection:quasi-generalized-independence}.)}
 
+\ifdefined\DISSERTATION
 \subsection{A more general formulation of threshold sets}\label{subsection:lvars-a-more-general-formulation-of-threshold-sets}
 
 Certain deterministic computations are difficult to express using the
@@ -384,3 +393,4 @@ return value, but \emph{any} constant return value will suffice.
   particular call to \il{get} to have $\top$ as their lub.  Augh,
   maybe I should actually do this...I didn't promise I would, but
   maybe I should...}
+\fi
