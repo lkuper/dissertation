@@ -5,13 +5,11 @@ operation $\Freeze{D, \userleq, \bot, \top} \defeq (D_p, \leqp, \botp,
 \topp)$ as follows:
 \begin{enumerate}
 \item $D_p$ is a set defined as follows:
-\begin{equation*}
-\begin{split}
+\begin{align*}
   D_p  \defeq & \setof{ \state{d}{\status} \sep d \in (D - \setof{\top}) \land \status
     \in \setof{\frozentrue, \frozenfalse} } \\
   & \cup \setof{(\top, \frozenfalse)}
-\end{split}
-\end{equation*}
+\end{align*}
 
 \item $\leqp \;\in\, \power{D_p \times D_p}$ is a binary relation
   defined as follows:
