@@ -156,7 +156,7 @@ interface to LVars (which \either{I}{we} will explain in detail in
 \item The @put@ operation can only make the state of an LVar ``grow''
   with respect to the lattice, because it updates the LVar to the
   \emph{least upper bound} of the current state and the new state.
-  For example, on collection LVars, @put@ typically inserts an element.
+  For example, on LVars of collection type, such as sets, @put@ typically inserts an element.
 
 \item The @get@ operation allows only limited observations of the
   contents of an LVar.  It requires the user to specify a

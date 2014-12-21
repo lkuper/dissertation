@@ -66,7 +66,7 @@ into the connected component---before nodes of distance two are
 considered.  Level-synchronization is a popular strategy for parallel
 breadth-first graph traversal.  (In fact, the aforementioned
 implementation from the Parallel Boost Graph Library~\cite{bfs-pbgl}
-uses level-synchronization.)  Although it necessarily sacrifices some
+uses level-synchronization.)  However, level-synchronization necessarily sacrifices some
 parallelism: parallel tasks cannot continue
 discovering nodes in the component before synchronizing with all other
 tasks at a given distance from the start.

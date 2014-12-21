@@ -140,7 +140,7 @@ $3$.  Had we chosen $\setof{2}$ as the threshold set, the program
 would deterministically evaluate to $2$; had we chosen $\setof{4}$, it
 would deterministically block forever.
 
-As long as we only access LVars with @put@ and (thresholded) @get@, we
+As long as we only access LVars with @put@ and @get@, we
 can arbitrarily share them between threads without introducing
 nondeterminism. That is, the @put@ and @get@ operations in a given
 program can happen in any order, without changing the value to which
