@@ -1,3 +1,4 @@
+\ifdefined\DISSERTATION
 The LVars programming model presented in Chapter~\ref{ch:lvars} is
 based on the idea of \emph{monotonic data structures}, in which
 information can only be added, never removed, and the timing with
@@ -18,12 +19,13 @@ is always
 reach a desired threshold.  In a monotonic data structure, the absence
 of information is transient---another thread could add that
 information at any time---but the presence of information is forever.
+\fi
 
-The LVars model guarantees determinism and supports an unlimited
+The LVars model \either{}{of Section~\ref{ch:lvars}} guarantees determinism and supports an unlimited
 variety of shared data structures: anything viewable as a lattice.
 However, it is not as general-purpose as one might hope.  Consider
 again the challenge problem for deterministic-by-construction parallel
-programming that we saw in Chapter~\ref{ch:lvars}:
+programming that we saw in \either{Chapter}{Section}~\ref{ch:lvars}:
 \begin{quote}
   In a directed graph, find the connected component containing a
   vertex $v$, and compute a (possibly expensive) function $f$ over all
@@ -61,19 +63,19 @@ in the LVars model, asking whether a node is in a set means waiting
 until the node \emph{is} in the set, and it is not clear how to lift
 this restriction while retaining determinism.
 
-In this chapter, I describe two extensions to the basic LVars model of
-Chapter~\ref{ch:lvars} that make it possible for monotonic data
+In this \either{chapter, I}{section, we} describe two extensions to the basic LVars model of
+\either{Chapter}{Section}~\ref{ch:lvars} that make it possible for monotonic data
 structures to ``say no'':
 
 \begin{itemize}
-\item First, I extend the model with a primitive operation @freeze@
+\item First, \either{I}{we} extend the model with a primitive operation @freeze@
   for \emph{freezing} an LVar, which comes with the following
   tradeoff: once an LVar is frozen, any further writes that would
   change its value instead throw an exception; on the other hand, it
   becomes possible to discover the exact value of the LVar, learning
   both positive and negative information about it, without blocking.
 \item
-  Second, I add the ability to attach \emph{event handlers} to an
+  Second, \either{I}{we} add the ability to attach \emph{event handlers} to an
   LVar.  When an event handler has been registered with an LVar, it
   invokes a \emph{callback function} to run asynchronously, whenever
   events arrive (in the form of monotonic updates to the LVar).
@@ -98,7 +100,7 @@ determinism!
 
 Fortunately, the loss is not total.  Although LVar programs with
 freezing are not guaranteed to be deterministic, they do satisfy a
-related property that I call \emph{quasi-determinism}: all executions
+related property that \either{I}{we} call \emph{quasi-determinism}: all executions
 that produce a final value produce the \emph{same} final value.  To
 put it another way, a quasi-deterministic program can be trusted to
 never change its answer due to nondeterminism; at worst, it might
@@ -113,33 +115,33 @@ leads to flirtation with nondeterminism, perhaps the best way of
 ultimately getting deterministic outcomes is to traipse a short
 distance into nondeterministic territory, and make our way back.  The
 identification of quasi-deterministic programs as a useful
-intermediate class of programs is a contribution of this dissertation.
+intermediate class of programs is a contribution of \either{this dissertation}{our work}.
 That said, in many cases the @freeze@ construct is only used as the
 very final step of a computation: after a global barrier, freezing is
 used to extract an answer.  In this common case, determinism is
 guaranteed, since no writes can subsequently occur.
 
-I will refer to the LVars model, extended with handlers, quiescence,
-and freezing, as the \emph{LVish model}.  The rest of this chapter is
-organized as follows: in Section~\ref{s:quasi-informal}, I introduce
+\either{I}{We} will refer to the LVars model, extended with handlers, quiescence,
+and freezing, as the \emph{LVish model}.  \either{The rest of this chapter is
+organized as follows: in Section~\ref{s:quasi-informal}, I}{In this section, we first} introduce
 the LVish programming model informally, through a series of examples.
-I will also return to the graph traversal I discussed above and show
-how to implement it using the LVish Haskell library (which I will go
-on to discuss the internals of in Chapter~\ref{ch:lvish}).  Then, in
-Section~\ref{s:quasi-formal}, I formalize the LVish model by extending
+\either{I}{We} will also return to the graph traversal \either{I}{we} discussed above and show
+how to implement it using the LVish Haskell library (which \either{I}{we} will go
+on to discuss the internals of in \either{Chapter}{Section}~\ref{ch:lvish}).  Then, in
+Section~\ref{s:quasi-formal}, \either{I}{we} formalize the LVish model by extending
 the $\lambdaLVar$ calculus of Chapter~\ref{ch:lvars} to add support
 for handlers, quiescence, and freezing, calling the resulting language
-$\lambdaLVish$.  Along with handlers, quiescence, and freezing, I add
+$\lambdaLVish$.  Along with handlers, quiescence, and freezing, \either{I}{we} add
 support for the arbitrary update operations described in
-Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}.
-Finally, the main technical result of this chapter is a proof of
+Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}}.
+Finally, the main technical result of this \either{chapter}{section} is a proof of
 quasi-determinism for
 $\lambdaLVish$~(Section~\ref{s:quasi-proof-of-quasi-determinism}). Just
-as with the determinism proof I gave for $\lambdaLVar$ in
-Chapter~\ref{ch:lvars}, which relies on the Independence lemma
+as with the determinism proof \either{I gave}{} for $\lambdaLVar$ in
+\either{Chapter}{Section}~\ref{ch:lvars}, which relies on the Independence lemma
 (Lemma~\ref{lem:lvars-independence}), the quasi-determinism proof for
 $\lambdaLVish$ relies on a ``frame property'', the Generalized
-Independence lemma (Lemma~\ref{lem:generalized-independence}).  As I
+Independence lemma (Lemma~\ref{lem:generalized-independence}).  As \either{I}{we}
 explain in Section~\ref{subsection:quasi-generalized-independence},
 the Generalized Independence lemma updates the original Independence
 lemma to account for both freezing and the arbitrary update operations

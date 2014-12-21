@@ -1,10 +1,13 @@
 \section{LVish, informally}\label{s:quasi-informal}
 
+\ifdefined\DISSERTATION
 While LVars offer a deterministic programming model that allows
 communication through a wide variety of data structures, they are not
 powerful enough to express common algorithmic patterns, like fixpoint
-computations, that require both positive and negative queries.  In
-this section, I explain our extensions to the LVars model at a high
+computations, that require both positive and negative queries.
+\fi
+In
+this section, \either{I}{we} explain our extensions to the LVars model at a high
 level; Section~\ref{s:quasi-formal} then formalizes them.
 
 \subsection{Asynchrony through event handlers}
@@ -43,7 +46,7 @@ $5$, then the callback will run three times, with $1$, $3$, and $5$ as
 its respective arguments, and with the latter of these calls writing
 $5+1 = 6$ into $\mathit{lv}$, leaving $\mathit{lv}$ as $6$.
 
-In general, the second argument to @addHandler@, which I call an
+In general, the second argument to @addHandler@, which \either{I}{we} call an
 \emph{event set}, is an arbitrary subset $Q$ of the LVar's lattice,
 specifying which events should be handled.\footnote{Like threshold
   sets, these event sets are a mathematical modeling tool only; they
@@ -148,7 +151,7 @@ callbacks.  Early quiescence no risk to quasi-determinism, however,
 because @quiesce@ does not yield any information about \emph{which}
 events have been handled---any such questions must be asked through
 LVar functions like @get@.  In practice, @quiesce@ is almost always
-used together with freezing, which I explain next.
+used together with freezing, which \either{I}{we} explain next.
 
 \subsection{Freezing and the ``freeze-after'' pattern}\label{subsection:quasi-freeze-after}
 
@@ -196,7 +199,7 @@ traversal in the following simple fashion:
 \lstinputlisting{chapter3/code/bfs_new.hs}
 \doublespacing
 
-This code, written using the LVish Haskell library (which I will go on
+This code, written using the LVish Haskell library (which \either{I}{we} will go on
 to describe in Chapter~\ref{ch:lvish}), discovers (in parallel) the
 set of nodes in a graph @g@ reachable from a given node @startV@, and
 is guaranteed to produce a deterministic result.\footnote{In the LVish
