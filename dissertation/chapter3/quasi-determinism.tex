@@ -1,21 +1,21 @@
 \section{Proof of quasi-determinism for $\lambdaLVish$}\label{s:quasi-proof-of-quasi-determinism}
 
-In this section, I give a proof of quasi-determinism for
-$\lambdaLVish$ that formalizes the claim made earlier in this chapter:
+In this section, \either{I}{we} give a proof of quasi-determinism for
+$\lambdaLVish$ that formalizes the claim made earlier in this \either{chapter}{section}:
 that, for a given program, although some executions may raise
 exceptions, all executions that produce a final result will produce
 the same final result.
 
-The quasi-determinism theorem I show says that if two executions
+The quasi-determinism theorem \either{I}{we} show says that if two executions
 starting from a configuration $\conf$ terminate in configurations
 $\conf'$ and $\conf''$, then either $\conf'$ and $\conf''$ are the
 same configuration (up to a permutation on locations), or one of them
-is $\error$.  As with the determinism proof for $\lambdaLVar$ that I
+is $\error$.  As with the determinism proof for $\lambdaLVar$ that \either{I}{we}
 give in Section~\ref{s:lvars-proof}, quasi-determinism follows from a
 series of supporting lemmas.  The basic structure of the proof follows
 that of the $\lambdaLVar$ determinism proof closely.  However, instead
-of the Independence property that I show for $\lambdaLVar$
-(Lemma~\ref{lem:lvars-independence}), I prove a more general property,
+of the Independence property that \either{I}{we} showed for $\lambdaLVar$
+(Lemma~\ref{lem:lvars-independence}), here \either{I}{we} prove a more general property,
 Generalized Independence (Lemma~\ref{lem:generalized-independence}),
 that accounts for the presence of both freezing and arbitrary update
 operations in $\lambdaLVish$.  Also, in the setting of $\lambdaLVish$,
@@ -29,10 +29,15 @@ that follow, Strong One-sided Quasi-Confluence
 Quasi-Confluence (Lemma~\ref{lem:lvars-strong-confluence}), and
 Quasi-Confluence (Lemma~\ref{lem:lvars-confluence}), all follow this
 pattern as well.
+\ifdefined\JOURNAL
+As with Section~\ref{ch:lvars}, we only give the statements of the
+properties we are proving here; the proofs appear
+in~\cite{lvars-dissertation}.
+\fi
 
 \subsection{Permutations and permutability}\label{subsection:quasi-permutations}
 
-As with $\lambdaLVar$, the $\lambdaLVish$ is nondeterministic with
+As with $\lambdaLVar$, the $\lambdaLVish$ language is nondeterministic with
 respect to the names of locations it allocates.  We therefore prove
 quasi-determinism up to a permutation on locations.  We can reuse the
 definition of a permutation verbatim from
@@ -59,11 +64,13 @@ that a configuration $\conf$ can step to $\conf'$ exactly when
 $\pi(\conf)$ can step to $\pi(\conf')$.
 
 \LemPermutability
+\ifdefined\DISSERTATION
 \begin{proof}
   Similar to the proof of Lemma~\ref{lem:lvars-permutability}
   (Permutability for $\lambdaLVar$); see
   Section~\ref{section:permutability-proof}.
 \end{proof}
+\fi
 
 \subsection{Internal Determinism}
 
@@ -76,12 +83,14 @@ in the proof of Strong Local Quasi-Confluence
 (Lemma~\ref{lem:strong-local-quasi-confluence}).
 
 \LemInternalDeterminism
+\ifdefined\DISSERTATION
 \begin{proof}
   Straightforward by cases on the rule of the reduction semantics by
   which $\conf$ steps to $\conf'$; the only interesting case is for
   the {\sc E-New} rule.  See
   Section~\ref{section:internal-determinism-proof}.
 \end{proof}
+\fi
 
 \subsection{Locality}
 
@@ -105,10 +114,12 @@ for $\lambdaLVar$), but the proof must account for the set of possible
 evaluation contexts in $\lambdaLVish$ being different (and larger).
 
 \LemLocality
+\ifdefined\DISSERTATION
 \begin{proof}
   \TODO{Add short description here once the proof is done.} See
   Section~\ref{section:locality-proof}.
 \end{proof}
+\fi
 
 \subsection{Monotonicity}\label{subsection:quasi-monotonicity}
 
@@ -117,16 +128,18 @@ the $\parstepsto$ relation, the store can only grow with respect to
 the $\leqstore{}{}$ ordering.
 
 \LemMonotonicity
+\ifdefined\DISSERTATION
 \begin{proof}
   Straightforward by cases on the rule of the reduction semantics by
   which $\config{S}{e}$ steps to $\config{S'}{e'}$. The interesting
   cases are for the {\sc E-New} and {\sc E-Put} rules.  See
   Section~\ref{section:monotonicity-proof}.
 \end{proof}
+\fi
 
 \subsection{Generalized Independence}\label{subsection:quasi-generalized-independence}
 
-Recall from Chapter~\ref{ch:lvars} that in order to prove determinism
+Recall from \either{Chapter}{Section}~\ref{ch:lvars} that in order to prove determinism
 for $\lambdaLVar$, we needed to establish a ``frame property'' that
 captures the idea that independent effects commute with each other.
 For $\lambdaLVar$, the Independence lemma
@@ -140,7 +153,7 @@ $S''$.
 
 For $\lambdaLVish$, we need to establish a similar frame property.
 However, since we have generalized from the lub writes of the @put@
-operation in Chapter~\ref{ch:lvars} to the arbitrary update operations
+operation in \either{Chapter}{Section}~\ref{ch:lvars} to the arbitrary update operations
 discussed in Section~\ref{subsection:quasi-update-operations}, we also
 need to generalize our frame property.  In fact, the original
 Lemma~\ref{lem:lvars-independence} does not hold for $\lambdaLVish$ in
@@ -185,7 +198,7 @@ $\lambdaLVish$, though, we need to state our frame property in a way
 that will allow it to accommodate any update operation from the given
 set $U$.
 
-Therefore, I define a \emph{store update operation} $U_S$ to be a
+Therefore, \either{I}{we} define a \emph{store update operation} $U_S$ to be a
 function from stores to stores that can add new bindings, update the
 contents of existing locations using operations $u_i$ from the given
 set $U$ of update operations (or, more specifically, their lifted
@@ -205,6 +218,7 @@ With Definition~\ref{def:store-update-operation} in hand, we can state
 a more general version of the Independence lemma:
 
 \LemGeneralizedIndependence
+\ifdefined\DISSERTATION
 \begin{proof}
   By cases on the rule of the reduction semantics by which
   $\config{S}{e}$ steps to $\config{S'}{e'}$.  The interesting cases
@@ -212,6 +226,7 @@ a more general version of the Independence lemma:
     E-Freeze-Simple} rules.  See
   Section~\ref{section:generalized-independence-proof}.
 \end{proof}
+\fi
 
 Lemma~\ref{lem:generalized-independence} has three preconditions on
 the store update operation $U_S$, two of which mirror the two
@@ -260,20 +275,20 @@ rule out interference from freezing.  On the other hand, a version of
 the language \emph{without} freezing, but \emph{with} arbitrary
 updates, would still use $U_S$ but could leave out the requirement
 that it be freeze-safe (since the requirement would be vacuously true
-anyway).  I make particular note of the orthogonality of freezing and
+anyway).  \either{I}{We} make particular note of the orthogonality of freezing and
 arbitrary updates because freezing introduces quasi-determinism, while
 arbitrary updates do not.\footnote{To rigorously show that arbitrary
-  updates retain full determinism and not merely quasi-determinism, I
+  updates retain full determinism and not merely quasi-determinism, \either{I}{we}
   would need to define yet another language, one that generalizes
   \il{put} to $\PUTi$ but does not introduce freezing, and then prove
-  determinism for \emph{that} language.  Instead, I hope to informally
+  determinism for \emph{that} language.  Instead, \either{I}{we} hope to informally
   convince you that the quasi-determinism in $\lambdaLVish$ comes from
   freezing, rather than from arbitrary updates.}
 
 Finally, although it no longer uses an explicit ``frame'' store, we
 can still think of Lemma~\ref{lem:generalized-independence} as a frame
 property; in fact, it is reminiscent of the generalized frame rule of
-the ``Views'' framework~\cite{views}, which I discuss in more detail
+the ``Views'' framework~\cite{views}, which \either{I}{we} discuss in more detail
 in Section~\ref{s:related-frame-properties-and-separation-logics}.
 
 \subsection{Generalized Clash}
@@ -284,22 +299,25 @@ where $U_S(S') = \topS$.  It establishes that, in that case,
 $\config{U_S(S)}{e}$ steps to $\error$ in at most one step.
 
 \LemGeneralizedClash
+\ifdefined\DISSERTATION
 \begin{proof}
   By cases on the rule of the reduction semantics by which
   $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since $\config{S'}{e'}
   \neq \error$, we do not need to consider the {\sc E-Put-Err} rule.
   See Section~\ref{section:generalized-clash-proof}.
 \end{proof}
+\fi
 
 \subsection{Error Preservation}
 
 Lemma~\ref{lem:error-preservation}, Error Preservation, is the
 $\lambdaLVish$ counterpart of Lemma~\ref{lem:lvars-error-preservation}
-from Chapter~\ref{ch:lvars}.  It says that if a configuration
+from \either{Chapter}{Section}~\ref{ch:lvars}.  It says that if a configuration
 $\config{S}{e}$ steps to $\error$, then evaluating $e$ in the context
 of some larger store will also result in $\error$.
 
 \LemErrorPreservation
+\ifdefined\DISSERTATION
 \begin{proof}
   Suppose $\config{S}{e} \parstepsto \error$ and
   $\leqstore{S}{S'}$. We are required to show that $\config{S'}{e}
@@ -314,6 +332,7 @@ of some larger store will also result in $\error$.
     E-Put-Err}, $\config{S'}{\putiexp{l}} \parstepsto \error$, as we
   were required to show.
 \end{proof}
+\fi
 
 \subsection{Quasi-Confluence}\label{subsection:quasi-quasi-confluence}
 
@@ -328,6 +347,7 @@ and~\ref{lem:strong-quasi-confluence} then generalize that result to
 arbitrary numbers of steps.
 
 \LemStrongLocalQuasiConfluence
+\ifdefined\DISSERTATION
 \begin{proof}
   As in the proof of Strong Local Confluence for $\lambdaLVar$
   (Lemma~\ref{lem:lvars-strong-local-confluence}), since the original
@@ -356,18 +376,23 @@ arbitrary numbers of steps.
   write-after-freeze error is possible.  See
   Section~\ref{section:strong-local-quasi-confluence-proof}.
 \end{proof}
+\fi
 
 \LemStrongOneSidedQuasiConfluence
+\ifdefined\DISSERTATION
 \begin{proof}
   By induction on $m$; see
   Section~\ref{section:strong-one-sided-quasi-confluence-proof}.
 \end{proof}
+\fi
 
 \LemStrongQuasiConfluence
+\ifdefined\DISSERTATION
 \begin{proof}
   By induction on $n$; see
   Section~\ref{section:strong-quasi-confluence-proof}.
 \end{proof}
+\fi
 
 \LemQuasiConfluence
  
@@ -431,6 +456,6 @@ debug the problem.
 However, if we \emph{can} ensure that an LVar is only ever frozen
 \emph{after} all writes to that LVar have completed, then we can
 guarantee full determinism, because we will have ruled out races
-between write operations and freeze operations.  In the next chapter,
-I discuss how the LVish Haskell library enforces this ``freeze after
+between write operations and freeze operations.  In the next \either{chapter}{section},
+\either{I}{we} discuss how the LVish Haskell library enforces this ``freeze after
 writing'' property.

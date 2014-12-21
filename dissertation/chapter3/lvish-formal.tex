@@ -1,16 +1,16 @@
 \section{LVish, formally}\label{s:quasi-formal}
 
-In this section, I present $\lambdaLVish$, a core calculus for the
+In this section, \either{I}{we} present $\lambdaLVish$, a core calculus for the
 LVish programming model. $\lambdaLVish$ is a quasi-deterministic,
 parallel, call-by-value $\lambda$-calculus extended with a store
 containing LVars.  It extends the original $\lambdaLVar$ language of
-Chapter~\ref{ch:lvars} to support the new features in the LVish model
-that I described in Section~\ref{s:quasi-informal}. Rather than
+\either{Chapter}{Section}~\ref{ch:lvars} to support the new features in the LVish model
+that \either{I}{we} described in Section~\ref{s:quasi-informal}. Rather than
 modeling the full ensemble of event handlers, handler pools,
-quiescence, and freezing as separate primitives, I instead formalize
+quiescence, and freezing as separate primitives, \either{I}{we} instead formalize
 the ``freeze-after'' pattern---which combined them---directly as a
 primitive.  This simplifies the calculus while still capturing the
-essence of the programming model.  I also generalize the @put@
+essence of the programming model.  \either{I}{we} also generalize the @put@
 operation to allow arbitrary \emph{update operations} (previously
 described in
 Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}),
@@ -30,8 +30,8 @@ $\userleq$ represents the order in which an LVar may take on states.
 It induces a binary lub operation $\userlub{}{}$ on the elements of
 $D$.  Every two elements of $D$ must have a lub in $D$.  Formally,
 this makes $(D, \userleq, \bot, \top)$ a \emph{bounded
-  join-semilattice} with a designated greatest element $\top$; I
-continue to use ``lattice'' as shorthand, and I use $D$ as a shorthand
+  join-semilattice} with a designated greatest element $\top$; \either{I}{we}
+continue to use ``lattice'' as shorthand, and \either{I}{we} use $D$ as a shorthand
 for the entire 4-tuple $(D, \userleq, \bot, \top)$ when its meaning is
 clear from the context. \lk{Hm, do I actually do that?}
 
@@ -46,7 +46,7 @@ either $\frozentrue$ or $\frozenfalse$.  A state where $\status$ is
 $\frozenfalse$ is ``unfrozen'', and one where $\status$ is
 $\frozentrue$ is ``frozen''.
 
-I define an ordering $\leqp$ on LVar states $\state{d}{\status}$ in
+\either{I}{We} define an ordering $\leqp$ on LVar states $\state{d}{\status}$ in
 terms of the application-specific ordering $\userleq$ on elements of
 $D$.  Every element of $D$ is ``freezable'' except $\top$.
 Informally:
@@ -68,7 +68,7 @@ Informally:
 Adding status bits to each element (except $\top$) of the lattice $(D,
 \userleq, \bot, \top)$ results in a new lattice $(D_p, \leqp, \botp,
 \topp)$.  (The $p$ stands for pair, since elements of this new lattice
-are pairs $\state{d}{\status}$.) I write $\lubp{}{}$ for the lub
+are pairs $\state{d}{\status}$.) \either{I}{We} write $\lubp{}{}$ for the lub
 operation that $\leqp$ induces.
 Definitions~\ref{def:lattice-with-status-bits} and \ref{def:lubp} and
 Lemmas~\ref{lem:partition-of-Dp} and~\ref{lem:lattice-structure}
@@ -84,9 +84,11 @@ Lemma~\ref{lem:lattice-structure} says that if $(D, \leq, \bot, \top)$
 is a lattice, then $(D_p, \leqp, \botp, \topp)$ is as well:
 
 \LemLatticeStructure
+\ifdefined\DISSERTATION
 \begin{proof}
 See Section~\ref{section:lattice-structure-proof}.
 \end{proof}
+\fi
 
 \subsection{Update operations}\label{subsection:quasi-update-operations}
 
@@ -122,7 +124,7 @@ we could also have a set of update operations $\{ u_{(+1)}, u_{(+2)},
 $u_{(+2)}(d)$ increments by two, and so on.) Update operations are
 therefore general enough to express lub writes as well as
 non-idempotent increments.  (When a write is specifically a lub write,
-I will continue to use the notation @put@, without the subscript.)
+\either{I}{we} will continue to use the notation @put@, without the subscript.)
 
 In $\lambdaLVish$, the @put@ operation took two arguments, a location
 $l$ and a lattice element $d$.  The $\PUTi$ operations take a location
@@ -158,7 +160,7 @@ merely to $d$, that is, elements of $D$.
 
 \DefStore
 
-I use the notation $\extS{S}{l}{d}{\status}$ to denote extending $S$
+\either{I}{We} use the notation $\extS{S}{l}{d}{\status}$ to denote extending $S$
 with a binding from $l$ to $\state{d}{\status}$.  If $l \in \dom{S}$,
 then $\extS{S}{l}{d}{\status}$ denotes an update to the existing
 binding for $l$, rather than an extension.  Another way to denote a
@@ -200,7 +202,7 @@ Figure~\ref{f:lambdaLVish-syntax}, and
 Figures~\ref{f:lambdaLVish-reduction-semantics}
 and~\ref{f:lambdaLVish-context-semantics} together give the
 operational semantics.  As with $\lambdaLVar$ in
-Chapter~\ref{ch:lvars}, both the syntax and semantics are
+\either{Chapter}{Section}~\ref{ch:lvars}, both the syntax and semantics are
 parameterized by the lattice $(D, \userleq, \bot, \top)$, and the
 operational semantics is split into two parts, a \emph{reduction
   semantics}, shown in
@@ -214,13 +216,13 @@ $\lambdaLVar$: variables, values, application expressions, @get@
 expressions, and @new@.  Instead of @put@ expressions, it has $\PUTi$
 expressions, which are the interface to the specified set of update
 operations.  $\lambdaLVish$ also adds two new language forms, the
-@freeze@ expression and the $\FAW$ expression, which I discuss in more
+@freeze@ expression and the $\FAW$ expression, which \either{I}{we} discuss in more
 detail below.
 
 Values in $\lambdaLVish$ include all those from $\lambdaLVar$---the
 unit value $\unit$, lattice elements $d$, locations $l$, threshold
 sets $P$, and $\lambda$ expressions---as well as states $p$, which are
-pairs $\state{d}{\status}$, and event sets $Q$.  Instead of $T$, I now
+pairs $\state{d}{\status}$, and event sets $Q$.  Instead of $T$, \either{I}{we} now
 use the metavariable $P$ for threshold sets, in keeping with the fact
 that in $\lambdaLVish$, members of threshold sets are states $p$.
 
@@ -282,7 +284,7 @@ for the @freeze@ expression, which takes an LVar as argument and
 immediately freezes and returns its contents.
 
 More interesting is the $\FAW$ primitive, which models the
-``freeze-after'' pattern I described in
+``freeze-after'' pattern \either{I}{we} described in
 Section~\ref{subsection:quasi-freeze-after}.  The expression
 \[ \freezeafter{e_{\rm lv}}{e_{\rm events}}{e_{\rm cb}} \]
 has the following semantics:
