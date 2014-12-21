@@ -21,7 +21,7 @@ LVar with a callback function that is asynchronously invoked whenever
 some events of interest occur.
 
 To illustrate how event handlers work, consider again the lattice of
-Figure~\ref{f:lvars-example-lattices}(a) from Chapter~\ref{ch:lvars}.
+Figure~\ref{f:lvars-example-lattices}(a) from \either{Chapter}{Section}~\ref{ch:lvars}.
 Suppose that $\mathit{lv}$ is an LVar whose states correspond to this
 lattice.  The expression
 
@@ -97,13 +97,13 @@ Unlike the usual @forEach@ function found in functional programming
 languages, this function sets up a \emph{permanent}, asynchronous flow
 of data from $\mathit{lv}$ into the callback $f$.  Functions like
 @forEach@ can be used to set up complex, cyclic data-flow networks, as
-we will see in Chapter~\ref{ch:lvish}.
+we will see in \either{Chapter}{Section}~\ref{ch:lvish}.
 
 In writing @forEach@, we consider only the singleton sets to be events
 of interest, which means that if the value of $\mathit{lv}$ is some
 set like $\setof{2, 3, 5}$ then $f$ will be executed once for each
 singleton subset ($\setof{2}$, $\setof{3}$, $\setof{5}$)---that is,
-once for each element.  In Chapter~\ref{ch:lvish}, we will see that
+once for each element.  In \either{Chapter}{Section}~\ref{ch:lvish}, we will see that
 this kind of event set can be specified in a lattice-generic way, and
 that it corresponds closely to our implementation strategy.
 
@@ -112,7 +112,7 @@ that it corresponds closely to our implementation strategy.
 Because event handlers are asynchronous, we need a separate mechanism
 to determine when they have reached a \emph{quiescent} state, \ie,
 when all callbacks for the events that have occurred have finished
-running.  As we saw in the introduction to this chapter, detecting
+running.  As \either{we saw in the introduction to this chapter}{we've seen}, detecting
 quiescence is crucial for implementing fixpoint computations.  To
 build flexible data-flow networks, it is also helpful to be able to
 detect quiescence of multiple handlers simultaneously.  Thus, our
@@ -200,11 +200,11 @@ traversal in the following simple fashion:
 \doublespacing
 
 This code, written using the LVish Haskell library (which \either{I}{we} will go on
-to describe in Chapter~\ref{ch:lvish}), discovers (in parallel) the
+to describe in \either{Chapter}{Section}~\ref{ch:lvish}), discovers (in parallel) the
 set of nodes in a graph @g@ reachable from a given node @startV@, and
 is guaranteed to produce a deterministic result.\footnote{In the LVish
   library, the \lstinline|Par| type constructor is the monad in which
-  LVar computations run; see Chapter~\ref{ch:lvish} for details.}  It
+  LVar computations run; see \either{Chapter}{Section}~\ref{ch:lvish} for details.}  It
 works by creating a fresh @Set@ LVar (corresponding to a lattice whose
 elements are sets, with set union as lub), and seeding it with the
 starting node.
