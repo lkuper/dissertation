@@ -11,12 +11,13 @@
   stuff doesn't \emph{require} lattices to be atomistic.)  Also, the
   material on \il{putLV} probably needs to be significantly revised
   and updated to be able to account for non-idempotent writes.}
+\rn{I totally agree.}
 
 In this section, \either{I}{we} describe the internals of the LVish library,
 including how the library represents LVars and @Par@ computations
 internally and how it implements lattice-generic functions for
 writing, reading, and freezing LVars, as well as registering handlers
-with and quiescing LVars.  First, though, \either{I}{we} discuss a semantic
+and quiescing LVars.  First, though, \either{I}{we} discuss a semantic
 observation about lattices that our implementation makes use of.
 
 \subsection{Leveraging atoms}\label{subsection:lvish-leveraging-atoms}
@@ -26,8 +27,8 @@ In a lattice, the smallest such pieces are called the \emph{atoms} of
 the lattice: they are elements not equal to $\bot$, but for which the
 only smaller element is $\bot$.  Lattices for which every element is
 the lub of some set of atoms are called \emph{atomistic}, and in
-practice most application-specific lattices used by LVish programs
-have this property---especially those whose elements represent
+practice most lattices used by LVish programs
+have this property---especially those that represent
 collections.
 
 In general, the LVish primitives allow arbitrarily large queries and
@@ -192,8 +193,8 @@ By doing the global check only after enrolling a listener, @getLV@ is
 sure not to miss any threshold-passing updates.  It does \emph{not}
 need to synchronize between the delta and global thresholds: if the
 threshold is passed just as @getLV@ runs, it might launch the
-continuation twice (once via the global check, once via delta), but by
-idempotence this does no harm.  This is a performance tradeoff: we
+continuation twice (once via the global check, once via delta), \textred{but by
+idempotence this does no harm.}  This is a performance tradeoff: we
 avoid imposing extra synchronization on \emph{all} uses of @getLV@ at
 the cost of some duplicated work in a rare case.  We can easily
 provide a second version of @getLV@ that makes the alternative
@@ -281,10 +282,9 @@ mode---meaning that marking and clearing them is extremely cheap.  The
 only time that the busy flags can create cross-core communication is
 during @freezeLV@, which should only occur once per LVar computation.
 
-One final point: unlike @getLV@ and @putLV@, which are polymorphic in
-their determinism level, @freezeLV@ is statically @QuasiDet@, because
-a computation that performs freezes is necessarily
-quasi-deterministic.
+One final point: unlike @getLV@ and @putLV@, which can be used in deterministic
+contexts, a computation that performs @freezeLV@ is necessarily
+quasi-deterministic or non-deterministic.
 
 \subsection{Handlers, pools and quiescence}
 
