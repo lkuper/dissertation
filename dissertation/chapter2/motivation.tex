@@ -16,12 +16,12 @@ To illustrate the issues that arise in computations of this nature,
 consider a specific problem, drawn from the domain of \emph{graph
   algorithms}, where issues of ordering create a tension between
 parallelism and determinism:
-\begin{quote}
+\begin{blockquote}
   In a directed graph, find the connected component containing a
   vertex $v$, and compute a (possibly expensive) function $f$ over all
   vertices in that component, making the set of results available
   asynchronously to other computations.
-\end{quote}
+\end{blockquote}
 For example, in a directed graph representing user profiles on a
 social network and the connections between them, where $v$ represents
 a particular profile, we might wish to find all (or the first $k$

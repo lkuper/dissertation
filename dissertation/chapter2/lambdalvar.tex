@@ -1,11 +1,5 @@
 \section{$\lambdaLVar$: syntax and semantics}\label{s:lvars-lambdalvar}
 
-\FigLambdaLVarGrammar
-
-\FigLambdaLVarReductionSemantics
-
-\FigLambdaLVarContextSemantics
-
 The syntax of $\lambdaLVar$ appears in
 Figure~\ref{f:lvars-lambdaLVar-syntax}, and
 Figures~\ref{f:lvars-lambdaLVar-reduction-semantics}
@@ -26,6 +20,12 @@ unit value $\unit$, elements $d$ of the specified lattice, store
 locations $l$, threshold sets $T$, or $\lambda$-expressions
 $\lam{x}{e}$.  A threshold set is a set $\setof{d_1, d_2, \dots}$ of
 one or more elements of the specified lattice.
+
+\FigLambdaLVarGrammar
+
+\FigLambdaLVarReductionSemantics
+
+\FigLambdaLVarContextSemantics
 
 The operational semantics is split into two parts, a \emph{reduction
   semantics}, shown in
@@ -101,6 +101,7 @@ computing $e_3$:
 
 \TODO{Make the typesetting less awful here.}
 
+\vspace{-8mm}
 \singlespacing
 \begin{displaymath}
 \begin{minipage}[b]{1.5in}

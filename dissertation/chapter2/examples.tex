@@ -15,7 +15,8 @@ Consider a program in which two
 parallel computations write to an LVar $\mathit{lv}$, with one thread
 writing the value $2$ and the other writing $3$:
 
-% \TODO{Fix the ridiculous whitespace with these examples.}
+\lk{The negative vspace on these is hopefully a temporary hack.}
+
 \vspace{-8mm}
 \singlespacing
 \begin{equation}
@@ -89,6 +90,7 @@ Figure~\ref{f:lvars-example-lattices}(a) for $\mathit{lv}$, but
 suppose we change \eref{e:lvar-example-1} to allow a direct @read@ of the LVar
 to be interleaved with the two @put@s:
 
+\vspace{-8mm}
 \singlespacing
 \begin{equation}
 \begin{split}
@@ -120,6 +122,7 @@ reached or surpassed.
 We can then change \eref{e:lvar-example-2} to behave deterministically using 
 @get@ with a threshold set:
 
+\vspace{-8mm}
 \singlespacing
 \begin{equation}
 \begin{split}
@@ -169,6 +172,7 @@ $\mathit{lv}$:
 \end{align*}
 This allows us to write programs like the following:
 
+\vspace{-8mm}
 \singlespacing
 \begin{equation}
 \begin{split}

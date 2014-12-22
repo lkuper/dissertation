@@ -45,8 +45,10 @@ Section~\ref{subsection:lvars-permutations}:
 
 \DefPermutation
 
-We can then lift $\pi$ to apply expressions, stores, and
-configurations.  Because expressions and stores are defined slightly
+We can lift $\pi$ to apply expressions, stores, and
+configurations.
+\ifdefined\DISSERTATION
+Because expressions and stores are defined slightly
 differently in $\lambdaLVish$ than they are in $\lambdaLVar$, we must
 update our definitions of permutation of a store and permutation of an
 expression:
@@ -58,8 +60,8 @@ expression:
 And the definition of permutation of a configuration is as it was before:
 
 \DefPermutationConfiguration
-
-We can now prove a Permutability lemma for $\lambdaLVish$, which says
+\fi
+We can then prove a Permutability lemma for $\lambdaLVish$, which says
 that a configuration $\conf$ can step to $\conf'$ exactly when
 $\pi(\conf)$ can step to $\pi(\conf')$.
 
@@ -395,6 +397,12 @@ arbitrary numbers of steps.
 \fi
 
 \LemQuasiConfluence
+\ifdefined\DISSERTATION
+\begin{proof}
+  Strong Quasi-Confluence (Lemma~\ref{lem:strong-quasi-confluence})
+  implies Quasi-Confluence.
+\end{proof}
+\fi
  
 \subsection{Quasi-Determinism}\label{subsection:quasi-quasi-determinism}
 
@@ -405,6 +413,7 @@ in configurations $\conf'$ and $\conf''$, then $\conf'$ and $\conf''$
 are the same configuration, or one of them is $\error$.
 
 \ThmQuasiDeterminism
+\ifdefined\DISSERTATION
 \begin{proof}
   By Lemma~\ref{lem:quasi-confluence}, one of the following two cases
   applies:
@@ -423,6 +432,7 @@ are the same configuration, or one of them is $\error$.
       is immediate.
   \end{enumerate}
 \end{proof}
+\fi
 
 \subsection{Discussion: quasi-determinism in practice}
 
