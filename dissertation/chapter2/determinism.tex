@@ -15,7 +15,7 @@ Lemma~\ref{lem:lvars-locality} (Locality) establishes a useful
 property for dealing with expressions that decompose into redex and
 context in multiple ways.  After that point, the structure of the
 proof is similar to that of the proof of determinism for Featherweight
-CnC given by Budimli\'c \etal~\cite{CnC}.  \either{I}{We} reuse the naming
+CnC given by Budimli\'c \etal~\shortcite{CnC}.  \either{I}{We} reuse the naming
 conventions of Budimli\'c \etal~for
 Lemmas~\ref{lem:lvars-monotonicity} (Monotonicity),
 \ref{lem:lvars-independence} (Independence), \ref{lem:lvars-clash}
@@ -124,7 +124,7 @@ Section~\ref{subsection:lvars-confluence}.\footnote{For another
   example of using permutations in the metatheory of a language to
   account for an allocator's nondeterministic choice of locations in
   an otherwise deterministic setting, see
-  Krishnaswami~\cite{simple-frp}.}
+  Krishnaswami~\shortcite{simple-frp}.}
 
 \subsection{Internal Determinism}
 
@@ -146,7 +146,7 @@ a configuration takes the same sequence of steps on the way to
 reaching its value at the end of every run, and in fact, the
 $\lambdaLVar$ operational semantics does not have that property.
 Borrowing terminology from
-Blelloch~\etal~\cite{blelloch-internally-deterministic}, \either{I}{we} will use
+Blelloch~\etal~\shortcite{blelloch-internally-deterministic}, \either{I}{we} will use
 the term \emph{internally deterministic} to describe a program that
 does, in fact, take the same sequence of steps on every
 run.\footnote{\either{I am}{We are} using ``internally deterministic'' in a more
@@ -256,7 +256,7 @@ the $\leqstore{}{}$ ordering.
           {\config{\lubstore{S}{S''}}{e} \parstepsto \config{\lubstore{S'}{S''}}{e'}}
     \end{mathpar}
   \caption{Comparison of O'Hearn~\etal's frame
-    rule~\protect\cite{OHearnLocalReasoning} and a simplified version
+    rule~\protect\shortcite{OHearnLocalReasoning} and a simplified version
     of the Independence lemma.  The separating conjunction connective
     $*$ in the frame rule requires that its arguments be disjoint; the
     Independence lemma uses the $\lubstore{}{}$ operation in place of
@@ -265,11 +265,11 @@ the $\leqstore{}{}$ ordering.
 \end{figure}
 
 Figure~\ref{f:lvars-frame-rule} shows a \emph{frame rule}, due to
-O'Hearn \etal~\cite{OHearnLocalReasoning}, which captures the idea of
+O'Hearn \etal~\shortcite{OHearnLocalReasoning}, which captures the idea of
 \emph{local reasoning} about programs that alter state.  In it, $C$ is
 a program, and $\lbrace p \rbrace ~ C ~ \lbrace q \rbrace$ is a
 \emph{Hoare triple} (in the style of Hoare
-logic~\cite{HoareAxiomatic}) specifying the behavior of $C$: it says
+logic~\shortcite{HoareAxiomatic}) specifying the behavior of $C$: it says
 that if the assertion $p$ is true before $C$ runs, then the assertion
 $q$ will be true afterwards.  For example, $p$ and $q$ might
 respectively describe the state of the heap before and after a heap
@@ -293,7 +293,7 @@ interfere with the truth of $r$.  The frame rule gets its name from
 the fact that $r$ is a ``frame'' around $C$: everything that is not
 explicitly changed by $C$ is part of the frame and is
 inviolate.\footnote{The ``frame'' terminology was originally
-  introduced in 1969 by McCarthy and Hayes~\cite{McCarthyHayesFrame},
+  introduced in 1969 by McCarthy and Hayes~\shortcite{McCarthyHayesFrame},
   who observed that specifying only what is changed by an action does
   not generally allow an intelligent agent to conclude that nothing
   else is changed; they called this dilemma the \emph{frame problem}.}
@@ -507,7 +507,7 @@ is a direct result of Lemma~\ref{lem:lvars-confluence}:
 
 \subsection{Discussion: termination}
 
-\either{I}{We} have followed Budimli\'c \etal~\cite{CnC} in treating
+\either{I}{We} have followed Budimli\'c \etal~\shortcite{CnC} in treating
 \emph{determinism} separately from the issue of \emph{termination}.
 Yet one might legitimately be concerned that in $\lambdaLVar$, a
 configuration could have both an infinite reduction path and one that

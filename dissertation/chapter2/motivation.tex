@@ -31,7 +31,7 @@ each profile in that set in parallel.
 This is a challenge problem for deterministic-by-construction parallel
 programming: existing parallel solutions (such as, for instance, the
 parallel breadth-first graph traversal implementation from the
-Parallel Boost Graph Library~\cite{bfs-pbgl}) often traverse the
+Parallel Boost Graph Library~\shortcite{bfs-pbgl}) often traverse the
 connected component in a nondeterministic order---even though the
 outcome of the program, that is, the final connected component, is
 deterministic.  Neither IVars nor streams provide a way 
@@ -65,7 +65,7 @@ distance one from the starting vertex are discovered---and set-unioned
 into the connected component---before nodes of distance two are
 considered.  Level-synchronization is a popular strategy for parallel
 breadth-first graph traversal.  (In fact, the aforementioned
-implementation from the Parallel Boost Graph Library~\cite{bfs-pbgl}
+implementation from the Parallel Boost Graph Library~\shortcite{bfs-pbgl}
 uses level-synchronization.)  However, level-synchronization necessarily sacrifices some
 parallelism: parallel tasks cannot continue
 discovering nodes in the component before synchronizing with all other
