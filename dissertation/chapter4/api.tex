@@ -12,6 +12,7 @@ examples.\footnote{The examples in this section, among others, are
 
 \subsection{Basic examples using IVars}
 
+\ifdefined\DISSERTATION
 As mentioned in the previous section, the LVish library extends the
 approach of Haskell's monad-par library for deterministic parallelism,
 which allows communication between parallel tasks through IVars.
@@ -51,24 +52,31 @@ write happened first, the program still raises an error because of the
 IVar single-write restriction.
 
 Now let's consider a version of this program written using the LVish
-library.  (Of course, in LVish we are not limited to IVars, but we
+library. (Of course, in LVish we are not limited to IVars, but we
 will consider IVars first as an interesting special case of LVars, and
 then go on to consider some more sophisticated LVars later in this
 section.)  A version of the above program written using LVish will
 write @4@ to an IVar twice and then deterministically print @4@
 instead of raising an error:
+\else
+First, let's consider one of our previous IVar programs, written 
+using the LVish library:
+\fi
 
 \singlespacing
 \lstinputlisting{chapter4/code/repeated-4-lvar.hs}
 \doublespacing
 
+\ifdefined\JOURNAL
+Compared to a monad-par implementation, the differences are minor.
+\fi{}
 Here, we import the @Control.LVish@ module rather than
 @Control.Monad.Par@ (that is, we are using LVish instead of
 monad-par), and we must specifically import @Data.LVar.IVar@ in order
 to specify which LVar data structure we want to work with (since we
 are no longer limited to IVars).  Just as with monad-par, the LVish
 @runPar@ function is a global barrier: both @fork@s must compete
-before @runPar@ can return.  Also, as before, we have @new@, @put@,
+before @runPar@ can return.  Also,\either{as before,}{} we have @new@, @put@,
 and @get@ operations that respectively create, update, and read from
 @num@.  However, these operations now have LVar semantics: the @put@
 operation computes a lub (with respect to a lattice like that of
