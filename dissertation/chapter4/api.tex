@@ -3,9 +3,12 @@
 In this section \either{I}{we} illustrate the use of the LVish library from the
 point of view of the application writer, through a series of
 examples.\footnote{The examples in this section, among others, are
-  available at \url{https://github.com/lkuper/lvar-examples/}.  All of
-  the examples are tested against GHC 7.6.3, the most recent release
-  at the time of this writing.\TODO{Update this.  The lvar-examples examples have now been tested against 7.8.3, but I should double-check.}}
+  available at \url{https://github.com/lkuper/lvar-examples/}.  
+  % All of
+  % the examples are tested against GHC 7.6.3, the most recent release
+  % at the time of this writing.\TODO{Update this.  The lvar-examples examples
+  % have now been tested against 7.8.3, but I should double-check.}
+}
 
 \subsection{Basic examples using IVars}
 
@@ -169,8 +172,7 @@ that only two items are on offer:
 
 \singlespacing
 \begin{lstlisting}
-data Item = Book | Shoes
-  deriving (Show, Ord, Eq)
+data Item = Book | Shoes    deriving (Show, Ord, Eq)
 \end{lstlisting}
 \doublespacing
 
