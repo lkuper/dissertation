@@ -148,11 +148,16 @@ Figure~\ref{fig:implementation-getLV} gives the implementation for the
 lattice-generic @getLV@ function, which assists data structure authors
 in writing operations with @get@ semantics.  In addition to an LVar,
 it takes two \emph{threshold functions} as arguments, one for global
+\ifdefined\DISSERTATION
 state and one for deltas.\footnote{In this sense, the way that
   threshold reads are implemented in LVish of is in fact quite close
   to the semantic notion of \emph{threshold functions} that \either{I}{we}
   described in
   Section~\ref{subsection:lvars-generalizing-from-threshold-sets-to-threshold-functions}.}
+\fi
+\ifdefined\JOURNAL
+state and one for deltas.
+\fi
 The \emph{global threshold} @gThresh@ is used to initially check
 whether the LVar is above some lattice value(s) by global inspection;
 the extra boolean argument gives the frozen status of the LVar.  The

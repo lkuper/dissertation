@@ -156,7 +156,7 @@ in the types of LVars themselves, and the universal quantification of
 @s@ in @runPar@ and its variants forces each LVar to be tied to a
 single ``session'', \ie, a single use of a @run@ function, in the same
 way that the @ST@ monad in Haskell prevents an @STRef@ from escaping
-@runST@.  Doing so allows the Lvish implementation to assume that
+@runST@.  Doing so allows the LVish implementation to assume that
 LVars are created and used within the same session.\footnote{The
   addition of the \il{s} type parameter to \il{Par} in the LVish
   library has nothing to do with LVars in particular; it would also be
