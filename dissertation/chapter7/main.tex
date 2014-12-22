@@ -1,24 +1,21 @@
 \chapter{Summary and future work}\label{ch:conclusion} % 7
 
-\ifdefined\JOURNAL
-\TODO{Revise and add dissertation chapter 7 here}
-\fi
-
-\ifdefined\DISSERTATION
 As single-assignment languages and Kahn process networks demonstrate,
 monotonicity can serve as the foundation of diverse
 deterministic-by-construction parallel programming models.  The LVars
 programming model takes monotonicity as a starting point and
 generalizes single assignment to monotonic multiple assignment,
 parameterized by a lattice.  The LVars model, and the accompanying
-LVish library, support my claim that lattice-based data structures are
-a general and practical unifying abstracton for deterministic and
-quasi-deterministic parallel and distributed programming.
+LVish library, \either{support my claim}{demonstrate} that lattice-based data structures are
+a general and practical unifying abstraction for deterministic and
+quasi-deterministic parallel \either{and distributed}{} programming.
 
+\ifdefined\DISSERTATION
 \section{Remapping the deterministic parallel landscape}
+\fi
 
 Let us reconsider how LVars fit into the deterministic parallel
-programming landscape that we mapped out in Chapter~\ref{ch:intro}:
+programming landscape that we mapped out in \either{Chapter}{Section}~\ref{ch:intro}:
 \begin{itemize}
   \item \emph{No-shared-state parallelism:} The purely functional core
     of the $\lambdaLVar$ and $\lambdaLVish$ calculi (and of the LVish
@@ -75,7 +72,7 @@ yet formalized their relationship.  In fact, this is an example of a
 general pattern in which the LVish library is usually one step ahead
 of the LVars formalism: to take another example, the LVish library
 supported the general inflationary, commutative writes of
-Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}
+Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}}
 well before the notion had been formalized in $\lambdaLVish$.
 Moreover, even for the parts of the LVish library that \emph{are}
 fully accounted for in the model, we do not have proof that the
@@ -93,6 +90,7 @@ properties that must be true of an LVar, such as that the states that
 it can take on form a lattice and that writes are commutative and
 inflationary.
 
+\ifdefined\DISSERTATION
 \section{Distributed programming and the future of LVars and LVish}
 
 \lk{Maybe some of this material should actually be moved to the end of
