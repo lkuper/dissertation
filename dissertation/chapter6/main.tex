@@ -55,7 +55,7 @@ LVish only the data-structure author needs to write trusted code. The
 application programmer can run untrusted code that still enjoys a
 (quasi-)determinism guarantee, because only (quasi-)deterministic
 programs can be expressed as LVish @Par@ computations.
-More recently, Bocchino \etal~\cite{dpj-popl} proposed a type and
+More recently, Bocchino \etal~\shortcite{dpj-popl} proposed a type and
 effect system that allows for the incorporation of nondeterministic
 sections of code in DPJ.  The goal here is different from ours: while
 they aim to support \emph{intentionally} nondeterministic computations
@@ -65,7 +65,7 @@ nondeterminism.
 
 \section{FlowPools}
 
-Prokopec \etal~\cite{flowpools} propose a data structure with an API
+Prokopec \etal~\shortcite{flowpools} propose a data structure with an API
 closely related to LVars extended with freezing and handlers: a
 FlowPool is a bag (that is, a multiset) that allows concurrent
 insertions but forbids removals, a @seal@ operation that forbids
@@ -88,7 +88,7 @@ FlowPools are specialized to bags.
 
 \section{Concurrent Revisions}
 
-Burckhardt \etal~\cite{eventually-consistent-transactions} propose a
+Burckhardt \etal~\shortcite{eventually-consistent-transactions} propose a
 formalism for eventual consistency based on graphs called
 \emph{revision diagrams}, and Leijen, Burckhardt, and Fahndrich apply
 the revision diagrams approach to guaranteed-deterministic concurrent
@@ -108,7 +108,7 @@ two writing threads should prevail, regardless of the order in which
 those writes arrive, and the states that a shared variable can take on
 need not form a lattice.  Still, semilattices turn up in the
 metatheory of CR: in particular, Burckhardt and
-Leijen~\cite{semantics-concurrent-revisions} show that revision
+Leijen~\shortcite{semantics-concurrent-revisions} show that revision
 diagrams are semilattices, and that therefore, for any two vertices in
 a CR revision diagram, there exists a \emph{greatest common ancestor}
 state that can be used to determine what changes each side has
@@ -128,7 +128,7 @@ variables.
 \ifdefined\JOURNAL
 
 Shapiro~\etal's \emph{conflict-free replicated data types}
-(CRDTs)~\cite{crdts,crdts-tr} provide a simple mathematical framework
+(CRDTs)~\shortcite{crdts,crdts-tr} provide a simple mathematical framework
 for reasoning about and enforcing the \emph{eventual consistency} of
 replicated objects in a distributed system.  Lattice-based CRDTs,
 known as \emph{convergent replicated data types} or CvRDTs, view
@@ -145,7 +145,7 @@ replicated shared objects, and high availability requires that reads
 return a value immediately, even if that value is stale.  Our work on
 equipping CvRDTs with LVar-style threshold reads (which would allow
 for deterministic reads at the price of high availability) is
-ongoing~\cite{joining-wodet}.  \fi
+ongoing~\cite{joining-wodet, lkuper-dissertation}.  \fi
 
 \ifdefined\DISSSERTATION
 In Chapter~\ref{ch:distributed}, I presented a way to equip
@@ -185,7 +185,7 @@ Bloom~\cite{bloom-cidr} had a notion of monotonicity based on set
 inclusion, which is analogous to the store ordering relation in the
 (IVar-based) Featherweight CnC system that \either{I}{we} described in
 Section~\ref{subsection:lvars-monotonic-store-growth}.  Later, Conway
-\etal~\cite{blooml} generalized Bloom to a more flexible
+\etal~\shortcite{blooml} generalized Bloom to a more flexible
 lattice-parameterized system, Bloom$^L$, in a manner analogous to the
 generalization from IVars to LVars.  Bloom$^L$ combines ideas from the
 aforementioned work on CRDTs~\cite{crdts, crdts-tr} with
@@ -225,12 +225,12 @@ replaces the separating conjunction with the lub operation, allows
 overlap between the original store and the ``frame'' store $S''$;
 indeed, the point of LVars is that total disjointness is unnecessary,
 since updates commute.  Jensen and Birkedal's recent work on
-\emph{fictional separation logic}~\cite{JensenBirkedalFictional}
+\emph{fictional separation logic}~\shortcite{JensenBirkedalFictional}
 explores the notion of fictional separation in detail, generalizing
 traditional separation logic to allow much more sophisticated kinds of
 sharing.
 
-Even more recently, Dinsdale-Young \etal~\cite{views} introduced the
+Even more recently, Dinsdale-Young \etal~\shortcite{views} introduced the
 ``Views'' framework, which brings the notion of fictional separation
 to a concurrent setting.  The Views framework is a metatheory of
 concurrent reasoning principles that generalizes a variety of

@@ -13,7 +13,7 @@ The \emph{$k$-CFA} analyses provide a hierarchy of increasingly
 precise methods to compute the flow of values to expressions in a
 higher-order language.  For this case study, we began with a
 sequential implementation of $k$-CFA translated to Haskell from a
-version by Might~\cite{MightkCFABlog}.\footnote{Haskell port by Max
+version by Might~\shortcite{MightkCFABlog}.\footnote{Haskell port by Max
   Bolingbroke:
   \url{https://github.com/batterseapower/haskell-kata/blob/master/0CFA.hs}.}
 The algorithm processes expressions written in a
@@ -235,7 +235,7 @@ skip lists~\cite{art}.\footnote{LVish also provides analogous
 We evaluated both the @PureSet@-based and @SLSet@-based $k$-CFA
 implementations on two benchmarks. For the first, we used a version of
 the ``blur'' benchmark from a recent paper on $k$-CFA by Earl
-\etal~\cite{earl-might-icfp-2012}.  In general, it proved difficult to
+\etal~\shortcite{earl-might-icfp-2012}.  In general, it proved difficult to
 generate example inputs to $k$-CFA that took long enough to be
 candidates for parallel speedup; we were, however, able to ``scale
 up'' the blur benchmark by replicating the code $N$ times, feeding one
