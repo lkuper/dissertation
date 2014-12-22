@@ -104,10 +104,6 @@
   then there exist $\conf_c$ and $\pi$ such that $\conf' \ctxstepsto^*
   \conf_c$ and $\pi(\conf'') \ctxstepsto^* \conf_c$.
 \end{lem}
-\begin{proof}
-  Strong Confluence (Lemma~\ref{lem:lvars-strong-confluence}) implies
-  Confluence.
-\end{proof}
 }
 
 \newcommand{\LVarsThmDeterminism}{
@@ -116,17 +112,4 @@
   and neither $\conf'$ nor $\conf''$ can take a step, then there
   exists $\pi$ such that $\conf' = \pi(\conf'')$.
 \end{thm}
-\begin{proof}
-  We have from Confluence (Lemma~\ref{lem:lvars-confluence}) that
-  there exists $\conf_c$ and $\pi$ such that $\conf' \ctxstepsto^*
-  \conf_c$ and $\pi(\conf'') \ctxstepsto^* \conf_c$.  Since $\conf'$
-  cannot step, we must have $\conf' = \conf_c$.
-
-  By Permutability (Lemma~\ref{lem:lvars-permutability}), $\conf''$
-  can step iff $\pi(\conf'')$ can step, so since $\conf''$ cannot
-  step, $\pi(\conf'')$ cannot step either.
-
-  Hence we must have $\pi(\conf'') = \conf_c$.  Since $\conf' =
-  \conf_c$ and $\pi(\conf'') = \conf_c$, $\conf' = \pi(\conf'')$.
-\end{proof}
 }

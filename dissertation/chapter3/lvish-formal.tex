@@ -10,10 +10,10 @@ modeling the full ensemble of event handlers, handler pools,
 quiescence, and freezing as separate primitives, \either{I}{we} instead formalize
 the ``freeze-after'' pattern---which combined them---directly as a
 primitive.  This simplifies the calculus while still capturing the
-essence of the programming model.  \either{I}{we} also generalize the @put@
+essence of the programming model.  \either{I}{We} also generalize the @put@
 operation to allow arbitrary \emph{update operations} (previously
 described in
-Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}),
+Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}}),
 which are inflationary and commutative, but do not necessarily compute
 a lub.
 
@@ -74,9 +74,21 @@ Definitions~\ref{def:lattice-with-status-bits} and \ref{def:lubp} and
 Lemmas~\ref{lem:partition-of-Dp} and~\ref{lem:lattice-structure}
 formalize this notion.
 
+\ifdefined\JOURNAL
+As with Section~\ref{ch:lvars}, we only give the statements of the
+properties we are proving here, as well as in the quasi-determinism
+proof in Section~\ref{s:quasi-proof-of-quasi-determinism}; the proofs
+appear in~\cite{lvars-dissertation}.
+\fi
+
 \DefLatticeWithStatusBits
 
 \LemPartitionOfDp
+\ifdefined\DISSERTATION
+\begin{proof}
+  Immediate from Definition~\ref{def:lattice-with-status-bits}.
+\end{proof}
+\fi
 
 \DefLubP
 
@@ -95,12 +107,12 @@ See Section~\ref{section:lattice-structure-proof}.
 $\lambdaLVish$ generalizes the @put@ operation of $\lambdaLVar$ to a
 family of operations $\PUTi$, in order to allow the generalized update
 operations of
-Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}
+Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}}
 that are commutative and inflationary, but do not necessarily compute
 a lub.  To make this possible we parameterize $\lambdaLVish$ not only
 by the lattice $(D, \userleq, \bot, \top)$, but also by a set $U$ of
 \emph{update operations}, as discussed previously in
-Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}:
+Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}}:
 
 \DefSetOfUpdateOperations
 
@@ -118,7 +130,7 @@ to be $\userlub{d}{d_i}$.  On the other hand, if $D$ is a lattice of
 natural numbers and we want increment-only counters, we can
 instantiate $U$ to be a singleton set $\setof{ u }$ where $u(d) = d +
 1$.  (As described in
-Section~\ref{subsection:lvars-generalizing-from-least-upper-bound-writes},
+Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}},
 we could also have a set of update operations $\{ u_{(+1)}, u_{(+2)},
 \dots \}$, where $u_{(+1)}(d)$ increments $d$'s contents by one,
 $u_{(+2)}(d)$ increments by two, and so on.) Update operations are
@@ -191,12 +203,6 @@ and there is no $\state{\top}{\frozentrue}$ element of $D_p$.
 
 \subsection{$\lambdaLVish$: syntax and semantics}
 
-\FigLambdaLVishGrammar
-
-\FigLambdaLVishReductionSemantics
-
-\FigLambdaLVishContextSemantics
-
 The syntax of $\lambdaLVish$ appears in
 Figure~\ref{f:lambdaLVish-syntax}, and
 Figures~\ref{f:lambdaLVish-reduction-semantics}
@@ -210,6 +216,12 @@ Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}, and a
 \emph{context semantics}, shown in
 Figure~\ref{f:lvars-lambdaLVar-context-semantics}.  The reduction
 semantics is also parameterized by the set $U$ of update operations.
+
+\FigLambdaLVishGrammar
+
+\FigLambdaLVishReductionSemantics
+
+\FigLambdaLVishContextSemantics
 
 The $\lambdaLVish$ grammar has most of the expression forms of
 $\lambdaLVar$: variables, values, application expressions, @get@

@@ -24,22 +24,27 @@ information at any time---but the presence of information is forever.
 The LVars model \either{}{of Section~\ref{ch:lvars}} guarantees determinism and supports an unlimited
 variety of shared data structures: anything viewable as a lattice.
 However, it is not as general-purpose as one might hope.  Consider
-again the challenge problem for deterministic-by-construction parallel
-programming that we saw in \either{Chapter}{Section}~\ref{ch:lvars}:
-\begin{quote}
+again the graph traversal problem that we saw in 
+\ifdefined\DISSERTATION
+Chapter~\ref{ch:lvars}:
+\begin{blockquote}
   In a directed graph, find the connected component containing a
   vertex $v$, and compute a (possibly expensive) function $f$ over all
   vertices in that component, making the set of results available
   asynchronously to other computations.
-\end{quote}
+\end{blockquote}
 In Section~\ref{s:lvars-motivation}, we considered an attempt at a
-solution for this problem using purely functional parallelism (shown
+solution using purely functional parallelism (shown
 in Figure~\ref{f:bfs-pure}).  Unfortunately, our purely functional
 attempt did not quite satisfy the above specification: although
 connected component discovery proceeded in parallel, members of the
 output set did not become available to other computations until the
 entire connected component had been traversed, limiting parallelism.
 
+\fi
+\ifdefined\JOURNAL
+Section~\ref{s:lvars-motivation}.
+\fi
 What would happen if we tried to solve this problem using LVars?  A
 typical implementation of the graph-traversal part of the
 problem---including the purely functional implementation of

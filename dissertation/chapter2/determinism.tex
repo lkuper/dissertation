@@ -38,8 +38,8 @@ semantics of LVars, lattices, or the store, and instead deals only
 with execution steps at a high level.
 
 \ifdefined\JOURNAL
-For most of the supporting lemmas, we only give the statements of the
-lemmas here; their proofs appear in~\cite{lvars-dissertation}.
+For brevity, we only give the statements of the properties we are
+proving here; their proofs appear in~\cite{lvars-dissertation}.
 \fi
 
 \subsection{Permutations and permutability}\label{subsection:lvars-permutations}
@@ -64,6 +64,12 @@ number of locations.  Equivalently, we can say that $\pi$ is a
 bijection from $\Loc$ to $\Loc$ such that it is the identity on all
 but finitely many elements.
 
+\ifdefined\JOURNAL
+We can lift Definition~\ref{def:lvars-permutation} to expressions,
+stores, and configurations in the obvious way.
+\fi
+
+\ifdefined\DISSERTATION
 Definitions~\ref{def:lvars-permutation-expression},
 \ref{def:lvars-permutation-store},
 and~\ref{def:lvars-permutation-configuration} lift
@@ -87,6 +93,7 @@ that will be useful to us shortly.
 \LVarsDefPermutationStore
 
 \LVarsDefPermutationConfiguration
+\fi
 
 With these definitions in place, \either{I}{we} can prove
 Lemma~\ref{lem:lvars-permutability}, which says that the names of
@@ -464,7 +471,17 @@ keep the semantics a bit more faithful to the implementation.
 \end{proof}
 \fi
 
+\ifdefined\JOURNAL
+\noindent Directly following from Strong Confluence is Confluence:
+\fi
+
 \LVarsLemConfluence
+\ifdefined\DISSERTATION
+\begin{proof}
+  Strong Confluence (Lemma~\ref{lem:lvars-strong-confluence}) implies
+  Confluence.
+\end{proof}
+\fi
 
 \subsection{Determinism}
 
@@ -472,6 +489,21 @@ Finally, the determinism theorem, Theorem~\ref{thm:lvars-determinism},
 is a direct result of Lemma~\ref{lem:lvars-confluence}:
 
 \LVarsThmDeterminism
+\ifdefined\DISSERTATION
+\begin{proof}
+  We have from Confluence (Lemma~\ref{lem:lvars-confluence}) that
+  there exists $\conf_c$ and $\pi$ such that $\conf' \ctxstepsto^*
+  \conf_c$ and $\pi(\conf'') \ctxstepsto^* \conf_c$.  Since $\conf'$
+  cannot step, we must have $\conf' = \conf_c$.
+
+  By Permutability (Lemma~\ref{lem:lvars-permutability}), $\conf''$
+  can step iff $\pi(\conf'')$ can step, so since $\conf''$ cannot
+  step, $\pi(\conf'')$ cannot step either.
+
+  Hence we must have $\pi(\conf'') = \conf_c$.  Since $\conf' =
+  \conf_c$ and $\pi(\conf'') = \conf_c$, $\conf' = \pi(\conf'')$.
+\end{proof}
+\fi
 
 \subsection{Discussion: termination}
 
