@@ -16,7 +16,9 @@ programming language, that is, one without side effects, but it is
 perhaps more useful to think of it as a language that gets other
 effects out of the way so that one can add one's own effects!}  In the
 case of the basic LVars model of \either{Chapter}{Section}~\ref{ch:lvars}, those effects
-are @put@ and @get@ operations on LVars; \either{Chapter}{Section}~\ref{ch:quasi} adds
+are @put@ and @get@ operations on LVars;
+\rn{What about addHandler?}
+ \either{Chapter}{Section}~\ref{ch:quasi} adds
 the @freeze@ operation and arbitrary update operations.  Implementing
 the LVars model as a Haskell library makes it possible to provide
 compile-time guarantees about determinism and quasi-determinism,
@@ -25,11 +27,16 @@ and can therefore only perform the side effects that we choose to
 sanction.
 
 Another reason why the existing @Par@ monad is an appealing starting
-point for a practical implementation of LVars is that it allows
+point for a practical implementation of LVars is that it already allows
 inter-task communication through IVars, which, as we have seen, are a
-special case of LVars.  Implementing the basic LVars model then
-becomes a matter of generalizing the existing @Par@ monad
-implementation.  Finally, the @Par@ monad approach is appealing
+special case of LVars.  % Implementing the basic LVars model thus
+% becomes a matter of generalizing the existing @Par@ monad
+% implementation.  
+% 
+%% RN: Nixing this because we didn't end up actually USING any piece of the
+%% monad-par implementation, did we?  Besides, space.
+%
+Finally, the @Par@ monad approach is appealing
 because it is implemented entirely as a library in Haskell, with a
 library-level scheduler.  This modularity makes it possible to make
 changes to the @Par@ scheduling strategy (which we will need to do in
@@ -44,7 +51,12 @@ library for practical deterministic and quasi-deterministic parallel
 programming with LVars.  We have already seen a taste of what it is
 like to use the LVish library; Section~\ref{s:quasi-informal} gave an
 example of an LVish Haskell program.  Here, \either{I}{we} go on to give a
-systematic introduction to the LVish library.  First, in
+systematic introduction to the LVish library.  
+\rn{What about just nixing most of this?  I think the paper shouldn't be soooo
+long that there's more than just one roadmap para in the intro, if there is one
+at all.}
+\if{0}
+First, in
 Section~\ref{s:lvish-big-picture}, \either{I}{we} discuss the library at a high
 level.  Then, in Section~\ref{s:lvish-api}, \either{I}{we} describe the LVish API,
 and \either{I}{we} discuss the parallel breadth-first traversal of
@@ -62,3 +74,4 @@ algorithm.  Second, in Section~\ref{s:lvish-phybin}, \either{I}{we} describe usi
 LVish to parallelize
 \emph{PhyBin}, a bioinformatics application that relies heavily on a
 (parallelizable) tree-edit distance algorithm.
+\fi{}
