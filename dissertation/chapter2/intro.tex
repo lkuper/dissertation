@@ -1,3 +1,17 @@
+\ifdefined\JOURNAL
+
+In this section, we introduce the LVars programming model, first with
+a motivating problem and a series of brief code examples, and then
+with $\lambdaLVar$, a deterministic parallel calculus with shared
+state that extends the call-by-value $\lambda$-calculus with a store
+and @put@ and @get@ operations.  The main technical result of
+this \either{chapter}{section} is a proof of determinism for
+$\lambdaLVar$ (Section~\ref{s:lvars-proof}).  Finally, we consider a
+more expressive semantics for the @put@ operation that generalizes
+from least-upper-bound writes to arbitrary inflationary, commutative
+writes.
+
+\fi
 
 \ifdefined\DISSERTATION
 
@@ -100,11 +114,6 @@ with respect to the lattice, and the @get@ operation performs
 a \emph{threshold read} that blocks until a lower bound in the lattice
 is reached.
 
-\else
-First, we begin with a motivating example problem in
-Section~\ref{s:lvars-motivation}.  Next,
-% , and then introduce the $\lambdaLVar$ calculus.
-\fi
 Section~\ref{s:lvars-examples} introduces the concept of LVars through
 a series of small code examples.  Then, in Sections~\ref{s:lvars-lattices}
 and~\ref{s:lvars-lambdalvar} \either{I}{we} formally define $\lambdaLVar$, a
@@ -142,3 +151,4 @@ original semantics: \either{I}{we} generalize the @put@ operation from
 least-upper-bound writes to inflationary, commutative writes, and \either{I}{we}
 generalize the @get@ operation to allow a more general form of
 threshold reads.
+\fi
