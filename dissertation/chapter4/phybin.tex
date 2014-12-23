@@ -80,7 +80,7 @@ in Figure~\ref{f:hashrf-alg} are potentially parallel.
 \begin{lstlisting}
   (1) for t `member` alltrees:
         for bip `member` t:
-          insert(splitsmap, (t, bip))
+          insert(splitsmap, (bip, {t}))
   (2) for (_, tree_set) `member` splitsmap: 
         for t1 `member` alltrees:
           for t2 `member` alltrees:
