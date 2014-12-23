@@ -195,16 +195,18 @@ otherwise, @getLV@ invokes the scheduler, effectively treating its
 continuation as a blocked thread.
 
 By doing the global check only after enrolling a listener, @getLV@ is
-sure not to miss any threshold-passing updates.  It does \emph{not}
+sure not to miss any threshold-passing updates.  But it \emph{may}
 need to synchronize between the delta and global thresholds: if the
 threshold is passed just as @getLV@ runs, it might launch the
-continuation twice (once via the global check, once via delta), \textred{but by
-idempotence this does no harm.  This is a performance tradeoff: we
+continuation twice (once via the global check, once via delta).  Whether this 
+is a problem depends on whether the effect combination used in the @Par@ session
+is idempotent.
+%
+If @Sched.idemp q@ is false---\ie{} if non-idempotent update operations
+are used---then only one invocation of @ifWinRace a b@, can run @a@, all others
+must run @b@.  {This is a performance tradeoff: if all effects are idempotent, we
 avoid imposing extra synchronization on \emph{all} uses of \il{getLV} at
-the cost of some duplicated work in a rare case.  We can easily
-provide a second version of \il{getLV} that makes the alternative
-tradeoff, but as we will see below, idempotence plays an
-\emph{essential} role in the analogous situation for handlers.}
+the cost of some duplicated work in a rare case.}
 
 \subsection{Putting and freezing}
 
@@ -419,7 +421,8 @@ writes.  For example, an increment-only counter might have an
 \doublespacing
 
 \lk{This is from the PLDI paper, but shouldn't it also have \il{NoPut}
-  as a constraint?}
+  as a constraint?}\rn{Why NoPut?  Bumps disallow any optimizations that may
+  duplicate work, but puts still work fine, right?}
 
 \lk{There should really be more in this section about how the
   information provided by \il{HasBump} or \il{NoBump}, etc., is
