@@ -1,4 +1,4 @@
-putLV :: LVar a d -> (a -> IO (Maybe d)) -> Par lvl ()
+putLV :: LVar a d -> (a -> IO (Maybe d)) -> Par e s ()
 putLV (LVar{state, status}) doPut = mkPar $ \k q -> do  
   Sched.mark q  -- publish our intent to modify the LVar
   delta   <- doPut state      -- possibly modify LVar

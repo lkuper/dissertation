@@ -62,7 +62,8 @@ LVish uses the following generic representation for LVars:
 \singlespacing
 \begin{lstlisting}
   data LVar a d = 
-       LVar { state :: a,  status :: IORef (Status d) }
+       LVar { state :: a,  status :: IORef (Status d),
+              handlerStatus :: IORef Handlerstatus }
 \end{lstlisting}
 \doublespacing
 
@@ -218,8 +219,10 @@ the cost of some duplicated work in a rare case.}
   \singlespacing
   \lstinputlisting{chapter4/code/putLV.hs}
   \doublespacing
-  \caption{Implementation of the \il{putLV}
-    function.}\label{fig:implementation-putLV}
+  \caption{Idempotence-assuming implementation of the \il{putLV}
+    function.  The version supporting non-idempotent (Sched.idemp==False), must
+    also use \il{handlerStatus} as a reader-writer lock, except with put
+    being the ``reader'' and \il{addHandler} as the writer.}\label{fig:implementation-putLV}
 \end{figure}
 
 \begin{figure}
