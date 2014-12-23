@@ -209,6 +209,31 @@ must run @b@.  {This is a performance tradeoff: if all effects are idempotent, w
 avoid imposing extra synchronization on \emph{all} uses of \il{getLV} at
 the cost of some duplicated work in a rare case.}
 
+
+\ifdefined\JOURNAL
+
+Because of the additional cost required to make sure no work is duplicated,
+naturally, it is best to pay the aforementioned synchronization overhead only
+when required.  But how is @Sched.idemp@ set?
+%
+Fortunately, LVish's fine-grained effect-tracking capability can provide
+precisely this information.  We
+refer to a write that is specifically non-idempotent as a \emph{bump}, and the
+@HasBump@ effect level constraint says that a @Par@ computation is allowed to
+perform such writes.  For example, an increment-only counter might have an
+@incrCounter@ operation with the following signature:
+%
+%\singlespacing
+\begin{lstlisting}
+   incrCounter :: HasBump e => Counter s -> Par s e ()
+\end{lstlisting}
+%\doublespacing
+%
+Then, the type-level @HasBump@ information is reified into a value in the 
+@Sched.idemp@ flag.
+
+\fi
+
 \subsection{Putting and freezing}
 
 \TODO{I think this section needs to be updated to accommodate
@@ -362,11 +387,10 @@ quiescence are resumed.
 
 
 
-
+\ifdefined\DISSERTATION
 \subsection{Discussion: tracking and leveraging idempotency}
 \label{subsection:lvish-discussion-leveraging-idempotency}
 
-\ifdefined\DISSERTATION
 While \either{I}{we} have emphasized the commutativity of the lub operation, it
 also has another important property: \emph{idempotence}, meaning that
 $\userlub{d}{d} = d$ for any element $d$.  In LVar terms, repeated
@@ -428,24 +452,11 @@ writes.  For example, an increment-only counter might have an
   don't actually know how that works! :( Ryan and Aaron, I need your
   help here.}
 
-\else
-
-Above we saw the additional complexity and cost required to make sure no work is 
-duplicated in @getLV@.  Naturally, it is best to pay the aforementioned synchronization
-overhead only when required.  We saw that a given instance of the scheduler is
-marked with whether the @Par@ monad's effects are idempotent (@Sched.idemp@).
-%
-Fortunately, LVish's fine-grained effect-tracking capability can provide
-precisely this information and thus can determine and set @Sched.idemp@.  We
-refer to a write that is specifically non-idempotent as a \emph{bump}, and the
-@HasBump@ effect level constraint says that a @Par@ computation is allowed to
-perform such writes.  For example, an increment-only counter might have an
-@incrCounter@ operation with the following signature:
-
-\fi{}
-
 \singlespacing
 \begin{lstlisting}
    incrCounter :: HasBump e => Counter s -> Par s e ()
 \end{lstlisting}
 \doublespacing
+
+\fi{}
+
