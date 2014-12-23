@@ -227,10 +227,7 @@ skip lists~\cite{art}.\footnote{LVish also provides analogous
   \emph{any} lock-free data structures in Haskell, which required
   solving some unique problems pertaining to Haskell's laziness and
   the GHC compiler's assumptions regarding referential
-  transparency.\lk{Question for Ryan: ``first project to incorporate
-    any lock-free data structures in Haskell'' seems like a strong
-    statement that I don't want to let go unsupported---is there
-    anything I can point to about this?  Even just a blog post?}}
+  transparency~\cite{RyanAtomicPrimopsTalk}.}
 
 We evaluated both the @PureSet@-based and @SLSet@-based $k$-CFA
 implementations on two benchmarks. For the first, we used a version of
