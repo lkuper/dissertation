@@ -1,0 +1,18 @@
+Dear editors,
+
+Please find attached our manuscript, "LVars: lattice-based data
+structures for deterministic parallel programming", which we are
+submitting for consideration for the upcoming JFP Special Issue on
+Parallel and Concurrent Programming.
+
+This manuscript can be thought of as a significantly revised and
+extended version of our POPL 2014 paper "Freeze after writing:
+quasi-deterministic parallel programming with LVars".  It incorporates
+previously unpublished material, as well as some material from our
+other publications on LVars.
+
+Thanks for your consideration of our manuscript, and special thanks to
+Matthias Felleisen for encouraging us to submit our work to JFP.
+
+Best,
+Lindsey Kuper, Aaron Turon, Neel Krishnaswami, and Ryan Newton
