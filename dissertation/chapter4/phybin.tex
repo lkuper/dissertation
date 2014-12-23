@@ -139,14 +139,21 @@ each.  The table shows the time it took in each case to fill in the
 all-to-all tree edit distance matrix and get an answer back.  PhyBin
 was much faster than these two alternatives.
 
-\begin{table}
-\begin{tabular}{| l | l | l | l | l | l | l |}
-\hline
-Trees     & Species    & \multicolumn{3}{|l|}{PhyBin} & DendroPy & PHYLIP \\ \hline
-100       & 150        & \multicolumn{3}{|l|}{0.269}  & 22.1     & 12.8   \\ \hline
-          &            & \multicolumn{4}{|l|}{PhyBin 1, 2, 4, 8 core} & HashRF \\ \hline
-1000      & 150        & 4.7      & 3     & 1.9     & 1.4      & 1.7      \\ \hline
-\end{tabular}
+\begin{table}[h]
+
+\begin{tabularx}{.75\textwidth}{XXXXX}
+Trees & Species & DendroPy & PHYLIP & PhyBin    \\ \hline
+100   & 150     & 22.1     & 12.8   & \textbf{0.269}
+\end{tabularx}
+
+\vspace{8mm}
+
+\begin{tabularx}{\textwidth}{XXXXXXX}
+\multirow{2}{*}{Trees} & \multirow{2}{*}{Species} & \multirow{2}{*}{HashRF} & \multicolumn{4}{c}{PhyBin}                \\
+                       &                          &                         & 1 core & 2 cores & 4 cores & 8 cores      \\ \hline
+1000                   & 150                      & \textbf{1.7}            & 4.7    & 3       & 1.9     & \textbf{1.4} \\
+                       &                          &                         &        &         &         &              \\
+\end{tabularx}
 \caption{PhyBin performance comparison with DendroPy, PHYLIP, and
   HashRF.  All times in seconds.}
 \label{t:phybin-bench}
