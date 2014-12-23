@@ -1,0 +1,29 @@
+Deterministic-by-construction parallel programming models guarantee
+that programs have the same observable behavior on every run,
+promising freedom from bugs caused by schedule nondeterminism.  To
+make that guarantee, though, they must sharply restrict sharing of
+state between parallel tasks, usually either by disallowing sharing
+entirely or by restricting it to one type of data structure, such as
+single-assignment locations.
+
+We show that lattice-based data structures, or LVars, are the
+foundation for a guaranteed-deterministic parallel programming model
+that allows a more general form of sharing.  LVars allow multiple
+assignments that are inflationary with respect to an
+application-specific lattice.  They ensure determinism by allowing
+only inflationary writes and "threshold" reads that block until a
+lower bound is reached.  After presenting the basic LVars model, we
+extend it to support event handlers, which enable an event-driven
+programming style, and non-blocking "freezing" reads, resulting in a
+quasi-deterministic model in which programs behave deterministically
+modulo exceptions.
+
+We demonstrate the viability of the LVars model with LVish, a Haskell
+library that provides a collection of lattice-based data structures, a
+work-stealing scheduler, and a monad in which LVar computations run.
+LVish leverages Haskell's type system to index such computations with
+effect levels to ensure that only certain LVar effects can occur,
+hence statically enforcing determinism or quasi-determinism. We
+present two case studies of parallelizing existing programs using
+LVish: a k-CFA control flow analysis, and a bioinformatics application
+for comparing phylogenetic trees.
