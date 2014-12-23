@@ -199,12 +199,12 @@ sure not to miss any threshold-passing updates.  It does \emph{not}
 need to synchronize between the delta and global thresholds: if the
 threshold is passed just as @getLV@ runs, it might launch the
 continuation twice (once via the global check, once via delta), \textred{but by
-idempotence this does no harm.}  This is a performance tradeoff: we
-avoid imposing extra synchronization on \emph{all} uses of @getLV@ at
+idempotence this does no harm.  This is a performance tradeoff: we
+avoid imposing extra synchronization on \emph{all} uses of \il{getLV} at
 the cost of some duplicated work in a rare case.  We can easily
-provide a second version of @getLV@ that makes the alternative
+provide a second version of \il{getLV} that makes the alternative
 tradeoff, but as we will see below, idempotence plays an
-\emph{essential} role in the analogous situation for handlers.
+\emph{essential} role in the analogous situation for handlers.}
 
 \subsection{Putting and freezing}
 
@@ -285,7 +285,7 @@ acts as a memory barrier).  Since the mark bits are per-CPU flags,
 they can generally be held in a core-local cache line in exclusive
 mode---meaning that marking and clearing them is extremely cheap.  The
 only time that the busy flags can create cross-core communication is
-during @freezeLV@, which should only occur once per LVar computation.
+during @freezeLV@, which should only occur once in each LVar's lifetime.
 
 One final point: unlike @getLV@ and @putLV@, which can be used in deterministic
 contexts, a computation that performs @freezeLV@ is necessarily
@@ -296,23 +296,26 @@ quasi-deterministic or non-deterministic.
 Given the above infrastructure, the implementation of handlers is
 relatively straightforward.  We represent handler pools as follows:
 
+\vspace{-4mm}
 \singlespacing
 \begin{lstlisting}
   data HandlerPool = HandlerPool {
-    numCallbacks :: Counter,  blocked :: B.Bag ClosedPar }
+    numCallbacks :: Counter,  
+    blocked :: B.Bag ClosedPar }
 \end{lstlisting}
 \doublespacing
-
+%
 where @Counter@ is a simple counter supporting atomic increment,
 decrement, and checks for equality with zero.\footnote{One can use a
   high-performance \emph{scalable non-zero indicator}~\cite{snzi} to
-  implement \il{Counter}, but we have not yet done so.}  We use the
+  implement \il{Counter}.
+\rn{Actually, it's implemented and passing tests, so lets turn SNZI on.}}  We use the
 counter to track the number of currently-executing callbacks, which we
 can use to implement @quiesce@.  A handler pool also keeps a bag of
 threads that are blocked waiting for the pool to reach a quiescent
 state.
 
-We create a pool using @newPool@ (of type @Par lvl HandlerPool@), and
+We create a pool using @newPool@ (of type @Par e s HandlerPool@), and
 implement quiescence testing as follows:
 
 \singlespacing
@@ -352,7 +355,9 @@ launched, the callback count is incremented; when it is finished, the
 count is decremented, and if zero, all threads blocked on its
 quiescence are resumed.
 
-\subsection{Discussion: leveraging idempotency}\label{subsection:lvish-discussion-leveraging-idempotency}
+\subsection{Discussion: leveraging idempotency}
+\label{subsection:lvish-discussion-leveraging-idempotency}
+\ifdefined\DISSERTATION
 
 While \either{I}{we} have emphasized the commutativity of the lub operation, it
 also has another important property: \emph{idempotence}, meaning that
@@ -390,10 +395,12 @@ expose the following @foreach@ function for a finite map:
 \end{lstlisting}
 \doublespacing
 
-Here, idempotence really pays off: without it, we must synchronize to
+\fi
+
+\textred{Here, idempotence really pays off: without it, we must synchronize to
 ensure that no callbacks are duplicated between the global threshold
 (which may or may not see concurrent additions to the map) and the
-delta threshold (which will catch all concurrent additions).
+delta threshold (which will catch all concurrent additions).}
 
 Naturally, it is best to pay the aforementioned synchronization
 overhead only when required.  This requires static information about
