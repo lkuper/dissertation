@@ -62,7 +62,8 @@ LVish uses the following generic representation for LVars:
 \singlespacing
 \begin{lstlisting}
   data LVar a d = 
-       LVar { state :: a,  status :: IORef (Status d) }
+       LVar { state :: a,  status :: IORef (Status d),
+              handlerStatus :: IORef Handlerstatus }
 \end{lstlisting}
 \doublespacing
 
@@ -195,16 +196,18 @@ otherwise, @getLV@ invokes the scheduler, effectively treating its
 continuation as a blocked thread.
 
 By doing the global check only after enrolling a listener, @getLV@ is
-sure not to miss any threshold-passing updates.  It does \emph{not}
+sure not to miss any threshold-passing updates.  But it \emph{may}
 need to synchronize between the delta and global thresholds: if the
 threshold is passed just as @getLV@ runs, it might launch the
-continuation twice (once via the global check, once via delta), \textred{but by
-idempotence this does no harm.  This is a performance tradeoff: we
+continuation twice (once via the global check, once via delta).  Whether this 
+is a problem depends on whether the effect combination used in the @Par@ session
+is idempotent.
+%
+If @Sched.idemp q@ is false---\ie{} if non-idempotent update operations
+are used---then only one invocation of @ifWinRace a b@, can run @a@, all others
+must run @b@.  {This is a performance tradeoff: if all effects are idempotent, we
 avoid imposing extra synchronization on \emph{all} uses of \il{getLV} at
-the cost of some duplicated work in a rare case.  We can easily
-provide a second version of \il{getLV} that makes the alternative
-tradeoff, but as we will see below, idempotence plays an
-\emph{essential} role in the analogous situation for handlers.}
+the cost of some duplicated work in a rare case.}
 
 \subsection{Putting and freezing}
 
@@ -216,8 +219,10 @@ tradeoff, but as we will see below, idempotence plays an
   \singlespacing
   \lstinputlisting{chapter4/code/putLV.hs}
   \doublespacing
-  \caption{Implementation of the \il{putLV}
-    function.}\label{fig:implementation-putLV}
+  \caption{Idempotence-assuming implementation of the \il{putLV}
+    function.  The version supporting non-idempotent (Sched.idemp==False), must
+    also use \il{handlerStatus} as a reader-writer lock, except with put
+    being the ``reader'' and \il{addHandler} as the writer.}\label{fig:implementation-putLV}
 \end{figure}
 
 \begin{figure}
@@ -355,10 +360,13 @@ launched, the callback count is incremented; when it is finished, the
 count is decremented, and if zero, all threads blocked on its
 quiescence are resumed.
 
-\subsection{Discussion: leveraging idempotency}
-\label{subsection:lvish-discussion-leveraging-idempotency}
-\ifdefined\DISSERTATION
 
+
+
+\subsection{Discussion: tracking and leveraging idempotency}
+\label{subsection:lvish-discussion-leveraging-idempotency}
+
+\ifdefined\DISSERTATION
 While \either{I}{we} have emphasized the commutativity of the lub operation, it
 also has another important property: \emph{idempotence}, meaning that
 $\userlub{d}{d} = d$ for any element $d$.  In LVar terms, repeated
@@ -395,9 +403,7 @@ expose the following @foreach@ function for a finite map:
 \end{lstlisting}
 \doublespacing
 
-\fi
-
-\textred{Here, idempotence really pays off: without it, we must synchronize to
+{Here, idempotence really pays off: without it, we must synchronize to
 ensure that no callbacks are duplicated between the global threshold
 (which may or may not see concurrent additions to the map) and the
 delta threshold (which will catch all concurrent additions).}
@@ -412,17 +418,34 @@ constraint says that a @Par@ computation is allowed to perform such
 writes.  For example, an increment-only counter might have an
 @incrCounter@ operation with the following signature:
 
-\singlespacing
-\begin{lstlisting}
-   incrCounter :: HasBump e => Counter s -> Par s e ()
-\end{lstlisting}
-\doublespacing
-
 \lk{This is from the PLDI paper, but shouldn't it also have \il{NoPut}
-  as a constraint?}
+  as a constraint?}\rn{Why NoPut?  Bumps disallow any optimizations that may
+  duplicate work, but puts still work fine, right?}
 
 \lk{There should really be more in this section about how the
   information provided by \il{HasBump} or \il{NoBump}, etc., is
   actually communicated to and used by the runtime system.  But I
   don't actually know how that works! :( Ryan and Aaron, I need your
   help here.}
+
+\else
+
+Above we saw the additional complexity and cost required to make sure no work is 
+duplicated in @getLV@.  Naturally, it is best to pay the aforementioned synchronization
+overhead only when required.  We saw that a given instance of the scheduler is
+marked with whether the @Par@ monad's effects are idempotent (@Sched.idemp@).
+%
+Fortunately, LVish's fine-grained effect-tracking capability can provide
+precisely this information and thus can determine and set @Sched.idemp@.  We
+refer to a write that is specifically non-idempotent as a \emph{bump}, and the
+@HasBump@ effect level constraint says that a @Par@ computation is allowed to
+perform such writes.  For example, an increment-only counter might have an
+@incrCounter@ operation with the following signature:
+
+\fi{}
+
+\singlespacing
+\begin{lstlisting}
+   incrCounter :: HasBump e => Counter s -> Par s e ()
+\end{lstlisting}
+\doublespacing
