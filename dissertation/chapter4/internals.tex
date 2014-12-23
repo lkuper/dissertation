@@ -360,10 +360,13 @@ launched, the callback count is incremented; when it is finished, the
 count is decremented, and if zero, all threads blocked on its
 quiescence are resumed.
 
-\subsection{Discussion: leveraging idempotency}
-\label{subsection:lvish-discussion-leveraging-idempotency}
-\ifdefined\DISSERTATION
 
+
+
+\subsection{Discussion: tracking and leveraging idempotency}
+\label{subsection:lvish-discussion-leveraging-idempotency}
+
+\ifdefined\DISSERTATION
 While \either{I}{we} have emphasized the commutativity of the lub operation, it
 also has another important property: \emph{idempotence}, meaning that
 $\userlub{d}{d} = d$ for any element $d$.  In LVar terms, repeated
@@ -400,9 +403,7 @@ expose the following @foreach@ function for a finite map:
 \end{lstlisting}
 \doublespacing
 
-\fi
-
-\textred{Here, idempotence really pays off: without it, we must synchronize to
+{Here, idempotence really pays off: without it, we must synchronize to
 ensure that no callbacks are duplicated between the global threshold
 (which may or may not see concurrent additions to the map) and the
 delta threshold (which will catch all concurrent additions).}
@@ -417,12 +418,6 @@ constraint says that a @Par@ computation is allowed to perform such
 writes.  For example, an increment-only counter might have an
 @incrCounter@ operation with the following signature:
 
-\singlespacing
-\begin{lstlisting}
-   incrCounter :: HasBump e => Counter s -> Par s e ()
-\end{lstlisting}
-\doublespacing
-
 \lk{This is from the PLDI paper, but shouldn't it also have \il{NoPut}
   as a constraint?}\rn{Why NoPut?  Bumps disallow any optimizations that may
   duplicate work, but puts still work fine, right?}
@@ -432,3 +427,25 @@ writes.  For example, an increment-only counter might have an
   actually communicated to and used by the runtime system.  But I
   don't actually know how that works! :( Ryan and Aaron, I need your
   help here.}
+
+\else
+
+Above we saw the additional complexity and cost required to make sure no work is 
+duplicated in @getLV@.  Naturally, it is best to pay the aforementioned synchronization
+overhead only when required.  We saw that a given instance of the scheduler is
+marked with whether the @Par@ monad's effects are idempotent (@Sched.idemp@).
+%
+Fortunately, LVish's fine-grained effect-tracking capability can provide
+precisely this information and thus can determine and set @Sched.idemp@.  We
+refer to a write that is specifically non-idempotent as a \emph{bump}, and the
+@HasBump@ effect level constraint says that a @Par@ computation is allowed to
+perform such writes.  For example, an increment-only counter might have an
+@incrCounter@ operation with the following signature:
+
+\fi{}
+
+\singlespacing
+\begin{lstlisting}
+   incrCounter :: HasBump e => Counter s -> Par s e ()
+\end{lstlisting}
+\doublespacing
