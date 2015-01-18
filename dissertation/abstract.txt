@@ -9,14 +9,13 @@ single-assignment locations.
 I show that lattice-based data structures, or LVars, are the
 foundation for a guaranteed-deterministic parallel programming model
 that allows a more general form of sharing.  LVars allow multiple
-assignments that are inflationary with respect to an
-application-specific lattice.  They ensure determinism by allowing
-only inflationary writes and "threshold" reads that block until a
-lower bound is reached.  After presenting the basic LVars model, I
-extend it to support event handlers, which enable an event-driven
-programming style, and non-blocking "freezing" reads, resulting in a
-quasi-deterministic model in which programs behave deterministically
-modulo exceptions.
+assignments that are inflationary with respect to a given lattice.
+They ensure determinism by allowing only inflationary writes and
+"threshold" reads that block until a lower bound is reached.  After
+presenting the basic LVars model, I extend it to support event
+handlers, which enable an event-driven programming style, and
+non-blocking "freezing" reads, resulting in a quasi-deterministic
+model in which programs behave deterministically modulo exceptions.
 
 I demonstrate the viability of the LVars model with LVish, a Haskell
 library that provides a collection of lattice-based data structures, a

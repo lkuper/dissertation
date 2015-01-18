@@ -9,8 +9,7 @@ single-assignment locations.
 \either{I}{We} show that \emph{lattice-based} data structures, or \emph{LVars}, are the
 foundation for a guaranteed-deterministic parallel programming model
 that allows a more general form of sharing.  LVars allow multiple
-assignments that are inflationary with respect to an
-application-specific lattice.  They ensure determinism by allowing
+assignments that are inflationary with respect to a given lattice.  They ensure determinism by allowing
 only inflationary writes and ``threshold'' reads that block until a
 lower bound is reached.  After presenting the basic LVars model, \either{I}{we}
 extend it to support \emph{event handlers}, which enable an event-driven
