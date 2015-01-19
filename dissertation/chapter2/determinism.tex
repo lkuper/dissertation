@@ -63,7 +63,6 @@ condition (2) ensures that we only consider renamings of a finite
 number of locations.  Equivalently, we can say that $\pi$ is a
 bijection from $\Loc$ to $\Loc$ such that it is the identity on all
 but finitely many elements.
-
 \ifdefined\JOURNAL
 We can lift Definition~\ref{def:lvars-permutation} to expressions,
 stores, and configurations in the obvious way.
@@ -117,7 +116,7 @@ $\conf'$ exactly when $\pi(\conf)$ can step to $\pi(\conf')$.
 \end{proof}
 \fi
 
-Because the names of locations in a configuration do not affect
+\noindent Because the names of locations in a configuration do not affect
 whether it can step, we can rename locations as needed, which will be
 important later on when proving the \emph{confluence} lemmas of
 Section~\ref{subsection:lvars-confluence}.\footnote{For another
@@ -126,7 +125,7 @@ Section~\ref{subsection:lvars-confluence}.\footnote{For another
   an otherwise deterministic setting, see
   Krishnaswami~\shortcite{simple-frp}.}
 
-\subsection{Internal Determinism}
+\subsection{Internal determinism}
 
 \either{My}{Our} goal is to show that $\lambdaLVar$ is deterministic according to
 the definition of \emph{observable determinism} that \either{I}{we} gave in
@@ -134,7 +133,7 @@ the definition of \emph{observable determinism} that \either{I}{we} gave in
 evaluates to the same value.  In the context of $\lambdaLVar$, a
 ``program'' can be understood as a configuration, and a ``value'' can
 be understood as a configuration that cannot step, either because the
-expression in that configuration is actually a value, or because it is
+expression in that configuration is actually a $\lambdaLVar$ value, or because it is
 a ``stuck'' configuration that cannot step because no rule of the
 operational semantics applies.  In $\lambdaLVar$, the latter situation
 could occur if, for instance, a configuration contains a blocking
@@ -143,8 +142,7 @@ that might cause it to unblock.
 
 This definition of observable determinism does \emph{not} require that
 a configuration takes the same sequence of steps on the way to
-reaching its value at the end of every run, and in fact, the
-$\lambdaLVar$ operational semantics does not have that property.
+reaching its value at the end of every run.
 Borrowing terminology from
 Blelloch~\etal~\shortcite{blelloch-internally-deterministic}, \either{I}{we} will use
 the term \emph{internally deterministic} to describe a program that
@@ -171,13 +169,11 @@ context.  In fact, it is exactly this property that makes it possible
 for multiple subexpressions of a $\lambdaLVar$ expression (a @let par@
 expression, for instance) to be evaluated in parallel.
 
-But, if we leave aside evaluation contexts for the moment (we'll
-return to them in the following section) and focus on only the rules
-of the reduction semantics in
-Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}, we see that, if a
+But, leaving aside evaluation contexts for the moment---we will return to them in the following section---let us focus on the rules of the reduction semantics in
+Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}.  Here we can see that if a
 given configuration can step by the reduction semantics, then there is
 only one rule by which it can step, and only one configuration to
-which it can step.  The exception is the {\sc E-New} rule, which
+which it can step.  The only exception is the {\sc E-New} rule, which
 nondeterministically allocates locations and returns pointers to
 them---but we can account for this by saying that the reduction
 semantics is internally deterministic up to a permutation on
@@ -298,7 +294,7 @@ inviolate.\footnote{The ``frame'' terminology was originally
   not generally allow an intelligent agent to conclude that nothing
   else is changed; they called this dilemma the \emph{frame problem}.}
 O'Hearn \etal~refer to the resources (such as heap locations) actually
-used by $C$ as the "footprint" of $C$; $r$ is an assertion about
+used by $C$ as the ``footprint'' of $C$; $r$ is an assertion about
 resources outside of that footprint.
 
 The Independence lemma establishes a similar ``frame property'' for
@@ -357,7 +353,7 @@ $\config{\lubstore{S}{S''}}{e}$ steps to $\error$.
 \end{proof}
 \fi
 
-\subsection{Error Preservation}
+\subsection{Error preservation}
 
 Lemma~\ref{lem:lvars-error-preservation}, Error Preservation, says
 that if a configuration $\config{S}{e}$ steps to $\error$, then

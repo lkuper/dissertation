@@ -99,14 +99,13 @@ structure, though, we can take the more general notion of monotonic
 data structures as the basis for a new deterministic parallel
 programming model.  In this \either{chapter, I}{section, we} show how to generalize IVars
 to \emph{LVars}, thus named because the states an LVar can take on are
-elements of an application-specific \emph{lattice}.\footnote{This
+elements of a given \emph{lattice}.\footnote{This
 ``lattice'' need only be a \emph{bounded join-semilattice} augmented
 with a greatest element $\top$, in which every two elements have a
 least upper bound but not necessarily a greatest lower bound; see
 Section~\ref{subsection:lvars-lattices}.  For brevity, \either{I}{we} use the term
 ``lattice'' in place of ``bounded join-semilattice with a designated
-greatest element'' throughout this dissertation.}  This
-application-specific lattice determines the semantics of the @put@ and
+greatest element'' throughout this dissertation.}  This lattice determines the semantics of the @put@ and
 @get@ operations that comprise the interface to LVars (which \either{I}{we} will
 explain in detail in \either{the sections that follow}{the rest of this section}): the @put@ operation
 takes the least upper bound of the current state and the new state

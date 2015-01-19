@@ -24,7 +24,7 @@ for the state of an LVar to evolve over time is through a series of
 @put@ operations.  Unfortunately, this way of updating an LVar
 provides no efficient way to model, for instance, an atomically
 incremented counter that occupies one memory location.  Consider an
-LVar based on the lattice of Figure~\ref{f:lvars-example-lattices}(c).
+LVar based on the lattice of Figure~\ref{f:lvars-example-lattices}(a).
 Under the semantics of @put@, if two independent writes each take the
 LVar's contents from, say, $1$ to $2$, then after both writes, its
 contents will be $2$, because @put@ takes the maximum of the previous
@@ -38,7 +38,7 @@ the LVar by one, resulting in $3$.
 
 To support this alternative semantics in the LVars model, we
 generalize the model as follows.  For an LVar with lattice $(D,
-\userleq, \bot, \top)$, we can define a set of \emph{update
+\userleq, \bot, \top)$, we can define a family of \emph{update
   operations} $u_i : D \rightarrow D$, which must meet the following
 two conditions:
 \begin{itemize}
@@ -52,9 +52,9 @@ correspond to the two informal criteria that we set forth for
 monotonic data structures at the beginning of this \either{chapter}{section}: the
 requirement that updates be inflationary corresponds to the fact that
 monotonic data structures can only ``grow'', and the requirement that
-updates be commutative corresponds to the fact that the order of
+updates be commutative corresponds to the fact that the timing of
 updates must not be observable.\footnote{Of course, commutativity of
-  updates alone is not enough to assure that the order of updates is
+  updates alone is not enough to assure that the timing of updates is
   not observable; for that we also need threshold reads.}
 
 \lk{``update'' used to be called ``bump'', but I think ``update'' is a
@@ -69,7 +69,7 @@ in addition to being inflationary and commutative, also happens to
 compute a lub.  However, when generalizing LVars to support update
 operations, we must keep in mind that @put@ operations do not
 necessarily mix with arbitrary update operations on the same LVar.
-For example, consider a set of update operations $\{ u_{(+1)},
+For example, consider a family of update operations $\{ u_{(+1)},
 u_{(+2)}, \dots \}$ for atomically incrementing a counter represented
 by a natural number LVar, with a lattice ordered by the usual $\leq$
 on natural numbers.  The $u_{(+1)}$ operation increments the counter
@@ -86,8 +86,8 @@ be combined.
 In practice, the author of a particular LVar data structure must
 choose which update operations that data structure should provide, and
 it is the data structure author's responsibility to ensure that they
-commute.  For example, the LVish Haskell library (which \either{I}{we} discuss in
-\either{Chapter}{Section}~\ref{ch:lvish}) provides a set data structure,
+commute.  For example, the LVish Haskell library of
+\either{Chapter}{Section}~\ref{ch:lvish} provides a set data structure,
 @Data.LVar.Set@, that supports only @put@, whereas the counter data
 structure @Data.LVar.Counter@ supports only increments; an attempt to
 call @put@ on a @Counter@ would be ruled out by the type system.
@@ -97,20 +97,16 @@ monotonically growing collection (which supports @put@) of counter
 LVars, where each counter is itself monotonically increasing and
 supports only increment.  Indeed, the PhyBin case study that \either{I}{we}
 describe in Section~\ref{s:lvish-phybin} uses just such a collection
-of counters.\footnote{Unlike \il{put}, arbitrary update operations are
-  not idempotent, which means that in order to support arbitrary
-  update operations we must be careful not to assume idempotency of
-  writes in the LVish scheduler implementation.  \either{I}{We} discuss this
-  consideration in more detail in Section~\ref{s:lvish-internals}.}
+of counters.
 
 In \either{Chapter}{Section}~\ref{ch:quasi}, in addition to extending $\lambdaLVar$ to
 support the new features of \emph{freezing} and \emph{event handlers},
 \either{I}{we} generalize the @put@ operation to allow arbitrary update operations.
-More precisely, \either{I}{we} replace the @put@ operation with a set of operations
+More precisely, \either{I}{we} replace the @put@ operation with a family of operations
 $\PUTi$, with each corresponding to an update operation $u_i$.  The
 resulting generalized language definition is therefore parameterized
-not only by an application-specific lattice, but also by an
-application-specific set of update operations.  Furthermore, as we
+not only by a given lattice, but also by a
+given family of update operations.  Furthermore, as we
 will see in Section~\ref{subsection:quasi-generalized-independence},
 we will need to generalize the Independence lemma
 (Lemma~\ref{lem:lvars-independence}) in order to accommodate this
@@ -137,7 +133,7 @@ Certain deterministic computations are difficult to express using the
 definition of threshold sets presented in
 Section~\ref{subsection:lvars-communication-primitives}.  For
 instance, consider an LVar that stores the result of a parallel
-logical ``and'' operation on two Boolean inputs.  \either{I'll}{We'll} call this data
+logical ``and'' operation on two Boolean inputs.  \either{I will}{We will} call this data
 structure an $\mathrm{AndLV}$, and its two inputs the \emph{left} and
 \emph{right} inputs, respectively.
 
@@ -155,7 +151,7 @@ writes \il{T} and then later changes its mind to \il{F}.
 \begin{center}
   \includegraphics[width=3in]{chapter2/figures/lvars-parallel-and.pdf}
 \end{center}
-  \caption{Lattice of states that an $\mathrm{AndLV}$ can take on.
+  \caption{The lattice of states that an $\mathrm{AndLV}$ can take on.
     The five red states in the lattice correspond to a false result,
     and the one green state corresponds to a true one.}
   \label{f:lvars-parallel-and}
@@ -169,7 +165,7 @@ operation updates the $\mathrm{AndLV}$'s state to the lub of the
 incoming state and the current state.
 
 We are interested in learning whether the result of our parallel
-``and'' computation is ``true'' or ``false''.  Let's consider what
+``and'' computation is ``true'' or ``false''.  Let us consider what
 observations it is possible to make of an $\mathrm{AndLV}$ under our
 existing definition of threshold reads.  The states $\andlv{T}{T}$,
 $\andlv{T}{F}$, $\andlv{F}{T}$, and $\andlv{F}{F}$ are all pairwise
@@ -240,7 +236,7 @@ second input if the first input contains an \il{F}.  If, on the other
 hand, the inputs are $\andlv{T}{Bot}$ and $\andlv{Bot}{T}$, the @get@
 will unblock and return $\setof{ \andlv{T}{T} }$.
 
-In a real implementation, of course, the value returned from the @get@
+In practice, the value returned from the @get@
 could be more meaningful to the client---for instance, a Haskell
 implementation could return \il{False} instead of returning the actual
 activation set that corresponds to ``false''.  However, the
@@ -276,7 +272,7 @@ sets, so if we let $Q = \setof{ \andlv{T}{T} }$ and $R = \setof{
   \andlv{F}{F} }$, the lub of $\andlv{T}{T}$ and $r$ must be \il{Top},
 where $r$ is any element of $R$.  We can easily verify that this is
 the case.
-``
+
 To illustrate why we need pairwise incompatibility to be defined this
 way, consider the following (illegal) ``threshold set'' that does not
 meet the pairwise incompatibility criterion:
@@ -286,7 +282,7 @@ meet the pairwise incompatibility criterion:
 \setof{ \andlv{T}{Bot}, \andlv{Bot}{T} }
 }
 \]
-A threshold read corresponding to this so-called threshold set will
+A @get@ corresponding to this so-called threshold set will
 unblock and return $\setof{ \andlv{F}{Bot}, \andlv{Bot}{F} }$ as soon
 as a state containing an \il{F} is reached, and $\setof{
   \andlv{T}{Bot}, \andlv{Bot}{T} }$ as soon as a state containing a
@@ -294,9 +290,10 @@ as a state containing an \il{F} is reached, and $\setof{
 $\andlv{F}{Bot}$ and the right input writes $\andlv{Bot}{T}$, and
 these writes occur in arbitrary order, the threshold read will return
 a nondeterministic result, depending on the order of the two writes.
-But, with the properly pairwise-incompatible threshold set above, the
-threshold read will block until the write of $\andlv{F}{Bot}$ arrives,
-and then will deterministically return the ``false'' activation set,
+But if @get@ uses the properly pairwise-incompatible threshold set
+that has $Q$ and $R$ as its two activation sets, it
+will block until the write of $\andlv{F}{Bot}$ arrives,
+and then will deterministically return $Q$, the ``false'' activation set,
 regardless of whether the write of $\andlv{Bot}{T}$ has arrived yet.
 Hence ``short-circuit'' evaluation is possible.
 
@@ -328,7 +325,7 @@ activation-set-based threshold queries of distributed data structures
 behave deterministically (according to a definition of determinism
 that is particular to the distributed setting; see
 Section~\ref{s:distributed-results} for the details).  That said,
-there is nothing about activation-set-based threshold sets that make
+there is nothing about activation-set-based threshold sets that makes
 them particularly suited to the distributed setting; either the
 original formulation of threshold sets or the even more general
 \emph{threshold functions} I discuss in the following section would
@@ -352,7 +349,7 @@ function is undefined for inputs that are neither above nor below its
 threshold point.)
 
 Threshold functions capture the semantics of both the original
-style of threshold sets, and the activation-set-based style:
+style of threshold sets and the activation-set-based style:
 \begin{itemize}
 \item In the original style of threshold sets, every element $d$ of a
   threshold set can be described by a threshold function that has $d$

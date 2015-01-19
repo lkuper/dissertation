@@ -27,7 +27,7 @@ one or more elements of the specified lattice.
 
 \FigLambdaLVarContextSemantics
 
-The operational semantics is split into two parts, a \emph{reduction
+The operational semantics is split into two parts: a \emph{reduction
   semantics}, shown in
 Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}, and a
 \emph{context semantics}, shown in
@@ -75,29 +75,12 @@ nondeterminism of scheduling between concurrent threads, and in
 $\lambdaLVar$, the arguments to @get@, @put@, and application
 expressions are \emph{implicitly} evaluated concurrently.
 
-\subsection{Errors and observable determinism}\label{subsection:lvars-errors-and-observable-determinism}
-
-Is the @get@ operation deterministic?  Consider two lattice elements
-$d_1$ and $d_2$ that have no ordering and have $\top$ as their lub,
-and suppose that @put@s of $d_1$ and $d_2$ and a @get@ with
-$\setof{d_1, d_2}$ as its threshold set all race for access to an LVar
-$lv$.  Eventually, the program is guaranteed to raise $\error$ by way
-of the {\sc E-Put-Err} rule, because $\userlub{d_1}{d_2} = \top$.  Before
-that happens, though, $\getexp{lv}{\setof{d_1, d_2}}$ could return
-either $d_1$ or $d_2$.  Therefore, @get@ \emph{can} behave
-nondeterministically---but this behavior is not observable in the
-final outcome of the program, and under our definition of observable
-determinism, only the final outcome of a program counts as what is
-observable.
-
 \subsection{Fork-join parallelism}\label{subsection:fork-join}
 
 $\lambdaLVar$ has a call-by-value semantics: arguments must be fully
 evaluated before function application ($\beta$-reduction, via the {\sc
-  E-Beta} rule) can occur.  \either{I}{We} exploit this property to define a
-syntactic sugar @let par@ for \emph{parallel composition}, which
-computes two subexpressions $e_1$ and $e_2$ in parallel before
-computing $e_3$:
+  E-Beta} rule) can occur.  We can exploit this property to define the
+syntactic sugar @let par@ for \emph{parallel composition} that we first saw earlier in \eref{e:lvar-example-1}.  With @let par@, we can evaluate two subexpressions $e_1$ and $e_2$ in parallel before evaluating a third subexpression $e_3$:
 
 \TODO{Make the typesetting less awful here.}
 
@@ -113,7 +96,7 @@ computing $e_3$:
 \end{minipage}
 \begin{minipage}[b]{2in}
 \[
-  \quad \defeq \quad\quad \app{(\app{(\lam{x}{(\lam{y}{e_3})})}{e_1})}{e_2}
+  \defeq \quad\quad\quad \app{(\app{(\lam{x}{(\lam{y}{e_3})})}{e_1})}{e_2}
 \]
 \end{minipage}
 \end{displaymath}
@@ -154,7 +137,38 @@ graphs, just as with \emph{first-class
 Because we do not reduce under $\lambda$-terms, we can sequentially
 compose $e_1$ before $e_2$ by writing $\letexp{\_}{e_1}{e_2}$, which
 desugars to $\app{(\lam{\_}{e_2})}{e_1}$.  Sequential composition is
-useful for situations when expressions must run in a particular order,
-\eg, if we want to first allocate a new LVar with @new@ and then call
-@put@ on it.
+useful for situations in which expressions must run in a particular order,
+\eg, if we want to first allocate a new LVar with @new@ and then write to it
+using @put@.
+
+\subsection{Errors and observable determinism}\label{subsection:lvars-errors-and-observable-determinism}
+
+Is the @get@ operation deterministic?  Consider two lattice elements
+$d_1$ and $d_2$ that have no ordering and have $\top$ as their lub,
+and suppose that @put@s of $d_1$ and $d_2$ and a @get@ with
+$\setof{d_1, d_2}$ as its threshold set all race for access to an LVar
+$lv$:
+
+\vspace{-8mm}
+\singlespacing
+\begin{equation}
+\begin{split}
+& \LETPAR ~\_ = \putexp{\mathit{lv}}{d_1} \\
+&  \letparspace ~\_ = \putexp{\mathit{lv}}{d_2} \\
+&  \letparspace ~x = \getexp{\mathit{lv}}{\setof{d_1, d_2}} \\
+&  \letspace \IN~x
+\end{split}
+\label{e:lvar-example-5}
+\end{equation}
+\doublespacing
+
+Eventually, \eref{e:lvar-example-5} is guaranteed to raise $\error$ by way of the
+{\sc E-Put-Err} rule, because $\userlub{d_1}{d_2} = \top$.  Before
+that happens, though, $\getexp{lv}{\setof{d_1, d_2}}$ could return
+either $d_1$ or $d_2$.  Therefore, @get@ \emph{can} behave
+nondeterministically---but this behavior is not observable in the
+final outcome of the program, since one of the two @put@s will raise
+$\error$ before the $x$ in the body of the @let par@ can be evaluated, and under
+our definition of observable determinism, only the final outcome of a
+program counts.
 

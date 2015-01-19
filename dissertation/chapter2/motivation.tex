@@ -5,8 +5,8 @@ Consider applications in which independent subcomputations contribute
 results to shared mutable data structures.  
 Hindley-Milner type inference is one example: in a
 parallel type-inference algorithm, each type variable monotonically
-acquires information through unification (which can be represented as
-a lattice). Likewise, in control-flow analysis, the \emph{set} of
+acquires information through unification.
+Likewise, in control-flow analysis, the \emph{set} of
 locations to which a variable refers monotonically \emph{shrinks}.  In
 logic programming, a parallel implementation of conjunction might
 asynchronously add information to a logic variable from different
@@ -22,14 +22,14 @@ parallelism and determinism:
   vertices in that component, making the set of results available
   asynchronously to other computations.
 \end{blockquote}
-For example, in a directed graph representing user profiles on a
+\noindent For example, in a directed graph representing user profiles on a
 social network and the connections between them, where $v$ represents
-a particular profile, we might wish to find all (or the first $k$
+a particular user's profile, we might wish to find all (or the first $k$
 degrees of) profiles connected to $v$, then map a function $f$ over
 each profile in that set in parallel.
 
 This is a challenge problem for deterministic-by-construction parallel
-programming: existing parallel solutions (such as, for instance, the
+programming models. Existing parallel solutions (such as, for instance, the
 parallel breadth-first graph traversal implementation from the
 Parallel Boost Graph Library~\shortcite{bfs-pbgl}) often traverse the
 connected component in a nondeterministic order---even though the
@@ -41,7 +41,7 @@ be used as ``mark bits'' on visited nodes, since they can only be
 written once and not tested for emptiness.  Streams, on the other
 hand, impose an excessively strict ordering for computing the
 unordered \emph{set} of vertex labels in a connected component.
-Before turning to an LVar-based approach, though, let's consider
+Before turning to an LVar-based approach, though, let us consider
 whether a purely functional (and therefore deterministic by
 construction) program can meet the specification.
 
@@ -63,19 +63,23 @@ Figure~\ref{f:bfs-pure} gives a Haskell implementation of a
 connected component reachable from a starting vertex.  Nodes at
 distance one from the starting vertex are discovered---and set-unioned
 into the connected component---before nodes of distance two are
-considered.  Level-synchronization is a popular strategy for parallel
-breadth-first graph traversal.  (In fact, the aforementioned
-implementation from the Parallel Boost Graph Library~\shortcite{bfs-pbgl}
-uses level-synchronization.)  However, level-synchronization necessarily sacrifices some
+considered.  
+Level-synchronization necessarily sacrifices some
 parallelism: parallel tasks cannot continue
 discovering nodes in the component before synchronizing with all other
 tasks at a given distance from the start.
+Nevertheless, level-synchronization is a popular strategy for implementing
+parallel breadth-first graph traversal.  (In fact, the aforementioned
+implementation from the Parallel Boost Graph Library~\shortcite{bfs-pbgl}
+uses level-synchronization.)
 
 Unfortunately, the code given in Figure~\ref{f:bfs-pure} does not
 quite implement the problem specification given above.  Even though
 connected-component discovery is parallel, members of the output set
-do not become available to other computations until component
-discovery is \emph{finished}, limiting parallelism.  We could
+do not become available to @analyze@ until component discovery is
+\emph{finished}, limiting parallelism: the first nodes in the
+connected component to be discovered must go un-@analyze@d until all
+of the nodes in the connected component have been traversed.  We could
 manually push the @analyze@ invocation inside the @bf_traverse@
 function, allowing the @analyze@ computation to start sooner, but
 doing so just passes the problem to the downstream consumer, unless
@@ -99,12 +103,8 @@ ready.  Still, at the granularity of the individual level-sets, the
 problem would remain: within each level-set, one would not be able to
 launch all instances of @analyze@ and asynchronously use those results
 that finished first.  Moreover, we would still have to contend with
-the problem~\cite{monad-par} that pure programming with futures 
-has in separating the scheduling of producers and consumers.
-
-% the previously-mentioned difficulty of separating producers and
-% consumers when expressing producer-consumer computations when using
-% pure programming with futures~\cite{monad-par}.
+the problem of separating the scheduling of producers and consumers
+that pure programming with futures presents~\cite{monad-par}.
 
 \subsection{An LVar-based solution}
 

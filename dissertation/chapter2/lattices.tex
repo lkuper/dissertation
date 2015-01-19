@@ -8,12 +8,8 @@ with $\lambdaLVar$ are those with explicit effectful operations on
 shared data structures, in which parallel subcomputations may
 communicate with each other via the @put@ and @get@ operations.
 
-In this setting of shared mutable state, the trick that $\lambdaLVar$
-employs to maintain determinism is that stores contain \emph{LVars},
-which are a generalization of IVars.\footnote{IVars are so named
-  because they are a special case of
-  \emph{I-structures}~\cite{IStructures}---namely, those with only one
-  cell.}  Whereas IVars are single-assignment variables---either empty
+In $\lambdaLVar$, stores contain LVars.  Whereas IVars are
+single-assignment variables---either empty
 or filled with an immutable value---an LVar may have an arbitrary
 number of states forming a set $D$, which is partially ordered by a
 relation $\userleq$.  An LVar can take on any sequence of states from
@@ -51,14 +47,19 @@ greatest element $\top$.  That is, $D$ has the following structure:
 We can specify all these components as a 4-tuple $(D, \userleq, \bot,
 \top)$ where $D$ is a set, $\userleq$ is a partial order on the
 elements of $D$, $\bot$ is the least element of $D$ according to
-$\userleq$, and $\top$ is the greatest.  However, \either{I}{we} use $D$ as a
+$\userleq$, and $\top$ is the greatest element.  However, \either{I}{we} use $D$ as a
 shorthand for the entire 4-tuple $(D, \userleq, \bot, \top)$ when its
 meaning is clear from the context.
+\ifdefined\JOURNAL
+For brevity, we also use the term
+``lattice'' in place of ``bounded join-semilattice with a designated
+greatest element'' throughout this paper.
+\fi
 
 Virtually any data structure to which information is added gradually
 can be represented as a lattice, including pairs, arrays, trees, maps,
 and infinite streams.  In the case of maps or sets, $\sqcup$ could be
-defined as union; for pointer-based data structures like tries, it
+defined as union; for pointer-based data structures like tries, $\sqcup$
 could allow for unification of partially-initialized structures.
 
 \lk{Since I've already talked abut this stuff in
@@ -66,10 +67,10 @@ could allow for unification of partially-initialized structures.
   here again belabors the point, although the treatment here is more
   formal.}
 
-The simplest example of a useful lattice is one that represents the
+The simplest example of a useful $D$ is one that represents the
 states that a single-assignment variable (that is, an IVar) can take
-on.  A natural-number-valued IVar, for instance, has a state space
-corresponding to the lattice in
+on.  The states of a natural-number-valued IVar, for instance, are the elements of
+the lattice in
 Figure~\ref{f:lvars-example-lattices}(b), that is,
 
 \vspace{-8mm}
@@ -99,12 +100,12 @@ that no conflicting updates can occur to the LVar.
 
 During the evaluation of a $\lambdaLVar$ program, a \emph{store} $S$
 keeps track of the states of LVars.  Each LVar is represented by a
-\emph{binding} that maps from a location $l$, drawn from a countable
+\emph{binding} that maps a location $l$, drawn from a countable
 set $\Loc$, to a \emph{state}, which is some element $d \in D$.
 Although each LVar in a program has its own state, the states of all
 the LVars are drawn from the same lattice $D$.\footnote{In practice,
-  different LVars in a program might have different state spaces (and,
-  in the LVish Haskell library that I will present in
+  different LVars in a program might correspond to different lattices (and,
+  in the LVish Haskell library that \either{I}{we} will present in
   \either{Chapter}{Section}~\ref{ch:lvish}, they do).  Multiple lattices can in
   principle be encoded using a sum construction, so this modeling
   choice is just to keep the presentation simple.}
@@ -117,7 +118,7 @@ denotes an update to the existing binding for $l$, rather than an
 extension.  Another way to denote a store is by explicitly writing out
 all its bindings, using the notation
 $\store{\storebindingRaw{l_1}{d_1}, \dots,
-  \storebindingRaw{l_n}{d_n}}$.  The state space of stores forms a
+  \storebindingRaw{l_n}{d_n}}$.  The set of states that a store can take on forms a
 lattice, just as $D$ does, with the empty store $\bot_S$ as its least
 element and $\topS$ as its greatest element.  It is straightforward to
 lift the $\userleq$ and $\sqcup$ operations defined on elements of $D$
@@ -140,7 +141,7 @@ $\lubstore{\store{\storebindingRaw{l}{d_1}}}{\store{\storebindingRaw{l}{d_2}}}
 $\storebindingRaw{l}{\top}$ can never arise during the execution of a
 $\lambdaLVar$ program, because (as \either{I}{we} will show in
 Section~\ref{s:lvars-lambdalvar}) an attempted write that would take
-the state of $l$ to $\top$ would raise an error before the write can
+the state of some location $l$ to $\top$ would raise an error before the write can
 occur.
 
 \subsection{Communication primitives}\label{subsection:lvars-communication-primitives}
@@ -179,7 +180,7 @@ threshold set is an ``alarm'' that detects the activation of itself or
 any state above it.  One way of visualizing the threshold set for a
 @get@ operation is as a subset of edges in the lattice that, if
 crossed, set off the corresponding alarm.  Together these edges form a
-``tripwire''.  Figure~\ref{f:lvars-example-lattices}(b) shows what the
+``tripwire''.  Figure~\ref{f:lvars-example-lattices}(c) shows what the
 ``tripwire'' looks like for an example @get@ operation.  The
 threshold set $\stateset{(\bot, 0), (\bot, 1), ...}$ (or a subset
 thereof) would pass the incompatibility test, as would the threshold
@@ -190,8 +191,8 @@ The requirement that the elements of a threshold set be pairwise
 incompatible limits the expressivity of threshold sets.  In fact, it
 is a stronger requirement than we need to ensure determinism.  Later
 on, in Section~\ref{s:lvars-generalizing}, \either{I}{we} will explain how to
-generalize the definition of threshold sets to make more programs
-expressible.  For now, \either{I}{we} will proceed with the simpler definition
+generalize the definition of threshold sets to allow more programs
+to be expressed.  For now, \either{I}{we} will proceed with the simpler definition
 above.
 
 \subsection{Monotonic store growth and determinism}\label{subsection:lvars-monotonic-store-growth}
@@ -217,7 +218,7 @@ Definition~\ref{def:lvars-leqstore-cnc}, but
 Definition~\ref{def:lvars-leqstore-cnc} requires that $S(l)$ and
 $S'(l)$ be \emph{equal}, instead of our weaker requirement that $S(l)$
 be \emph{less than or equal to} $S'(l)$ according to the
-application-specific lattice $\userleq$.  In $\lambdaLVar$, stores may
+given lattice $\userleq$.  In $\lambdaLVar$, stores may
 grow by updating existing bindings via repeated @put@s, so
 Definition~\ref{def:lvars-leqstore-cnc} would be too strong; for
 instance, if $\bot \userlt d_1 \userleq d_2$ for distinct $d_1, d_2
@@ -225,12 +226,12 @@ instance, if $\bot \userlt d_1 \userleq d_2$ for distinct $d_1, d_2
 $\leqstore{\store{\storebindingRaw{l}{d_1}}}{\store{\storebindingRaw{l}{d_2}}}$
 holds under Definition~\ref{def:lvars-leqstore}, but would not hold
 under Definition~\ref{def:lvars-leqstore-cnc}.  That is, in
-$\lambdaLVar$ an LVar could take on the state $d_1$ followed by $d_2$,
+$\lambdaLVar$ an LVar could take on the state $d_1$, and then later the state $d_2$,
 which would not be possible in Featherweight CnC.
 
 \either{I}{We} establish in Section~\ref{s:lvars-proof} that $\lambdaLVar$ remains
 deterministic despite the relatively weak $\leqstore{}{}$ relation
-given in Definition~\ref{def:lvars-leqstore}.  The keys to maintaining
-determinism are the blocking semantics of the @get@ operation and the
+given in Definition~\ref{def:lvars-leqstore}.  The key to maintaining
+determinism is the blocking semantics of the @get@ operation and the
 fact that it allows only \emph{limited} observations of the state of
 an LVar.

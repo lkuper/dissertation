@@ -1,14 +1,17 @@
 \section{LVars by example}\label{s:lvars-examples}
 
 \emph{IVars} \cite{IStructures, id, monad-par} are a well-known
-mechanism for deterministic parallel programming.  An IVar is a
+mechanism for deterministic parallel programming.\footnote{IVars are so named
+  because they are a special case of
+  \emph{I-structures}~\cite{IStructures}---namely, those with only one
+  cell.}  An IVar is a
 \emph{single-assignment} variable \cite{Tesler-1968} with a blocking
 read semantics: an attempt to read an empty IVar will block until the
 IVar has been filled with a value.  The ``I'' in IVar stands for
 ``immutable'': an IVar can only be written to once, and thereafter its
 contents cannot change.  LVars are a generalization of IVars: an LVar
 allows multiple writes, but only so long as those writes are
-monotonically increasing with respect to an application-specific
+monotonically increasing with respect to a given
 lattice of states.
 
 Consider a program in which two
@@ -41,11 +44,7 @@ respectively, and the expression
 
 has \emph{fork-join} semantics: it launches concurrent subcomputations
 $e_1, e_2, \dots$ whose executions arbitrarily interleave, but must
-all complete before $\mathit{body}$ runs.  The @put@ operation is
-defined in terms of the corresponding lattice of LVar states; it
-% , which can even be application-specific. @put@ 
-updates the LVar to the \emph{least upper bound} (lub) of its
-current state and the new state being written.
+all complete before $\mathit{body}$ runs.
 
 \begin{figure}
 \centering
@@ -60,13 +59,17 @@ current state and the new state being written.
   \label{f:lvars-example-lattices}
 \end{figure}
 
+The @put@ operation is
+defined in terms of the specified lattice of LVar states; it
+updates the LVar to the \emph{least upper bound} (lub) of its
+current state and the new state being written.
 If $\mathit{lv}$'s lattice is the $\leq$ ordering on positive
 integers, as shown in Figure~\ref{f:lvars-example-lattices}(a), then
 $\mathit{lv}$'s state will always be $\max(3, 2) = 3$ by the time
 $\GET~\mathit{lv}$ runs, since the lub of two positive integers $n_1$
 and $n_2$ is $\max(n_1, n_2)$.  Therefore \eref{e:lvar-example-1} will
 deterministically evaluate to $3$, regardless of the order in which
-the two @put@ operations occurred.
+the two @put@ operations occur.
 
 On the other hand, if $\mathit{lv}$'s lattice is that shown in
 Figure~\ref{f:lvars-example-lattices}(b), in which the lub of any two
@@ -84,10 +87,10 @@ value do not allow any nondeterminism to be observed.
 \subsection{Threshold reads}
 
 However, merely ensuring that writes to an LVar are monotonically
-increasing is not enough to ensure that programs behave
+increasing is not enough to guarantee that programs behave
 deterministically.  Consider again the lattice of
 Figure~\ref{f:lvars-example-lattices}(a) for $\mathit{lv}$, but
-suppose we change \eref{e:lvar-example-1} to allow a direct @read@ of the LVar
+suppose we change \eref{e:lvar-example-1} to allow a direct, non-blocking @read@ of the LVar
 to be interleaved with the two @put@s:
 
 \vspace{-8mm}
@@ -96,8 +99,8 @@ to be interleaved with the two @put@s:
 \begin{split}
 & \LETPAR ~\_ = \putexp{\mathit{lv}}{3} \\
 &  \letparspace ~\_ = \putexp{\mathit{lv}}{2} \\
-&  \letparspace ~x = \texttt{read}~\mathit{lv} 
-    ~~~~~~\textcolor{darkgreen}{\texttt{-- Not allowed!}}\\
+&  \letparspace ~x = \termfont{read}~\mathit{lv} 
+    ~~~~~~\textcolor{darkgreen}{\termfont{-- Not allowed!}}\\
 &  \letspace \IN~x
 \end{split}
 \label{e:lvar-example-2}
@@ -108,14 +111,14 @@ Since the two @put@s and the @read@ can be scheduled in any order,
 \eref{e:lvar-example-2} is nondeterministic: $x$ might be either $2$ or
 $3$, depending on the order in which the LVar effects occur.
 Therefore, to maintain determinism, LVars allow only blocking, restricted @get@
-operations.  Rather than allowing @get@ to observe the exact
-value of the LVar, it can only observe that the LVar has reached one
+operations.  Rather than observing the exact
+value of the LVar, the @get@ operation can only observe that the LVar has reached one
 of a specified set of \emph{lower bound} states.  This set of lower
 bounds, which we provide as an extra argument to @get@, is called a
 \emph{threshold set} because the values in it form a ``threshold''
 that the state of the LVar must cross before the call to @get@ is
 allowed to unblock and return.  When the threshold has been reached,
-@get@ unblocks and returns \emph{not} the exact value of the LVar, but
+@get@ unblocks and returns not the exact contents of the LVar, but
 instead, the (unique) element of the threshold set that has been
 reached or surpassed.
 
@@ -151,7 +154,8 @@ the program evaluates.
 
 \subsection{Incompatibility of threshold sets}
 
-While the LVar interface just described is deterministic, it is only useful for
+While \eref{e:lvar-example-3} is deterministic, the style of programming it illustrates is
+ only useful for
 synchronization, not for communicating data: we must specify in advance the
 single answer we expect to be returned from the call to @get@.  In general,
 though, threshold sets do not have to be singleton sets.  For example, consider
