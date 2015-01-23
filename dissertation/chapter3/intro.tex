@@ -1,3 +1,29 @@
+\ifdefined\JOURNAL
+In this section, we describe two extensions to the basic LVars model
+of Section~\ref{ch:lvars}.  First, we add the ability to
+attach \emph{event handlers} to an LVar that allow \emph{callback
+functions} to run in response to updates to the LVar.  It is possible
+to check for the \emph{quiescence} of a group of handlers: a group of
+handlers is quiescent when no callbacks are currently enabled to run.
+Second, we add a new primitive operation, @freeze@, that returns the
+exact contents of an LVar without blocking.  Using @freeze@ to read an
+LVar comes with the following tradeoff: once an LVar has been read, it
+is \emph{frozen}, and any further writes that would change its value
+instead throw an exception.
+
+The threshold reads that we have seen so far encourage a
+synchronous, \emph{pull} model of programming in which threads ask
+specific questions of an LVar, potentially blocking until the answer
+is ``yes''.  Handlers, quiescence, and freezing, by contrast, support
+an asynchronous, \emph{push} model of programming.  We will refer to
+the LVars programming model, extended with handlers, quiescence, and
+freezing, as the \emph{LVish} programming model.  Because quiescence
+makes it possible to tell when the fixpoint of a computation has been
+reached, the LVish model is particularly well suited to problems like
+the graph traversal problem that we saw in
+Section~\ref{s:lvars-motivation}.
+\fi
+
 \ifdefined\DISSERTATION
 The LVars programming model presented in Chapter~\ref{ch:lvars} is
 based on the idea of \emph{monotonic data structures}, in which
@@ -19,13 +45,11 @@ is always
 reach a desired threshold.  In a monotonic data structure, the absence
 of information is transient---another thread could add that
 information at any time---but the presence of information is forever.
-\fi
 
 The LVars model \either{}{of Section~\ref{ch:lvars}} guarantees determinism and supports an unlimited
 variety of shared data structures: anything viewable as a lattice.
 However, it is not as general-purpose as one might hope.  Consider
 again the graph traversal problem that we saw in 
-\ifdefined\DISSERTATION
 Chapter~\ref{ch:lvars}:
 \begin{blockquote}
   In a directed graph, find the connected component containing a
@@ -41,10 +65,6 @@ connected component discovery proceeded in parallel, members of the
 output set did not become available to other computations until the
 entire connected component had been traversed, limiting parallelism.
 
-\fi
-\ifdefined\JOURNAL
-Section~\ref{s:lvars-motivation}.
-\fi
 What would happen if we tried to solve this problem using LVars?  A
 typical implementation of the graph-traversal part of the
 problem---including the purely functional implementation of
@@ -95,6 +115,7 @@ structures to ``say no'':
   fixpoint has been reached.
 \end{itemize}
 
+\fi
 Unfortunately, freezing does not commute with writes that change an
 LVar.\footnote{The same is true for quiescence detection; see
 Section~\ref{subsection:quasi-quiescence}.}  If a freeze is
@@ -126,6 +147,7 @@ very final step of a computation: after a global barrier, freezing is
 used to extract an answer.  In this common case, determinism is
 guaranteed, since no writes can subsequently occur.
 
+\ifdefined\DISSERTATION
 \either{I}{We} will refer to the LVars model, extended with handlers, quiescence,
 and freezing, as the \emph{LVish model}.  \either{The rest of this chapter is
 organized as follows: in Section~\ref{s:quasi-informal}, I}{In this section, we first} introduce
@@ -151,3 +173,4 @@ explain in Section~\ref{subsection:quasi-generalized-independence},
 the Generalized Independence lemma updates the original Independence
 lemma to account for both freezing and the arbitrary update operations
 that $\lambdaLVish$ allows.
+\fi
