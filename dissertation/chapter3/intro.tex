@@ -1,29 +1,3 @@
-\ifdefined\JOURNAL
-In this section, we describe two extensions to the basic LVars model
-of Section~\ref{ch:lvars}.  First, we add the ability to
-attach \emph{event handlers} to an LVar that allow \emph{callback
-functions} to run in response to updates to the LVar.  It is possible
-to check for the \emph{quiescence} of a group of handlers: a group of
-handlers is quiescent when no callbacks are currently enabled to run.
-Second, we add a new primitive operation, @freeze@, that returns the
-exact contents of an LVar without blocking.  Using @freeze@ to read an
-LVar comes with the following tradeoff: once an LVar has been read, it
-is \emph{frozen}, and any further writes that would change its value
-instead throw an exception.
-
-The threshold reads that we have seen so far encourage a
-synchronous, \emph{pull} model of programming in which threads ask
-specific questions of an LVar, potentially blocking until the answer
-is ``yes''.  Handlers, quiescence, and freezing, by contrast, support
-an asynchronous, \emph{push} model of programming.  We will refer to
-the LVars programming model, extended with handlers, quiescence, and
-freezing, as the \emph{LVish} programming model.  Because quiescence
-makes it possible to tell when the fixpoint of a computation has been
-reached, the LVish model is particularly well suited to problems like
-the graph traversal problem that we saw in
-Section~\ref{s:lvars-motivation}.
-\fi
-
 \ifdefined\DISSERTATION
 The LVars programming model presented in Chapter~\ref{ch:lvars} is
 based on the idea of \emph{monotonic data structures}, in which
@@ -45,79 +19,43 @@ is always
 reach a desired threshold.  In a monotonic data structure, the absence
 of information is transient---another thread could add that
 information at any time---but the presence of information is forever.
-
-The LVars model \either{}{of Section~\ref{ch:lvars}} guarantees determinism and supports an unlimited
-variety of shared data structures: anything viewable as a lattice.
-However, it is not as general-purpose as one might hope.  Consider
-again the graph traversal problem that we saw in 
-Chapter~\ref{ch:lvars}:
-\begin{blockquote}
-  In a directed graph, find the connected component containing a
-  vertex $v$, and compute a (possibly expensive) function $f$ over all
-  vertices in that component, making the set of results available
-  asynchronously to other computations.
-\end{blockquote}
-In Section~\ref{s:lvars-motivation}, we considered an attempt at a
-solution using purely functional parallelism (shown
-in Figure~\ref{f:bfs-pure}).  Unfortunately, our purely functional
-attempt did not quite satisfy the above specification: although
-connected component discovery proceeded in parallel, members of the
-output set did not become available to other computations until the
-entire connected component had been traversed, limiting parallelism.
-
-What would happen if we tried to solve this problem using LVars?  A
-typical implementation of the graph-traversal part of the
-problem---including the purely functional implementation of
-Section~\ref{s:lvars-motivation}---involves a monotonically growing
-set of ``seen nodes''; neighbors of seen nodes are fed back into the
-set until it reaches a fixed point.  Such fixpoint computations are
-ubiquitous, and would seem to be a perfect match for the LVars model
-due to their use of monotonicity.  But they are not expressible using
-the threshold read and least-upper-bound write operations of the basic
-LVars model.
-
-The problem is that these computations rely on \emph{negative}
-information about a monotonic data structure, \ie, on the
-\emph{absence} of certain writes to the data structure.  In a graph
-traversal, for example, neighboring nodes should only be explored if
-the current node is \emph{not yet} in the set; a fixpoint is reached
-only if no new neighbors are found; and, of course, at the end of the
-computation it must be possible to learn exactly which nodes were
-reachable (which entails learning that certain nodes were not).  But
-in the LVars model, asking whether a node is in a set means waiting
-until the node \emph{is} in the set, and it is not clear how to lift
-this restriction while retaining determinism.
-
-In this \either{chapter, I}{section, we} describe two extensions to the basic LVars model of
-\either{Chapter}{Section}~\ref{ch:lvars} that make it possible for monotonic data
-structures to ``say no'':
-
-\begin{itemize}
-\item First, \either{I}{we} extend the model with a primitive operation @freeze@
-  for \emph{freezing} an LVar, which comes with the following
-  tradeoff: once an LVar is frozen, any further writes that would
-  change its value instead throw an exception; on the other hand, it
-  becomes possible to discover the exact value of the LVar, learning
-  both positive and negative information about it, without blocking.
-\item
-  Second, \either{I}{we} add the ability to attach \emph{event handlers} to an
-  LVar.  When an event handler has been registered with an LVar, it
-  invokes a \emph{callback function} to run asynchronously, whenever
-  events arrive (in the form of monotonic updates to the LVar).
-  Ordinary LVar reads encourage a synchronous, \emph{pull} model of
-  programming in which threads ask specific questions of an LVar,
-  potentially blocking until the answer is ``yes''.  Handlers, by
-  contrast, support an asynchronous, \emph{push} model of programming.
-  Crucially, it is possible to check for \emph{quiescence} of a
-  handler, discovering that no callbacks are currently enabled---a
-  transient, negative property.  Since quiescence means that there are
-  no further changes to respond to, it can be used to tell that a
-  fixpoint has been reached.
-\end{itemize}
-
 \fi
+
+We want to use LVars to implement fixpoint computations like the
+parallel graph traversal of Section~\ref{s:lvars-motivation}.  But we
+cannot do so using only least-upper-bound writes and threshold reads,
+because in order to determine when the set of traversed nodes in the
+graph has reached a fixpoint, we need to be able to see the exact
+contents of that set, and it is impossible to learn the exact contents
+of the set using only threshold reads.
+
+In this \either{chapter, I}{section, we} describe two extensions to the basic LVars model
+of \either{Chapter}{Section}~\ref{ch:lvars} that give us a new way to approach problems like
+the parallel graph traversal problem.
+First, \either{I}{we} add the ability to attach \emph{event handlers} to an LVar
+that allow \emph{callback functions} to run in response to updates to
+the LVar.  It is possible to check for the \emph{quiescence} of a
+group of handlers: a group of handlers is quiescent when no callbacks
+are currently enabled to run.  Second, \either{I}{we} add a new primitive
+operation, @freeze@, that returns the exact contents of an LVar
+without blocking.  Using @freeze@ to read an LVar comes with the
+following tradeoff: once an LVar has been read, it is \emph{frozen},
+and any further writes that would change its value instead throw an
+exception.
+
+The threshold reads that we have seen so far encourage a
+synchronous, \emph{pull} model of programming in which threads ask
+specific questions of an LVar, potentially blocking until the answer
+is ``yes''.  The addition of handlers, quiescence, and freezing, by contrast, enables
+an asynchronous, \emph{push} model of programming.  We will refer to
+this extended programming model as the \emph{LVish} programming model.  Because quiescence
+makes it possible to tell when the fixpoint of a computation has been
+reached, the LVish model is particularly well suited to problems like
+the graph traversal problem that we saw in
+Section~\ref{s:lvars-motivation}.
+
 Unfortunately, freezing does not commute with writes that change an
-LVar.\footnote{The same is true for quiescence detection; see
+LVar.\footnote{The same is true for quiescence detection, as we will see in
 Section~\ref{subsection:quasi-quiescence}.}  If a freeze is
 interleaved before such a write, the write will raise an exception; if
 it is interleaved afterwards, the program will proceed normally.  It
@@ -147,30 +85,18 @@ very final step of a computation: after a global barrier, freezing is
 used to extract an answer.  In this common case, determinism is
 guaranteed, since no writes can subsequently occur.
 
-\ifdefined\DISSERTATION
 \either{I}{We} will refer to the LVars model, extended with handlers, quiescence,
-and freezing, as the \emph{LVish model}.  \either{The rest of this chapter is
-organized as follows: in Section~\ref{s:quasi-informal}, I}{In this section, we first} introduce
-the LVish programming model informally, through a series of examples.
-\either{I}{We} will also return to the graph traversal \either{I}{we} discussed above and show
-how to implement it using the LVish Haskell library (which \either{I}{we} will go
-on to discuss the internals of in \either{Chapter}{Section}~\ref{ch:lvish}).  Then, in
-Section~\ref{s:quasi-formal}, \either{I}{we} formalize the LVish model by extending
+and freezing, as the \emph{LVish model}.  This \either{chapter}{section} introduces
+the LVish programming model, first informally through a series of examples, and then formally, by extending
 the $\lambdaLVar$ calculus of \either{Chapter}{Section}~\ref{ch:lvars} to add support
-for handlers, quiescence, and freezing, calling the resulting language
-$\lambdaLVish$.  Along with handlers, quiescence, and freezing, \either{I}{we} add
-support for the arbitrary update operations described in
+for handlers, quiescence, freezing, and the arbitrary update operations described in
 Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}}.
-Finally, the main technical result of this \either{chapter}{section} is a proof of
-quasi-determinism for
-$\lambdaLVish$~(Section~\ref{s:quasi-proof-of-quasi-determinism}). Just
-as with the determinism proof \either{I gave}{} for $\lambdaLVar$ in
-\either{Chapter}{Section}~\ref{ch:lvars}, which relies on the Independence lemma
-(Lemma~\ref{lem:lvars-independence}), the quasi-determinism proof for
-$\lambdaLVish$ relies on a ``frame property'', the Generalized
-Independence lemma (Lemma~\ref{lem:generalized-independence}).  As \either{I}{we}
-explain in Section~\ref{subsection:quasi-generalized-independence},
-the Generalized Independence lemma updates the original Independence
-lemma to account for both freezing and the arbitrary update operations
-that $\lambdaLVish$ allows.
-\fi
+\either{I}{We} will also return to our parallel graph traversal problem and show
+an solution implemented using the LVish Haskell library.
+
+Finally, the main technical result of this \either{chapter}{section}
+is a proof of quasi-determinism for $\lambdaLVish$. The key to the
+proof is a generalized version of the Independence lemma
+of \either{Chapter}{Section}~\ref{ch:lvars} that accounts for both
+freezing and the arbitrary update operations that $\lambdaLVish$
+allows.
