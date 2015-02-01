@@ -227,7 +227,16 @@ computation it must be possible to learn exactly which nodes were
 reachable (which entails learning that certain nodes were not).  In \either{Chapter}{Section}~\ref{ch:quasi}, \either{I}{we} describe two extensions to the basic LVars
 model that make such computations possible:
 \begin{itemize}
-\item First, \either{I}{we} extend the model with a primitive operation @freeze@
+\item First, \either{I}{we} add the ability to attach \emph{event handlers} to an
+  LVar.  When an event handler has been registered with an LVar, it
+  causes a callback function to run, asynchronously, whenever
+  events arrive (in the form of monotonic updates to the LVar).
+  Crucially, it is possible to check for \emph{quiescence} of a group
+  of handlers, discovering that no callbacks are currently enabled---a
+  transient, negative property.  Since quiescence means that there are
+  no further changes to respond to, it can be used to tell that a
+  fixpoint has been reached.
+\item Second, \either{I}{we} extend the model with a primitive operation @freeze@
   for \emph{freezing} an LVar, which allows its contents to be read
   immediately and exactly, rather than the blocking threshold read
   that @get@ allows.  The @freeze@ primitive imposes the following
@@ -242,24 +251,17 @@ model that make such computations possible:
   \emph{quasi-determinism}: all executions that produce a final value
   (instead of raising an exception)
   produce the \emph{same} final value.
-\item Second, \either{I}{we} add the ability to attach \emph{event handlers} to an
-  LVar.  When an event handler has been registered with an LVar, it
-  invokes a \emph{callback function} to run, asynchronously, whenever
-  events arrive (in the form of monotonic updates to the LVar).
-  Crucially, it is possible to check for \emph{quiescence} of a group
-  of handlers, discovering that no callbacks are currently enabled---a
-  transient, negative property.  Since quiescence means that there are
-  no further changes to respond to, it can be used to tell that a
-  fixpoint has been reached.
 \end{itemize}
-Of course, since more events could arrive later, there is no 
-guarantee that quiescence is permanent---but since the contents of the
-LVar being written to can only be read through @get@ or @freeze@
+
+Writes to an LVar could cause more events to occur after a group of handlers associated
+with that LVar has quiesced, and those events could trigger more
+invocations of callback functions.  However, since the contents of the
+LVar can only be read through @get@ or @freeze@
 operations anyway, early quiescence poses no risk to determinism or
 quasi-determinism, respectively.  In fact, freezing and quiescence
 work particularly well together because freezing provides a mechanism
-by which the programmer can safely ``place a bet'' that all writes
-have completed.  Hence freezing and handlers make possible fixpoint
+by which the programmer can safely ``place a bet'' that all writes to an LVar
+have completed.  Hence freezing and handlers make it possible to implement fixpoint
 computations like the graph traversal described above.  Moreover, if
 we can ensure that a freeze does indeed happen after all writes to the LVar in question have
 completed, then we can ensure that the entire computation is deterministic,
