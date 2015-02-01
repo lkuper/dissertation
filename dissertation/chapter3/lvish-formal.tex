@@ -1,58 +1,35 @@
 \section{LVish, formally}\label{s:quasi-formal}
 
 In this section, \either{I}{we} present $\lambdaLVish$, a core calculus for the
-LVish programming model. $\lambdaLVish$ is a quasi-deterministic,
-parallel, call-by-value $\lambda$-calculus extended with a store
-containing LVars.  It extends the original $\lambdaLVar$ language of
-\either{Chapter}{Section}~\ref{ch:lvars} to support the new features in the LVish model
-that \either{I}{we} described in Section~\ref{s:quasi-informal}. Rather than
+LVish programming model. It extends the $\lambdaLVar$ language of
+\either{Chapter}{Section}~\ref{ch:lvars}. Rather than
 modeling the full ensemble of event handlers, handler pools,
-quiescence, and freezing as separate primitives, \either{I}{we} instead formalize
+quiescence, and freezing as separate primitives in $\lambdaLVish$, though,
+\either{I}{we} instead formalize
 the ``freeze-after'' pattern---which combined them---directly as a
 primitive.  This simplifies the calculus while still capturing the
 essence of the programming model.  \either{I}{We} also generalize the @put@
-operation to allow arbitrary \emph{update operations} (previously
-described in
-Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}}),
-which are inflationary and commutative, but do not necessarily compute
+operation to allow the arbitrary \emph{update operations} of Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}},
+which are inflationary and commutative but do not necessarily compute
 a lub.
-
-\subsection{Lattices}
-
-Just as with $\lambdaLVar$, the application-specific lattice is given
-as a 4-tuple $(D, \userleq, \bot, \top)$ where $D$ is a set,
-$\userleq$ is a partial order on the elements of $D$, $\bot$ is the
-least element of $D$ according to $\userleq$ and $\top$ is the
-greatest.  The $\bot$ element represents the initial ``empty'' state
-of every LVar, while $\top$ represents the ``error'' state that would
-result from conflicting updates to an LVar.  The partial order
-$\userleq$ represents the order in which an LVar may take on states.
-It induces a binary lub operation $\userlub{}{}$ on the elements of
-$D$.  Every two elements of $D$ must have a lub in $D$.  Formally,
-this makes $(D, \userleq, \bot, \top)$ a \emph{bounded
-  join-semilattice} with a designated greatest element $\top$; \either{I}{we}
-continue to use ``lattice'' as shorthand, and \either{I}{we} use $D$ as a shorthand
-for the entire 4-tuple $(D, \userleq, \bot, \top)$ when its meaning is
-clear from the context. \lk{Hm, do I actually do that?}
 
 \subsection{Freezing}
 
 To model freezing, we need to generalize the notion of the state of an
 LVar to include information about whether it is ``frozen'' or not.
 Thus, in $\lambdaLVish$ an LVar's \emph{state} is a pair
-$\state{d}{\status}$, where $d$ is an element of the
-application-specific set $D$ and $\status$ is a ``status bit'' of
+$\state{d}{\status}$, where $d$ is an element of the set $D$ and $\status$ is a ``status bit'' of
 either $\frozentrue$ or $\frozenfalse$.  A state where $\status$ is
 $\frozenfalse$ is ``unfrozen'', and one where $\status$ is
 $\frozentrue$ is ``frozen''.
 
 \either{I}{We} define an ordering $\leqp$ on LVar states $\state{d}{\status}$ in
-terms of the application-specific ordering $\userleq$ on elements of
+terms of the given ordering $\userleq$ on elements of
 $D$.  Every element of $D$ is ``freezable'' except $\top$.
 Informally:
 \begin{itemize}
 \item Two unfrozen states are ordered according to the
-  application-specific $\userleq$; that is, $\state{d}{\frozenfalse}
+  given $\userleq$; that is, $\state{d}{\frozenfalse}
   \leqp \state{d'}{\frozenfalse}$ exactly when $d \userleq d'$.
 \item Two frozen states do not have an order, unless they are equal:
   $\state{d}{\frozentrue} \leqp \state{d'}{\frozentrue}$ exactly when
@@ -113,15 +90,15 @@ Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes
 
 \DefSetOfUpdateOperations
 
-The first of the conditions in
+\noindent The first of the conditions in
 Definition~\ref{def:set-of-update-operations} says that each update
 operation is inflationary with respect to $\userleq$, and the second
 condition says that update operations commute with each other.  Every
 set of update operations always implicitly contains the identity
 function.
 
-If we want to encode the original lub semantics of @put@ using
-$\PUTi$, we can do so by instantiating $U$ such that there is one
+If we want to recover the original semantics of @put@,
+we can do so by instantiating $U$ such that there is one
 $u_i$ for each element $d_i$ of the lattice $D$, and defining $u_i(d)$
 to be $\userlub{d}{d_i}$.  On the other hand, if $D$ is a lattice of
 natural numbers and we want increment-only counters, we can
@@ -147,7 +124,7 @@ the set $U_p$ of lifted operations as follows:
 
 \DefSetOfStateUpdateOperations
 
-Because every set $U$ of update operations implicitly contains the
+\noindent Because every set $U$ of update operations implicitly contains the
 identity function, the same is true for the set $U_p$ of state update
 operations.  Furthermore, it is easy to show that state update
 operations commute, just as update operations do; that is, $\forall d,
@@ -190,7 +167,7 @@ then
 \[ \lubstore{\store{\storebinding{l}{d_1}{\status_1}}}{\store{\storebinding{l}{d_2}{\status_2}}} =
 \topS. \]
 
-Just as a store containing a binding $\storebindingRaw{l}{\top}$ can
+\noindent Just as a store containing a binding $\storebindingRaw{l}{\top}$ can
 never arise during the execution of a $\lambdaLVar$ program, a store
 containing a binding $\storebinding{l}{\top}{\status}$ can never arise
 during the execution of a $\lambdaLVish$ program. An attempted write
@@ -216,10 +193,6 @@ semantics is also parameterized by the set $U$ of update operations.
 
 \FigLambdaLVishGrammar
 
-\FigLambdaLVishReductionSemantics
-
-\FigLambdaLVishContextSemantics
-
 The $\lambdaLVish$ grammar has most of the expression forms of
 $\lambdaLVar$: variables, values, application expressions, @get@
 expressions, and @new@.  Instead of @put@ expressions, it has $\PUTi$
@@ -235,19 +208,15 @@ pairs $\state{d}{\status}$, and event sets $Q$.  Instead of $T$, \either{I}{we} 
 use the metavariable $P$ for threshold sets, in keeping with the fact
 that in $\lambdaLVish$, members of threshold sets are states $p$.
 
-As before, configurations $\config{S}{e}$ are made up of a store and
-an expression; the \emph{error configuration}, written $\error$, is a
-unique element added to the set of configurations, but
-$\config{\topS}{e}$ is equal to $\error$ for all expressions $e$; and
-the metavariable $\conf$ ranges over configurations.  Both the
-reduction relation $\parstepsto$ and the context relation
-$\ctxstepsto$ are defined on configurations.
-
 As with $\lambdaLVar$, the $\lambdaLVish$ context relation
 $\ctxstepsto$ has only one rule, {\sc E-Eval-Ctxt}, which allows us to
 apply reductions within a context. The rule itself is identical to the
 corresponding rule in $\lambdaLVar$, although the set of evaluation
 contexts that the metavariable $E$ ranges over is different.
+
+\FigLambdaLVishReductionSemantics
+
+\FigLambdaLVishContextSemantics
 
 \subsection{Semantics of \il{new}, $\PUTi$, and \il{get}}\label{subsection:quasi-semantics-of-new-put-and-get}
 
