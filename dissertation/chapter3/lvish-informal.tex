@@ -33,7 +33,7 @@ lattice.  The expression
 \end{equation}
 \doublespacing
 
-registers a handler for $\mathit{lv}$ that executes the callback
+\noindent registers a handler for $\mathit{lv}$ that executes the callback
 function $\lam{x}{\putexp{\mathit{lv}}{x+1}}$ for each odd number that
 $\mathit{lv}$ is at or above.  When \eref{e:lvish-example-1} is
 finished evaluating, $\mathit{lv}$ will contain the smallest even
@@ -114,7 +114,7 @@ that it corresponds closely to our implementation strategy.
 Because event handlers are asynchronous, we need a separate mechanism
 to determine when they have reached a \emph{quiescent} state, \ie,
 when all callbacks for the events that have occurred have finished
-running.  As \either{we saw in the introduction to this chapter}{we've seen}, detecting
+running. Detecting
 quiescence is crucial for implementing fixpoint computations.  To
 build flexible data-flow networks, it is also helpful to be able to
 detect quiescence of multiple handlers simultaneously.  Thus, our
@@ -138,19 +138,19 @@ like the following:
 \]
 \doublespacing
 
-where $\mathit{lv}$ is an LVar, $Q$ is an event set, and $f$ is a
+\noindent where $\mathit{lv}$ is an LVar, $Q$ is an event set, and $f$ is a
 callback.  Handler pools are created with the @newPool@ function, and
 handlers are registered with @addHandlerInPool@, a variant of
 @addHandler@ that takes a handler pool as an additional argument.
 Finally, @quiesce@ takes a handler pool as its argument and blocks
 until all of the handlers in the pool have reached a quiescent state.
 
-Of course, whether or not a handler is quiescent is a non-monotonic
+Whether or not a handler is quiescent is a non-monotonic
 property: we can move in and out of quiescence as more writes to an
 LVar occur, and even if all states at or below the current state have
 been handled, there is no way to know that more writes will not arrive
 to move the LVar's state upwards in the lattice and trigger more
-callbacks.  Early quiescence no risk to quasi-determinism, however,
+callbacks.  Early quiescence poses no risk to quasi-determinism, however,
 because @quiesce@ does not yield any information about \emph{which}
 events have been handled---any such questions must be asked through
 LVar functions like @get@.  In practice, @quiesce@ is almost always
@@ -161,7 +161,7 @@ used together with freezing, which \either{I}{we} explain next.
 Our final addition to the LVar model is the ability to \emph{freeze}
 an LVar, which forbids further changes to it, but in return allows its
 exact value to be read.  We expose freezing through the function
-@freeze@, which takes an LVar as its sole argument, and returns the
+@freeze@, which takes an LVar as its sole argument and returns the
 exact value of the LVar as its result.  Any writes that would change
 the value of a frozen LVar instead raise an exception, and it is the
 potential for races between such writes and @freeze@ that makes the
@@ -177,7 +177,7 @@ common pattern of programming in the LVish model:
   \termfont{freezeAfter} = \lam{\mathit{lv}}{\lam{Q}{\lam{f}{}}}
   \begin{array}[t]{l}
     \termfont{let}~\mathit{h}~=~\NEWPOOL \\
-    \termfont{in}
+    \letspace \termfont{in}
       \begin{array}[t]{l}  
         \ADDHANDLERINPOOL~h~\mathit{lv}~Q~f;
 \\
@@ -190,7 +190,7 @@ common pattern of programming in the LVish model:
 \]
 \doublespacing
 
-In this pattern, an event handler is registered for an LVar,
+\noindent In this pattern, an event handler is registered for an LVar,
 subsequently quiesced, and then the LVar is frozen and its exact value
 is returned.
 
@@ -203,8 +203,7 @@ traversal in the following simple fashion:
 \lstinputlisting{chapter3/code/bfs_new.hs}
 \doublespacing
 
-This code, written using the LVish Haskell library (which \either{I}{we} will go on
-to describe in \either{Chapter}{Section}~\ref{ch:lvish}), discovers (in parallel) the
+\noindent This code, written using the LVish Haskell library, discovers (in parallel) the
 set of nodes in a graph @g@ reachable from a given node @startV@, and
 is guaranteed to produce a deterministic result.\footnote{In the LVish
   library, the \lstinline|Par| type constructor is the monad in which
@@ -214,7 +213,7 @@ elements are sets, with set union as lub), and seeding it with the
 starting node.
 
 The @freezeSetAfter@ function implements a set-specific variant of the
-freeze-after pattern I described above.  It combines freezing and
+freeze-after pattern described above.  It combines freezing and
 event handlers: first, it registers the callback @handle@ as a handler
 for the @seen@ set, which will asynchronously put the neighbors of
 each visited node into the set, possibly triggering further callbacks,

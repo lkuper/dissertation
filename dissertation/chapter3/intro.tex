@@ -33,9 +33,8 @@ In this \either{chapter, I}{section, we} describe two extensions to the basic LV
 of \either{Chapter}{Section}~\ref{ch:lvars} that give us a new way to approach problems like
 the parallel graph traversal problem.
 First, \either{I}{we} add the ability to attach \emph{event handlers} to an LVar
-that allow \emph{callback functions} to run in response to updates to
-the LVar.  It is possible to check for the \emph{quiescence} of a
-group of handlers: a group of handlers is quiescent when no callbacks
+that allow callback functions to run in response to updates to
+the LVar.  We say that a group of event handlers is \emph{quiescent} when no callbacks
 are currently enabled to run.  Second, \either{I}{we} add a new primitive
 operation, @freeze@, that returns the exact contents of an LVar
 without blocking.  Using @freeze@ to read an LVar comes with the
@@ -86,11 +85,11 @@ used to extract an answer.  In this common case, determinism is
 guaranteed, since no writes can subsequently occur.
 
 \either{I}{We} will refer to the LVars model, extended with handlers, quiescence,
-and freezing, as the \emph{LVish model}.  This \either{chapter}{section} introduces
+and freezing, as the \emph{LVish model}.  The rest of this \either{chapter}{section} introduces
 the LVish programming model, first informally through a series of examples, and then formally, by extending
 the $\lambdaLVar$ calculus of \either{Chapter}{Section}~\ref{ch:lvars} to add support
 for handlers, quiescence, freezing, and the arbitrary update operations described in
-Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}}.
+Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}}, resulting in a calculus \either{I}{we} call $\lambdaLVish$.
 \either{I}{We} will also return to our parallel graph traversal problem and show
 an solution implemented using the LVish Haskell library.
 
