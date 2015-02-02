@@ -33,9 +33,8 @@ to their data structure.  For finite maps, for instance, this
 interface might include key/value insertion, lookup, event handlers
 and pools, and freezing---along with higher-level abstractions built
 on top of these.
-%
 Control operators like @fork@ are the only non-data-structure-specific
-operations exposed to application-writers.
+operations exposed to application writers.
 
 For this approach to scale well with available parallel resources, it
 is essential that the data structures themselves support efficient
@@ -49,6 +48,4 @@ advantage: because all updates must commute, it may be possible to
 avoid the expensive synchronization which \emph{must} be used for
 non-commutative operations~\cite{lawsOfOrder}.  And in any case,
 monotonic data structures can be simpler to represent and
-implement than general ones. \lk{I think Aaron wrote that last
-  sentence. I'm not sure I feel comfortable making the claim without
-  citation...}
+implement than general ones.

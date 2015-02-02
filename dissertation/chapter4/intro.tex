@@ -17,25 +17,18 @@ perhaps more useful to think of it as a language that gets other
 effects out of the way so that one can add one's own effects!}  In the
 case of the basic LVars model of \either{Chapter}{Section}~\ref{ch:lvars}, those effects
 are @put@ and @get@ operations on LVars;
-\rn{What about addHandler?}
  \either{Chapter}{Section}~\ref{ch:quasi} adds
 the @freeze@ operation and arbitrary update operations.  Implementing
-the LVars model as a Haskell library makes it possible to provide
-compile-time guarantees about determinism and quasi-determinism,
-because programs written using the library run in a particular monad
-and can therefore only perform the side effects that we choose to
-sanction.
+these operations as monadic effects in Haskell makes it possible to
+provide compile-time guarantees about determinism and
+quasi-determinism, because as long as the only monad that programs use
+is the one in which LVar operations are allowed to run, we know that
+they can only perform the side effects that we have chosen to allow.
 
-Another reason why the existing @Par@ monad is an appealing starting
+Another reason why the existing @Par@ monad is an appealing conceptual starting
 point for a practical implementation of LVars is that it already allows
 inter-task communication through IVars, which, as we have seen, are a
-special case of LVars.  % Implementing the basic LVars model thus
-% becomes a matter of generalizing the existing @Par@ monad
-% implementation.  
-% 
-%% RN: Nixing this because we didn't end up actually USING any piece of the
-%% monad-par implementation, did we?  Besides, space.
-%
+special case of LVars.
 Finally, the @Par@ monad approach is appealing
 because it is implemented entirely as a library in Haskell, with a
 library-level scheduler.  This modularity makes it possible to make
@@ -43,35 +36,9 @@ changes to the @Par@ scheduling strategy (which we will need to do in
 order to support LVars) without having to make any modifications to
 GHC or its run-time system.
 
-\lk{Ugh, I hate roadmap paragraphs, and this is just about the worst of
-all time. Maybe I can make this better.}
-
 In this \either{chapter}{section}, \either{I}{we} describe the \emph{LVish} library, a Haskell
 library for practical deterministic and quasi-deterministic parallel
 programming with LVars.  We have already seen a taste of what it is
 like to use the LVish library; Section~\ref{s:quasi-informal} gave an
 example of an LVish Haskell program.  Here, \either{I}{we} go on to give a
-systematic introduction to the LVish library.  
-\rn{What about just nixing most of this?  I think the paper shouldn't be soooo
-long that there's more than just one roadmap para in the intro, if there is one
-at all.}
-\ifdefined\DISSERTATION
-First, in
-Section~\ref{s:lvish-big-picture}, \either{I}{we} discuss the library at a high
-level.  Then, in Section~\ref{s:lvish-api}, \either{I}{we} describe the LVish API,
-and \either{I}{we} discuss the parallel breadth-first traversal of
-Section~\ref{s:quasi-informal} in more detail.  In
-Section~\ref{s:lvish-disjoint}, \either{I}{we} discuss how LVish
-supports \emph{imperative disjoint parallelism} (in the style of
-DPJ~\cite{dpj-oopsla}) alongside LVars, which we accomplish using a
-monad transformer, @ParST@.  In Section~\ref{s:lvish-internals}, \either{I}{we}
-describe how the LVish library itself is implemented.  Finally, in
-Sections~\ref{s:lvish-k-cfa} and~\ref{s:lvish-phybin}, \either{I}{we} present two
-case studies of parallelizing existing Haskell programs by porting
-them to LVish.  First, in Section~\ref{s:lvish-k-cfa}, \either{I}{we} describe
-using LVish to parallelize a control-flow analysis ($k$-CFA)
-algorithm.  Second, in Section~\ref{s:lvish-phybin}, \either{I}{we} describe using
-LVish to parallelize
-\emph{PhyBin}, a bioinformatics application that relies heavily on a
-(parallelizable) tree-edit distance algorithm.
-\fi{}
+more thorough tour of LVish.
