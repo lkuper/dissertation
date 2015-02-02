@@ -230,24 +230,20 @@ counterparts in $\lambdaLVar$:
   \frozenfalse)$, and returns the location $l$ of that LVar (\ie, a
   pointer to the LVar).
 \item @get@ (implemented by the {\sc E-Get} rule) performs a blocking
-  threshold read.  It takes a pointer to an LVar and a \emph{threshold
-    set} $P$, which is a non-empty set of LVar states that must be
-  \emph{pairwise incompatible}, expressed by the premise $\incomp{P}$.
+  threshold read.  It takes a pointer to an LVar and a threshold
+    set $P$, which is a non-empty set of LVar states that must be
+  pairwise incompatible, expressed by the premise $\incomp{P}$.
   A threshold set $P$ is pairwise incompatible iff the lub of any two
   distinct elements in $P$ is $\topp$.  If the LVar's state $p_1$ in
-  the lattice is \emph{at or above} some $p_2 \in P$, the @get@
-  operation unblocks and returns $p_2$.  Note that $p_2$ is a unique
-  element of $P$, for if there is another $p'_2 \neq p_2$ in the
-  threshold set such that $p'_2 \leqp p_1$, it would follow that
-  $\lubp{p_2}{p'_2} = p_1 \neq \topp$, which contradicts the
-  requirement that $P$ be pairwise incompatible.
+  the lattice is at or above some $p_2 \in P$, the @get@
+  operation unblocks and returns $p_2$.
 \end{itemize}
 
-$\lambdaLVish$'s counterpart to the @put@ operation is the $\PUTi$
-operation, which is actually a set of operations that provide access
-to the provided update operations $u_i$.  For each $u_i$ update
-operation, $\PUTi$ (implemented by the {\sc E-Put} rule) takes a
-pointer to an LVar and updates the LVar's state to result of calling
+\noindent $\lambdaLVish$ replaces the $\lambdaLVar$ @put@ operation with the $\PUTi$
+operation, which is actually a set of operations that are the interface
+to the provided update operations $u_i$.  For each update
+operation $u_i$, $\PUTi$ (implemented by the {\sc E-Put} rule) takes a
+pointer to an LVar and updates the LVar's state to the result of calling
 $u_{p_i}$ on the LVar's current state, potentially pushing the state
 of the LVar upward in the lattice.  The {\sc E-Put-Err} rule applies
 when a $\PUTi$ operation would take the state of an LVar to $\topp$;
@@ -264,19 +260,20 @@ immediately freezes and returns its contents.
 More interesting is the $\FAW$ primitive, which models the
 ``freeze-after'' pattern \either{I}{we} described in
 Section~\ref{subsection:quasi-freeze-after}.  The expression
-\[ \freezeafter{e_{\rm lv}}{e_{\rm events}}{e_{\rm cb}} \]
+\[ \freezeafter{\mathit{lv}}{Q}{f} \]
 has the following semantics:
 \begin{itemize}
-\item It attaches the callback $e_{\rm cb}$ to the LVar $e_{\rm lv}$.
-  The expression $e_{\rm events}$ must evaluate to a event set $Q$;
-  the callback will be executed, once, for each lattice element in $Q$
-  that the LVar's state reaches or surpasses.  The callback $e_{\rm
-    cb}$ is a function that takes a lattice element as its argument.
-  Its return value is ignored, so it runs solely for effect.  For
-  instance, a callback might itself do a $\PUTi$ to the LVar to which
-  it is attached, triggering yet more callbacks.
-\item If the handler reaches a quiescent state, the LVar $e_{\rm lv}$
-  is frozen, and its \emph{exact} state is returned (rather than an
+\item It attaches the callback $f$ to the LVar $\mathit{lv}$.  The
+  callback will be executed, once, for each element of the event set
+  $Q$ that the LVar's state reaches or surpasses.  The callback is a
+  function that takes a lattice element as its argument.  Its return
+  value is ignored, so it runs solely for effect.  For instance, a
+  callback might itself do a $\PUTi$ to the LVar to which it is
+  attached, triggering yet more callbacks.
+\item If execution reaches a point where there are
+  no more elements of $Q$ left to handle and no callbacks still running,
+  then we have reached a quiescent state, the LVar $\mathit{lv}$ is
+  frozen, and its \emph{exact} state is returned (rather than an
   underapproximation of the state, as with @get@).
 \end{itemize}
 To keep track of the running callbacks, $\lambdaLVish$ includes an
@@ -289,16 +286,14 @@ where:
 \item The value $l$ is the LVar being handled/frozen;
 \item The set $Q$ (a subset of the lattice $D$) is the event set;
 \item The value $\lam{x}{e_0}$ is the callback function;
-\item The set of expressions $\setof{e, \dots}$ are the running
+\item The set of expressions $\setof{e, \dots}$ is the set of running
   callbacks; and
 \item The set $H$ (a subset of the lattice $D$) represents those
-  values in $Q$ for which callbacks have already been launched.
+  values in $Q$ for which callbacks have already been launched; we call $H$ the ``handled'' set.
 \end{itemize}
 Due to $\lambdaLVish$'s use of evaluation contexts, any running
 callback can execute at any time, as if each is running in its own
-thread.
-
-The rule {\sc E-Spawn-Handler} launches a new callback thread any time
+thread.  The rule {\sc E-Spawn-Handler} launches a new callback thread any time
 the LVar's current value is at or above some element in $Q$ that has
 not already been handled.  This step can be taken nondeterministically
 at any time after the relevant $\PUTi$ has been performed.

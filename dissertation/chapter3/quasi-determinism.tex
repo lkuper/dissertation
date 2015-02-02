@@ -10,8 +10,8 @@ The quasi-determinism theorem \either{I}{we} show says that if two executions
 starting from a configuration $\conf$ terminate in configurations
 $\conf'$ and $\conf''$, then either $\conf'$ and $\conf''$ are the
 same configuration (up to a permutation on locations), or one of them
-is $\error$.  As with the determinism proof for $\lambdaLVar$ that \either{I}{we}
-give in Section~\ref{s:lvars-proof}, quasi-determinism follows from a
+is $\error$.  As with the determinism proof for $\lambdaLVar$
+in Section~\ref{s:lvars-proof}, quasi-determinism follows from a
 series of supporting lemmas.  The basic structure of the proof follows
 that of the $\lambdaLVar$ determinism proof closely.  However, instead
 of the Independence property that \either{I}{we} showed for $\lambdaLVar$
@@ -24,10 +24,10 @@ the Strong Local Confluence property
 \emph{Quasi-}Confluence
 (Lemma~\ref{lem:strong-local-quasi-confluence}), which allows the
 possibility of an $\error$ result, and the quasi-confluence lemmas
-that follow, Strong One-sided Quasi-Confluence
+that follow---Strong One-sided Quasi-Confluence
 (Lemma~\ref{lem:strong-one-sided-quasi-confluence}), Strong
 Quasi-Confluence (Lemma~\ref{lem:lvars-strong-confluence}), and
-Quasi-Confluence (Lemma~\ref{lem:lvars-confluence}), all follow this
+Quasi-Confluence (Lemma~\ref{lem:lvars-confluence})---all follow this
 pattern as well.
 \ifdefined\JOURNAL
 We give only the statements of the quasi-determinism theorem and its
@@ -154,12 +154,10 @@ is, $\config{\lubstore{S}{S''}}{e} \parstepsto
 $S''$.
 
 For $\lambdaLVish$, we need to establish a similar frame property.
-However, since we have generalized from the lub writes of the @put@
-operation in \either{Chapter}{Section}~\ref{ch:lvars} to the arbitrary update operations
-discussed in Section~\ref{subsection:quasi-update-operations}, we also
+However, since we have generalized from @put@ to $\PUTi$, we also
 need to generalize our frame property.  In fact, the original
-Lemma~\ref{lem:lvars-independence} does not hold for $\lambdaLVish$ in
-general.  As an example, consider an LVar whose states form a lattice
+Lemma~\ref{lem:lvars-independence} does not hold for $\lambdaLVish$.
+As an example, consider an LVar whose states form a lattice
 $\bot < 0 < 1 < \top$.  Consider the transition
 \[
 \config{\store{\storebinding{l}{0}{\frozenfalse}}}{\putiexp{l}}
@@ -208,7 +206,7 @@ versions $u_{p_i}$), or freeze the contents of existing locations.
 
 \DefStoreUpdateOperation
 
-Definition~\ref{def:store-update-operation} says that applying $U_S$
+\noindent Definition~\ref{def:store-update-operation} says that applying $U_S$
 to $S$ either updates (using some $u_{p_i} \in U_p$) or freezes the
 contents of each $l \in \dom{S}$.  Since the identity function is
 always implicitly a member of $U_p$, $U_S$ can act as the identity on
@@ -237,7 +235,7 @@ requirement that $U_S(S') \neq \topS$, and the requirement that $U_S$
 is non-conflicting with the transition from $\config{S}{e}$ to
 $\config{S'}{e'}$.
 Definition~\ref{def:non-conflicting-store-update-operation} revises
-our previous definition of non-conflicting to apply to store update
+our previous definition of ``non-conflicting'' to apply to store update
 operations.  It says that $U_S$ is non-conflicting with the transition
 $\config{S}{e} \parstepsto \config{S'}{e'}$ if, for all locations
 allocated during the transition, $U_S$ does not interfere with those
@@ -259,7 +257,7 @@ that $U_S$ need not avoid updating the contents of locations that are
 \emph{already} frozen before the transition takes place.  This
 corresponds to the fact that, if an LVar is already frozen, arbitrary
 updates to it \emph{do}, in fact, commute with freeze operations on
-it---although those later freeze operations will have no effect, and
+it---those later freeze operations will have no effect, and
 updates will either have no effect or raise an error.)
 
 \DefFreezeSafe
@@ -461,7 +459,7 @@ Moreover, in the LVish model, an $\error$ result \emph{always} means
 that there is an undersynchronization bug in the program, and in
 principle the error message can even specify exactly which write
 operation happened after which freeze operation, making it easier to
-debug the problem.
+debug the race.
 
 However, if we \emph{can} ensure that an LVar is only ever frozen
 \emph{after} all writes to that LVar have completed, then we can
