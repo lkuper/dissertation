@@ -1515,8 +1515,7 @@ Leijen~\cite{semantics-concurrent-revisions} show that, for any two
 vertices in a CR revision diagram, there exists a \emph{greatest
   common ancestor} state that can be used to determine what changes
 each side has made---an interesting duality with our model (in which
-any two LVar states have a lub).\lk{TODO: Write to them and ask them
-  if it's a join-semilattice or a meet-semilattice!}
+any two LVar states have a lub).
 
 Although versioned variables in CR could model lattice-based data
 structures---if they used least upper bound as their merge function
@@ -1544,9 +1543,7 @@ out programs that would perform non-monotonic operations on
 distributed data collections, whereas in the LVars model, monotonicity
 is enforced by the API presented by LVars.  Another difference between
 Bloom($^L$) and the LVars model is that the former does not have a
-notion of quasi-determinism.\lk{TODO: make sure this is the case---I
-  think there might be some sort of way to unsafely peek in Bloom, but
-  it's ruled out by the CALM analysis.}  Finally, since LVish is
+notion of quasi-determinism.  Finally, since LVish is
 implemented as a Haskell library (whereas Bloom($^L$) is implemented
 as a domain-specific language embedded in Ruby), we can rely on
 Haskell's static type system for fine-grained effect tracking and
