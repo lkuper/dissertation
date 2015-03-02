@@ -1,30 +1,24 @@
-\TODO{Edit this.}
+\TODO{Some kind of introductory paragraph...}
 
-\lk{Dumped acks from FHPC paper.}
+Dan Friedman invited me to be a teaching assistant for his C311 course in spring 2009, which eventually led to my first research project in grad school: working on miniKanren with Dan, Will Byrd, and a group of relational programming aficionados fueled by intense curiosity and Mother Bear's pizza.  I was in way over my head, but we had a great time, and I went on to help out with C311 for two more semesters under Dan and Will's expert guidance.
 
-Thanks to Aaron Turon, Neel Krishnaswami, Amr Sabry, and
-Chung-chieh Shan for many insightful conversations and for their expert feedback at various stages of this work.
-Thanks also to Amal Ahmed for originally pointing out the
-similarity between the Independence Lemma and the frame rule.  This
-research was funded in part by NSF grant CCF-1218375.
+Amal Ahmed joined the IU faculty in 2009 and was a tremendous influence on me as I began truly learning how to read PL research papers and, eventually, write them.  Although I never worked on deterministic parallelism with Amal, it was nevertheless from her that I learned how to design and prove properties of calculi very much like the ones in this dissertation.  Amal also had a huge positive influence on the culture of the PL group at IU.  Weekly ``PL Wonks'' meetings are a given these days, but it wasn't so very long ago that the PL group didn't have particularly regular meetings, or even much of a group identity.  It was Amal who gathered us all in a room and told us that from then on we were all giving talks every semester.  When Amal left IU for Northeastern in 2011, I had to make a difficult choice between going with her or staying, and although I decided to stay at IU and work with Ryan on what would eventually become this dissertation, Amal's influence on my work has been undeniable.  In fact, it was Amal who originally pointed out the similarity between the Independence Lemma and the frame rule that I discuss in Section~\ref{subsection:lvars-independence}.
 
-\rn{I'm thinking of thanking some of the CnC ppl and Arvind for discussions that led up to this generalization.  If we have space!}
+Ryan Newton, my advisor, is one of the most energetic people I've ever met.  His first act as a new faculty member at IU in fall 2011 was to arrange for our department to get a fancy espresso machine --- and to kick-start a community of student espresso enthusiasts who lovingly maintain it.  In fact, now that I think about it, I'm not sure it was a coincidence that Ryan had the espresso machine installed in the kitchen directly next to my office...
 
-\lk{Dumped acks from POPL paper.}
+Anyway, I took Ryan's seminar course that fall, which was how I started learning about deterministic parallel programming models.  In November 2011, we started discussing the idea of generalizing single-assignment models --- we got so caught up in talking about it one morning that I actually made him late for lunch with Bjarne Stroustrup --- and Ryan suggested that I could help him write an NSF grant proposal to continue working on the idea.  We somehow managed to get our proposal together as 2011 came to a close.  To my astonishment, the proposal was funded.  I gratefully acknowledge everyone at the NSF who took a chance on grant CCF-1218375 --- without that early vote of confidence, I'm not sure I would have been able to keep my spirits up during the year that followed, in which it took us four attempts to get our first LVars paper published.  (In retrospect, I am deeply grateful to the many anonymous reviewers whose advice helped us turn LVars from a half-baked idea into a convincing research contribution.)
 
-\lk{TODO: who else should we thank?  probably Derek?}
+Even before we managed to publish anything, though, I had started to hear from people in the distributed systems community who were interested in LVars.  Pursuing the connection between LVars and distributed data consistency --- the topic of Chapter~\ref{ch:distributed} --- has been one of the most rewarding parts of this whole journey for me, largely because of all the distributed systems researchers who have met me more than halfway.  I especially want to thank the BOOM group at Berkeley, particularly Joe Hellerstein and his students Peter Alvaro, Peter Bailis, and Neil Conway; and the fine folks from Basho Technologies, particularly Sam Elliott and Chris Meiklejohn.  Speaking about LVars at RICON 2013 was one of the highlights of my Ph.D. experience; thanks to everyone at Basho who made it possible.
 
-Lindsey Kuper and Ryan Newton's work on this paper was funded by NSF grant CCF-1218375.
+\TODO{Lots more people to acknowledge:
+Aaron Turon;
+Neel Krishnaswami;
+Amr Sabry;
+Larry Moss;
+Chung-chieh Shan;
+Derek Dreyer;
+Mozilla Research folks, especially Dave Herman;
+The original Rust interns: Tim Chevalier, Michael ``Sully'' Sullivan, Paul Stansifer, Eric Holk;
+Sam Tobin-Hochstadt; PL Wonks; and probably some others I'm forgetting.}
 
-\lk{Dumped acks from WoDet paper.}
-
-Thanks to the anonymous reviewers, Sam Elliott, and Christopher
-Meiklejohn for their helpful comments on earlier versions of this
-paper.  This research is supported by NSF grant CCF-1218375.
-
-\lk{Dumped acks from PLDI paper.}
-
-Thanks to Aaron Turon for many illuminating conversations that helped
-develop the ideas in this paper, and to the anonymous PLDI reviewers
-for their insightful and helpful comments.  This research was funded
-in part by NSF grant CCF-1218375.
+Finally, this dissertation is dedicated to my husband, Alex Rudnick, without whose unflagging love, support, advice, and encouragement I doubt I would have \emph{started} grad school, let alone finished.
