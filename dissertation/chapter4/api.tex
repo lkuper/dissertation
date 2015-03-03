@@ -1,23 +1,19 @@
 \section{The LVish library interface for application writers}\label{s:lvish-api}
 
-In this section \either{I}{we} illustrate the use of the LVish library from the
-point of view of the application writer, through a series of
-examples.\footnote{The examples in this section, among others, are
-  available at \url{https://github.com/lkuper/lvar-examples/}.  
-  % All of
-  % the examples are tested against GHC 7.6.3, the most recent release
-  % at the time of this writing.\TODO{Update this.  The lvar-examples examples
-  % have now been tested against 7.8.3, but I should double-check.}
-}
+In this section \either{I}{we} illustrate the use of the LVish library
+from the point of view of the application writer, through a series of
+short example programs.\footnote{The examples in this section, among
+  others, are available at
+  \url{https://github.com/lkuper/lvar-examples/}.}
 
-\subsection{Basic examples using IVars}
+\subsection{A simple example: IVars in LVish}
 
 \ifdefined\DISSERTATION
 As mentioned in the previous section, the LVish library extends the
 approach of Haskell's monad-par library for deterministic parallelism,
 which allows communication between parallel tasks through IVars.
 Recall that IVars can only be assigned to once.  Therefore the
-following program written using @Par@ will deterministically raise an
+following program written using monad-par will deterministically raise an
 error, because it tries to write to the IVar @num@ twice:
 
 \singlespacing
@@ -27,19 +23,20 @@ error, because it tries to write to the IVar @num@ twice:
 Here, @p@ is a computation of type @Par Int@, meaning that it runs in
 the @Par@ monad (via the call to @runPar@) and returns a value of
 @Int@ type.  @num@ is an IVar, created with a call to @new@ and then
-assigned to via two calls to @put@, each of which runs in a separately
+assigned to twice, via two calls to @put@, each of which runs in a separately
 @fork@ed task.  The @runPar@ function is an implicit global barrier:
 all @fork@s have to complete before @runPar@ can return.
 
 The program raises a ``multiple put'' error at runtime, which is as it
 should be: differing writes to the same shared location could cause
-the subsequent call to @get@ to behave nondeterministically.  (Here,
-@get@ has IVar semantics, not LVar semantics: rather than performing a
-threshold read, it blocks until @num@ has been written, then unblocks
-and evaluates to the exact contents of @num@.)
+the subsequent call to @get@ to behave nondeterministically.  (Since
+we are using monad-par and not LVish, @get@ has IVar semantics, not
+LVar semantics: rather than performing a threshold read, it blocks
+until @num@ has been written, then unblocks and evaluates to the exact
+contents of @num@.)
 
-However, in monad-par, even multiple writes of the \emph{same} value
-to an IVar will raise a ``multiple put'' error:
+However, when using monad-par, even multiple writes of the \emph{same}
+value to an IVar will raise a ``multiple put'' error:
 
 \singlespacing
 \lstinputlisting{chapter4/code/repeated-4-ivar.hs}
@@ -48,19 +45,24 @@ to an IVar will raise a ``multiple put'' error:
 This program differs from the previous one only in that the two @put@s
 are writing @4@ and @4@, rather than @3@ and @4@.  Even though the
 call to @get@ would produce a deterministic result regardless of which
-write happened first, the program still raises an error because of the
-IVar single-write restriction.
+write happened first, the program nevertheless raises an error because
+of monad-par's single-write restriction on IVars.
 
-Now let's consider a version of this program written using the LVish
+Now let us consider a version of this program written using the LVish
 library. (Of course, in LVish we are not limited to IVars, but we
 will consider IVars first as an interesting special case of LVars, and
 then go on to consider some more sophisticated LVars later in this
 section.)  A version of the above program written using LVish will
 write @4@ to an IVar twice and then deterministically print @4@
 instead of raising an error:
-\else
-First, let's consider one of our previous IVar programs, written 
-using the LVish library:
+\fi
+
+\ifdefined\JOURNAL
+First, let us consider an LVish program that writes the same value to
+an IVar twice.  (Of course, in LVish we are not limited to IVars, but
+we will consider IVars first as an interesting special case of LVars,
+and then go on to consider some more sophisticated LVars later in this
+section.)
 \fi
 
 \singlespacing
@@ -68,15 +70,15 @@ using the LVish library:
 \doublespacing
 
 \ifdefined\JOURNAL
-Compared to a monad-par implementation, the differences are minor.
-\fi{}
-Here, we import the @Control.LVish@ module rather than
+\noindent Compared to a monad-par implementation, the differences are minor.
+\fi
+\either{Here, we}{We} need to import the @Control.LVish@ module rather than
 @Control.Monad.Par@ (that is, we are using LVish instead of
 monad-par), and we must specifically import @Data.LVar.IVar@ in order
 to specify which LVar data structure we want to work with (since we
 are no longer limited to IVars).  Just as with monad-par, the LVish
 @runPar@ function is a global barrier: both @fork@s must compete
-before @runPar@ can return.  Also,\either{as before,}{} we have @new@, @put@,
+before @runPar@ can return.  Also,\either{as before}{as in monad-par}, we have @new@, @put@,
 and @get@ operations that respectively create, update, and read from
 @num@.  However, these operations now have LVar semantics: the @put@
 operation computes a lub (with respect to a lattice like that of
@@ -89,8 +91,8 @@ and @get@) that have the semantic effect of lub writes and threshold
 reads (as \either{I}{we} touched on earlier in
 Section~\ref{subsection:lvars-the-model-versus-reality}).
 
-There are two other important differences between the monad-par
-program and the LVish program: the @Par@ type constructor has gained
+There are two other important differences between \either{the monad-par
+program}{a monad-par implementation} and the LVish program: the @Par@ type constructor has gained
 two new type parameters, @e@ and @s@, and @p@'s type annotation now
 has a \emph{type class constraint} of @(HasPut e, HasGet e)@.
 Furthermore, we have added two @LANGUAGE@ pragmas, instructing the
