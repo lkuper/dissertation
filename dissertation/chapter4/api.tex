@@ -91,61 +91,55 @@ and @get@) that have the semantic effect of lub writes and threshold
 reads (as \either{I}{we} touched on earlier in
 Section~\ref{subsection:lvars-the-model-versus-reality}).
 
-There are two other important differences between \either{the monad-par
-program}{a monad-par implementation} and the LVish program: the @Par@ type constructor has gained
-two new type parameters, @e@ and @s@, and @p@'s type annotation now
-has a \emph{type class constraint} of @(HasPut e, HasGet e)@.
-Furthermore, we have added two @LANGUAGE@ pragmas, instructing the
-compiler that we are now using the @DataKinds@ and @TypeFamilies@
-language extensions.  In the following section, \either{I}{we} explain these
-changes.
+There are two other important differences between \either{the
+  monad-par program}{a monad-par implementation} and the LVish
+program: the @Par@ type constructor has gained two new type
+parameters, @e@ and @s@, and @p@'s type annotation now has a
+\emph{type class constraint} of @(HasPut e, HasGet e)@.  Furthermore,
+we have added a @LANGUAGE@ pragma, instructing the compiler that we
+are now using the @TypeFamilies@ language extension.  In the following
+section, \either{I}{we} explain these changes.
 
 \subsection{The \il{e} and \il{s} type parameters: effect tracking and session tracking}
 
-In order to support both determinism and quasi-determinism guarantees
-in the LVish library, we need to be able to guarantee that only
-certain LVar effects can occur within a given @Par@ computation.  In a
-deterministic computation, only update operations (such as @put@) and
-threshold reads should be allowed; in a quasi-deterministic
-computation, @freeze@ operations should be allowed as well.  Yet other
-combinations may be desirable: for instance, we may want a computation
-to perform \emph{only} writes, and not reads.  Furthermore, we want to
-be able to specifically allow or disallow \emph{non-idempotent} update
+In order to support both deterministic and quasi-deterministic
+programming in LVish, we need a way to specify which LVar effects can
+occur within a given @Par@ computation.  In a deterministic
+computation, only update operations (such as @put@) and threshold
+reads should be allowed; in a quasi-deterministic computation,
+@freeze@ operations should be allowed as well.  Yet other combinations
+may be desirable: for instance, we may want a computation to perform
+\emph{only} writes, and not reads.
+\ifdefined\DISSERTATION
+Furthermore, we want to be able to
+specifically allow or disallow \emph{non-idempotent} update
 operations, which \either{I}{we} discuss in more detail in
 Section~\ref{subsection:lvish-discussion-leveraging-idempotency}.
+\fi
 
 In order to capture these constraints and make them explicit in the
 types of LVar computations, LVish indexes @Par@ computations with a
 \emph{phantom type} @e@ that indicates their \emph{effect level}.  The
 @Par@ type becomes, instead, @Par e@, where @e@ is a type-level
-encoding of booleans indicating which operations, such as writes,
-reads, or freeze operations, are allowed to occur inside it.
-
-\lk{Any terminology preference for ``effect level'' vs. ``effect
-  signature''?}
-
-Since we do not know in advance which effects this
-``switch-on-and-off'' capability will need to support, LVish follows
-the precedent of Kiselyov \etal~on extensible effects in
+encoding of Booleans indicating which operations, such as writes,
+reads, or freeze operations, are allowed to occur inside it.  LVish
+follows the precedent of Kiselyov \etal~on extensible effects in
 Haskell~\cite{oleg-amr-haskell-2013}: it abstracts away the specific
 structure of @e@ into \emph{type class constraints}, which allow a
 @Par@ computation to be annotated with the \emph{interface} that its
-@e@ type parameter is expected to satisfy.  This static effect
-tracking mechanism allows us to define ``effect shorthands'' and use
-them as Haskell type class constraints.  For example, a @Par@
-computation where @e@ is annotated with the effect level constraint
-@HasPut@ can perform @put@s.  In our example above, @e@ is annotated
-with both @HasPut@ and @HasGet@ and therefore the @Par@ computation in
-question can perform both @put@s and @get@s.  We will see several more
-examples of effect level constraints in LVish @Par@ computations
-shortly.
+@e@ type parameter is expected to satisfy.  This approach allows us to
+define ``effect shorthands'' and use them as Haskell type class
+constraints.  For example, a @Par@ computation where @e@ is annotated
+with the effect level constraint @HasPut@ can perform @put@s.  In our
+example above, @e@ is annotated with both @HasPut@ and @HasGet@ and
+therefore the @Par@ computation in question can perform both @put@s
+and @get@s.  We will see several more examples of effect level
+constraints in LVish @Par@ computations shortly.
 
 The effect tracking infrastructure is also the reason why we need to
-use the @DataKinds@ and @TypeFamilies@ language extensions in our
-LVish programs.  For brevity, \either{I}{we} will elide the @LANGUAGE@ pragmas in
-the rest of the example LVish programs in this section.  \TODO{I need
-  to figure out and actually explain \emph{why} the effect tracking
-  requires \il{DataKinds} and \il{TypeFamilies}.}
+use the @TypeFamilies@ language extension in our LVish programs.  For
+brevity, \either{I}{we} will elide the @LANGUAGE@ pragmas in the rest
+of the example LVish programs in this section.
 
 The LVish @Par@ type constructor also has a second type parameter,
 @s@, making @Par e s a@ the complete type of a @Par@ computation that
