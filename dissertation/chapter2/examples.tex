@@ -38,13 +38,13 @@ respectively, and the expression
 \vspace{-8mm}
 \singlespacing
 \begin{displaymath}
-\letparexp{x_1}{e_1}{x_2}{e_2;~\dots}{\mathit{body}}
+\letparexp{x_1}{e_1}{x_2}{e_2;~\dots}{e_3}
 \end{displaymath}
 \doublespacing
 
 has \emph{fork-join} semantics: it launches concurrent subcomputations
 $e_1, e_2, \dots$ whose executions arbitrarily interleave, but must
-all complete before $\mathit{body}$ runs.
+all complete before the expression $e_3$ runs.
 
 \begin{figure}
 \centering
