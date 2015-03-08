@@ -1,9 +1,11 @@
 import Control.LVish
-import Control.LVish.DeepFrz
+import Control.LVish.DeepFrz -- provides Frzn
 import Data.LVar.Generic (addHandler, freeze)
 import Data.LVar.PureSet
+import qualified Data.Graph as G
 
-traverse :: (HasPut e, HasGet e, HasFreeze e) => G.Graph -> Int -> Par e s (ISet Frzn Int)
+traverse :: (HasPut e, HasFreeze e) =>
+            G.Graph -> Int -> Par e s (ISet Frzn Int)
 traverse g startNode = do
   seen <- newEmptySet
   h <- newHandler seen

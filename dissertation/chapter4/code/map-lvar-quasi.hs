@@ -1,5 +1,4 @@
 import Control.LVish
-import Control.LVish.DeepFrz
 import Data.LVar.PureMap
 import qualified Data.Map as M
 

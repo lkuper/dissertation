@@ -161,13 +161,7 @@ LVars are created and used within the same session.\footnote{The
   another, which is, as Simon Marlow has noted, ``a Very Bad Idea;
   don't do it''~\cite{marlow-book}.}
 
-% \subsection{Non-idempotent writes: an increment-only counter}
-
-% \TODO{I want to put an example here, but the last time I tried
-%   actually using \il{Data.LVar.Counter} in LVish, it didn't work. :(
-%   Need to figure this out!}
-
-\subsection{Container LVars: a shopping cart example}\label{subsection:lvish-container-lvars}
+\subsection{An observably deterministic shopping cart}\label{subsection:lvish-container-lvars}
 
 For our next few examples, let us consider concurrently adding items
 to a shopping cart.  Suppose we have an @Item@ data type for items
@@ -242,9 +236,9 @@ monotonic growth.\footnote{On the other hand, one way to implement a
     literature on CRDTs to the setting of LVars is a topic of ongoing
     work~\cite{joining-wodet}.}}
 
-\subsection{A quasi-deterministic shopping cart example}
+\subsection{A quasi-deterministic shopping cart}
 
-So far, the examples in this section have been fully deterministic;
+The LVish examples we have seen so far have been fully deterministic;
 they do not use @freeze@.  Next, let us consider a program that
 freezes and reads the exact contents of a shopping cart, concurrently
 with inserting into it.
@@ -266,11 +260,11 @@ underlying @Data.Map@.
 
 Because @p@ performs a freezing operation, the effect level of its
 return type must reflect the fact that it is allowed to perform
-freezes.  Therefore, in addition to @HasPut@, we now have the
-additional type class constraint of @HasFreeze@ on @e@.  Furthermore,
-because @p@ is allowed to perform a freeze, we cannot run it with
-@runPar@, as in our previous examples, but must instead use a special
-variant, @runParQuasiDet@, whose type signature allows @Par@
+freezes.  Therefore, instead of @HasGet@, we have the type class
+constraint of @HasFreeze@ on @e@.  Furthermore, because @p@ is allowed
+to perform a freeze, we cannot run it with @runPar@, as in our
+previous examples, but must instead use a special variant of @runPar@,
+called @runParQuasiDet@, whose type signature allows @Par@
 computations that allow freezing to be passed to it.
 
 The quasi-determinism in this program arises from the fact that the
@@ -291,38 +285,40 @@ been written.
 The advantage of freezing is that it allows us to observe the exact,
 complete contents of an LVar; the disadvantage is that it introduces
 quasi-determinism due to the possibility of a write racing with a
-freeze, as in the example above.  But, if we could ensure that a
+freeze, as in the example above.  But, if we could ensure that the
 @freeze@ operation happened \emph{last}, we would be able to freeze
 LVars with no risk to determinism.  In fact, the LVish library offers
-a straightforward solution to this problem: instead of writing
-@freeze@ operations ourselves (and perhaps accidentally writing an
-undersynchronized program that freezes an LVar too early), we can ask
-LVish to freeze an LVar for us itself while ``on the way out'' of a
-@Par@ computation.  The mechanism that allows this is a special
-@runParThenFreeze@ function.  A version of the above program written
-using @runParThenFreeze@ is as follows:
+a straightforward solution to this problem: instead of manually
+calling @freeze@ (and perhaps accidentally freezing an LVar too
+early), we can tell LVish to handle the freezing for us while ``on the
+way out'' of a @Par@ computation.  The mechanism that allows this is
+another variant of @runPar@, which we call @runParThenFreeze@.  A
+version of the above program written using @runParThenFreeze@ is as
+follows:
 
 \singlespacing
 \lstinputlisting{chapter4/code/map-lvar-freezeafter.hs}
 \doublespacing
 
-An interesting thing to note about this @Par@ computation is that it
-\emph{only} performs writes (as evidenced by its effect level, which
-is only constrained by @HasPut@).  Also, unlike the previous version,
-where the @freeze@ took place inside the @Par@ computation, this
-computation returns an @IMap@ rather than a @Map@.
+\noindent An interesting thing to note about this @Par@ computation is
+that it \emph{only} performs writes (as we can see from its effect
+level, which is only constrained by @HasPut@).  Also, unlike the
+previous version, where the @freeze@ took place inside the @Par@
+computation, this computation returns an @IMap@ rather than a @Map@.
+Since @IMap@ is an LVar, it has an @s@ parameter, which we can see in
+the type of @p@.
 
 Because there is no synchronization operation after the two @fork@
-calls, @p@ may well return @cart@ before both (or either) of the items
-have been added to it.  However, since @runParThenFreeze@ is an
+calls, @p@ may well return @cart@ before both (or either) of the calls
+to @insert@ have completed.  However, since @runParThenFreeze@ is an
 implicit global barrier (just as @runPar@ and @runParQuasiDet@ are),
 both calls to @insert@ \emph{must} complete before @runParThenFreeze@
 can return---which means that the result of the program is
 deterministic.
 
-\subsection{Event-driven programming: a deterministic parallel graph traversal}
+\subsection{Event-driven programming with LVars: a deterministic parallel graph traversal}
 
-Finally, we'll look at an example that uses event handlers as well as
+Finally, let us look at an example that uses event handlers as well as
 freezing.  The function @traverse@ takes a graph @g@ and a vertex
 @startNode@ and finds the set of all vertices reachable from
 @startNode@, in parallel.
@@ -331,47 +327,62 @@ freezing.  The function @traverse@ takes a graph @g@ and a vertex
 \lstinputlisting{chapter4/code/graph-traversal-explicit-freeze.hs}
 \doublespacing
 
-@traverse@ works by first creating a new LVar of set type, called
-@seen@.  Its next step is to attach an event handler to @seen@, using
-the @newHandler@ function.  @newHandler@ takes two arguments: an LVar
-and the callback that we want to run every time an event occurs on
+\noindent The @traverse@ function first creates a new LVar, called
+@seen@, to represent a montonically growing set of @Int@s that will
+identify nodes in the graph.  For this purpose, we use the @ISet@
+type, provided by the @Data.LVar.PureSet@ module.  (As with @IMap@,
+the individual elements of the @ISet@ are immutable, but the set
+itself can grow.)
+
+Next, @traverse@ attaches an event handler to @seen@.  It does so by
+calling the @newHandler@ function, which takes two arguments: an LVar
+and the callback that is to be to run every time an event occurs on
 that LVar (in this case, every time a new node is added to the
 set).\footnote{\il{newHandler} is not provided by LVish, but we can
   easily implement it using LVish's built-in \il{newPool} and
   \il{addHandler} operations.\lk{Actually, is there any good reason
     why LVish \emph{doesn't} provide something like \il{newHandler}?}}
-We respond to such events by looking up the neighbors of the newly
-arrived node (with a call to the @neighbors@ operation, which takes a
+The callback responds to events by looking up the neighbors of the
+newly arrived node (assuming a @neighbors@ operation, which takes a
 graph and a vertex and returns a list of the vertex's neighbor
 vertices), then mapping the @insert@ function over that list of
 neighbors.
 
 Finally, @traverse@ adds the starting node to the @seen@ set by
-calling \il{insert startNode seen}---and the event handler does the
-rest of the work.  We know that we are done handling events when the
-call to @quiesce h@ returns; it will block until all events have been
-handled.  Finally, we freeze and return the LVar, which by this point
-is a set of all reachable nodes.
+calling @insert startNode seen@---and the event handler does the rest
+of the work.  We know that we are done handling events when the call
+to @quiesce h@ returns; it will block until all events have been
+handled.  Finally, we freeze and return the @ISet@ of all reachable
+nodes.  Since @ISet@ is an LVar, it has an @s@ parameter, and in the
+return type of @traverse@, the @s@ parameter of @ISet@ has been
+replaced by the @Frzn@ type, indicating that the LVar has been frozen.
 
-The good news is that this particular graph traversal is
+The good news is that this particular graph traversal program is
 deterministic.  The bad news is that, in general, freezing introduces
 quasi-determinism, since we could have accidentally forgotten to call
 @quiesce@ before the freeze---which is why @traverse@ must be run with
-@runParQuasiDet@, rather than @runPar@.  Although the program is
-deterministic, the \emph{language-level} guarantee is merely of
+@runParQuasiDet@, rather than @runPar@.  Although the \emph{program}
+is deterministic, the \emph{language-level} guarantee is merely of
 quasi-determinism, not determinism.
 
 However, just as with the final shopping cart example above, we can
 use @runParThenFreeze@ to ensure that freezing happens last.  Here is
-a version of @traverse@ that is guaranteed to be deterministic at the
-language level:
+a version of @traverse@ that uses @runParThenFreeze@, and eliminates
+the possibility of forgetting to call @quiesce@ and thereby
+introducing quasi-determinism:
 
 \singlespacing
 \lstinputlisting{chapter4/code/graph-traversal-implicit-freeze.hs}
 \doublespacing
 
-Here, since freezing is performed by @runParThenFreeze@ rather by an
-explicit call to @freeze@, it is no longer necessary to explicitly
-call @quiesce@, either!  The reason for this is that the implicit
-barrier of @runParThenFreeze@ will ensure that all outstanding events
-that can be handled will be handled before it can return.
+\noindent Here, since freezing is performed by @runParThenFreeze@
+rather by an explicit call to @freeze@, it is no longer necessary to
+constrain @e@ with @HasFreeze@ in the type of @traverse@.
+Furthermore, the @s@ parameter in the @ISet@ that @traverse@ returns
+can remain @s@ instead of being instantiated with @Frzn@.  Most
+importantly, since freezing is performed by @runParThenFreeze@ rather
+by an explicit call to @freeze@, it is no longer necessary for
+@traverse@ to explicitly call @quiesce@, either!  The reason for this
+is that the implicit barrier of @runParThenFreeze@ will ensure that
+all outstanding events that can be handled will be handled before it
+can return.

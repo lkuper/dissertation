@@ -1,5 +1,5 @@
 import Control.LVish
-import Control.LVish.DeepFrz
+import Control.LVish.DeepFrz -- provides runParThenFreeze
 import Data.LVar.PureMap
 
 p :: (HasPut e) => Par e s (IMap Item s Int)

@@ -1,7 +1,8 @@
 import Control.LVish
-import Control.LVish.DeepFrz
+import Control.LVish.DeepFrz -- provides runParThenFreeze
 import Data.LVar.Generic (addHandler, freeze)
 import Data.LVar.PureSet
+import qualified Data.Graph as G
 
 traverse :: HasPut e => G.Graph -> Int -> Par e s (ISet s Int)
 traverse g startNode = do
