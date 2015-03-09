@@ -1,7 +1,6 @@
 traverse :: Graph -> NodeLabel -> Par (Set NodeLabel)
-traverse g startV = do
+traverse g startNode = do
   seen <- newEmptySet
-  putInSet seen startV
-  let handle node = parMapM (putInSet seen) (nbrs g node)
+  insert startNode seen -- Kick things off
+  let handle node = mapM (\v -> insert v seen) (neighbors g node)
   freezeSetAfter seen handle
-   

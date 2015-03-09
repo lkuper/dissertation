@@ -197,20 +197,26 @@ is returned.
 \subsection{A parallel graph traversal using handlers, quiescence, and freezing}\label{subsection:quasi-parallel-graph-traversal}
 
 We can use the new features in LVish to write a parallel graph
-traversal in the following simple fashion:
+traversal in the simple fashion shown in
+Listing~\ref{listing-bfs_new}.  This code, written using the LVish
+Haskell library, discovers (in parallel) the set of nodes in a graph
+@g@ reachable from a given node @startNode@, and is guaranteed to
+produce a deterministic result.\footnote{In the LVish library, the
+  \lstinline|Par| type constructor is the monad in which LVar
+  computations run; see \either{Chapter}{Section}~\ref{ch:lvish} for
+  details.}  It works by creating a fresh @Set@ LVar (corresponding to
+a lattice whose elements are sets, with set union as lub), and seeding
+it with the starting node.
 
 \singlespacing
-\lstinputlisting{chapter3/code/bfs_new.hs}
+\lstinputlisting[float, caption={A parallel graph traversal in LVish.}, label=listing-bfs_new]{chapter3/code/bfs_new.hs}
 \doublespacing
 
-\noindent This code, written using the LVish Haskell library, discovers (in parallel) the
-set of nodes in a graph @g@ reachable from a given node @startV@, and
-is guaranteed to produce a deterministic result.\footnote{In the LVish
-  library, the \lstinline|Par| type constructor is the monad in which
-  LVar computations run; see \either{Chapter}{Section}~\ref{ch:lvish} for details.}  It
-works by creating a fresh @Set@ LVar (corresponding to a lattice whose
-elements are sets, with set union as lub), and seeding it with the
-starting node.
+\TODO{As it is, this is not actually running LVish code -- although
+  the versions in
+  Section~\ref{subsection:lvish-parallel-graph-traversal} are.  We
+  could point ahead to that, or we could make this running code, but
+  one way or another we either need to acknowledge this.}
 
 The @freezeSetAfter@ function implements a set-specific variant of the
 freeze-after pattern described above.  It combines freezing and

@@ -65,39 +65,39 @@ pair of tree IDs, it checks whether exactly one of those tree IDs is
 in the splits map entry, and if so, increments the appropriate
 distance matrix entry by one.
 
-Figure~\ref{f:hashrf-alg} gives psuedocode for the HashRF algorithm.
-The second phase of the algorithm is still $O(N^2)$, but it only needs
-to read from the much smaller @tree_set@ during this phase.  All loops
-in Figure~\ref{f:hashrf-alg} are potentially parallel.
+Listing~\ref{listing-hashrf-alg} gives psuedocode for the HashRF
+algorithm.  The second phase of the algorithm is still $O(N^2)$, but
+it only needs to read from the much smaller @tree_set@ during this
+phase.  All loops in Listing~\ref{listing-hashrf-alg} are potentially
+parallel.
+
+\TODO{This is ugly -- shouldn't we be writing this in some nicer
+  pseudocode syntax?}
 
 \lk{Question for Ryan: shouldn't it be ``insert(splitsmap, (bip,
   t))'' since it maps bipartitions to trees, not the other way around?
   Or, really, it maps bipartitions to sets of tree IDs, so maybe this
   could be made more obvious in the pseudocode somehow.}
 
-\begin{figure}
-  \singlespacing
-\begin{lstlisting}
-  (1) for t `member` alltrees:
-        for bip `member` t:
-          insert(splitsmap, (bip, {t}))
-  (2) for (_, tree_set) `member` splitsmap: 
-        for t1 `member` alltrees:
-          for t2 `member` alltrees:
-            if t1 `member` tree_set `xor` t2 `member` tree_set
-            then increment(distancematrix[t1,t2])
-\end{lstlisting}  
-\doublespacing
-  \caption{Pseudocode of the HashRF algorithm for computing a tree
+\singlespacing
+\begin{lstlisting}[float, caption={Pseudocode of the HashRF algorithm for computing a tree
     edit distance matrix.  \il{alltrees} is the set of trees,
     represented as sets of bipartitions; \il{splitsmap} and
     \il{distancematrix} are global variables, defined elsewhere.
     \il{splitsmap} maps bipartitions to sets of trees in which they
     occur. The comparison uses `xor` because the RF distance between
     two trees is defined as the number of bipartitions implied by
-    exactly one of the two trees being compared.}
-  \label{f:hashrf-alg}
-\end{figure}
+    exactly one of the two trees being compared.}, label=listing-hashrf-alg]
+(1) for t `member` alltrees:
+      for bip `member` t:
+        insert(splitsmap, (bip, {t}))
+(2) for (_, tree_set) `member` splitsmap: 
+      for t1 `member` alltrees:
+        for t2 `member` alltrees:
+          if t1 `member` tree_set `xor` t2 `member` tree_set
+          then increment(distancematrix[t1,t2])
+\end{lstlisting}  
+\doublespacing
 
 \subsection{Parallelizing the HashRF algorithm with LVish}
 
@@ -105,7 +105,7 @@ In the original PhyBin source code, the type of the splits map is:
 
 \singlespacing
 \begin{lstlisting}
-  type BipTable = Map DenseLabelSet (Set TreeID)
+type BipTable = Map DenseLabelSet (Set TreeID)
 \end{lstlisting}
 \doublespacing
 

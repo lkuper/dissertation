@@ -61,9 +61,9 @@ LVish uses the following generic representation for LVars:
 
 \singlespacing
 \begin{lstlisting}
-  data LVar a d = 
-       LVar { state :: a,  status :: IORef (Status d),
-              handlerStatus :: IORef Handlerstatus }
+data LVar a d = 
+     LVar { state :: a,  status :: IORef (Status d),
+            handlerStatus :: IORef Handlerstatus }
 \end{lstlisting}
 \doublespacing
 
@@ -76,7 +76,7 @@ LVar is frozen:
 
 \singlespacing
 \begin{lstlisting}
-  data Status d = Frozen | Active (B.Bag (Listener d))
+data Status d = Frozen | Active (B.Bag (Listener d))
 \end{lstlisting}
 \doublespacing
 
@@ -90,9 +90,9 @@ atomic insertion and removal, and \emph{concurrent} traversal:
 
 \singlespacing
 \begin{lstlisting}
-  put     :: Bag a -> a -> IO (Token a)
-  remove  :: Token a -> IO ()
-  foreach :: Bag a -> (a -> Token a -> IO ()) -> IO ()
+put     :: Bag a -> a -> IO (Token a)
+remove  :: Token a -> IO ()
+foreach :: Bag a -> (a -> Token a -> IO ()) -> IO ()
 \end{lstlisting}
 \doublespacing
 
@@ -105,9 +105,9 @@ LVar's lattice value changes, and the other when the LVar is frozen:
 
 \singlespacing
 \begin{lstlisting}
- data Listener d = Listener {
-   onUpd :: d -> Token (Listener d) -> SchedQ -> IO (),
-   onFrz ::      Token (Listener d) -> SchedQ -> IO () }
+data Listener d = Listener {
+  onUpd :: d -> Token (Listener d) -> SchedQ -> IO (),
+  onFrz ::      Token (Listener d) -> SchedQ -> IO () }
 \end{lstlisting}
 \doublespacing
 
@@ -122,9 +122,9 @@ continuation-passing style, in terms of their interpretation in the
 
 \singlespacing
 \begin{lstlisting}
-  type ClosedPar = SchedQ -> IO ()
-  type ParCont a = a -> ClosedPar
-  mkPar :: (ParCont a -> ClosedPar) -> Par lvl a
+type ClosedPar = SchedQ -> IO ()
+type ParCont a = a -> ClosedPar
+mkPar :: (ParCont a -> ClosedPar) -> Par lvl a
 \end{lstlisting}
 \doublespacing
 
@@ -137,18 +137,16 @@ continuation---yielding a @ClosedPar@ computation.
 
 \subsection{Threshold reading}
 
-\begin{figure}
-  \singlespacing
-  \lstinputlisting{chapter4/code/getLV.hs}
-  \doublespacing
-  \caption{Implementation of the \il{getLV}
-    function.}\label{fig:implementation-getLV}
-\end{figure}
+\singlespacing
+\lstinputlisting[float, caption={Implementation of the \il{getLV}
+    function.}, label=listing-implementation-getLV]{chapter4/code/getLV.hs}
+\doublespacing
 
-Figure~\ref{fig:implementation-getLV} gives the implementation for the
-lattice-generic @getLV@ function, which assists data structure authors
-in writing operations with @get@ semantics.  In addition to an LVar,
-it takes two \emph{threshold functions} as arguments, one for global
+Listing~\ref{listing-implementation-getLV} gives the implementation
+for the lattice-generic @getLV@ function, which assists data structure
+authors in writing operations with @get@ semantics.  In addition to an
+LVar, it takes two \emph{threshold functions} as arguments, one for
+global
 \ifdefined\DISSERTATION
 state and one for deltas.\footnote{In this sense, the way that
   threshold reads are implemented in LVish of is in fact quite close
@@ -172,11 +170,11 @@ writers:
 
 \singlespacing
 \begin{lstlisting}
-  -- Wait for the map to contain a key; return its value
-  getKey key mapLV = getLV mapLV gThresh dThresh where
-    gThresh m frozen = lookup key m
-    dThresh (k,v) | k == key  = return (Just v)
-                  | otherwise = return Nothing 
+-- Wait for the map to contain a key; return its value
+getKey key mapLV = getLV mapLV gThresh dThresh where
+  gThresh m frozen = lookup key m
+  dThresh (k,v) | k == key  = return (Just v)
+                | otherwise = return Nothing 
 \end{lstlisting}
 \doublespacing
 
@@ -240,26 +238,23 @@ Then, the type-level @HasBump@ information is reified into a value in the
   non-idempotent writes, but I need some help in figuring out what to
   say.}
 
-\begin{figure}
-  \singlespacing
-  \lstinputlisting{chapter4/code/putLV.hs}
-  \doublespacing
-  \caption{Idempotence-assuming implementation of the \il{putLV}
-    function.  The version supporting non-idempotent (Sched.idemp==False), must
-    also use \il{handlerStatus} as a reader-writer lock, except with put
-    being the ``reader'' and \il{addHandler} as the writer.}\label{fig:implementation-putLV}
-\end{figure}
+\singlespacing
+\lstinputlisting[float, caption={Idempotence-assuming implementation
+    of the \il{putLV} function.  The version supporting non-idempotent
+    (Sched.idemp==False), must also use \il{handlerStatus} as a
+    reader-writer lock, except with put being the ``reader'' and
+    \il{addHandler} as the writer.},
+  label=listing-implementation-putLV]{chapter4/code/putLV.hs}
+\doublespacing
 
-\begin{figure}
-  \singlespacing
-  \lstinputlisting{chapter4/code/freezeLV.hs}
-  \doublespacing
-  \caption{Implementation of the \il{freezeLV}
-    function.}\label{fig:implementation-freezeLV}
-\end{figure}
+\singlespacing
+\lstinputlisting[float, caption={Implementation of the \il{freezeLV}
+    function.},
+  label=listing-implementation-freezeLV]{chapter4/code/freezeLV.hs}
+\doublespacing
 
-Figures~\ref{fig:implementation-putLV}
-and~\ref{fig:implementation-freezeLV} respectively give the
+Listings~\ref{listing-implementation-putLV}
+and~\ref{listing-implementation-freezeLV} respectively give the
 implementations for the lattice-generic @putLV@ and @freezeLV@
 functions.  The @putLV@ function is used to build operations with
 @put@ semantics.  It takes an LVar and an \emph{update function}
@@ -326,12 +321,11 @@ quasi-deterministic or non-deterministic.
 Given the above infrastructure, the implementation of handlers is
 relatively straightforward.  We represent handler pools as follows:
 
-\vspace{-4mm}
 \singlespacing
 \begin{lstlisting}
-  data HandlerPool = HandlerPool {
-    numCallbacks :: Counter,  
-    blocked :: B.Bag ClosedPar }
+data HandlerPool = HandlerPool {
+  numCallbacks :: Counter,  
+  blocked :: B.Bag ClosedPar }
 \end{lstlisting}
 \doublespacing
 %
@@ -350,12 +344,12 @@ implement quiescence testing as follows:
 
 \singlespacing
 \begin{lstlisting}
-  quiesce :: HandlerPool -> Par lvl ()
-  quiesce hp@(HandlerPool cnt bag) = mkPar $ \k q -> do
-    tok <- B.put bag (k ())
-    quiescent <- poll cnt
-    if quiescent then do B.remove tok; k () q
-                 else sched q
+quiesce :: HandlerPool -> Par lvl ()
+quiesce hp@(HandlerPool cnt bag) = mkPar $ \k q -> do
+  tok <- B.put bag (k ())
+  quiescent <- poll cnt
+  if quiescent then do B.remove tok; k () q
+               else sched q
 \end{lstlisting}
 \doublespacing
 
@@ -384,8 +378,6 @@ thread if the threshold has been passed.  Each time a callback is
 launched, the callback count is incremented; when it is finished, the
 count is decremented, and if zero, all threads blocked on its
 quiescence are resumed.
-
-
 
 \ifdefined\DISSERTATION
 \subsection{Discussion: tracking and leveraging idempotency}
@@ -420,10 +412,10 @@ expose the following @foreach@ function for a finite map:
 
 \singlespacing
 \begin{lstlisting}
- foreach mh mapLV cb = addHandler mh lv gThresh dThresh
-   where
-     dThresh (k,v) = return (Just (cb k v))
-     gThresh mp    = traverse mp (\(k,v) -> cb k v) mp
+foreach mh mapLV cb = addHandler mh lv gThresh dThresh
+  where
+    dThresh (k,v) = return (Just (cb k v))
+    gThresh mp    = traverse mp (\(k,v) -> cb k v) mp
 \end{lstlisting}
 \doublespacing
 
@@ -454,9 +446,9 @@ writes.  For example, an increment-only counter might have an
 
 \singlespacing
 \begin{lstlisting}
-   incrCounter :: HasBump e => Counter s -> Par s e ()
+incrCounter :: HasBump e => Counter s -> Par s e ()
 \end{lstlisting}
 \doublespacing
 
-\fi{}
+\fi
 

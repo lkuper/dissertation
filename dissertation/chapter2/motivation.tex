@@ -47,43 +47,41 @@ construction) program can meet the specification.
 
 \subsection{A purely functional attempt}
 
-\begin{figure}
-  \lstinputlisting{chapter2/code/bfs_pure.hs}
-  \caption{A purely functional Haskell program that maps the
-    \lstinline|analyze| function over the connected component of the
-    \lstinline|profiles| graph that is reachable from the node
-    \lstinline|profile0|.  Although component discovery proceeds in
-    parallel, results of \lstinline|analyze| are not asynchronously
-    available to other computations, inhibiting pipelining.}
-  \label{f:bfs-pure}
-\end{figure}
+\singlespacing
+\lstinputlisting[float, caption={A purely functional Haskell program
+    that maps the \lstinline|analyze| function over the connected
+    component of the \lstinline|profiles| graph that is reachable from
+    the node \lstinline|profile0|.  Although component discovery
+    proceeds in parallel, results of \lstinline|analyze| are not
+    asynchronously available to other computations, inhibiting
+    pipelining.}, label=listing-bfs_pure]{chapter2/code/bfs_pure.hs}
+\doublespacing
 
-Figure~\ref{f:bfs-pure} gives a Haskell implementation of a
+Listing~\ref{listing-bfs_pure} gives a Haskell implementation of a
 \emph{level-synchronized} breadth-first graph traversal that finds the
 connected component reachable from a starting vertex.  Nodes at
 distance one from the starting vertex are discovered---and set-unioned
 into the connected component---before nodes of distance two are
-considered.  
-Level-synchronization necessarily sacrifices some
-parallelism: parallel tasks cannot continue
-discovering nodes in the component before synchronizing with all other
-tasks at a given distance from the start.
-Nevertheless, level-synchronization is a popular strategy for implementing
-parallel breadth-first graph traversal.  (In fact, the aforementioned
-implementation from the Parallel Boost Graph Library~\shortcite{bfs-pbgl}
-uses level-synchronization.)
+considered.  Level-synchronization necessarily sacrifices some
+parallelism: parallel tasks cannot continue discovering nodes in the
+component before synchronizing with all other tasks at a given
+distance from the start.  Nevertheless, level-synchronization is a
+popular strategy for implementing parallel breadth-first graph
+traversal.  (In fact, the aforementioned implementation from the
+Parallel Boost Graph Library~\shortcite{bfs-pbgl} uses
+level-synchronization.)
 
-Unfortunately, the code given in Figure~\ref{f:bfs-pure} does not
-quite implement the problem specification given above.  Even though
-connected-component discovery is parallel, members of the output set
-do not become available to @analyze@ until component discovery is
-\emph{finished}, limiting parallelism: the first nodes in the
-connected component to be discovered must go un-@analyze@d until all
-of the nodes in the connected component have been traversed.  We could
-manually push the @analyze@ invocation inside the @bf_traverse@
+Unfortunately, the code given in Listing~\ref{listing-bfs_pure} does
+not quite implement the problem specification given above.  Even
+though connected-component discovery is parallel, members of the
+output set do not become available to @analyze@ until component
+discovery is \emph{finished}, limiting parallelism: the first nodes in
+the connected component to be discovered must go un-@analyze@d until
+all of the nodes in the connected component have been traversed.  We
+could manually push the @analyze@ invocation inside the @bf_traverse@
 function, allowing the @analyze@ computation to start sooner, but
-doing so just passes the problem to the downstream consumer, unless
-we are able to perform a heroic whole-program fusion.
+doing so just passes the problem to the downstream consumer, unless we
+are able to perform a heroic whole-program fusion.
 
 If @bf_traverse@ returned a list, lazy evaluation could make it
 possible to \emph{stream} results to consumers incrementally.  But

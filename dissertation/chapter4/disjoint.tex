@@ -62,8 +62,8 @@ far:
 
 \singlespacing
 \begin{lstlisting}
-   class (Monad m) => ParMonad m where
-     fork :: m () -> m ()
+class (Monad m) => ParMonad m where
+  fork :: m () -> m ()
 \end{lstlisting}
 \doublespacing
 
@@ -80,13 +80,13 @@ operations with the signatures below.\footnote{Although it may appear
 
 \singlespacing
 \begin{lstlisting}[mathescape=true]
-   class (ParMonad m) => ParFuture m  where
-     $\ldots$ 
-   class (ParMonad m) => ParIVar m  where
-     type IVar m :: * -> *
-     new :: m (IVar m a)
-     put :: IVar m a -> a -> m ()
-     get :: IVar m a -> m a
+class (ParMonad m) => ParFuture m  where
+  $\ldots$ 
+class (ParMonad m) => ParIVar m  where
+  type IVar m :: * -> *
+  new :: m (IVar m a)
+  put :: IVar m a -> a -> m ()
+  get :: IVar m a -> m a
 \end{lstlisting}
 \doublespacing
 
@@ -113,16 +113,16 @@ The below code promotes @StateT@ to be a @Par@-monad transformer:
 
 \singlespacing
 \begin{lstlisting}
-  class SplittableState a where
-    splitState :: a -> (a,a)
+class SplittableState a where
+  splitState :: a -> (a,a)
 
-  instance (SplittableState s, ParMonad m) => 
-           ParMonad (StateT s m) where  
-    fork task =
-       do s <- State.get 
-          let (s1,s2) = splitState s
-          State.put s2
-          lift (fork (do runStateT task s1; return ()))
+instance (SplittableState s, ParMonad m) => 
+         ParMonad (StateT s m) where  
+  fork task =
+     do s <- State.get 
+        let (s1,s2) = splitState s
+        State.put s2
+        lift (fork (do runStateT task s1; return ()))
 \end{lstlisting}
 \doublespacing
 
@@ -179,18 +179,18 @@ state being shared.
 
 \singlespacing
 \begin{lstlisting}
-  runParVecT 10 (
-    do -- Fill all 10 slots with "a":
-       set "a"
-       -- Get a pointer to the state:
-       ptr <- reify 
-       -- Call pre-existing ST code:
-       new <- pickLetter ptr
-       forkSTSplit (SplitAt 5)
-         (write 0 new)
-         (write 0 "c")
-       -- ptr is again accessible here
-       ellipses)
+runParVecT 10 (
+  do -- Fill all 10 slots with "a":
+     set "a"
+     -- Get a pointer to the state:
+     ptr <- reify 
+     -- Call pre-existing ST code:
+     new <- pickLetter ptr
+     forkSTSplit (SplitAt 5)
+       (write 0 new)
+       (write 0 "c")
+     -- ptr is again accessible here
+     ellipses)
 \end{lstlisting}
 \doublespacing
 

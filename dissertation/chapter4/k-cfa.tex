@@ -106,9 +106,9 @@ set of abstract values:
 
 \singlespacing
 \begin{lstlisting}
-  import Data.LVar.Map as IM
-  import Data.LVar.Set as IS
-  type Store s = IMap Addr s (ISet s Value)
+import Data.LVar.Map as IM
+import Data.LVar.Set as IS
+type Store s = IMap Addr s (ISet s Value)
 \end{lstlisting}
 \doublespacing
 
@@ -129,14 +129,14 @@ nested @forEach@ invocations to accumulate data into a store map:
 
 \singlespacing
 \begin{lstlisting}
-  summarize :: ISet s (State s) -> Par d s (Store s)
-  summarize states = do
-    storeFin <- newEmptyMap
-    IS.forEach states   $ \ (State _ _ store _) -> 
-      IM.forEach store  $ \ key vals -> 
-        IS.forEach vals $ \ elmt  -> 
-          IM.modify storeFin key (putInSet elmt)
-    return storeFin    
+summarize :: ISet s (State s) -> Par d s (Store s)
+summarize states = do
+  storeFin <- newEmptyMap
+  IS.forEach states   $ \ (State _ _ store _) -> 
+    IM.forEach store  $ \ key vals -> 
+      IS.forEach vals $ \ elmt  -> 
+        IM.modify storeFin key (putInSet elmt)
+  return storeFin    
 \end{lstlisting}
 \doublespacing
 
@@ -184,7 +184,7 @@ take each step through the state space graph:
 
 \singlespacing
 \begin{lstlisting}
-   store' <- IM.copy store 
+store' <- IM.copy store 
 \end{lstlisting}
 \doublespacing
 
@@ -196,7 +196,7 @@ by \emph{not} creating a copy:
 
 \singlespacing
 \begin{lstlisting}
-   let store' = store 
+let store' = store 
 \end{lstlisting}
 \doublespacing
 

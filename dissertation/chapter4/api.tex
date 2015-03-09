@@ -9,56 +9,59 @@ short example programs.\footnote{The examples in this section, among
 \subsection{A simple example: IVars in LVish}
 
 \ifdefined\DISSERTATION
+
 As mentioned in the previous section, the LVish library extends the
 approach of Haskell's monad-par library for deterministic parallelism,
 which allows communication between parallel tasks through IVars.
-Recall that IVars can only be assigned to once.  Therefore the
-following program written using monad-par will deterministically raise an
-error, because it tries to write to the IVar @num@ twice:
+Recall that IVars can only be assigned to once.
+Listing~\ref{listing-ivar-example} shows a program written using
+monad-par that will deterministically raise an error, because it tries
+to write to the IVar @num@ twice.  Here, @p@ is a computation of type
+@Par Int@, meaning that it runs in the @Par@ monad (via the call to
+@runPar@) and returns a value of @Int@ type.  @num@ is an IVar,
+created with a call to @new@ and then assigned to twice, via two calls
+to @put@, each of which runs in a separately @fork@ed task.  The
+@runPar@ function is an implicit global barrier: all @fork@s have to
+complete before @runPar@ can return.
 
 \singlespacing
-\lstinputlisting{chapter4/code/ivar-example.hs}
+\lstinputlisting[float, caption={A basic IVar example using monad-par.}, label=listing-ivar-example]{chapter4/code/ivar-example.hs}
 \doublespacing
 
-Here, @p@ is a computation of type @Par Int@, meaning that it runs in
-the @Par@ monad (via the call to @runPar@) and returns a value of
-@Int@ type.  @num@ is an IVar, created with a call to @new@ and then
-assigned to twice, via two calls to @put@, each of which runs in a separately
-@fork@ed task.  The @runPar@ function is an implicit global barrier:
-all @fork@s have to complete before @runPar@ can return.
-
-The program raises a ``multiple put'' error at runtime, which is as it
-should be: differing writes to the same shared location could cause
-the subsequent call to @get@ to behave nondeterministically.  (Since
-we are using monad-par and not LVish, @get@ has IVar semantics, not
-LVar semantics: rather than performing a threshold read, it blocks
-until @num@ has been written, then unblocks and evaluates to the exact
-contents of @num@.)
+Listing~\ref{listing-ivar-example} raises a ``multiple put'' error at
+runtime, which is as it should be: differing writes to the same shared
+location could cause the subsequent call to @get@ to behave
+nondeterministically.  (Since we are using monad-par and not LVish,
+@get@ has IVar semantics, not LVar semantics: rather than performing a
+threshold read, it blocks until @num@ has been written, then unblocks
+and evaluates to the exact contents of @num@.)
 
 However, when using monad-par, even multiple writes of the \emph{same}
-value to an IVar will raise a ``multiple put'' error:
+value to an IVar will raise a ``multiple put'' error, as in
+Listing~\ref{listing-repeated-4-ivar}.  This program differs from the
+previous one only in that the two @put@s are writing @4@ and @4@,
+rather than @3@ and @4@.  Even though the call to @get@ would produce
+a deterministic result regardless of which write happened first, the
+program nevertheless raises an error because of monad-par's
+single-write restriction on IVars.
 
 \singlespacing
-\lstinputlisting{chapter4/code/repeated-4-ivar.hs}
+\lstinputlisting[float, caption={Repeated writes of the same value to an IVar.}, label=listing-repeated-4-ivar]{chapter4/code/repeated-4-ivar.hs}
 \doublespacing
 
-This program differs from the previous one only in that the two @put@s
-are writing @4@ and @4@, rather than @3@ and @4@.  Even though the
-call to @get@ would produce a deterministic result regardless of which
-write happened first, the program nevertheless raises an error because
-of monad-par's single-write restriction on IVars.
-
-Now let us consider a version of this program written using the LVish
-library. (Of course, in LVish we are not limited to IVars, but we
-will consider IVars first as an interesting special case of LVars, and
-then go on to consider some more sophisticated LVars later in this
-section.)  A version of the above program written using LVish will
+Now let us consider a version of Listing~\ref{listing-repeated-4-ivar}
+written using the LVish library. (Of course, in LVish we are not
+limited to IVars, but we will consider IVars first as an interesting
+special case of LVars, and then go on to consider some more
+sophisticated LVars later in this section.)
+Listing~\ref{listing-repeated-4-lvar} shows an LVish program that will
 write @4@ to an IVar twice and then deterministically print @4@
-instead of raising an error:
+instead of raising an error.
 \fi
 
 \ifdefined\JOURNAL
-First, let us consider an LVish program that writes the same value to
+First, let us consider an LVish program, shown in
+Listing~\ref{listing-repeated-4-lvar}, that writes the same value to
 an IVar twice.  (Of course, in LVish we are not limited to IVars, but
 we will consider IVars first as an interesting special case of LVars,
 and then go on to consider some more sophisticated LVars later in this
@@ -66,20 +69,22 @@ section.)
 \fi
 
 \singlespacing
-\lstinputlisting{chapter4/code/repeated-4-lvar.hs}
+\lstinputlisting[float, caption={Repeated writes of the same value to an LVar.}, label=listing-repeated-4-lvar]{chapter4/code/repeated-4-lvar.hs}
 \doublespacing
 
 \ifdefined\JOURNAL
-\noindent Compared to a monad-par implementation, the differences are minor.
+Compared to a monad-par implementation, the differences in
+Listing~\ref{listing-repeated-4-lvar} are minor.
 \fi
-\either{Here, we}{We} need to import the @Control.LVish@ module rather than
-@Control.Monad.Par@ (that is, we are using LVish instead of
-monad-par), and we must specifically import @Data.LVar.IVar@ in order
-to specify which LVar data structure we want to work with (since we
-are no longer limited to IVars).  Just as with monad-par, the LVish
-@runPar@ function is a global barrier: both @fork@s must compete
-before @runPar@ can return.  Also,\either{as before}{as in monad-par}, we have @new@, @put@,
-and @get@ operations that respectively create, update, and read from
+\either{In Listing~\ref{listing-repeated-4-lvar}, we}{We} need to
+import the @Control.LVish@ module rather than @Control.Monad.Par@
+(that is, we are using LVish instead of monad-par), and we must
+specifically import @Data.LVar.IVar@ in order to specify which LVar
+data structure we want to work with (since we are no longer limited to
+IVars).  Just as with monad-par, the LVish @runPar@ function is a
+global barrier: both @fork@s must compete before @runPar@ can return.
+Also,\either{as before}{as in monad-par}, we have @new@, @put@, and
+@get@ operations that respectively create, update, and read from
 @num@.  However, these operations now have LVar semantics: the @put@
 operation computes a lub (with respect to a lattice like that of
 Figure~\ref{f:lvars-example-lattices}(b), except including all the
@@ -197,17 +202,18 @@ the values must be equal (according to \il{==}), or a ``multiple put''
 error will be raised.
 
 \singlespacing
-\lstinputlisting{chapter4/code/map-lvar-getkey-lib.hs}
+\lstinputlisting[float, caption={A deterministic shopping cart program.}, label=listing-map-lvar-getkey-lib]{chapter4/code/map-lvar-getkey-lib.hs}
 \doublespacing
 
-\noindent Here, the @newEmptyMap@ operation creates a new @IMap@, and the
-@insert@ operation allows us to add new key-value pairs to the cart.
-In this case, we are concurrently adding the @Book@ item with a
-quantity of @2@, and the @Shoes@ item with a quantity of @1@.  The
-call to @getKey@ will be able to unblock as soon as the first @insert@
-operation has completed, and the program will deterministically print
-@2@ regardless of whether the second @insert@ has completed at the
-time that @getKey@ unblocks.
+Listing~\ref{listing-map-lvar-getkey-lib} shows an LVish program that
+inserts items into our cart.  The @newEmptyMap@ operation creates a
+new @IMap@, and the @insert@ operation allows us to add new key-value
+pairs to the cart.  In this case, we are concurrently adding the
+@Book@ item with a quantity of @2@, and the @Shoes@ item with a
+quantity of @1@.  The call to @getKey@ will be able to unblock as soon
+as the first @insert@ operation has completed, and the program will
+deterministically print @2@ regardless of whether the second @insert@
+has completed at the time that @getKey@ unblocks.
 
 The @getKey@ operation allows us to threshold on a key---in this case
 @Book@---and get back the value associated with that key, once it has
@@ -241,22 +247,22 @@ monotonic growth.\footnote{On the other hand, one way to implement a
 The LVish examples we have seen so far have been fully deterministic;
 they do not use @freeze@.  Next, let us consider a program that
 freezes and reads the exact contents of a shopping cart, concurrently
-with inserting into it.
+with adding items to it.
 
 \singlespacing
-\lstinputlisting{chapter4/code/map-lvar-quasi.hs}
+\lstinputlisting[float, caption={A quasi-deterministic shopping cart program.}, label=listing-map-lvar-quasi]{chapter4/code/map-lvar-quasi.hs}
 \doublespacing
 
-\noindent Here, we are @insert@ing items into our cart, as in the
-previous example.  But, instead of returning the result of a call to
-@getKey@, this time @p@ returns the result of a call to @freezeMap@.
-Note that the return type of @p@ is a @Par@ computation containing not
-an @Int@, but rather an entire map from @Item@s to @Int@s.  In fact,
-this map is not the @IMap@ that @Data.LVar.PureMap@ provides, but
-rather the standard @Map@ from the @Data.Map@ module (imported as
-@M@).  This is possible because @Data.LVar.PureMap@ is implemented
-using @Data.Map@, and so freezing its @IMap@ simply returns the
-underlying @Data.Map@.
+In Listing~\ref{listing-map-lvar-quasi}, we are @insert@ing items into
+our cart, as in Listing~\ref{listing-map-lvar-getkey-lib}.  But,
+instead of returning the result of a call to @getKey@, this time @p@
+returns the result of a call to @freezeMap@.  Note that the return
+type of @p@ is a @Par@ computation containing not an @Int@, but rather
+an entire map from @Item@s to @Int@s.  In fact, this map is not the
+@IMap@ that @Data.LVar.PureMap@ provides, but rather the standard
+@Map@ from the @Data.Map@ module (imported as @M@).  This is possible
+because @Data.LVar.PureMap@ is implemented using @Data.Map@, and so
+freezing its @IMap@ simply returns the underlying @Data.Map@.
 
 Because @p@ performs a freezing operation, the effect level of its
 return type must reflect the fact that it is allowed to perform
@@ -267,18 +273,18 @@ previous examples, but must instead use a special variant of @runPar@,
 called @runParQuasiDet@, whose type signature allows @Par@
 computations that allow freezing to be passed to it.
 
-The quasi-determinism in this program arises from the fact that the
-call to @freezeMap@ may run before both @fork@ed computations have
-completed.  In this example, one or both calls to @insert@ may run
-after the call to @freezeMap@.  If this happens, the program will
-raise a write-after-freeze exception.  The other possibility is that
-both items are already in the cart at the time it is frozen, in which
-case the program will run without error and print both items.  There
-are therefore two possible outcomes: a cart with both items, or a
-write-after-freeze error.  The advantage of quasi-determinism is that
-it is not possible to get multiple \emph{non-error} outcomes, such as,
-for instance, an empty cart or a cart in which only the @Book@ has
-been written.
+The quasi-determinism in Listing~\ref{listing-map-lvar-quasi} arises
+from the fact that the call to @freezeMap@ may run before both
+@fork@ed computations have completed.  In this example, one or both
+calls to @insert@ may run after the call to @freezeMap@.  If this
+happens, the program will raise a write-after-freeze exception.  The
+other possibility is that both items are already in the cart at the
+time it is frozen, in which case the program will run without error
+and print both items.  There are therefore two possible outcomes: a
+cart with both items, or a write-after-freeze error.  The advantage of
+quasi-determinism is that it is not possible to get multiple
+\emph{non-error} outcomes, such as, for instance, an empty cart or a
+cart in which only the @Book@ has been written.
 
 \subsection{Regaining full determinism with \il{runParThenFreeze}}\label{subsection:lvish-regaining-full-determinism-with-runparthenfreeze}
 
@@ -292,21 +298,23 @@ a straightforward solution to this problem: instead of manually
 calling @freeze@ (and perhaps accidentally freezing an LVar too
 early), we can tell LVish to handle the freezing for us while ``on the
 way out'' of a @Par@ computation.  The mechanism that allows this is
-another variant of @runPar@, which we call @runParThenFreeze@.  A
-version of the above program written using @runParThenFreeze@ is as
-follows:
+another variant of @runPar@, which we call @runParThenFreeze@.
 
 \singlespacing
-\lstinputlisting{chapter4/code/map-lvar-freezeafter.hs}
+\lstinputlisting[float, caption={A deterministic shopping cart program that uses \il{runParThenFreeze}.}, label=listing-map-lvar-freezeafter]{chapter4/code/map-lvar-freezeafter.hs}
 \doublespacing
 
-\noindent An interesting thing to note about this @Par@ computation is
-that it \emph{only} performs writes (as we can see from its effect
-level, which is only constrained by @HasPut@).  Also, unlike the
-previous version, where the @freeze@ took place inside the @Par@
-computation, this computation returns an @IMap@ rather than a @Map@.
-Since @IMap@ is an LVar, it has an @s@ parameter, which we can see in
-the type of @p@.
+Listing~\ref{listing-map-lvar-freezeafter} shows a version of
+Listing~\ref{listing-map-lvar-quasi} written using @runParThenFreeze@.
+An interesting thing to note about the @Par@ computation in
+Listing~\ref{listing-map-lvar-freezeafter} is that it \emph{only}
+performs writes (as we can see from its effect level, which is only
+constrained by @HasPut@).  Also, unlike in
+Listing~\ref{listing-map-lvar-quasi}, where the @freeze@ took place
+inside the @Par@ computation, in
+Listing~\ref{listing-map-lvar-freezeafter} the @Par@ computation
+returns an @IMap@ rather than a @Map@.  Since @IMap@ is an LVar, it
+has an @s@ parameter, which we can see in the type of @p@.
 
 Because there is no synchronization operation after the two @fork@
 calls, @p@ may well return @cart@ before both (or either) of the calls
@@ -316,23 +324,22 @@ both calls to @insert@ \emph{must} complete before @runParThenFreeze@
 can return---which means that the result of the program is
 deterministic.
 
-\subsection{Event-driven programming with LVars: a deterministic parallel graph traversal}
+\subsection{Event-driven programming with LVars: a deterministic parallel graph traversal}\label{subsection:lvish-parallel-graph-traversal}
 
 Finally, let us look at an example that uses event handlers as well as
-freezing.  The function @traverse@ takes a graph @g@ and a vertex
-@startNode@ and finds the set of all vertices reachable from
-@startNode@, in parallel.
+freezing.  In Listing~\ref{listing-graph-traversal-explicit-freeze},
+the function @traverse@ takes a graph @g@ and a vertex @startNode@ and
+finds the set of all vertices reachable from @startNode@, in parallel.
+The @traverse@ function first creates a new LVar, called @seen@, to
+represent a montonically growing set of @Int@s that will identify
+nodes in the graph.  For this purpose, we use the @ISet@ type,
+provided by the @Data.LVar.PureSet@ module.  (As with @IMap@, the
+individual elements of the @ISet@ are immutable, but the set itself
+can grow.)
 
 \singlespacing
-\lstinputlisting{chapter4/code/graph-traversal-explicit-freeze.hs}
+\lstinputlisting[float, caption={A deterministic parallel graph traversal with an explicit call to \il{freeze}.}, label=listing-graph-traversal-explicit-freeze]{chapter4/code/graph-traversal-explicit-freeze.hs}
 \doublespacing
-
-\noindent The @traverse@ function first creates a new LVar, called
-@seen@, to represent a montonically growing set of @Int@s that will
-identify nodes in the graph.  For this purpose, we use the @ISet@
-type, provided by the @Data.LVar.PureSet@ module.  (As with @IMap@,
-the individual elements of the @ISet@ are immutable, but the set
-itself can grow.)
 
 Next, @traverse@ attaches an event handler to @seen@.  It does so by
 calling the @newHandler@ function, which takes two arguments: an LVar
@@ -365,24 +372,26 @@ quasi-determinism, since we could have accidentally forgotten to call
 is deterministic, the \emph{language-level} guarantee is merely of
 quasi-determinism, not determinism.
 
-However, just as with the final shopping cart example above, we can
-use @runParThenFreeze@ to ensure that freezing happens last.  Here is
-a version of @traverse@ that uses @runParThenFreeze@, and eliminates
-the possibility of forgetting to call @quiesce@ and thereby
-introducing quasi-determinism:
+However, just as with our final shopping cart example in
+Listing~\ref{listing-map-lvar-freezeafter}, we can use
+@runParThenFreeze@ to ensure that freezing happens last.
+Listing~\ref{listing-graph-traversal-implicit-freeze} gives a version
+of @traverse@ that uses @runParThenFreeze@, and eliminates the
+possibility of forgetting to call @quiesce@ and thereby introducing
+quasi-determinism:
 
 \singlespacing
-\lstinputlisting{chapter4/code/graph-traversal-implicit-freeze.hs}
+\lstinputlisting[float, caption={A deterministic parallel graph traversal that uses \il{runParThenFreeze}.}, label=listing-graph-traversal-implicit-freeze]{chapter4/code/graph-traversal-implicit-freeze.hs}
 \doublespacing
 
-\noindent Here, since freezing is performed by @runParThenFreeze@
-rather by an explicit call to @freeze@, it is no longer necessary to
-constrain @e@ with @HasFreeze@ in the type of @traverse@.
-Furthermore, the @s@ parameter in the @ISet@ that @traverse@ returns
-can remain @s@ instead of being instantiated with @Frzn@.  Most
-importantly, since freezing is performed by @runParThenFreeze@ rather
-by an explicit call to @freeze@, it is no longer necessary for
-@traverse@ to explicitly call @quiesce@, either!  The reason for this
-is that the implicit barrier of @runParThenFreeze@ will ensure that
-all outstanding events that can be handled will be handled before it
-can return.
+In Listing~\ref{listing-graph-traversal-implicit-freeze}, since
+freezing is performed by @runParThenFreeze@ rather by an explicit call
+to @freeze@, it is no longer necessary to constrain @e@ with
+@HasFreeze@ in the type of @traverse@.  Furthermore, the @s@ parameter
+in the @ISet@ that @traverse@ returns can remain @s@ instead of being
+instantiated with @Frzn@.  Most importantly, since freezing is
+performed by @runParThenFreeze@ rather by an explicit call to
+@freeze@, it is no longer necessary for @traverse@ to explicitly call
+@quiesce@, either!  The reason for this is that the implicit barrier
+of @runParThenFreeze@ will ensure that all outstanding events that can
+be handled will be handled before it can return.
