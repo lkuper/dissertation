@@ -74,11 +74,6 @@ parallel.
 \TODO{This is ugly -- shouldn't we be writing this in some nicer
   pseudocode syntax?}
 
-\lk{Question for Ryan: shouldn't it be ``insert(splitsmap, (bip,
-  t))'' since it maps bipartitions to trees, not the other way around?
-  Or, really, it maps bipartitions to sets of tree IDs, so maybe this
-  could be made more obvious in the pseudocode somehow.}
-
 \singlespacing
 \begin{lstlisting}[float, caption={Pseudocode of the HashRF algorithm for computing a tree
     edit distance matrix.  \il{alltrees} is the set of trees,
@@ -118,13 +113,6 @@ LVish.  The splits map created in the first phase is a map of sets,
 which are directly replaced by their LVar counterparts, and the
 distance matrix created in the second phase is a vector of
 monotonically increasing counters.  
-% Furthermore, the second phase of
-% the algorithm can be pipelined with the first, because as soon as one
-% of the rows of the splits map is complete, the second phase can start
-% working on that row.
-% \lk{Question for Ryan: is that last bit actually true?  if so, why is
-%   this pipelining possible -- don't we have to freeze the splits map
-%   before we can read from it?}
 
 In fact, the parallel port of PhyBin using LVish was so
 straightforward that, after reading the code, parallelizing the first
