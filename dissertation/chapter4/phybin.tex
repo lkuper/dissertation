@@ -27,12 +27,13 @@ that we parallelize in our case study.
 The distance metric itself is called \emph{Robinson-Foulds} (RF)
 distance, and the fastest algorithm for all-to-all RF distance
 computation is Sul and Williams' \emph{HashRF}
-algorithm~\cite{hashrf}, introduced by a software package of the same
-name.\footnote{Available at \url{https://code.google.com/p/hashrf/}.}
-The HashRF software package is written in C++ and is about 2-3$\times$
-as fast as PhyBin.  Both packages are dozens or hundreds of times
-faster than the more widely-used software that computes RF distance
-matrices, such as PHYLIP\footnote{Available at
+algorithm~\cite{hashrf}, which is used by a software package of the
+same name.\footnote{Available at
+  \url{https://code.google.com/p/hashrf/}.}  The HashRF software
+package is written in C++ and is about 2-3$\times$ as fast as PhyBin,
+which also implements the HashRF algorithm.  Both packages are dozens
+or hundreds of times faster than the more widely-used software that
+computes RF distance matrices, such as PHYLIP\footnote{Available at
   \url{http://evolution.genetics.washington.edu/phylip.html}.}~\cite{phylip}
 and DendroPy\footnote{Available at
   \url{http://pythonhosted.org/DendroPy/}.}~\cite{dendropy}.  These
@@ -65,33 +66,46 @@ pair of tree IDs, it checks whether exactly one of those tree IDs is
 in the splits map entry, and if so, increments the appropriate
 distance matrix entry by one.
 
-Listing~\ref{listing-hashrf-alg} gives psuedocode for the HashRF
+Algorithm~\ref{alg:hashrf} is a psuedocode version of the HashRF
 algorithm.  The second phase of the algorithm is still $O(N^2)$, but
-it only needs to read from the much smaller @tree_set@ during this
-phase.  All loops in Listing~\ref{listing-hashrf-alg} are potentially
+it only needs to read from the much smaller $\mathit{treeset}$ during
+this phase.  All loops in Algorithm~\ref{alg:hashrf} are potentially
 parallel.
 
-\TODO{This is ugly -- shouldn't we be writing this in some nicer
-  pseudocode syntax?}
+\algnewcommand{\LineComment}[1]{\State \(\triangleright\) {#1}\hfill~}
 
 \singlespacing
-\begin{lstlisting}[float, caption={Pseudocode of the HashRF algorithm for computing a tree
-    edit distance matrix.  \il{alltrees} is the set of trees,
-    represented as sets of bipartitions; \il{splitsmap} and
-    \il{distancematrix} are global variables, defined elsewhere.
-    \il{splitsmap} maps bipartitions to sets of trees in which they
-    occur. The comparison uses `xor` because the RF distance between
-    two trees is defined as the number of bipartitions implied by
-    exactly one of the two trees being compared.}, label=listing-hashrf-alg]
-(1) for t `member` alltrees:
-      for bip `member` t:
-        insert(splitsmap, (bip, {t}))
-(2) for (_, tree_set) `member` splitsmap: 
-      for t1 `member` alltrees:
-        for t2 `member` alltrees:
-          if t1 `member` tree_set `xor` t2 `member` tree_set
-          then increment(distancematrix[t1,t2])
-\end{lstlisting}  
+\begin{algorithm}
+  \begin{algorithmic}[0] % 0 means no line numbering
+    \LineComment{First phase: populate splits map}
+    \ForAll {$t \in \mathit{alltrees}$} \Comment $\mathit{alltrees}$ is the set of trees, represented as sets of bipartitions
+    \ForAll {$\mathit{bip} \in t$}
+    \hspace{3em}\LineComment{Add $t$ to the set of trees at $\mathit{splitsmap}[\mathit{bip}]$, adding a key for $\mathit{bip}$ to $\mathit{splitsmap}$ if necessary}\\
+    \hspace{3em}$\mathrm{insert}(t, \mathit{splitsmap}[\mathit{bip}])$
+    \EndFor
+    \EndFor
+    \LineComment{Second phase: populate distance matrix}
+    \ForAll {$(\mathit{bip}, \mathit{treeset}) \in \mathit{splitsmap}$}
+    \ForAll {$t_1 \in \mathit{alltrees}$}
+    \ForAll {$t_2 \in \mathit{alltrees}$}
+    \Comment 
+    \If {$t_1 \in \mathit{treeset}$ $\mathrm{XOR}$ $t_2 \in \mathit{treeset}$} \\
+    \hspace{6em}$\mathrm{increment}(\mathit{distancematrix}[t_1, t_2])$
+    \EndIf
+    \EndFor
+    \EndFor
+    \EndFor
+  \end{algorithmic} 
+  \caption{Pseudocode of the HashRF algorithm for computing a tree
+    edit distance matrix.  $\mathit{alltrees}$, $\mathit{splitsmap}$
+    and $\mathit{distancematrix}$ are global variables, defined
+    elsewhere.  $\mathit{splitsmap}$ maps bipartitions to sets of
+    trees in which they occur.  In the second phase, the comparison of
+    $t_1$ and $t_2$ uses $\mathrm{XOR}$ because the RF distance
+    between two trees is defined as the number of bipartitions implied
+    by exactly one of the two trees being compared.}
+  \label{alg:hashrf}
+\end{algorithm}
 \doublespacing
 
 \subsection{Parallelizing the HashRF algorithm with LVish}
