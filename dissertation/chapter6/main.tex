@@ -88,16 +88,17 @@ FlowPools are specialized to bags.
 
 \section{Concurrent Revisions}
 
-Burckhardt \etal~\shortcite{eventually-consistent-transactions} propose a
-formalism for eventual consistency based on graphs called
+Burckhardt \etal~\shortcite{eventually-consistent-transactions}
+propose a formalism for eventual consistency based on graphs called
 \emph{revision diagrams}, and Leijen, Burckhardt, and Fahndrich apply
 the revision diagrams approach to guaranteed-deterministic concurrent
-functional programming~\cite{concurrent-revisions-haskell11}.  Their
-\emph{Concurrent Revisions} (CR) programming model uses isolation
-types to distinguish regions of the heap shared by multiple mutators.
-Rather than enforcing exclusive access in the style of DPJ, CR clones
-a copy of the state for each mutator, using a deterministic ``merge
-function'' for resolving conflicts in local copies at join points.
+functional programming~\shortcite{concurrent-revisions-haskell11}.
+Their \emph{Concurrent Revisions} (CR) programming model uses
+isolation types to distinguish regions of the heap shared by multiple
+mutators.  Rather than enforcing exclusive access in the style of DPJ,
+CR clones a copy of the state for each mutator, using a deterministic
+``merge function'' for resolving conflicts in local copies at join
+points.
 
 In CR, variables can be annotated as being shared between a ``joiner''
 thread and a ``joinee'' thread.  Unlike the lub writes of LVars, CR
