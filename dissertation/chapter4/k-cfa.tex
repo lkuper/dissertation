@@ -2,65 +2,66 @@
 
 LVish is designed to be particularly applicable to (1) parallelizing
 complicated algorithms on structured data that pose challenges for
-other deterministic paradigms, and (2) composing pipeline-parallel
-stages of computation (each of which may be internally parallelized).
-In this section, \either{I}{we} describe a case study that fits this mold:
-\emph{parallelized control-flow analysis}.  \either{I}{We} discuss the process of
-porting a sequential implementation of a $k$-CFA static program
-analysis to a parallel implementation using LVish.
+other deterministic programming models, and (2) composing
+pipeline-parallel stages of computation (each of which may be
+internally parallelized).  In this section, \either{I}{we} describe a
+case study that fits this mold: \emph{parallelized control-flow
+  analysis}.  \either{I}{We} discuss the process of porting a
+sequential implementation of a $k$-CFA static program analysis to a
+parallel implementation using LVish.
 
 The \emph{$k$-CFA} analyses provide a hierarchy of increasingly
 precise methods to compute the flow of values to expressions in a
 higher-order language.  For this case study, we began with a
 sequential implementation of $k$-CFA translated to Haskell from a
-version by Might~\shortcite{MightkCFABlog}.\footnote{Haskell port by Max
-  Bolingbroke:
+version by Might~\shortcite{MightkCFABlog}.\footnote{Haskell port by
+  Max Bolingbroke:
   \url{https://github.com/batterseapower/haskell-kata/blob/master/0CFA.hs}.}
 The algorithm processes expressions written in a
 continuation-passing-style $\lambda$-calculus.  It resembles a
 nondeterministic abstract interpreter in which stores map addresses to
 \emph{sets} of abstract values, and function application entails a
-cartesian product between the operator and operand sets.
-
-Further, an address models not just a static variable, but includes a
-fixed $k$-size window of the calling history to get to that point (the
-$k$ in $k$-CFA).
+cartesian product between the operator and operand sets.  Furthermore,
+an address models not just a static variable, but includes a fixed
+$k$-size window of the calling history to get to that point (the $k$
+in $k$-CFA).
 
 Taken together, the current redex, environment, store, and call
 history make up the abstract state of the program, and the goal is to
 explore a graph of these abstract states in order to discover the flow
-of control of a program without actually running it.  This
+of control of a program without needing to actually run it.  This
 graph-exploration phase is followed by a second, summarization phase
 that combines all the information discovered into one store.
 
-\subsection{$k$-CFA phase 1: breadth-first exploration}
+\subsection{$k$-CFA phase one: breadth-first exploration}
 
-The following function from the original, sequential version of the
-analysis expresses the heart of the search process:
-
-\singlespacing
-\begin{lstlisting}
-explore :: Set State -> [State] -> Set State
-explore seen [] = seen
-explore seen (todo:todos)
-  | todo `member` seen = explore seen todos
-  | otherwise   = explore (insert todo seen)
-                          (toList (next todo) ++ todos)  
-\end{lstlisting}
-\doublespacing
-
-This code uses idiomatic Haskell data types like @Data.Set@ and lists.
-However, it presents a dilemma with respect to exposing parallelism.
-Consider attempting to parallelize @explore@ using purely functional
-parallelism with futures---for instance, using the Haskell Strategies
-library~\cite{marlow-par}.  An attempt to compute the next states in
-parallel would seem to be thwarted by the main thread rapidly forcing
-each new state to perform the seen-before check, @todo `member` seen@.
-There is no way for independent threads to ``keep going'' further into
-the graph; rather, they check in with @seen@ after one step.
+The @explore@ function from the original, sequential version of the
+analysis, shown in Listing~\ref{listing-pure-k-cfa}, expresses the
+heart of the search process.  @explore@ uses idiomatic Haskell data
+types like @Data.Set@ and lists.  However, it presents a dilemma with
+respect to exposing parallelism.  Consider attempting to parallelize
+@explore@ using purely functional parallelism with futures---for
+instance, using the Haskell Strategies library~\cite{marlow-par}.  An
+attempt to compute the next states in parallel would seem to be
+thwarted by the main thread rapidly forcing each new state to perform
+the seen-before check, @todo `S.member` seen@.  There is no way for
+independent threads to ``keep going'' further into the graph; rather,
+they check in with @seen@ after one step.
 
 We confirmed this prediction by adding a parallelism annotation from
 the aforementioned Strategies library:
+
+
+
+\singlespacing
+\begin{lstlisting}[float, caption={The \il{explore} function from a purely functional $k$-CFA implementation.}, label=listing-pure-k-cfa]
+explore :: S.Set State -> [State] -> S.Set State
+explore seen [] = seen
+explore seen (todo:todos)
+| todo `S.member` seen = explore seen todos
+| otherwise = explore (S.insert todo seen) (S.toList (next todo) ++ todos)
+\end{lstlisting}
+\doublespacing
 
 \singlespacing
 \begin{lstlisting}
@@ -68,13 +69,13 @@ withStrategy (parBuffer 8 rseq) (next todo)
 \end{lstlisting}
 \doublespacing
 
-The GHC runtime reported that 100\% of created futures were
+\noindent The GHC runtime reported that 100\% of created futures were
 ``duds''---that is, the main thread forced them before any helper
 thread could assist.  Changing @rseq@ to @rdeepseq@ exposed a small
 amount of parallelism---238/5000 futures were successfully executed in
 parallel---yielding no actual speedup.
 
-\subsection{$k$-CFA phase 2: summarization}
+\subsection{$k$-CFA phase two: summarization}
 
 The first phase of the algorithm produces a large set of states, with
 stores that need to be joined together in the summarization phase.
@@ -83,16 +84,16 @@ is immediately processed by the next phase, lazy languages can often
 achieve a form of pipelining ``for free''.  This outcome is most
 obvious with \emph{lists}, where the head element can be consumed
 before the tail is computed, offering cache-locality benefits.
-Unfortunately, when processing a pure @Set@ or @Map@ in Haskell, such
-pipelining is not possible, since the data structure is internally
-represented by a balanced tree whose structure is not known until all
-elements are present.  Thus phase 1 and phase 2 cannot overlap in the
-purely functional version---but they will in the LVish version, as we
-will see.  In fact, in LVish we will be able to achieve partial
-deforestation in addition to pipelining.  Full deforestation in this
-application is impossible, because the @Set@s in the implementation
-serve a memoization purpose: they prevent repeated computations as we
-traverse the graph of states.
+Unfortunately, when processing a pure @Data.Set@ or @Data.Map@ in
+Haskell, such pipelining is not possible, since the data structure is
+internally represented by a balanced tree whose structure is not known
+until all elements are present.  Thus phase one and phase two cannot
+overlap in the purely functional version---but they will in the LVish
+version, as we will see.  In fact, in LVish we will be able to achieve
+partial deforestation in addition to pipelining.  Full deforestation
+in this application is impossible, because the @Data.Set@s in the
+implementation serve a memoization purpose: they prevent repeated
+computations as we traverse the graph of states.
 
 \subsection{Porting to LVish}
 
@@ -102,20 +103,19 @@ purely functional program to allocate a new LVar for each new set or
 map value in the original code.  This was done simply by changing two
 types, @Set@ and @Map@, to their LVar counterparts, @ISet@ and @IMap@.
 In particular, a store maps a program location (with context) onto a
-set of abstract values:
+set of abstract values (here the libraries providing @ISet@ and @IMap@
+are imported as @IS@ and @IM@, respectively):
 
 \singlespacing
 \begin{lstlisting}
-import Data.LVar.Map as IM
-import Data.LVar.Set as IS
-type Store s = IMap Addr s (ISet s Value)
+type Store s = IM.IMap Addr s (IS.ISet s Value)
 \end{lstlisting}
 \doublespacing
 
 Next, we replaced allocations of containers, and @map@/@fold@
 operations over them, with the analogous operations on their LVar
-counterparts.  The @explore@ function above was replaced by the simple
-graph traversal function from
+counterparts.  The @explore@ function above was replaced by a function
+that amounts to the simple graph traversal function from
 Section~\ref{subsection:quasi-parallel-graph-traversal}.  These
 changes to the program were mechanical, including converting pure to
 monadic code.  Indeed, the key insight in doing the verbatim port to
@@ -129,14 +129,15 @@ nested @forEach@ invocations to accumulate data into a store map:
 
 \singlespacing
 \begin{lstlisting}
-summarize :: ISet s (State s) -> Par d s (Store s)
+summarize :: IS.ISet s (State s) -> Par d s (Store s)
 summarize states = do
   storeFin <- newEmptyMap
-  IS.forEach states   $ \ (State _ _ store _) -> 
-    IM.forEach store  $ \ key vals -> 
-      IS.forEach vals $ \ elmt  -> 
-        IM.modify storeFin key (putInSet elmt)
-  return storeFin    
+  void $ IS.forEach states $ \ (State _ _ store_n _) -> do 
+    void $ IM.forEach store_n $ \ key val -> do
+      void $ IS.forEach val $ \ elem  -> do
+        IM.modify storeFin key newEmptySet $ \ st -> do
+           IS.insert elem st
+  return storeFin
 \end{lstlisting}
 \doublespacing
 
@@ -148,17 +149,16 @@ pipeline can \emph{immediately} begin reading results from containers
 (\eg, @storeFin@), long before their contents are final.
 
 The LVish version of $k$-CFA contains eleven occurrences of @forEach@,
-as well as a few \emph{cartesian-product} operations.  The cartesian
-products serve to apply functions to combinations of all possible
-values that arguments may take on, greatly increasing the number of
-handler events in circulation.  Moreover, chains of handlers
-registered with @forEach@ result in cascades of events through six or
-more handlers.  The runtime behavior of these would be difficult to
-reason about.  Fortunately, the programmer can largely ignore the
-temporal behavior of their program, since all LVish effects
-commute---rather like the way in which a lazy functional programmer
-typically need not think about the order in which thunks are forced at
-runtime.
+as well as a few cartesian-product operations.  The cartesian products
+serve to apply functions to combinations of all possible values that
+arguments may take on, greatly increasing the number of handler events
+in circulation.  Moreover, chains of handlers registered with
+@forEach@ result in cascades of events through six or more handlers.
+The runtime behavior of these operations would be difficult to reason
+about.  Fortunately, the programmer can largely ignore the temporal
+behavior of their program, since all LVish effects commute---rather
+like the way in which a lazy functional programmer typically need not
+think about the order in which thunks are forced at runtime.
 
 Finally, there is an optimization benefit to using handlers.
 Normally, to flatten a nested data structure such as @[[[Int]]]@ in a
@@ -171,16 +171,18 @@ accumulator, @storeFin@.
 
 \subsection{Flipping the switch: the advantage of sharing}
 
-The verbatim port uses LVars poorly: copying them repeatedly and
-discarding them without modification.  This effect overwhelms the
+The verbatim port to LVish uses LVars poorly: copying them repeatedly
+and discarding them without modification.  This effect overwhelms the
 benefits of partial deforestation and pipelining, and the verbatim
 LVish port has a small performance overhead relative to the original.
 But not for long!
 
 The most clearly unnecessary operation in the verbatim port is in the
-@next@ function.  Like the purely functional program from which it was
-ported, it creates a fresh store to extend with new bindings as we
-take each step through the state space graph:
+@next@ function (called in the last line of
+Listing~\ref{listing-pure-k-cfa}).  In keeping with the purely
+functional program from which it was ported, @next@ creates a fresh
+store to extend with new bindings as we take each step through the
+state space graph:
 
 \singlespacing
 \begin{lstlisting}
@@ -188,11 +190,11 @@ store' <- IM.copy store
 \end{lstlisting}
 \doublespacing
 
-Of course, a ``copy'' for an LVar is persistent: it is just a handler
-that forces the copy to receive everything the original does.  But in
-LVish, it is also trivial to \emph{entangle} the parallel branches of
-the search, allowing them to share information about bindings, simply
-by \emph{not} creating a copy:
+\noindent Of course, a ``copy'' for an LVar is persistent: it is just
+a handler that forces the copy to receive everything the original
+does.  But in LVish, it is also trivial to \emph{entangle} the
+parallel branches of the search, allowing them to share information
+about bindings, simply by \emph{not} creating a copy:
 
 \singlespacing
 \begin{lstlisting}
@@ -200,8 +202,8 @@ let store' = store
 \end{lstlisting}
 \doublespacing
 
-This one-line change speeds up execution by up to $25\times$ \emph{on
-  one core}.  The lesson here is that, although pure functional
+\noindent This one-line change speeds up execution by up to $25\times$
+\emph{on one core}.  The lesson here is that, although pure functional
 parallel programs are guaranteed to be deterministic, the overhead of
 allocation and copying in an idiomatic pure functional program can
 overwhelm the advantages of parallelism.  In the LVish version, the
@@ -217,7 +219,7 @@ improvement over the purely functional version.
 
 We implemented two versions of the $k$-CFA algorithm using set data
 structures that the LVish library provides.  The first of these,
-@PureSet@, exported by the @Data.LVar.PureSet@ module) uses the LVish
+@PureSet@ (exported by the @Data.LVar.PureSet@ module), is the LVish
 library's reference implementation of a set, which uses a pure
 @Data.Set@ wrapped in a mutable container.  The other, @SLSet@,
 exported by @Data.LVar.SLSet@, is a lock-free set based on concurrent
@@ -232,15 +234,15 @@ skip lists~\cite{art}.\footnote{LVish also provides analogous
 We evaluated both the @PureSet@-based and @SLSet@-based $k$-CFA
 implementations on two benchmarks. For the first, we used a version of
 the ``blur'' benchmark from a recent paper on $k$-CFA by Earl
-\etal~\shortcite{earl-might-icfp-2012}.  In general, it proved difficult to
-generate example inputs to $k$-CFA that took long enough to be
-candidates for parallel speedup; we were, however, able to ``scale
-up'' the blur benchmark by replicating the code $N$ times, feeding one
-into the continuation argument for the next.  For our second
-benchmark, we ran the $k$-CFA analysis on a program that was simply a
-long chain of $300$ ``not'' functions (using a CPS conversion of the
-Church encoding for booleans).  This latter benchmark, which we call
-``notChain'', has a small state space of large states with many
+\etal~\shortcite{earl-might-icfp-2012}.  In general, it proved
+difficult to generate example inputs to $k$-CFA that took long enough
+to be candidates for parallel speedup; we were, however, able to
+``scale up'' the blur benchmark by replicating the code $N$ times,
+feeding one into the continuation argument for the next.  For our
+second benchmark, we ran the $k$-CFA analysis on a program that was
+simply a long chain of $300$ ``not'' functions (using a CPS conversion
+of the Church encoding for Booleans).  This latter benchmark, which we
+call ``notChain'', has a small state space of large states with many
 variables (600 states and 1211 variables), and was specifically
 designed to negate the benefits of our sharing approach.
 
@@ -254,11 +256,11 @@ designed to negate the benefits of our sharing approach.
     \emph{lock-free} versions (5.21s and 9.83s, respectively).  The
     normalized speedups are remarkably consistent for the lock-free
     version between the two benchmarks.  But the relationship to the
-    original, purely functional version is quite different: at 12
-    cores, the lock-free LVish version of ``blur'' is $202\times$
-    faster than the original, while ``notChain'' is only $1.6\times$
-    faster, not gaining anything from sharing rather than copying
-    stores due to a lack of fan-out in the state graph.  }
+    original, purely functional version (not shown) is quite
+    different: at 12 cores, the lock-free LVish version of ``blur'' is
+    $202\times$ faster than the original, while ``notChain'' is only
+    $1.6\times$ faster, not gaining anything from sharing rather than
+    copying stores due to a lack of fan-out in the state graph.}
   \label{fig:bench}
 \end{figure}
 
@@ -286,13 +288,13 @@ the @SLSet@-based implementation continues scaling and achieves an
 $8.14\times$ speedup on twelve cores ($0.64$s at $67\%$ GC
 productivity).
 
-Of course, it is unsurprising that using an efficient, concurrent,
-lock-free shared data structure results in a better parallel speedup;
-rather, the interesting thing about these results is that despite its
-determinism guarantee, \emph{there is nothing about the LVars model
-  that precludes using such data structures}.  Any data structure that
-has the semantics of an LVar is fine.  Part of the benefit of LVish is
-to allow parallel programs to make use of lock-free data structures
-while retaining the determinism guarantee of LVars, in much the same
-way that the @ST@ monad allows access to efficient in-place array
-computations.
+Of course, it is unsurprising that using an efficient lock-free shared
+data structure results in a better parallel speedup; rather, the
+interesting thing about these results is that despite its determinism
+guarantee, there is nothing about the LVars model that precludes using
+such data structures.  Any data structure that has the semantics of an
+LVar is fine.  Indeed, part of the benefit of LVish is that it can
+allow parallel programs to make use of lock-free data structures while
+retaining the determinism guarantee of LVars, in much the same way
+that the @ST@ monad allows Haskell programs access to efficient
+in-place array updates.
