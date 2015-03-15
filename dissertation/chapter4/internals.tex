@@ -1,24 +1,12 @@
 \section{The LVish library implementation}\label{s:lvish-internals}
 
-\lk{In our POPL paper, we discussed the importance of idempotence at
-  the start of the implementation section.  However, it seems to me
-  that it should be de-emphasized here.  I make a big enough deal of
-  being able to support arbitrary update operations (which aren't
-  idempotent) that it seems disingenuous to make a big thing out of
-  idempotence here.  (Also, increment-only counters (which were the
-  whole motivation for generalizing \il{put} in the first place)
-  aren't atomistic, either!  But at least the ``Leveraging atoms''
-  stuff doesn't \emph{require} lattices to be atomistic.)  Also, the
-  material on \il{putLV} probably needs to be significantly revised
-  and updated to be able to account for non-idempotent writes.}
-\rn{I totally agree.}
-
-In this section, \either{I}{we} describe the internals of the LVish library,
-including how the library represents LVars and @Par@ computations
-internally and how it implements lattice-generic functions for
-writing, reading, and freezing LVars, as well as registering handlers
-and quiescing LVars.  First, though, \either{I}{we} discuss a semantic
-observation about lattices that our implementation makes use of.
+In this section, \either{I}{we} highlight a few aspects of the
+internals of the LVish library, including how the library represents
+LVars and @Par@ computations internally and how it implements
+lattice-generic functions for writing, reading, and freezing LVars, as
+well as registering handlers and quiescing LVars.  First, though,
+\either{I}{we} discuss a semantic observation about lattices that our
+implementation makes use of.
 
 \subsection{Leveraging atoms}\label{subsection:lvish-leveraging-atoms}
 
@@ -27,56 +15,74 @@ In a lattice, the smallest such pieces are called the \emph{atoms} of
 the lattice: they are elements not equal to $\bot$, but for which the
 only smaller element is $\bot$.  Lattices for which every element is
 the lub of some set of atoms are called \emph{atomistic}, and in
-practice most lattices used by LVish programs
-have this property---especially those that represent
-collections.
+practice most lattices used by LVish programs have this
+property---especially those that represent collections.  For example,
+the lattice of finite maps is atomistic, with the atoms consisting of
+all singleton maps, \ie, all key/value pairs.
 
-In general, the LVish primitives allow arbitrarily large queries and
-updates to an LVar.  But for an atomistic lattice, the corresponding
-data structure usually exposes operations that work at the atom level,
-semantically limiting writes to atoms, @get@s to threshold sets of
-atoms, and event sets to sets of atoms.  For example, the lattice of
-finite maps is atomistic, with atoms consisting of all singleton maps
-(\ie, all key/value pairs).  The interface to a finite map usually
-works at the atom level, allowing addition of a new key/value pair,
-querying of a single key, or traversals (which we model as handlers)
-that walk over one key/value pair at a time.
+For data structures whose states form an atomistic lattice, we usually
+want to expose operations that work at the atom level, semantically
+limiting writes to atoms, @get@s to threshold sets of atoms, and event
+sets to sets of atoms.  For example, the interface to finite maps
+allows addition of a new key/value pair (an atom), querying of a
+single key, or traversals (which we model as handlers) that walk over
+one key/value pair at a time.
 
-Our implementation is designed to facilitate good performance for
-atomistic lattices by associating LVars with a set of \emph{deltas}
-(changes), as well as a lattice.  For atomistic lattices, the deltas
-are essentially just the atoms---for a set lattice, a delta is an
-element; for a map, a key/value pair.  Deltas provide a compact way to
+The LVish implementation is designed to facilitate good performance
+for data structures whose states form an atomistic lattice.  We
+accomplish this by associating an LVar type with a set of
+\emph{deltas}, or changes, as well as a lattice.  For atomistic
+lattices, the deltas are essentially just the atoms\lk{I think Aaron
+  wrote this.  ``essentially just'' seems weaselly --- what does it
+  mean?  Any chance we can get rid of those two words?}---for a set
+data structure, for instance, a delta is an element of the set; for a
+map, a delta is a key/value pair.  Deltas provide a compact way to
 represent a change to the lattice, allowing us to easily and
 efficiently communicate such changes between writes and
 @get@s/handlers.
 
-\lk{Someone who is more familiar with the current state of LVish than
-  I am should audit the next few sections and make sure it's still
-  accurate.}
+Of course, not every lattice that can be associated with an LVar type
+is atomistic.  The lattice of
+Figure~\ref{f:lvars-example-lattices}(a), for instance, is not
+atomistic and corresponds to an increment-only integer counter LVar.
+Therefore our implementation supports arbitrary lattices, not just
+atomistic ones.
 
 \subsection{Representation choices}
 
-LVish uses the following generic representation for LVars:
+\lk{I think everything in this subsection is now up-to-date and
+  accurate wrt the current LVish implementation, but it would be great
+  if someone else would check it over.  Also waiting for response to
+  my 3/14 email.}
+
+LVish uses the following generic internal representation for LVars:
 
 \singlespacing
 \begin{lstlisting}
-data LVar a d = 
-     LVar { state :: a,  status :: IORef (Status d),
-            handlerStatus :: IORef Handlerstatus }
+data LVar a d = LVar {
+  state  :: a,                                  -- current, "global" state of LVar
+  status :: {-# UNPACK #-} !(IORef (Status d)), -- is the LVar active or frozen?
+  name   :: {-# UNPACK #-} !LVarID              -- a unique identifier for this LVar
+}
 \end{lstlisting}
 \doublespacing
 
-where the type parameter @a@ is the (mutable) data structure
+\noindent where the type parameter @a@ is the (mutable) data structure
 representing the lattice, and @d@ is the type of deltas for the
-lattice.\footnote{For non-atomistic lattices, we take \il{a} and
-  \il{d} to be the same type.}  The @status@ field is a mutable
-reference that represents the status bit, which says whether or not an
-LVar is frozen:
+lattice.  For a set data structure, for instance, @a@ would be the set
+type, and @d@ would be the type of an element of the set.  For
+non-atomistic lattices, we take @a@ and @d@ to be the same type; for
+instance, for an increment-only counter, both @a@ and @d@ are @Int@.
+
+The @status@ field is a mutable reference that represents the status
+bit, which says whether or not an LVar is frozen:
 
 \singlespacing
 \begin{lstlisting}
-data Status d = Frozen | Active (B.Bag (Listener d))
+data Status d 
+  = Freezing                     -- ^ further changes to the state are forbidden
+  | Frozen                       -- ^ further changes to the state are forbidden
+  | Active (B.Bag (Listener d))  -- ^ bag of blocked threshold reads and handlers
 \end{lstlisting}
 \doublespacing
 
@@ -96,9 +102,10 @@ foreach :: Bag a -> (a -> Token a -> IO ()) -> IO ()
 \end{lstlisting}
 \doublespacing
 
-Removal of elements is done via abstract \emph{tokens}, which are
-acquired by insertion or traversal.  Updates may occur concurrently
-with a traversal, but are not guaranteed to be visible to it.
+\noindent Removal of elements is done via abstract \emph{tokens},
+which are acquired by insertion or traversal.  Updates may occur
+concurrently with a traversal, but are not guaranteed to be visible to
+it.
 
 A listener for an LVar is a pair of callbacks, one called when the
 LVar's lattice value changes, and the other when the LVar is frozen:
@@ -106,15 +113,17 @@ LVar's lattice value changes, and the other when the LVar is frozen:
 \singlespacing
 \begin{lstlisting}
 data Listener d = Listener {
-  onUpd :: d -> Token (Listener d) -> SchedQ -> IO (),
-  onFrz ::      Token (Listener d) -> SchedQ -> IO () }
+  onUpdate :: d -> B.Token (Listener d) -> SchedState -> IO (),
+  onFreeze ::      B.Token (Listener d) -> SchedState -> IO ()
+}
 \end{lstlisting}
 \doublespacing
 
-The listener is given access to its own token in the listener bag,
-which it can use to deregister from future events (useful for a @get@
-whose threshold has been passed).  It is also given access to the
-CPU-local scheduler queue, which it can use to spawn threads.
+\noindent The listener is given access to its own token in the
+listener bag, which it can use to deregister from future events
+(useful for a @get@ whose threshold has been passed).  It is also
+given access to the CPU-local scheduler queue, @SchedState@, which it
+can use to spawn threads.
 
 Internally, the @Par@ monad represents computations in
 continuation-passing style, in terms of their interpretation in the
@@ -122,25 +131,20 @@ continuation-passing style, in terms of their interpretation in the
 
 \singlespacing
 \begin{lstlisting}
-type ClosedPar = SchedQ -> IO ()
+type ClosedPar = SchedState -> IO ()
 type ParCont a = a -> ClosedPar
-mkPar :: (ParCont a -> ClosedPar) -> Par lvl a
+mkPar :: (ParCont a -> ClosedPar) -> Par a
 \end{lstlisting}
 \doublespacing
 
-The @ClosedPar@ type represents ready-to-run @Par@ computations, which
-are given direct access to the CPU-local scheduler queue.  Rather than
-returning a final result, a completed @ClosedPar@ computation must
-call the scheduler, @sched@, on the queue.  A @Par@ computation, on
-the other hand, completes by passing its intended result to its
-continuation---yielding a @ClosedPar@ computation.
+\noindent The @ClosedPar@ type represents ready-to-run @Par@
+computations, which are given direct access to the CPU-local scheduler
+queue.  Rather than returning a final result, a completed @ClosedPar@
+computation must call the scheduler, @sched@, on the queue.  A @Par@
+computation, on the other hand, completes by passing its intended
+result to its continuation---yielding a @ClosedPar@ computation.
 
 \subsection{Threshold reading}
-
-\singlespacing
-\lstinputlisting[float, caption={Implementation of the \il{getLV}
-    function.}, label=listing-implementation-getLV]{chapter4/code/getLV.hs}
-\doublespacing
 
 Listing~\ref{listing-implementation-getLV} gives the implementation
 for the lattice-generic @getLV@ function, which assists data structure
@@ -179,6 +183,11 @@ getKey key mapLV = getLV mapLV gThresh dThresh where
 \doublespacing
 
 where @lookup@ imperatively looks up a key in the underlying map.
+
+\singlespacing
+\lstinputlisting[float, caption={Implementation of the \il{getLV}
+    function.}, label=listing-implementation-getLV]{chapter4/code/getLV.hs}
+\doublespacing
 
 The challenge in implementing @getLV@ is the possibility that a
 \emph{concurrent} write will push the LVar over the threshold.  To
