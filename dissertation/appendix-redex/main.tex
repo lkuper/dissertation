@@ -1,52 +1,84 @@
-\chapter{PLT Redex Models of $\lambdaLVar$ and $\lambdaLVish$}\label{app:plt-redex}
+\chapter{A PLT Redex Model of $\lambdaLVish$}\label{app:plt-redex}
 
-\TODO{Edit this text.}
-
-We have developed a runnable version of the LVish
-calculus\footnote{Available at
-  \url{http://github.com/iu-parfunc/lvars}.} using the PLT Redex
-semantics engineering toolkit \cite{redex-book}.  In the Redex of
+I have developed a runnable version\footnote{Available at
+  \url{http://github.com/lkuper/lvar-semantics}.} of the
+$\lambdaLVish$ calculus of Chapter~\ref{ch:quasi} using the PLT Redex
+semantics engineering toolkit~\cite{redex-book}.  In the Redex of
 today, it is not possible to directly parameterize a language
 definition by a lattice.\footnote{See discussion at
   \url{http://lists.racket-lang.org/users/archive/2013-April/057075.html}.}
 Instead, taking advantage of Racket's syntactic abstraction
-capabilities, we define a Racket macro,
-\texttt{define-LVish-language}, that wraps a template implementing the
-lattice-agnostic semantics of $\lambdaLVish$, and
-takes the following arguments:
+capabilities, I define a Racket macro, @define-lambdaLVish-language@,
+that serves as a wrapper for a template that implements the
+lattice-agnostic semantics of $\lambdaLVish$.  The
+@define-lambdaLVish-language@ macro takes the following arguments:
 \begin{itemize}
 \item a \emph{name}, which becomes the \emph{lang-name} passed to
   Redex's \texttt{define-language} form;
 \item a \emph{``downset'' operation}, a Racket-level procedure that
   takes a lattice element and returns the (finite) set of all lattice
-  elements that are below that element (this operation is used to
-  implement the semantics of $\FAW$, in particular, to determine when
-  the {\sc E-Freeze-Final} rule can fire);
-\item a \emph{lub operation}, a Racket-level procedure that takes two
-  lattice elements and returns a lattice element; and
+  elements that are less than or equal to that element (this operation
+  is used to implement the semantics of $\FAW$, in particular, to
+  determine when the {\sc E-Freeze-Final} rule can fire);
+\item a \emph{lub operation}, a Racket procedure that takes two
+  lattice elements and returns a lattice element;
+\item a list of \emph{update operations}, Racket procedures that each
+  take a lattice element and return a lattice element; and
 \item a (possibly infinite) set of \emph{lattice elements} represented
   as Redex \emph{patterns}.
 \end{itemize}
-Given these arguments, \texttt{define-LVish-language} generates a
-Redex model specialized to the application-specific lattice in
-question. For instance, to instantiate a model called \texttt{nat},
-where the application-specific lattice is the natural numbers with
-\texttt{max} as the lub, one writes:
-\[
-\texttt{(define-LVish-language nat downset-op max natural)}
-\]
-where \texttt{downset-op} is separately defined.  Here,
-\texttt{downset-op} and \texttt{max} are Racket procedures.
-\texttt{natural} is a Redex pattern that has no meaning to Racket
-proper, but because \texttt{define-LVish-language} is a macro,
-\texttt{natural} is not evaluated until it is in the context of
-Redex.\lk{This might be too much information, or a little confusing.
-  It's a nice illustration of the power of macros, though.  I'd
-  welcome suggestions for how to word it differently.}
 
-\TODO{Freshen up the Redex models of $\lambdaLVar$ and $\lambdaLVish$
-  and add them here.}
+\noindent Given these arguments, @define-lambdaLVish-language@
+generates a Redex model that is specialized to the appropriate lattice
+and set of update operations. For instance, to generate a Redex model
+called @lambdaLVish-nat@ where the lattice is the non-negative
+integers ordered by $\leq$, and the set of update operations is $\{
+u_{(+1)}, u_{(+2)} \}$ where $u_{(+n)}(d)$ increments $d$'s contents
+by $n$, one could write:
 
+\singlespacing
+\begin{lstlisting}[language=Lisp]
+(define-lambdaLVish-language lambdaLVish-nat downset-op max update-ops natural)
+\end{lstlisting}
+\doublespacing
 
+\noindent where @max@ is a built-in Racket procedure, and @downset-op@
+and @update-ops@ can be defined in Racket as follows:
 
+\singlespacing
+\begin{lstlisting}[language=Lisp]
+(define downset-op
+  (lambda (d)
+    (if (number? d)
+        (append '(Bot) (iota d) `(,d))
+        '(Bot))))
 
+(define update-op-1
+  (lambda (d)
+    (match d
+      ['Bot 1]
+      [number (add1 d)])))
+
+(define update-op-2
+  (lambda (d)
+    (match d
+      ['Bot 2]
+      [number (add1 (add1 d))])))
+
+(define update-ops `(,update-op-1 ,update-op-2))
+\end{lstlisting}
+\doublespacing
+
+\noindent The last argument, @natural@, is a Redex pattern that
+matches any exact non-negative integer.  @natural@ has no meaning to
+Racket outside of Redex, but since @define-lambdaLVish-language@ is a
+macro rather than an ordinary procedure, its arguments are not
+evaluated until they are in the context of Redex, and so passing
+@natural@ as an argument to the macro gives us the behavior we want.
+
+The Redex model is not completely faithful to the $\lambdaLVish$
+calculus of Chapter~\ref{ch:quasi}: it requires us to specify a finite
+list of update operations rather than a possibly infinite set of them.
+However, the list of update operations can be arbitrarily long, and
+the definitions of the update operations could, at least in principle,
+be generated programmatically as well.
