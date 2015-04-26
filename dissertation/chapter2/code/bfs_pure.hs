@@ -1,9 +1,7 @@
-nbrs :: Graph -> NodeLabel -> Set NodeLabel
--- `nbrs g n' is the neighbor nodes of node `n' in graph `g'.
-
--- Traverse each level of the graph `g' in parallel, maintaining at each
--- recursive step a set of nodes that have been seen and a set of
--- nodes left to process.
+-- Traverse each level of the graph `g' in parallel, maintaining at
+-- each recursive step a set of nodes that have been seen and a set of
+-- nodes left to process.  `nbrs g n' is the neighbor nodes of node
+-- `n' in graph `g'.
 bf_traverse :: Graph -> Set NodeLabel -> Set NodeLabel -> Set NodeLabel
 bf_traverse g seen nu = 
   if nu == empty 
