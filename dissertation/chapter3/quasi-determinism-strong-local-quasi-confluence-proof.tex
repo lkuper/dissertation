@@ -1062,10 +1062,66 @@
 
         \item If $l = l'$:
 
-          Note that since $l = l'$, $p_1 = \state{d_1}{\frozentrue}$.
+          We have two cases to consider:
 
-          \TODO{This is the one interesting case in the whole
-            thing---the conflicting-put-and-freeze case.}
+          \begin{itemize}
+            \item $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$:
+
+              \lk{This is the interesting case: the potential
+                put-after-freeze case.  It's important to note that
+                this case doesn't necessarily end in a
+                put-after-freeze (and hence an error); all we're
+                required to show is that it \emph{can} end that way.}
+
+              Since $(\extSRaw{S}{l}{\state{d_1}{\frozentrue}})(l) =
+              \state{d_1}{\frozentrue}$ and
+              $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$, by {\sc
+                E-Put-Err} we have that
+              $\config{\extSRaw{S}{l}{\state{d_1}{\frozentrue}}}{\putiexp{l}}
+              \parstepsto \error$.
+
+              Since $S_b = \extSRaw{S}{l}{\state{d_1}{\frozentrue}}$,
+              we have that $\config{S_b}{\putiexp{l}} \parstepsto
+              \error$.
+
+              Since $\config{S}{e_{a_1}} \parstepsto
+              \config{S_a}{e_{a_2}}$ by {\sc E-Put}, it must be the
+              case that $e_{a_1} = \putiexp{l}$.  Hence
+              $\config{S_b}{e_{a_1}} \parstepsto \error$.
+
+              Since $\error$ is equal to $\config{\topS}{e}$ for all
+              expressions $e$, $\config{S_b}{e_{a_1}} \parstepsto
+              \config{\topS}{e}$ for all $e$.  Therefore, by {\sc
+                E-Eval-Ctxt}, $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}
+              \ctxstepsto \config{\topS}{\evalctxt{E'_a}{e}}$ for all
+              $e$.  Since $\config{\topS}{\evalctxt{E'_a}{e}}$ is
+              equal to $\error$, we have that
+              $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+              \error$.
+
+              Since $\evalctxt{E'_a}{e_{a_1}} =
+              \evalctxt{E_b}{e_{b_2}}$, we have that
+              $\config{S_b}{\evalctxt{E_b}{e_{b_2}}} \ctxstepsto
+              \error$.
+
+              Since $\conf_b = \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$,
+              we therefore have that $\conf_b \ctxstepsto \error$, and
+              the case is satisfied.
+
+            \item $u_{p_i}(\state{d_1}{\frozentrue}) \neq \topp$:
+
+              \lk{This is the case where there's a conflicting put and
+                freeze, but the put is a no-op, so it doesn't matter.}
+
+              In this case, by the definition of $U_p$
+              (Definition~\ref{def:set-of-state-update-operations}),
+              it must be the case that
+              $u_{p_i}(\state{d_1}{\frozentrue}) =
+              \state{d_1}{\frozentrue}$.
+
+              \TODO{Finish this case.}
+          \end{itemize}
+
       \end{itemize}
 
     \item \label{slqc-put-freeze-simple}Case {\sc E-Freeze-Simple}:
