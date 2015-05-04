@@ -536,10 +536,10 @@
         allocated during the transition is $l$;
       \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
         \extSRaw{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{u_{p_i}(p_1)}$
-        and we know $S \neq \topS$ and the addition of new bindings
-        $\storebinding{l}{\bot}{\frozenfalse}$ and
-        $\storebindingRaw{l'}{u_{p_i}(p_1)}$ cannot cause it to become
-        $\topS$ (since if $u_{p_i}(p_1) = \topp$,
+        and we know $S \neq \topS$ and the addition of a new binding
+        $\storebinding{l}{\bot}{\frozenfalse}$ and updating the
+        contents of location $l'$ to $u_{p_i}(p_1)$ in $S$ cannot
+        cause it to become $\topS$ (since if $u_{p_i}(p_1) = \topp$,
         $\config{S}{e_{b_1}}$ would not have been able to step by {\sc
           E-Put}); and
       \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}} \parstepsto
@@ -743,12 +743,12 @@
           \item $U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) \neq \topS$,
             since $U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) =
             \extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}$
-            and we know $S \neq \topS$ and the addition of new
-            bindings $\storebindingRaw{l}{u_{p_i}(p_1)}$ and
-            $\storebindingRaw{l'}{u_{p_j}(p'_1)}$ cannot cause it to
-            become $\topS$ (because if one of them could, then we
-            would have $S_a = \topS$ or $S_b = \topS$, which we know
-            are not the case); and
+            and we know $S \neq \topS$ and updating the contents of
+            location $l$ to $u_{p_i}(p_1)$ and the contents of
+            location $l'$ to $u_{p_j}(p'_1)$ in $S$ cannot cause it to
+            become $\topS$ (because if so, then we would have $S_a =
+            \topS$ or $S_b = \topS$, which we know are not the case);
+            and
           \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{e_{b_2}}$, since
@@ -990,12 +990,11 @@
           \item $U_S(\extS{S}{l'}{d_1}{\frozentrue}) \neq \topS$,
             since $U_S(\extS{S}{l'}{d_1}{\frozentrue}) =
             \extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}$
-            and we know $S \neq \topS$ and the addition of new
-            bindings $\storebindingRaw{l}{u_{p_i}(p_1)}$ and
-            $\storebinding{l'}{d_1}{\frozentrue}$ cannot cause it to
-            become $\topS$ (because if one of them could, then we
-            would have $S_a = \topS$ or $S_b = \topS$, which we know
-            are not the case); and
+            and we know $S \neq \topS$ and updating the contents of
+            location $l$ to $u_{p_i}(p_1)$ and freezing the contents
+            of location $l'$ in $S$ cannot cause it to become $\topS$
+            (because if so, then we would have $S_a = \topS$ or $S_b =
+            \topS$, which we know are not the case); and
           \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{b_2}}$, since
@@ -1029,12 +1028,11 @@
           \item $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$, since
             $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) =
             \extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}$,
-            and we know $S \neq \topS$ and the addition of new
-            bindings $\storebindingRaw{l}{u_{p_i}(p_1)}$ and
-            $\storebinding{l'}{d_1}{\frozentrue}$ cannot cause it to
-            become $\topS$ (because if one of them could, then we
-            would have $S_a = \topS$ or $S_b = \topS$, which we know
-            are not the case); and
+            and we know $S \neq \topS$ and updating the contents of
+            location $l$ to $u_{p_i}(p_1)$ and freezing the contents
+            of location $l$ in $S$ cannot cause it to become $\topS$
+            (because if so, then we would have $S_a = \topS$ or $S_b =
+            \topS$, which we know are not the case); and
           \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
             \parstepsto
             \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since
@@ -1194,10 +1192,9 @@
                 Definition~\ref{def:set-of-state-update-operations},
                 $u_i(d_1) = d_1$; otherwise we would have
                 $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$, a
-                contradiction), and we know $S \neq \topS$ and the
-                addition of a new binding
-                $\storebinding{l}{d_1}{\frozentrue}$ cannot cause it
-                to become $\topS$; and
+                contradiction), and we know $S \neq \topS$ and
+                freezing the contents of location $l$ in $S$ cannot
+                cause it to become $\topS$; and
               \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
                 \parstepsto
                 \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since
@@ -1437,12 +1434,10 @@
           \item $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) \neq \topS$,
             since $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) =
             \extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}$
-            and we know $S \neq \topS$ and the addition of new
-            bindings $\storebinding{l}{d_1}{\frozentrue}$ and
-            $\storebinding{l'}{d'_1}{\frozentrue}$ cannot cause it to
-            become $\topS$ (because if one of them could, then we
-            would have $S_a = \topS$ or $S_b = \topS$, which we know
-            are not the case); and
+            and we know $S \neq \topS$ and freezing the contents of
+            locations $l$ and $l'$ in $S$ cannot cause it to become
+            $\topS$ (because if so, then we would have $S_a = \topS$
+            or $S_b = \topS$, which we know are not the case); and
           \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extS{S}{l'}{d'_1}{\frozentrue}}{e_{b_2}}$, since
