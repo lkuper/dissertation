@@ -1407,7 +1407,62 @@
       \begin{itemize}
         \item If $l \neq l'$:
 
-          \TODO{}
+          Choose $S' =
+          \extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}$,
+          $i = 1$, $j = 1$, and $\pi = \id$.
+
+          We have to show that:
+          \begin{itemize}
+          \item
+            $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_1}}}
+            \ctxstepsto
+            \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+            and
+          \item
+            $\config{\extS{S}{l'}{d'_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
+            \ctxstepsto
+            \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
+          \end{itemize}
+
+          For the first of these, consider that
+          $\extS{S}{l}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is the
+          store update operation that freezes the contents of $l$
+          and acts as the identity on the contents of all other
+          locations.  Note that:
+          \begin{itemize}
+          \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+            \parstepsto
+            \config{\extS{S}{l'}{d'_1}{\frozentrue}}{e_{b_2}}$, since
+            no locations are allocated during the transition;
+          \item $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) \neq \topS$,
+            since $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) =
+            \extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}$
+            and we know $S \neq \topS$ and the addition of new
+            bindings $\storebinding{l}{d_1}{\frozentrue}$ and
+            $\storebinding{l'}{d'_1}{\frozentrue}$ cannot cause it to
+            become $\topS$ (because if one of them could, then we
+            would have $S_a = \topS$ or $S_b = \topS$, which we know
+            are not the case); and
+          \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+            \parstepsto
+            \config{\extS{S}{l'}{d'_1}{\frozentrue}}{e_{b_2}}$, since
+            the only location that can change in status between $S$
+            and $\extS{S}{l'}{d'_1}{\frozentrue}$ is $l'$, and $U_S$
+            acts as the identity on $l'$.
+          \end{itemize}
+          Therefore, by Lemma~\ref{lem:generalized-independence}
+          (Generalized Independence), we have that
+          $\config{U_S(S)}{e_{b_1}} \parstepsto
+          \config{U_S(\extS{S}{l'}{d'_1}{\frozentrue})}{e_{b_2}}$.
+          Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_1}}
+          \parstepsto
+          \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{e_{b_2}}$.
+          By {\sc E-Eval-Ctxt}, it follows that
+          $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_1}}}
+          \ctxstepsto
+          \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          as we were required to show.  The argument for the second is
+          symmetrical.
 
         \item If $l = l'$:
 
