@@ -1,3 +1,33 @@
 \begin{proof}
-  \TODO{Prove this.}
+  Suppose $\config{S}{\evalctxt{E_1}{e_1}} \ctxstepsto \config{S_1}{\evalctxt{E_1}{e'_1}}$ and
+  $\config{S}{\evalctxt{E_2}{e_2}} \ctxstepsto
+  \config{S_2}{\evalctxt{E_2}{e'_2}}$ and $\evalctxt{E_1}{e_1} =
+  \evalctxt{E_2}{e_2}$, where $E_1 \neq E_2$.
+
+  We are required to show that there exist evaluation contexts $E'_1$
+  and $E'_2$ such that:
+  \begin{itemize}
+  \item $\evalctxt{E'_1}{e_1} = \evalctxt{E_2}{e'_2}$, and
+  \item $\evalctxt{E'_2}{e_2} = \evalctxt{E_1}{e'_1}$, and
+  \item $\evalctxt{E'_1}{e'_1} = \evalctxt{E'_2}{e'_2}$.
+  \end{itemize}
+
+  Let $e = \evalctxt{E_1}{e_1} = \evalctxt{E_2}{e_2}$.  The proof is
+  by induction on the structure of the expression $e$.  Proceeding by
+  cases:
+
+  \begin{itemize}
+
+    \item Case $x$: \TODO{}
+
+    \item Case $v$: \TODO{}
+
+    \item Case $\app{e_a}{e_b}$: \TODO{}
+
+    \item Case $\getexp{e_a}{e_b}$: \TODO{}
+
+    \item Case $\putexp{e_a}{e_b}$: \TODO{}
+
+    \item Case $\NEW$: \TODO{}
+  \end{itemize}
 \end{proof}
