@@ -56,8 +56,10 @@ Therefore $(D_p, \leqp, \botp, \topp)$ is a lattice.
   \config{S_1}{\evalctxt{E_1}{e'_1}}$ and
   $\config{S}{\evalctxt{E_2}{e_2}} \ctxstepsto
   \config{S_2}{\evalctxt{E_2}{e'_2}}$ and $\evalctxt{E_1}{e_1} =
-  \evalctxt{E_2}{e_2}$, where $E_1 \neq E_2$, then there exist
-  evaluation contexts $E'_1$ and $E'_2$ such that:
+  \evalctxt{E_2}{e_2}$, then:
+
+  If $E_1 \neq E_2$, then there exist evaluation contexts $E'_1$ and
+  $E'_2$ such that:
   \begin{itemize}
   \item $\evalctxt{E'_1}{e_1} = \evalctxt{E_2}{e'_2}$, and
   \item $\evalctxt{E'_2}{e_2} = \evalctxt{E_1}{e'_1}$, and

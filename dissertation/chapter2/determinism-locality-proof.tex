@@ -2,10 +2,10 @@
   Suppose $\config{S}{\evalctxt{E_1}{e_1}} \ctxstepsto \config{S_1}{\evalctxt{E_1}{e'_1}}$ and
   $\config{S}{\evalctxt{E_2}{e_2}} \ctxstepsto
   \config{S_2}{\evalctxt{E_2}{e'_2}}$ and $\evalctxt{E_1}{e_1} =
-  \evalctxt{E_2}{e_2}$, where $E_1 \neq E_2$.
+  \evalctxt{E_2}{e_2}$.
 
-  We are required to show that there exist evaluation contexts $E'_1$
-  and $E'_2$ such that:
+  We are required to show that if $E_1 \neq E_2$, then there exist
+  evaluation contexts $E'_1$ and $E'_2$ such that:
   \begin{itemize}
   \item $\evalctxt{E'_1}{e_1} = \evalctxt{E_2}{e'_2}$, and
   \item $\evalctxt{E'_2}{e_2} = \evalctxt{E_1}{e'_1}$, and
@@ -18,16 +18,36 @@
 
   \begin{itemize}
 
-    \item Case $x$: \TODO{}
+    \item Case $x$: In this case, the only possible context for $E_1$
+      and $E_2$ is the empty context $[~]$.  Therefore $E_1 = E_2$,
+      and so the case holds vacuously.
 
-    \item Case $v$: \TODO{}
+    \item Case $v$: Similar to the case for $x$.
 
-    \item Case $\app{e_a}{e_b}$: \TODO{}
+    \item Case $\app{e_a}{e_b}$:
 
-    \item Case $\getexp{e_a}{e_b}$: \TODO{}
+      We know that $\evalctxt{E_1}{e_1} = e$.  From the grammar of
+      evaluation contexts, we know that either:
+      \begin{itemize}
+        \item $e = \evalctxt{E_1}{e_1} = \app{\evalctxt{E_a}{e_1}}{e_b}$, where $\evalctxt{E_a}{e_1} = e_a$, or
+        \item $e = \evalctxt{E_1}{e_1} = \app{e_a}{\evalctxt{E_a}{e_1}}$, where $\evalctxt{E_a}{e_1} = e_b$.
+      \end{itemize}
 
-    \item Case $\putexp{e_a}{e_b}$: \TODO{}
+      Similarly, we know that $\evalctxt{E_2}{e_2} = e$.  From the grammar of
+      evaluation contexts, we know that either:
+      \begin{itemize}
+        \item $e = \evalctxt{E_2}{e_2} = \app{\evalctxt{E_b}{e_2}}{e_b}$, where $\evalctxt{E_b}{e_2} = e_a$, or
+        \item $e = \evalctxt{E_2}{e_2} = \app{e_a}{\evalctxt{E_b}{e_2}}$, where $\evalctxt{E_b}{e_2} = e_b$.
+      \end{itemize}
 
-    \item Case $\NEW$: \TODO{}
+      This gives us four sub-cases to consider:
+
+      \TODO{Finish this.}
+
+    \item Case $\getexp{e_a}{e_b}$: Similar to the case for $\app{e_a}{e_b}$.
+
+    \item Case $\putexp{e_a}{e_b}$: Similar to the case for $\app{e_a}{e_b}$.
+
+    \item Case $\NEW$: Similar to the case for $x$.
   \end{itemize}
 \end{proof}
