@@ -12,9 +12,8 @@
   \item $\evalctxt{E'_1}{e'_1} = \evalctxt{E'_2}{e'_2}$.
   \end{itemize}
 
-  Let $e = \evalctxt{E_1}{e_1} = \evalctxt{E_2}{e_2}$.  The proof is
-  by induction on the structure of the expression $e$.  Proceeding by
-  cases:
+  The proof is by induction on the structure of the expression $e$.
+  Proceeding by cases:
 
   \begin{itemize}
 
@@ -26,23 +25,72 @@
 
     \item Case $\app{e_a}{e_b}$:
 
-      We know that $\evalctxt{E_1}{e_1} = e$.  From the grammar of
-      evaluation contexts, we know that either:
+      If $E_1 = E_2$, the case holds vacuously.  Otherwise, we proceed
+      as follows.  We know that $\app{e_a}{e_b} =
+      \evalctxt{E_1}{e_1}$.  From the grammar of evaluation contexts,
+      then, we know that either:
       \begin{itemize}
-        \item $e = \evalctxt{E_1}{e_1} = \app{\evalctxt{E_a}{e_1}}{e_b}$, where $\evalctxt{E_a}{e_1} = e_a$, or
-        \item $e = \evalctxt{E_1}{e_1} = \app{e_a}{\evalctxt{E_a}{e_1}}$, where $\evalctxt{E_a}{e_1} = e_b$.
+        \item $\app{e_a}{e_b} = \evalctxt{E_1}{e_1} = \app{\evalctxt{E_{11}}{e_1}}{e_b}$, where $\evalctxt{E_{11}}{e_1} = e_a$, or
+        \item $\app{e_a}{e_b} = \evalctxt{E_1}{e_1} = \app{e_a}{\evalctxt{E_{12}}{e_1}}$, where $\evalctxt{E_{12}}{e_1} = e_b$.
       \end{itemize}
 
-      Similarly, we know that $\evalctxt{E_2}{e_2} = e$.  From the grammar of
+      Similarly, we know that $\app{e_a}{e_b} = \evalctxt{E_2}{e_2}$.  From the grammar of
       evaluation contexts, we know that either:
       \begin{itemize}
-        \item $e = \evalctxt{E_2}{e_2} = \app{\evalctxt{E_b}{e_2}}{e_b}$, where $\evalctxt{E_b}{e_2} = e_a$, or
-        \item $e = \evalctxt{E_2}{e_2} = \app{e_a}{\evalctxt{E_b}{e_2}}$, where $\evalctxt{E_b}{e_2} = e_b$.
+        \item $\app{e_a}{e_b} = \evalctxt{E_2}{e_2} = \app{\evalctxt{E_{21}}{e_2}}{e_b}$, where $\evalctxt{E_{21}}{e_2} = e_a$, or
+        \item $\app{e_a}{e_b} = \evalctxt{E_2}{e_2} = \app{e_a}{\evalctxt{E_{22}}{e_2}}$, where $\evalctxt{E_{22}}{e_2} = e_b$.
       \end{itemize}
 
-      This gives us four sub-cases to consider:
+      This gives us four cases to consider:
 
-      \TODO{Finish this.}
+      \begin{itemize}
+        \item $\evalctxt{E_{11}}{e_1} = e_a$ and
+          $\evalctxt{E_{21}}{e_2} = e_a$:
+
+          In this case, we know that $E_{11} \neq E_{21}$, because if
+          $E_{11} = E_{21}$, we would have $e_1 = e_2$, which would
+          mean that $E_1 = E_2$, a contradiction.  So, since $E_{11}
+          \neq E_{21}$, by IH we have that there exist evaluation
+          contexts $E'_{11}$ and $E'_{21}$ such that:
+          \begin{itemize}
+          \item $\evalctxt{E'_{11}}{e_1} = \evalctxt{E_{21}}{e'_2}$, and
+          \item $\evalctxt{E'_{21}}{e_2} = \evalctxt{E_{11}}{e'_1}$, and
+          \item $\evalctxt{E'_{11}}{e'_1} = \evalctxt{E'_{21}}{e'_2}$.
+          \end{itemize}
+
+          \TODO{Show that we can construct $E'_1$ and $E'_2$ from
+            $E'_{11}$ and $E'_{21}$.  I've worked this out on paper,
+            just need to type it up.}
+
+        \item $\evalctxt{E_{12}}{e_1} = e_b$ and
+          $\evalctxt{E_{22}}{e_2} = e_b$: Similar to the previous
+          case.
+          
+        \item $\evalctxt{E_{11}}{e_1} = e_a$ and
+          $\evalctxt{E_{22}}{e_2} = e_b$:
+
+          In this case, we can choose $E'_1 =
+          \app{\evalctxt{E_{11}}{~}}{\evalctxt{E_{22}}{e'_2}}$, and
+          $E'_2 =
+          \app{\evalctxt{E_{11}}{e'_1}}{\evalctxt{E_{22}}{~}}$, which
+          satisfy the criteria for $E'_1$ and $E'_2$.
+
+          \lk{These work because: $\evalctxt{E'_1}{e_1} =
+            \app{\evalctxt{E_{11}}{e_1}}{\evalctxt{E_{22}}{e'_2}}$,
+            which is the same as $\app{e_a}{\evalctxt{E_{22}}{e'_2}}$,
+            which is the same as $\evalctxt{E_2}{e'_2}$.  Also,
+            $\evalctxt{E'_2}{e_2} =
+            \app{\evalctxt{E_{11}}{e'_1}}{\evalctxt{E_{22}}{e_2}}$,
+            which is the same as $\app{\evalctxt{E_{11}}{e'_1}}{e_b}$,
+            which is the same as $\evalctxt{E_1}{e'_1}$.  And finally,
+            $\evalctxt{E'_1}{e'_1} =
+            \app{\evalctxt{E_{11}}{e'_1}}{\evalctxt{E_{22}}{e'_2}}$,
+            which is the same as $\evalctxt{E'_2}{e'_2}$.}
+
+        \item $\evalctxt{E_{12}}{e_1} = e_b$ and
+          $\evalctxt{E_{21}}{e_2} = e_a$: Similar to the previous
+          case.
+      \end{itemize}
 
     \item Case $\getexp{e_a}{e_b}$: Similar to the case for $\app{e_a}{e_b}$.
 
