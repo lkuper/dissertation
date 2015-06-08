@@ -58,9 +58,22 @@
           \item $\evalctxt{E'_{11}}{e'_1} = \evalctxt{E'_{21}}{e'_2}$.
           \end{itemize}
 
-          \TODO{Show that we can construct $E'_1$ and $E'_2$ from
-            $E'_{11}$ and $E'_{21}$.  I've worked this out on paper,
-            just need to type it up.}
+          Hence we can choose $E'_1 =
+          \app{E'_{11}}{e_b}$ and $E'_2 =
+          \app{E'_{21}}{e_b}$, which satisfy the
+          criteria for $E'_1$ and $E'_2$.
+
+          \lk{These work because: $\evalctxt{E'_1}{e_1} =
+            \app{\evalctxt{E'_{11}}{e_1}}{e_b}$, which is equal to
+            $\app{\evalctxt{E_{21}}{e'_2}}{e_b}$, which is equal to
+            $\evalctxt{E_2}{e'_2}$.  Also, $\evalctxt{E'_2}{e_2} =
+            \app{\evalctxt{E'_{21}}{e_2}}{e_b}$, which is equal to
+            $\app{\evalctxt{E_{11}}{e'_1}}{e_b}$, which is equal to
+            $\evalctxt{E_1}{e'_1}$.  And finally,
+            $\evalctxt{E'_1}{e'_1} =
+            \app{\evalctxt{E_{11}}{e'_1}}{e_b}$, which is the same as
+            $\app{\evalctxt{E'_{21}}{e'_2}}{e_b}$, which is the same
+            as $\evalctxt{E'_2}{e'_2}$.}
 
         \item $\evalctxt{E_{12}}{e_1} = e_b$ and
           $\evalctxt{E_{22}}{e_2} = e_b$: Similar to the previous
@@ -70,10 +83,9 @@
           $\evalctxt{E_{22}}{e_2} = e_b$:
 
           In this case, we can choose $E'_1 =
-          \app{\evalctxt{E_{11}}{~}}{\evalctxt{E_{22}}{e'_2}}$, and
-          $E'_2 =
-          \app{\evalctxt{E_{11}}{e'_1}}{\evalctxt{E_{22}}{~}}$, which
-          satisfy the criteria for $E'_1$ and $E'_2$.
+          \app{E_{11}}{\evalctxt{E_{22}}{e'_2}}$, and $E'_2 =
+          \app{\evalctxt{E_{11}}{e'_1}}{E_{22}}$, which satisfy the
+          criteria for $E'_1$ and $E'_2$.
 
           \lk{These work because: $\evalctxt{E'_1}{e_1} =
             \app{\evalctxt{E_{11}}{e_1}}{\evalctxt{E_{22}}{e'_2}}$,
