@@ -1,3 +1,39 @@
 \begin{proof}
-  \TODO{Prove this.}
+  Suppose $\config{S}{\evalctxt{E_1}{e_1}} \ctxstepsto \config{S_1}{\evalctxt{E_1}{e'_1}}$ and
+  $\config{S}{\evalctxt{E_2}{e_2}} \ctxstepsto
+  \config{S_2}{\evalctxt{E_2}{e'_2}}$ and $\evalctxt{E_1}{e_1} =
+  \evalctxt{E_2}{e_2}$.
+
+  We are required to show that if $E_1 \neq E_2$, then there exist
+  evaluation contexts $E'_1$ and $E'_2$ such that:
+  \begin{itemize}
+  \item $\evalctxt{E'_1}{e_1} = \evalctxt{E_2}{e'_2}$, and
+  \item $\evalctxt{E'_2}{e_2} = \evalctxt{E_1}{e'_1}$, and
+  \item $\evalctxt{E'_1}{e'_1} = \evalctxt{E'_2}{e'_2}$.
+  \end{itemize}
+
+  Let $e = \evalctxt{E_1}{e_1} = \evalctxt{E_2}{e_2}$.  The proof is
+  by induction on the structure of the expression $e$.  Proceeding by
+  cases on $e$:
+
+  \begin{itemize}
+
+    \item Cases $e = x$, $e = v$, $e = \app{e_a}{e_b}$, $e = \getexp{e_a}{e_b}$, and
+      $e = \NEW$ are identical to their corresponding cases in the proof
+      of Lemma~\ref{lem:lvars-locality}.
+
+    \item Case $e = \putiexp{e_a}$: In this case, from the grammar of
+      evaluation contexts, the only contexts that $E_1$ and $E_2$ can
+      be are $\putiexp{E_{11}}$ and the empty context $[~]$.  If $E_1$
+      and $E_2$ are the same context, the case holds vacuously.  If
+      $E_1$ and $E_2$ are different, let us assume without loss of
+      generality that $E_1 = \putiexp{E_{11}}$ and $E_2 = [~]$. \TODO{this case}
+
+    \item Case $\freeze{e_a}$: Similar to the case for $\putiexp{e_a}$.
+
+    \item Case $\freezeafter{e_a}{e_b}{e_c}$: \TODO{this case}
+
+    \item Case $\freezeafterfull{l}{Q}{\lam{x}{e_a}}{\setof{e_b, \dots}}{H}$: \TODO{this case}
+
+  \end{itemize}
 \end{proof}
