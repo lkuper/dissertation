@@ -14,17 +14,17 @@
 
   Let $e = \evalctxt{E_1}{e_1} = \evalctxt{E_2}{e_2}$.  The proof is
   by induction on the structure of the expression $e$.  Proceeding by
-  cases:
+  cases on $e$:
 
   \begin{itemize}
 
-    \item Case $x$: In this case, the only possible context for $E_1$
-      and $E_2$ is the empty context $[~]$.  Therefore $E_1 = E_2$,
-      and so the case holds vacuously.
+    \item Case $e = x$: In this case, the only possible context that $E_1$
+      and $E_2$ can be is the empty context $[~]$.  Therefore $E_1 =
+      E_2$, and so the case holds vacuously.
 
-    \item Case $v$: Similar to the case for $x$.
+    \item Case $e = v$: Similar to the case for $x$.
 
-    \item Case $\app{e_a}{e_b}$:
+    \item Case $e = \app{e_a}{e_b}$:
 
       If $E_1 = E_2$, the case holds vacuously.  Otherwise, we proceed
       as follows.  We know that $\app{e_a}{e_b} =
@@ -105,10 +105,10 @@
           case.
       \end{itemize}
 
-    \item Case $\getexp{e_a}{e_b}$: Similar to the case for $\app{e_a}{e_b}$.
+    \item Case $e = \getexp{e_a}{e_b}$: Similar to the case for $\app{e_a}{e_b}$.
 
-    \item Case $\putexp{e_a}{e_b}$: Similar to the case for $\app{e_a}{e_b}$.
+    \item Case $e = \putexp{e_a}{e_b}$: Similar to the case for $\app{e_a}{e_b}$.
 
-    \item Case $\NEW$: Similar to the case for $x$.
+    \item Case $e = \NEW$: Similar to the case for $x$.
   \end{itemize}
 \end{proof}
