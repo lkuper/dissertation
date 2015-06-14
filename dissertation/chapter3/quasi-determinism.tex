@@ -106,14 +106,12 @@ ways.  An expression $e$ such that $e = \evalctxt{E_1}{e_1} =
 $\config{S}{\evalctxt{E_2}{e_2}} \ctxstepsto
 \config{S_2}{\evalctxt{E_2}{e'_2}}$.
 
-The Locality lemma says that $\ctxstepsto$ acts ``locally'' in each of
-these steps: when $e_1$ steps to $e'_1$ within its context, the
-expression $e_2$ will be left alone, because it belongs to the
-context.  Likewise, when $e_2$ steps to $e'_2$ within its context, the
-expression $e_1$ will be left alone.  The statement of the Locality
+The Locality lemma says that the $\ctxstepsto$ relation acts
+``locally'' in each of these steps. The statement of the Locality
 lemma is the same as that of Lemma~\ref{lem:lvars-locality} (Locality
 for $\lambdaLVar$), but the proof must account for the set of possible
-evaluation contexts in $\lambdaLVish$ being different (and larger).
+evaluation contexts in $\lambdaLVish$ being different (and larger)
+than the set of evaluation contexts in $\lambdaLVar$.
 
 \LemLocality
 \ifdefined\DISSERTATION
