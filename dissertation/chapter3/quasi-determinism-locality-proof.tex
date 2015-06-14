@@ -23,17 +23,18 @@
       of Lemma~\ref{lem:lvars-locality}.
 
     \item Case $e = \putiexp{e_a}$: In this case, from the grammar of
-      evaluation contexts, the only contexts that $E_1$ and $E_2$ can
-      be are $\putiexp{E_{11}}$ and the empty context $[~]$.  If $E_1$
-      and $E_2$ are the same context, the case holds vacuously.  If
-      $E_1$ and $E_2$ are different, let us assume without loss of
-      generality that $E_1 = \putiexp{E_{11}}$ and $E_2 = [~]$. \TODO{this case}
+      evaluation contexts, the only contexts that $E_1$ and $E_2$
+      could be are $\putiexp{E_{11}}$ for some context $E_{11}$, and
+      the empty context $[~]$.  If $E_1$ and $E_2$ are the same
+      context, the case holds vacuously.  If $E_1$ and $E_2$ are
+      different, let us assume without loss of generality that $E_1 =
+      \putiexp{E_{11}}$ and $E_2 = [~]$. \TODO{this case}
 
-    \item Case $\freeze{e_a}$: Similar to the case for $\putiexp{e_a}$.
+    \item Case $e = \freeze{e_a}$: Similar to the case for $\putiexp{e_a}$.
 
-    \item Case $\freezeafter{e_a}{e_b}{e_c}$: \TODO{this case}
+    \item Case $e = \freezeafter{e_a}{e_b}{e_c}$: \TODO{this case}
 
-    \item Case $\freezeafterfull{l}{Q}{\lam{x}{e_a}}{\setof{e_b, \dots}}{H}$: \TODO{this case}
+    \item Case $e = \freezeafterfull{l}{Q}{\lam{x}{e_a}}{\setof{e_b, \dots}}{H}$: \TODO{this case}
 
   \end{itemize}
 \end{proof}
