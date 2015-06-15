@@ -3,7 +3,7 @@
 exec 1>&2
 
 cd dissertation
-make
+make dissertation.pdf
 scp dissertation.pdf sharks.cs.indiana.edu:~/.hyplan/papers/dissertation-draft-latest.pdf
 
 
