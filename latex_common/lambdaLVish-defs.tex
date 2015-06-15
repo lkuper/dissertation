@@ -97,8 +97,8 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
   $\lubstore{S_1}{S_2}$) is defined as follows:
 
   \begin{itemize}
-  \item $\lubstore{S_1}{S_2} = \topS$ iff $S_1 = \topS$ or $S_2 = \topS$.
-  \item $\lubstore{S_1}{S_2} = \topS$ iff there exists some $l \in
+  \item $\lubstore{S_1}{S_2} = \topS$ if $S_1 = \topS$ or $S_2 = \topS$.
+  \item $\lubstore{S_1}{S_2} = \topS$ if there exists some $l \in
     \dom{S_1} \cap \dom{S_2}$ such that $\lubp{S_1(l)}{S_2(l)} = \topp$.
   \item Otherwise, $\lubstore{S_1}{S_2}$ is the store $S$ such that:
 
