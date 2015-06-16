@@ -1,8 +1,8 @@
 \begin{proof}
   Suppose $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$.
   We have to show that there is a permutation $\pi$ such that $\conf'
-  = \pi(\conf'')$.  The proof is by cases on the rule by which $\conf$
-  steps to $\conf'$.
+  = \pi(\conf'')$, modulo choice of events.  The proof is by cases on
+  the rule by which $\conf$ steps to $\conf'$.
 
   \begin{itemize}
 
@@ -118,9 +118,14 @@
     $d_2 \notin H$, and for the premises of {\sc E-Freeze-Final} to
     hold, we would need that for all $d_2$, if $d_2 \userleq d_1$ and
     $d_2 \in Q$, then $d_2 \in H$.)  Hence $\conf'' =
-    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-          e, \dots}} {\{d_2\}\cup H}}$, and the case is satisfied by
-    choosing $\pi$ to be the identity function.
+    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d'_2},
+          e, \dots}} {\{d'_2\}\cup H}}$, where $d'_2 \userleq d_1$ and
+    $d'_2 \in Q$ and $d'_2 \notin H$, and the case is satisfied by
+    choosing $\pi$ to be the identity function.  (It may be the case
+    that $d'_2 \neq d_2$; if so, then we have internal nondeterminism
+    modulo \emph{choice of events}, as we were required to show.  If
+    $d'_2 = d_2$ then we have internal nondeterminism even without
+    that additional qualification, which also satisfies the case.)
 
   \item Case {\sc E-Freeze-Final}:
 

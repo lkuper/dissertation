@@ -76,12 +76,22 @@ $\pi(\conf)$ can step to $\pi(\conf')$.
 
 \subsection{Internal Determinism}
 
-As we did for $\lambdaLVar$, we can prove that $\lambdaLVish$'s
-reduction semantics is internally deterministic: that is, if a
+In \either{Chapter}{Section}~\ref{ch:lvars}, we saw that the reduction
+semantics for $\lambdaLVar$ is internally deterministic: that is, if a
 configuration can step by the reduction semantics, there is only one
 rule by which it can step, and only one configuration to which it can
-step, modulo location names.  This fact will be useful to us later on
-in the proof of Strong Local Quasi-Confluence
+step, modulo location names.  For $\lambdaLVish$, we can also show an
+internal determinism property, but with a slight additional wrinkle.
+
+In $\lambdaLVish$, the {\sc E-Spawn-Handler} rule picks out an
+eligible element $d_2$ from the set $Q$ (that is, an event) and
+launches a new callback thread to handle that event.  But, since there
+could be more than one eligible element in $Q$ that {\sc
+  E-Spawn-Handler} could choose, the choice of event is a source of
+nondeterminism.  Therefore, we show that $\lambdaLVish$ is internally
+deterministic modulo \emph{choice of events}, as well as modulo
+location names.  This property will be useful to us later on in the
+proof of Strong Local Quasi-Confluence
 (Lemma~\ref{lem:strong-local-quasi-confluence}).
 
 \LemInternalDeterminism

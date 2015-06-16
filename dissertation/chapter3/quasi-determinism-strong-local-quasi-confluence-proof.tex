@@ -30,9 +30,27 @@
   \parstepsto \config{S_b}{e_{b_2}}$.  But then, since $e_{a_1} =
   e_{b_1}$, by Internal Determinism
   (Lemma~\ref{lem:internal-determinism}) there is a permutation $\pi'$
-  such that $\config{S_a}{e_{a_2}} = \pi'(\config{S_b}{e_{b_2}})$.
-  Then we can satisfy the proof by choosing $\conf_c =
-  \config{S_a}{e_{a_2}}$ and $i = 0$ and $j = 0$ and $\pi = \pi'$.
+  such that $\config{S_a}{e_{a_2}} = \pi'(\config{S_b}{e_{b_2}})$,
+  modulo choice of events.  We have two cases:
+
+  \begin{itemize}
+    \item In the case where the steps $\conf \ctxstepsto \conf_a$ and
+      $\conf \ctxstepsto \conf_b$ are both by {\sc E-Spawn-Handler}
+      and they handle different events $d_2$ and $d'_2$, then we can
+      satisfy the proof by choosing the final configuration $\conf_c$
+      as the configuration where both $d_2$ and $d'_2$ have been
+      handled.  Both $\conf_a$ and $\conf_b$ can step to this
+      configuration by {\sc E-Spawn-Handler}: if the step from $\conf$
+      to $\conf_a$ handles $d_2$ then the step from $\conf_a$ to
+      $\conf_c$ handles $d'_2$, while if the step from $\conf$ to
+      $\conf_b$ handles $d'_2$ then the step from $\conf_b$ to
+      $\conf_c$ handles $d_2$.  The store in the final configuration
+      is $S_a$ or $S_b$, which are equal because {\sc E-Spawn-Handler}
+      does not affect the store, and we can satisfy the proof by
+      choosing $i = 1$ and $j = 0$ and $\pi = \id$.
+    \item Otherwise, we can satisfy the proof by choosing $\conf_c =
+      \config{S_a}{e_{a_2}}$ and $i = 0$ and $j = 0$ and $\pi = \id$.
+  \end{itemize}
 
   The rest of this proof deals with the more interesting case in which
   $E_a \neq E_b$ (and $e_{a_1} \neq e_{b_1}$).  Since
