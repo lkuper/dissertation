@@ -141,17 +141,22 @@
         \item $\evalctxt{E'_{21}}{e_2} = \evalctxt{E_{11}}{e'_1}$, and
         \item $\evalctxt{E'_{11}}{e'_1} = \evalctxt{E'_{21}}{e'_2}$.
         \end{itemize}
-
-        Hence we can choose $E'_1 =
-        \freezeafterfull{l}{Q}{\lam{x}{e_a}}{\setof{e_{b_1}, \dots,
-            E'_{11}, \dots, e_{b_n}}}{H}$ and $E'_2 =
-        \freezeafterfull{l}{Q}{\lam{x}{e_a}}{\setof{e_{b_1}, \dots,
-            E'_{21}, \dots, e_{b_n}}}{H}$, which satisfy the criteria
+        Hence we can choose
+        \[E'_1 = \freezeafterfull{l}{Q}{\lam{x}{e_a}}{\setof{e_{b_1}, \dots,
+            E'_{11}, \dots, e_{b_n}}}{H},\] and
+        \[E'_2 = \freezeafterfull{l}{Q}{\lam{x}{e_a}}{\setof{e_{b_1}, \dots,
+            E'_{21}, \dots, e_{b_n}}}{H},\] which satisfy the criteria
         for $E'_1$ and $E'_2$.
 
       \item $e_{b_i} \neq e_{b_j}$:
-
-        \TODO{}
+        In this case, we can choose
+        \[E'_1 = \freezeafterfull{l}{Q}{\lam{x}{e_a}}{\setof{e_{b_1},
+            \dots, E_{11}, \dots, \evalctxt{E_{21}}{e'_2}, \dots,
+            e_{b_n}}}{H},\] and
+        \[E'_2 = \freezeafterfull{l}{Q}{\lam{x}{e_a}}{\setof{e_{b_1},
+            \dots, \evalctxt{E_{11}}{e'_1}, \dots, E_{21}, \dots,
+            e_{b_n}}}{H},\] which satisfy the criteria for $E'_1$ and
+        $E'_2$.
       \end{itemize}
   \end{itemize}
 \end{proof}
