@@ -42,6 +42,12 @@
         \item $\app{e_a}{e_b} = \evalctxt{E_2}{e_2} = \app{e_a}{\evalctxt{E_{22}}{e_2}}$, where $\evalctxt{E_{22}}{e_2} = e_b$.
       \end{itemize}
 
+      (If $E_1 = [~]$ or $E_2 = [~]$, then $\app{e_a}{e_b}$ must be
+      $\app{(\lam{x}{e'})}{v}$ for some $e'$ and $v$, and neither
+      $(\lam{x}{e'})$ nor $v$ can step individually, so the other of
+      $E_1$ or $E_2$ must be $[~]$ as well, and so $E_1 = E_2$ and the
+      case holds vacuously.)
+
       This gives us four cases to consider:
 
       \begin{itemize}
@@ -59,10 +65,9 @@
           \item $\evalctxt{E'_{11}}{e'_1} = \evalctxt{E'_{21}}{e'_2}$.
           \end{itemize}
 
-          Hence we can choose $E'_1 =
-          \app{E'_{11}}{e_b}$ and $E'_2 =
-          \app{E'_{21}}{e_b}$, which satisfy the
-          criteria for $E'_1$ and $E'_2$.
+          Hence we can choose $E'_1 = \app{E'_{11}}{e_b}$ and $E'_2 =
+          \app{E'_{21}}{e_b}$, which satisfy the criteria for $E'_1$
+          and $E'_2$.
 
           \lk{These work because: $\evalctxt{E'_1}{e_1} =
             \app{\evalctxt{E'_{11}}{e_1}}{e_b}$, which is equal to

@@ -22,19 +22,59 @@
       $e = \NEW$ are identical to their corresponding cases in the proof
       of Lemma~\ref{lem:lvars-locality}.
 
-    \item Case $e = \putiexp{e_a}$: In this case, from the grammar of
-      evaluation contexts, the only contexts that $E_1$ and $E_2$
-      could be are $\putiexp{E_{11}}$ for some context $E_{11}$, and
-      the empty context $[~]$.  If $E_1$ and $E_2$ are the same
-      context, the case holds vacuously.  If $E_1$ and $E_2$ are
-      different, let us assume without loss of generality that $E_1 =
-      \putiexp{E_{11}}$ and $E_2 = [~]$. \TODO{this case}
+    \item Case $e = \putiexp{e_a}$:
+
+      From the grammar of evaluation contexts, we know that either:
+      \begin{itemize}
+        \item $\putiexp{e_a} = \evalctxt{E_1}{e_1} = \evalctxt{E_1}{\putiexp{e_a}}$, where $E_1 = [~]$, or
+        \item $\putiexp{e_a} = \evalctxt{E_1}{e_1} =
+          \putiexp{\evalctxt{E_{11}}{e_1}}$, where
+          $\evalctxt{E_{11}}{e_1} = e_a$.
+      \end{itemize}
+
+      Similarly, we know that $\putiexp{e_a} = \evalctxt{E_2}{e_2}$.
+      From the grammar of evaluation contexts, we know that either:
+      \begin{itemize}
+        \item $\putiexp{e_a} = \evalctxt{E_2}{e_2} = \evalctxt{E_2}{\putiexp{e_a}}$, where $E_2 = [~]$, or
+        \item $\putiexp{e_a} = \evalctxt{E_2}{e_2} =
+          \putiexp{\evalctxt{E_{21}}{e_2}}$, where
+          $\evalctxt{E_{21}}{e_2} = e_a$.
+      \end{itemize}
+
+      However, if $E_1 = [~]$ or $E_2 = [~]$, then $\putiexp{e_a}$
+      must be $\putiexp{v}$ for some $v$, and $v$ cannot step
+      individually, so the other of $E_1$ or $E_2$ must be $[~]$ as
+      well, and so $E_1 = E_2$.  Therefore the only case that we have
+      to consider is the case in which $\evalctxt{E_1}{e_1} =
+      \putiexp{\evalctxt{E_{11}}{e_1}}$, where $\evalctxt{E_{11}}{e_1}
+      = e_a$, and $\putiexp{e_a} = \evalctxt{E_2}{e_2} =
+      \putiexp{\evalctxt{E_{21}}{e_2}}$, where $\evalctxt{E_{21}}{e_2}
+      = e_a$.
+
+      So, we have $\evalctxt{E_{11}}{e_1} = e_a$ and
+      $\evalctxt{E_{21}}{e_2} = e_a$.  In this case, we know that
+      $E_{11} \neq E_{21}$, because if $E_{11} = E_{21}$, we would
+      have $e_1 = e_2$, which would mean that $E_1 = E_2$, a
+      contradiction.  So, since $E_{11} \neq E_{21}$, by IH we have
+      that there exist evaluation contexts $E'_{11}$ and $E'_{21}$
+      such that:
+      \begin{itemize}
+      \item $\evalctxt{E'_{11}}{e_1} = \evalctxt{E_{21}}{e'_2}$, and
+      \item $\evalctxt{E'_{21}}{e_2} = \evalctxt{E_{11}}{e'_1}$, and
+      \item $\evalctxt{E'_{11}}{e'_1} = \evalctxt{E'_{21}}{e'_2}$.
+      \end{itemize}
+
+      Hence we can choose $E'_1 = \putiexp{E'_{11}}$ and $E'_2 =
+      \putiexp{E'_{21}}$, which satisfy the criteria for $E'_1$ and
+      $E'_2$.
 
     \item Case $e = \freeze{e_a}$: Similar to the case for $\putiexp{e_a}$.
 
-    \item Case $e = \freezeafter{e_a}{e_b}{e_c}$: \TODO{this case}
+    \item Case $e = \freezeafter{e_a}{e_b}{e_c}$: Similar to the case
+      where $e = \app{e_a}{e_b}$.
 
-    \item Case $e = \freezeafterfull{l}{Q}{\lam{x}{e_a}}{\setof{e_b, \dots}}{H}$: \TODO{this case}
+    \item Case $e = \freezeafterfull{l}{Q}{\lam{x}{e_a}}{\setof{e_b,
+        \dots}}{H}$: \TODO{this case}
 
   \end{itemize}
 \end{proof}
