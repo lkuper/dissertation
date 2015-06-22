@@ -5,7 +5,17 @@ data loss and allows for good data locality.  But the well-known
 \emph{CAP theorem}~\cite{gilbert-lynch-cap, BrewerCAPBlog} of
 distributed computing imposes a trade-off between \emph{consistency},
 in which every replica sees the same data, and \emph{availability}, in
-which all data is available for both reading and writing by all
+which all
+\ifdefined\DISSERTATION
+\begin{wrapfigure}{r}{1.5in}
+\vspace{-1em}
+\begin{center}
+  \includegraphics[scale=0.15]{../illustrations/keys}
+\end{center}
+\vspace{-1em}
+\end{wrapfigure}
+\fi
+data is available for both reading and writing by all
 replicas.  \emph{Highly available} distributed systems, such as
 Amazon's Dynamo key-value store~\cite{dynamo}, relax strong
 consistency in favor of \emph{eventual consistency}~\cite{vogels-ec},

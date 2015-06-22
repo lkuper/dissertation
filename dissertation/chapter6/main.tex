@@ -100,6 +100,16 @@ CR clones a copy of the state for each mutator, using a deterministic
 ``merge function'' for resolving conflicts in local copies at join
 points.
 
+\ifdefined\DISSERTATION
+\begin{wrapfigure}{r}{3in}
+\vspace{-1em}
+\begin{center}
+  \includegraphics[scale=0.15]{../illustrations/communicating-threads}
+\end{center}
+\vspace{-2em}
+\end{wrapfigure}
+\fi
+
 In CR, variables can be annotated as being shared between a ``joiner''
 thread and a ``joinee'' thread.  Unlike the lub writes of LVars, CR
 merge functions are \emph{not} necessarily commutative; indeed, the

@@ -96,6 +96,16 @@ and another writes $1$, the resulting state will be $2$, since $2
 \sqcup 1 = 2$.  Here, the unreachability of $\top$ models the fact
 that no conflicting updates can occur to the LVar.
 
+\ifdefined\DISSERTATION
+\begin{wrapfigure}{r}{2.3in}
+\vspace{-2em}
+\begin{center}
+  \includegraphics[scale=0.15]{../illustrations/store}
+\end{center}
+\vspace{-2em}
+\end{wrapfigure}
+\fi
+
 \subsection{Stores}\label{subsection:lvars-stores}
 
 During the evaluation of a $\lambdaLVar$ program, a \emph{store} $S$

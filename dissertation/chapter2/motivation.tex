@@ -28,6 +28,16 @@ a particular user's profile, we might wish to find all (or the first $k$
 degrees of) profiles connected to $v$, then map a function $f$ over
 each profile in that set in parallel.
 
+\ifdefined\DISSERTATION
+\begin{wrapfigure}{l}{3.2in}
+\vspace{-1em}
+\begin{center}
+  \includegraphics[scale=0.15]{../illustrations/graph-traversal}
+\end{center}
+\vspace{-1em}
+\end{wrapfigure}
+\fi
+
 This is a challenge problem for deterministic-by-construction parallel
 programming models. Existing parallel solutions (such as, for instance, the
 parallel breadth-first graph traversal implementation from the

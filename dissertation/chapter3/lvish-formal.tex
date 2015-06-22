@@ -298,6 +298,16 @@ the LVar's current value is at or above some element in $Q$ that has
 not already been handled.  This step can be taken nondeterministically
 at any time after the relevant $\PUTi$ has been performed.
 
+\ifdefined\DISSERTATION
+\begin{wrapfigure}{l}{1.4in}
+\vspace{-1.5em}
+\begin{center}
+  \includegraphics[scale=0.15]{../illustrations/thread}
+\end{center}
+\vspace{-1em}
+\end{wrapfigure}
+\fi
+
 The rule {\sc E-Freeze-Final} detects quiescence by checking that two
 properties hold.  First, every event of interest (lattice element in
 $Q$) that has occurred (is bounded by the current LVar state) must be

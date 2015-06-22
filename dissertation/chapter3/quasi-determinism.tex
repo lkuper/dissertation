@@ -255,6 +255,16 @@ $\config{S}{e}$ to $\config{S'}{e'}$, then $l \notin \dom{U_S(S)}$
 
 \DefNonConflictingStoreUpdateOperation
 
+\ifdefined\DISSERTATION
+\begin{wrapfigure}{r}{2in}
+\vspace{-1.5em}
+\begin{center}
+  \includegraphics[scale=0.13]{../illustrations/frozen}
+\end{center}
+\vspace{-1em}
+\end{wrapfigure}
+\fi
+
 The third precondition on $U_S$ has to do with freezing: $U_S$ must be
 \emph{freeze-safe} with the transition $\config{S}{e} \parstepsto
 \config{S'}{e'}$, which means that, for any locations that change in

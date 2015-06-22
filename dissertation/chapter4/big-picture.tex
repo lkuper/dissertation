@@ -11,6 +11,16 @@ that concurrency in the library is \emph{explicitly marked}, either
 through uses of a @fork@ function or through asynchronous callbacks,
 which run in their own lightweight thread.
 
+\ifdefined\DISSERTATION
+\begin{wrapfigure}{l}{1.2in}
+\vspace{-2em}
+\begin{center}
+  \includegraphics[scale=0.2]{../illustrations/elf}
+\end{center}
+\vspace{-1.5em}
+\end{wrapfigure}
+\fi
+
 We envision two parties interacting with the LVish library.  First,
 there are \emph{data structure authors}, who use the library directly
 to implement a specific monotonic data structure (\eg, a monotonically

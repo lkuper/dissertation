@@ -141,7 +141,17 @@ like the following:
 \noindent where $\mathit{lv}$ is an LVar, $Q$ is an event set, and $f$ is a
 callback.  Handler pools are created with the @newPool@ function, and
 handlers are registered with @addHandlerInPool@, a variant of
-@addHandler@ that takes a handler pool as an additional argument.
+@addHandler@ that takes a
+\ifdefined\DISSERTATION
+\begin{wrapfigure}{l}{1.8in}
+\vspace{-1.5em}
+\begin{center}
+  \includegraphics[scale=0.15]{../illustrations/pool}
+\end{center}
+\vspace{-2em}
+\end{wrapfigure}
+\fi
+handler pool as an additional argument.
 Finally, @quiesce@ takes a handler pool as its argument and blocks
 until all of the handlers in the pool have reached a quiescent state.
 
