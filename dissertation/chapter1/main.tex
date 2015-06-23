@@ -119,7 +119,7 @@ possibilities include:
 \begin{wrapfigure}{r}{3in}
 \vspace{-2em}
 \begin{center}
-  \includegraphics[scale=0.15]{../illustrations/sharing-state}
+  \includegraphics[scale=0.18]{../illustrations/sharing-state}
 \end{center}
 \vspace{-1.5em}
 \end{wrapfigure}
@@ -379,7 +379,15 @@ kinds of queries within a single, lattice-based reasoning framework.
 Furthermore, since threshold queries behave deterministically
 regardless of whether all replicas agree, they suggest a way to save
 on synchronization costs: existing operations that require all
-replicas to agree could be done with threshold queries instead, and
+replicas
+\begin{wrapfigure}{r}{1.4in}
+  \vspace{-2em}
+  \begin{center}
+    \includegraphics[scale=0.18]{../illustrations/map}
+  \end{center}
+  \vspace{-3em}
+\end{wrapfigure}
+to agree could be done with threshold queries instead, and
 retain behavior that is \emph{observably} strongly consistent while
 avoiding unnecessary synchronization.
 \fi
