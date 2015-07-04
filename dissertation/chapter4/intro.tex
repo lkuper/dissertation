@@ -13,32 +13,37 @@ guarantee of any parallel programming model to hold, the only side
 effects allowed must be those sanctioned by the programming
 model.\footnote{Haskell is often advertised as a purely functional
 programming language, that is, one without side effects, but it is
-perhaps more useful to think of it as a language that gets other
-effects out of the way so that one can add one's own effects!}  In the
-case of the basic LVars model of \either{Chapter}{Section}~\ref{ch:lvars}, those effects
-are @put@ and @get@ operations on LVars;
- \either{Chapter}{Section}~\ref{ch:quasi} adds
-the @freeze@ operation and arbitrary update operations.  Implementing
-these operations as monadic effects in Haskell makes it possible to
-provide compile-time guarantees about determinism and
-quasi-determinism, because as long as the only monad that programs use
-is the one in which LVar operations are allowed to run, we know that
-they can only perform the side effects that we have chosen to allow.
+perhaps more useful to think of it as a language that keeps other
+effects out of the way so that one can use only the effects that one
+wants to use!}  In the case of the basic LVars model
+of \either{Chapter}{Section}~\ref{ch:lvars}, those allowed effects are
+@put@ and @get@ operations on
+LVars; \either{Chapter}{Section}~\ref{ch:quasi} adds the @freeze@
+operation and arbitrary update operations to the set of allowed
+effects.  Implementing these operations as monadic effects in Haskell
+makes it possible to provide compile-time guarantees about determinism
+and quasi-determinism, because as long as the only monad that programs
+use is the one in which LVar operations are allowed to run, we know
+that they can only perform the side effects that we have chosen to
+allow.
 
-Another reason why the existing @Par@ monad is an appealing conceptual starting
-point for a practical implementation of LVars is that it already allows
-inter-task communication through IVars, which, as we have seen, are a
-special case of LVars.
-Finally, the @Par@ monad approach is appealing
-because it is implemented entirely as a library in Haskell, with a
-library-level scheduler.  This modularity makes it possible to make
-changes to the @Par@ scheduling strategy (which we will need to do in
-order to support LVars) without having to make any modifications to
-GHC or its run-time system.
+Another reason why the existing @Par@ monad is an appealing conceptual
+starting point for a practical implementation of LVars is that it
+already allows inter-task communication through IVars, which, as we
+have seen, are a special case of LVars.  Finally, the @Par@ monad
+approach is appealing because it is implemented entirely as a library
+in Haskell, with a library-level scheduler.  This modularity makes it
+possible to make changes to the @Par@ scheduling strategy without
+having to make any modifications to GHC or its run-time system.
 
-In this \either{chapter}{section}, \either{I}{we} describe the \emph{LVish} library, a Haskell
-library for practical deterministic and quasi-deterministic parallel
-programming with LVars.  We have already seen a taste of what it is
-like to use the LVish library; Section~\ref{s:quasi-informal} gave an
-example of an LVish Haskell program.  Here, \either{I}{we} go on to give a
-more thorough tour of LVish.
+In this \either{chapter}{section}, \either{I}{we} describe
+the \emph{LVish} library, a Haskell library for practical
+deterministic and quasi-deterministic parallel programming with LVars.
+We have already seen an example of an LVish Haskell program in
+Section~\ref{s:quasi-informal}; in the following two sections, we will
+take a more extensive tour of what LVish offers.  Then, in
+Section~\ref{s:lvish-disjoint}, we will consider adding support for
+DPJ-style imperative disjoint parallelism to LVish.  Finally, in
+Sections~\ref{s:lvish-k-cfa}, and~\ref{s:lvish-phybin}, we will look
+at two case studies that illustrate how LVish and LVars can be used in
+practice.

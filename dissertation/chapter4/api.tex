@@ -2,8 +2,8 @@
 
 In this section \either{I}{we} illustrate the use of the LVish library
 from the point of view of the application writer, through a series of
-short example programs.\footnote{The examples in this section, among
-  others, are available at
+short example programs.\footnote{Code for all the examples in this
+  section is available at
   \url{https://github.com/lkuper/lvar-examples/}.}
 
 \subsection{A simple example: IVars in LVish}
@@ -231,20 +231,17 @@ case, the set of all @Int@s.  This is a legal threshold set because
 key of @Book@ with a quantity of @2@ and then later change the @2@ to
 @3@.  In a more realistic shopping cart, the values in the cart could
 themselves be LVars representing incrementable counters, as in the
-previous section.  \TODO{I'd like there to be some kind of footnote
-  here about the problem that LVars-that-contain-LVars presents for
-  determinism.  I don't actually understand the problem, though.}
-However, a shopping cart from which we can \emph{delete} items is not
-possible with LVars, because it would go against the principle of
-monotonic growth.\footnote{On the other hand, one way to implement a
-  container that allows both insertion and removal of elements is to
-  represent it internally with \emph{two} containers, one for the
-  inserted elements and one for the removed elements, where both
-  containers grow monotonically.  \emph{Conflict-free replicated data
-    types} (CRDTs)~\cite{crdts} use variations on this approach to
-  implement various data structures that support seemingly
-  non-monotonic operations.  \either{I discuss the relationship of
-    LVars to CRDTs in more detail in
+previous section.  However, a shopping cart from which we can
+\emph{delete} items is not possible with LVars, because it would go
+against the principle of monotonic growth.\footnote{On the other hand,
+  one way to implement a container that allows both insertion and
+  removal of elements is to represent it internally with \emph{two}
+  containers, one for the inserted elements and one for the removed
+  elements, where both containers grow monotonically.
+  \emph{Conflict-free replicated data types} (CRDTs)~\cite{crdts} use
+  variations on this approach to implement various data structures
+  that support seemingly non-monotonic operations.  \either{I discuss
+    the relationship of LVars to CRDTs in more detail in
     Chapter~\ref{ch:distributed}.}{Bringing these ideas from the
     literature on CRDTs to the setting of LVars is a topic of ongoing
     work~\cite{joining-wodet}.}}
