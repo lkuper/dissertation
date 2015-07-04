@@ -334,14 +334,13 @@ make use of handlers and freezing:
 \item Second, \either{I}{we} describe using LVish to parallelize
   \emph{PhyBin}~\cite{PhyBin}, a bioinformatics application for
   comparing sets of phylogenetic trees that relies heavily on a
-  parallel tree-edit distance algorithm~\cite{hashrf}.  In addition to
-  handlers and freezing\rn{DOUBLE CHECK - does phybin use handlers?},
-  the PhyBin application crucially relies on the aforementioned
-  ability to perform arbitrary inflationary and commutative (but not idempotent) updates on
-  LVars (in contrast to the idempotent @put@ operation).  We show that
-  the performance of the parallelized PhyBin application compares
-  favorably to existing widely-used software packages for analyzing
-  collections of phylogenetic trees.
+  parallel tree-edit distance algorithm~\cite{hashrf}.  The PhyBin
+  application crucially relies on the aforementioned ability to
+  perform arbitrary inflationary and commutative (but not idempotent)
+  updates on LVars (in contrast to the idempotent @put@ operation).
+  We show that the performance of the parallelized PhyBin application
+  compares favorably to existing widely-used software packages for
+  analyzing collections of phylogenetic trees.
 \end{itemize}
 
 \ifdefined\DISSERTATION

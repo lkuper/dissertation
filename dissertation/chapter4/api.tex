@@ -352,15 +352,13 @@ Next, @traverse@ attaches an event handler to @seen@.  It does so by
 calling the @newHandler@ function, which takes two arguments: an LVar
 and the callback that is to be to run every time an event occurs on
 that LVar (in this case, every time a new node is added to the
-set).\footnote{\il{newHandler} is not provided by LVish, but we can
+set).\footnote{LVish does not provide \il{newHandler}, but we can
   easily implement it using LVish's built-in \il{newPool} and
-  \il{addHandler} operations.\lk{Actually, is there any good reason
-    why LVish \emph{doesn't} provide something like \il{newHandler}?}}
-The callback responds to events by looking up the neighbors of the
-newly arrived node (assuming a @neighbors@ operation, which takes a
-graph and a vertex and returns a list of the vertex's neighbor
-vertices), then mapping the @insert@ function over that list of
-neighbors.
+  \il{addHandler} operations.}  The callback responds to events by
+looking up the neighbors of the newly arrived node (assuming a
+@neighbors@ operation, which takes a graph and a vertex and returns a
+list of the vertex's neighbor vertices), then mapping the @insert@
+function over that list of neighbors.
 
 Finally, @traverse@ adds the starting node to the @seen@ set by
 calling @insert startNode seen@---and the event handler does the rest
