@@ -115,12 +115,6 @@ reads should be allowed; in a quasi-deterministic computation,
 @freeze@ operations should be allowed as well.  Yet other combinations
 may be desirable: for instance, we may want a computation to perform
 \emph{only} writes, and not reads.
-\ifdefined\DISSERTATION
-Furthermore, we want to be able to
-specifically allow or disallow \emph{non-idempotent} update
-operations, which \either{I}{we} discuss in more detail in
-Section~\ref{subsection:lvish-discussion-leveraging-idempotency}.
-\fi
 
 In order to capture these constraints and make them explicit in the
 types of LVar computations, LVish indexes @Par@ computations with a
