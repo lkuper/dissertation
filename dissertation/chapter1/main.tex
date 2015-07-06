@@ -305,7 +305,7 @@ indexed with a deterministic effect level is not allowed to use
 determinism or quasi-determinism guarantee.  Furthermore, if a
 @freeze@ is guaranteed to be the \emph{last} effect that occurs in a
 computation, then it is impossible for that @freeze@ to race with a
-write, ruling out the possibility of a run-time write-after-freeze
+write, ruling out the possibility of a runtime write-after-freeze
 exception.  LVish exposes a @runParThenFreeze@ operation that captures
 this ``freeze-last'' idiom and has a deterministic effect level.
 
