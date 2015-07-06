@@ -72,24 +72,26 @@ compatible, as evidenced by the use of @ParST@ in LVish, we have not
 yet formalized their relationship.  In fact, this is an example of a
 general pattern in which the LVish library is usually one step ahead
 of the LVars formalism: to take another example, the LVish library
-supported the general inflationary, commutative writes of
+supported the update operations of
 Section~\either{\ref{subsection:lvars-generalizing-from-least-upper-bound-writes}}{\ref{s:lvars-generalizing}}
-well before the notion had been formalized in $\lambdaLVish$.
-Moreover, even for the parts of the LVish library that \emph{are}
-fully accounted for in the model, we do not have proof that the
-library is a faithful implementation of the formal LVars model.
+(which are commutative and inflationary but not necessarily
+idempotent) well before the notion had been formalized in
+$\lambdaLVish$.  Moreover, even for the parts of the LVish library
+that \emph{are} fully accounted for in the model, we do not have proof
+that the library is a faithful implementation of the formal LVars
+model.
 
 Although it is unlikely that this game of catch-up can ever be won, an
 interesting direction to pursue for future work would be a
 \emph{verified} implementation of LVish, for instance, in a
 dependently typed programming language.  Even though a fully verified
-implementation of LVish (including the scheduler implementation) might
-be unrealistic, a more manageable might be individually verified
-LVar data structures.  For example, in a dependently typed language
-such as Idris or Agda, we could use the type system to express
-properties that must be true of an LVar, such as that the states that
-it can take on form a lattice and that writes are commutative and
-inflationary.
+implementation of LVish (including the scheduler implementation) is an
+ambitious goal, a more manageable first step might be individually
+verified LVar data structures, implemented in a dependently typed
+language such as Coq or Agda.  The type system of such a language is
+rich enough to express properties that must be true of an LVar, such
+as that the states that it can take on form a lattice and that writes
+are commutative and inflationary.
 
 \ifdefined\DISSERTATION
 \begin{figure}[h]
@@ -104,9 +106,6 @@ inflationary.
 \ifdefined\DISSERTATION
 \section{Distributed programming and the future of LVars and LVish}
 
-\TODO{Move some of this to the end of Chapter~\ref{ch:distributed},
-  and update to include my recent thinking.}
-
 Most of this dissertation concerns the problem of how to program
 \emph{parallel} systems, in which programs are running on multiple
 processors.  However, I am also concerned with the problem of how to
@@ -118,37 +117,33 @@ unifying abstractions between the two. It is in that spirit that I
 have explored the relationship of LVars to existing work on
 distributed systems.
 
-This work is made much easier by the fact that LVars have a close
-cousin in the distributed systems literature in convergent replicated
-data types (CvRDTs)~\cite{crdts,crdts-tr}, which leverage lattice
-properties to guarantee that all replicas of an object (for instance,
-in a distributed database) are eventually consistent.
+LVars are a close cousin to convergent replicated data types
+(CvRDTs)~\cite{crdts,crdts-tr}, which leverage lattice properties to
+guarantee that all replicas of an object (for instance, in a
+distributed database) are eventually consistent.
 Chapter~\ref{ch:distributed} begins to explore the relationship
 between LVars and CvRDTs by porting LVar-style threshold reads to the
-CvRDT setting.  However, there is \emph{much} more work to do here.
-Most immediately, although the idea of a single lattice-based
-framework for reasoning about both strongly consistent and eventually
-consistent queries of distributed data is appealing and elegant, it is
-not yet clear what the applications for threshold-readable CvRDTs are.
+CvRDT setting, but there is much more work to do here.  Most
+immediately, although the idea of a single lattice-based framework for
+reasoning about both strongly consistent and eventually consistent
+queries of distributed data is appealing and elegant, it is not yet
+clear what the compelling applications for threshold-readable CvRDTs
+are.
 
-Second, it should also be possible to back-port ideas from the realm
-of CvRDTs to LVars.  We have taken a few steps in this direction---in
-fact, supporting the aforementioned commutative and inflationary
-updates is actually a step toward making LVars more like CvRDTs, since
-CvRDTs have always allowed arbitrary inflationary and commutative
-writes to individual replicas (the lub operation is only used when
-replicas' states are \emph{merged} with one another).  But the LVars
-model could further benefit from applying techniques pioneered by
-CvRDTs to support data structures that allow seemingly non-monotonic
-updates, such as counters that support decrements as well as
-increments and sets that support removals as well as additions.
+As a further step, it should also be possible to ``back-port'' ideas
+from the realm of CvRDTs to LVars.  In fact, support for
+not-neccessarily-idempotent updates to LVars was inspired in part by
+CvRDTs, which have always permitted arbitrary inflationary and
+commutative writes to individual replicas (the lub operation is only
+used when replicas' states are \emph{merged} with one another).  The
+LVars model might further benefit from techniques pioneered in the
+work on CvRDTs to support data structures that allow seemingly
+non-monotonic updates, such as counters that support decrements as
+well as increments and sets that support removals as well as
+additions~\cite{crdts}.
 
-Finally, a huge remaining difference between LVars and CvRDTs is that
-in the LVars model, we do not have to contend with replication!  The
-LVars model is a shared-memory model, and when an LVar is updated, all
-reading threads can immediately see the update.  CvRDTs, as well as
-distributed lattice-based programming languages like
-Bloom~\cite{bloom-cidr, blooml}, may serve as a source of inspiration
-for a future version of LVish that supports distributed execution.
-
+Finally, existing work on CvRDTs, as well as the work on distributed
+lattice-based programming languages like Bloom~\cite{bloom-cidr,
+  blooml}, may serve as a source of inspiration for a future version
+of LVish that supports distributed execution.
 \fi

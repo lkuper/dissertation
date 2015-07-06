@@ -1,5 +1,15 @@
-Distributed systems typically involve \emph{replication} of data
-objects across a number of physical locations.  Replication is of
+So far, we have considered the problem of how to
+program \emph{shared-memory parallel systems} in a way that guarantees
+determinism.  In this chapter, we turn our attention to a different
+but related problem: that of effectively and correctly
+programming \emph{distributed systems}, in which programs run on a
+network of interconnected nodes, each with its own memory, and where
+the network is subject to network partitions and other kinds of
+failures.
+
+Because network partitions can occur and because nodes in a network
+can fail, distributed systems typically involve \emph{replication} of
+data objects across a number of physical locations.  Replication is of
 fundamental importance in such systems: it makes them more robust to
 data loss and allows for good data locality.  But the well-known
 \emph{CAP theorem}~\cite{gilbert-lynch-cap, BrewerCAPBlog} of
@@ -16,7 +26,9 @@ which all
 \end{wrapfigure}
 \fi
 data is available for both reading and writing by all
-replicas.  \emph{Highly available} distributed systems, such as
+replicas.
+
+\emph{Highly available} distributed systems, such as
 Amazon's Dynamo key-value store~\cite{dynamo}, relax strong
 consistency in favor of \emph{eventual consistency}~\cite{vogels-ec},
 in which replicas need not agree at all times.  Instead, updates
@@ -66,22 +78,21 @@ CvRDTs offer a simple and theoretically-sound approach to eventual
 consistency.  However, with CvRDTs (and unlike with LVars), it is
 still possible to observe inconsistent \emph{intermediate} states of
 replicated shared objects, and high availability requires that reads
-return a value immediately, even if that value is stale.
-
-In practice, applications call for both strong consistency and high
-availability at different times~\cite{pileus}, and increasingly, they
-support consistency choices at the granularity of individual queries,
-not that of the entire system.  For example, the Amazon SimpleDB
-database service gives customers the choice between eventually
-consistent and strongly consistent read operations on a per-read
+return a value immediately, even if that value is stale.  In practice,
+applications call for both strong consistency and high availability at
+different times~\cite{pileus}, and increasingly, they support
+consistency choices at the granularity of individual queries, not that
+of the entire system.  For example, the Amazon SimpleDB database
+service gives customers the choice between eventually consistent and
+strongly consistent read operations on a per-read
 basis~\cite{simpledb-vogels-article}.
 
 Ordinarily, strong consistency is a global property: all replicas
-agree on the data.  When we make consistency choices at a
-\emph{per-query} granularity, though, a global strong consistency
-property need not hold.  I define a \emph{strongly consistent query}
-to be one that, if it returns a result $x$ when executed at a replica
-$i$:
+agree on the data.  When a system allows consistency choices to be
+made at a \emph{per-query} granularity, though, a global strong
+consistency property need not hold.  We can define a \emph{strongly
+consistent query} to be one that, if it returns a result $x$ when
+executed at a replica $i$,
 \begin{itemize}
   \item will always return $x$ on subsequent executions at $i$, and
   \item will \emph{eventually} return $x$ when executed at \emph{any}
@@ -94,23 +105,23 @@ distributed execution, regardless of when the query executes or which
 replica it occurs on.
 
 Traditional CvRDTs only support eventually consistent queries.  We
-could get strong consistency by waiting until all replicas agree
-before allowing a query to return---but in practice, such agreement
-may never happen.  In this chapter, I present an alternative approach
-to supporting strongly consistent queries of CvRDTs that takes
-advantage of their existing lattice structure and does \emph{not}
-require waiting for all replicas to agree.  To do so, I take
-inspiration from LVar-style threshold reads.  I show how to extend
-CvRDTs to support deterministic, strongly consistent queries, which I
-call \emph{threshold queries}.  After reviewing the fundamentals of
-CvRDTs in Section~\ref{s:distributed-cvrdts}, I introduce CvRDTs
-extended with threshold queries (Section~\ref{s:distributed-model})
-and prove that threshold queries in our extended model are strongly
-consistent queries (Section~\ref{s:distributed-results}).  That is, I
-show that a threshold query that returns an answer when executed on a
-replica will return the same answer every subsequent time that it is
-executed on that replica, and that executing that threshold query on a
-different replica will eventually return the same answer, and will
-block until it does so.  It is therefore impossible to observe
-different results from the same threshold query, whether at different
-times on the same replica or whether on different replicas.
+could get strong consistency from CvRDTs by waiting until all replicas
+agree before allowing a query to return---but in practice, such
+agreement may never happen.  In this chapter, I present an alternative
+approach that takes advantage of the existing lattice structure of
+CvRDTs and does \emph{not} require waiting for all replicas to agree.
+To do so, I take inspiration from LVar-style threshold reads.  I show
+how to extend the CvRDT model to support deterministic, strongly
+consistent queries, which I call \emph{threshold queries}.  After
+reviewing the fundamentals of CvRDTs in
+Section~\ref{s:distributed-cvrdts}, I introduce CvRDTs extended with
+threshold queries (Section~\ref{s:distributed-model}), and I prove
+that threshold queries in our extended model are strongly consistent
+queries (Section~\ref{s:distributed-results}).  That is, I show that a
+threshold query that returns an answer when executed at a replica will
+return the same answer every subsequent time that it is executed at
+that replica, and that executing that threshold query on a different
+replica will eventually return the same answer, and will block until
+it does so.  It is therefore impossible to observe different results
+from the same threshold query, whether at different times on the same
+replica or whether on different replicas.

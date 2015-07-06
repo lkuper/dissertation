@@ -28,6 +28,16 @@ sufficient to guarantee that the object is SEC.  (The term ``CRDT'' is
 used interchangeably to mean a specification for an object, or an
 object meeting that specification.)
 
+\ifdefined\DISSERTATION
+\begin{wrapfigure}{l}{1.4in}
+\vspace{-2em}
+\begin{center}
+  \includegraphics[scale=0.2]{../illustrations/shopping-cart}
+\end{center}
+\vspace{-1.5em}
+\end{wrapfigure}
+\fi 
+
 There are two ``styles'' of specifying a CRDT: \emph{state-based},
 also known as \emph{convergent}\footnote{There is a potentially
   misleading terminology overlap here: the definitions of convergence
@@ -43,20 +53,10 @@ CvRDTs are lattice-based data structures and therefore amenable to
 threshold queries---although, as Shapiro \etal~show, CmRDTs can
 emulate CvRDTs and vice versa.
 
-\ifdefined\DISSERTATION
-\begin{wrapfigure}{l}{1.4in}
-\vspace{-2em}
-\begin{center}
-  \includegraphics[scale=0.2]{../illustrations/shopping-cart}
-\end{center}
-\vspace{-1.5em}
-\end{wrapfigure}
-\fi
-
 \subsection{State-based objects}
 
-The Shapiro \etal~model specifies a \emph{state-based object} as a
-tuple $(S, s^0, q, u, m)$, where $S$ is a set of states, $s^0$ is the
+In the Shapiro \etal~model, a \emph{state-based object} is a tuple
+$(S, s^0, q, u, m)$, where $S$ is a set of states, $s^0$ is the
 initial state, $q$ is the \emph{query method}, $u$ is the \emph{update
   method}, and $m$ is the \emph{merge method}.  Objects are replicated
 across some finite number of processes, with one replica at each
@@ -100,17 +100,17 @@ SEC~\cite{crdts}.
 
 \subsection{Discussion: the need for inflationary updates}
 
-Although CvRDT updates are required to be inflationary, we note that
-it is not clear that inflationary updates are necessarily required for
-convergence.  Consider, for example, a scenario in which replicas 1
-and 2 both have the state $\{a, b\}$. Replica 1 updates its state to
-$\{a\}$, a non-inflationary update, and then sends its updated state
-to replica 2.  Replica 2 merges the received state $\{a\}$ with $\{a,
-b\}$, and its state remains $\{a, b\}$. Then replica 2 sends its state
-back to replica 1; replica 1 merges $\{a, b\}$ with $\{a\}$, and its
-state becomes $\{a, b\}$.  The non-inflationary update has been lost,
-and was, perhaps, nonsensical---but the replicas are nevertheless
-convergent.
+Although CvRDT updates are required to be inflationary, it is not the
+case that every update must be inflationary for convergence, given our
+assumption of eventual delivery.  Consider, for example, a scenario in
+which replicas 1 and 2 both have the state $\{a, b\}$. Replica 1
+updates its state to $\{a\}$, a non-inflationary update, and then
+sends its updated state to replica 2.  Replica 2 merges the received
+state $\{a\}$ with $\{a, b\}$, and its state remains $\{a, b\}$. Then
+replica 2 sends its state back to replica 1; replica 1 merges $\{a,
+b\}$ with $\{a\}$, and its state becomes $\{a, b\}$.  The
+non-inflationary update has been lost, and was, perhaps,
+nonsensical---but the replicas are nevertheless convergent.
 
 However, once we introduce threshold queries of CvRDTs, as we will do
 in the following section, inflationary updates become \emph{necessary}

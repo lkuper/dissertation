@@ -86,57 +86,8 @@ LVars are \emph{data structure-generic}: both our formalism and our
 library support an unlimited collection of data structures, whereas
 FlowPools are specialized to bags.
 
-\section{Concurrent Revisions}
-
-Burckhardt \etal~\shortcite{eventually-consistent-transactions}
-propose a formalism for eventual consistency based on graphs called
-\emph{revision diagrams}, and Leijen, Burckhardt, and Fahndrich apply
-the revision diagrams approach to guaranteed-deterministic concurrent
-functional programming~\shortcite{concurrent-revisions-haskell11}.
-Their \emph{Concurrent Revisions} (CR) programming model uses
-isolation types to distinguish regions of the heap shared by multiple
-mutators.  Rather than enforcing exclusive access in the style of DPJ,
-CR clones a copy of the state for each mutator, using a deterministic
-``merge function'' for resolving conflicts in local copies at join
-points.
-
-\ifdefined\DISSERTATION
-\begin{wrapfigure}{r}{2.8in}
-\vspace{-1em}
-\begin{center}
-  \includegraphics[scale=0.15]{../illustrations/communicating-threads}
-\end{center}
-\vspace{-2em}
-\end{wrapfigure}
-\fi
-
-In CR, variables can be annotated as being shared between a ``joiner''
-thread and a ``joinee'' thread.  Unlike the lub writes of LVars, CR
-merge functions are \emph{not} necessarily commutative; indeed, the
-default CR merge function is ``joiner wins''.  Determinism is enforced
-by the programming model allowing the programmer to specify which of
-two writing threads should prevail, regardless of the order in which
-those writes arrive, and the states that a shared variable can take on
-need not form a lattice.  Still, semilattices turn up in the
-metatheory of CR: in particular, Burckhardt and
-Leijen~\shortcite{semantics-concurrent-revisions} show that revision
-diagrams are semilattices, and that therefore, for any two vertices in
-a CR revision diagram, there exists a \emph{greatest common ancestor}
-state that can be used to determine what changes each side has
-made---an interesting duality with the LVars model (in which any two
-LVar states have a lub).
-
-Although versioned variables in CR could model lattice-based data
-structures---if they used the lub operation as their merge function
-for conflicts---the programming model nevertheless differs from the
-LVars model in that effects only become visible at the end of parallel
-regions, as opposed to the asynchronous communication within parallel
-regions that the LVars model allows.  This semantics precludes the use
-of traditional lock-free data structures for representing versioned
-variables.
-
-\section{Conflict-free replicated data types}
 \ifdefined\JOURNAL
+\section{Conflict-free replicated data types}
 
 Shapiro~\etal's \emph{conflict-free replicated data types}
 (CRDTs)~\shortcite{crdts,crdts-tr} provide a simple mathematical framework
@@ -156,36 +107,22 @@ replicated shared objects, and high availability requires that reads
 return a value immediately, even if that value is stale.  Our work on
 equipping CvRDTs with LVar-style threshold reads (which would allow
 for deterministic reads at the price of high availability) is
-ongoing~\cite{joining-wodet, lvars-dissertation}.  \fi
+ongoing~\cite{joining-wodet, lvars-dissertation}.
+\fi
+
+\section{Bloom and Bloom$^L$}
 
 \ifdefined\DISSERTATION
 In Chapter~\ref{ch:distributed}, I presented a way to equip
 lattice-based distributed data structures with LVar-style threshold
 reads, resulting in a way to make deterministic \emph{threshold
-  queries} of them.  My approach is based on Shapiro \etal's work on
-conflict-free replicated data types (CRDTs) \cite{crdts,crdts-tr} and
-in particular their work on the lattice-based formulation of CRDTs,
-called \emph{convergent replicated data types} or CvRDTs, which I
-discuss in detail in Section~\ref{s:distributed-cvrdts}.
-
-As we saw in Chapter~\ref{ch:distributed}, database services such as
-Amazon's SimpleDB~\cite{simpledb-vogels-article} allow for both
-eventually consistent and strongly consistent reads, chosen at a
-per-query granularity.  Terry~\etal's Pileus key-value
-store~\cite{pileus} takes the idea of mixing consistency levels
-further: instead of requiring the application developer to choose the
-consistency level of a particular query at development time, the
-system allows the developer to specify a service-level agreement that
-can dynamically adapt to changing network conditions, for instance.
-Hence choosing consistency at a per-query level and mixing consistency
-levels within a single application is not a new idea.  Rather, the new
-contribution that I make by adding threshold queries to CvRDTs is to
-establish lattice-based data structures as a unifying formal
-foundation for both eventually consistent and strongly consistent
-queries.
+  queries} of those data structures.  My approach is based on Shapiro
+\etal's work on conflict-free replicated data types (CRDTs)
+\cite{crdts,crdts-tr} and in particular their work on the
+lattice-based formulation of CRDTs, called \emph{convergent replicated
+  data types} or CvRDTs, which Chapter~\ref{ch:distributed} discusses
+in detail.
 \fi
-
-\section{Bloom and Bloom$^L$}
 
 Other authors have also used lattices as a framework for establishing
 formal guarantees about eventually consistent systems and distributed
@@ -212,6 +149,36 @@ LVish library is implemented in Haskell, we can rely on Haskell's type
 system for fine-grained effect tracking and monadic encapsulation of
 LVar effects.
 
+\section{Concurrent Revisions}
+
+Burckhardt \etal~\shortcite{eventually-consistent-transactions}
+propose a formalism for eventual consistency based on graphs called
+\emph{revision diagrams}, and Leijen, Burckhardt, and Fahndrich apply
+the revision diagrams approach to guaranteed-deterministic concurrent
+functional programming~\shortcite{concurrent-revisions-haskell11}.
+Their \emph{Concurrent Revisions} (CR) programming model uses
+isolation types to distinguish regions of the heap shared by multiple
+mutators.  Rather than enforcing exclusive access in the style of DPJ,
+CR clones a copy of the state for each mutator, using a deterministic
+``merge function'' for resolving conflicts in local copies at join
+points.
+
+In CR, variables can be annotated as being shared between a ``joiner''
+thread and a ``joinee'' thread.  Unlike the lub writes of LVars, CR
+merge functions are \emph{not} necessarily commutative; indeed, the
+default CR merge function is ``joiner wins''.  Determinism is enforced
+by the programming model allowing the programmer to specify which of
+two writing threads should prevail, regardless of the order in which
+those writes arrive, and the states that a shared variable can take on
+need not form a lattice.  Still, semilattices turn up in the
+metatheory of CR: in particular, Burckhardt and
+Leijen~\shortcite{semantics-concurrent-revisions} show that revision
+diagrams are semilattices, and that therefore, for any two vertices in
+a CR revision diagram, there exists a \emph{greatest common ancestor}
+state that can be used to determine what changes each side has
+made---an interesting duality with the LVars model (in which any two
+LVar states have a lub).
+
 \section{Frame properties and separation logics}\label{s:related-frame-properties-and-separation-logics}
 
 In Section~\ref{subsection:lvars-independence}, we saw that the
@@ -225,6 +192,17 @@ logic~\cite{OHearnLocalReasoning, ReynoldsSeparationLogic,
       {\lbrace p \rbrace ~ C ~ \lbrace q \rbrace}
       {\lbrace p * r \rbrace ~ C ~ \lbrace q * r \rbrace}
 \end{mathpar}
+
+\ifdefined\DISSERTATION
+\begin{wrapfigure}{r}{2.8in}
+\vspace{-1em}
+\begin{center}
+  \includegraphics[scale=0.15]{../illustrations/communicating-threads}
+\end{center}
+\vspace{-2em}
+\end{wrapfigure}
+\fi
+
 Recall that the separating conjunction connective $*$ says that the
 assertions it combines can be satisfied in a non-overlapping manner;
 for instance, $p * r$ is satisfied by a heap if the heap can be split

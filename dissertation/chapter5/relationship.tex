@@ -1,0 +1,35 @@
+\section{Discussion: reasoning about per-query consistency choices}\label{s:distributed-per-query-consistency}
+
+In this chapter, we have seen a way to extend CvRDTs to support
+LVar-style threshold queries.  Seen from another angle, this chapter
+shows how to ``port'' the notion of threshold reads from a
+shared-memory setting (that of LVars) to a distributed-memory one
+(that of CvRDTs).  However, I do not want to suggest that
+deterministic threshold queries should replace traditional CvRDT
+queries.  Instead, traditional queries and threshold queries can
+coexist.  Moreover, extending CvRDTs with threshold queries allows
+them to more accurately model systems in which consistency properties
+are defined and enforced at the granularity of individual queries.
+
+As mentioned at the beginning of this chapter, database services such
+as Amazon's SimpleDB~\cite{simpledb-vogels-article} allow for both
+eventually consistent and strongly consistent reads, chosen at a
+per-query granularity.\footnote{Terry~\etal's Pileus key-value
+  store~\cite{pileus} takes the idea of combining different levels of
+  consistency in a single application even further: instead of
+  requiring the application developer to choose the consistency level
+  of a particular query at development time, the system allows the
+  developer to specify a service-level agreement that may be satisfied
+  in different ways at runtime.  This allows the application to, for
+  instance, dynamically adapt to changing network conditions.}
+Choosing consistency at the query level, and giving different
+consistency properties to different queries within a single
+application, is not a new idea.  Rather, the new contribution we make
+by adding threshold queries to CvRDTs is to establish lattice-based
+data structures as a unifying formal foundation for both eventually
+consistent and strongly consistent queries.  Adding support for
+threshold reads to CvRDTs allows us to take advantage of the machinery
+that CvRDTs already give us for reasoning about eventually consistent
+objects, and use it to reason about systems that allow consistency
+choices to be made at per-query granularity, as real systems do.
+
