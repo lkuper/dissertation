@@ -9,7 +9,7 @@ pools.  It differs from the formalism of Section~\ref{s:quasi-formal}
 in following Haskell's by-need evaluation strategy, which also means
 that concurrency in the library is \emph{explicitly marked}, either
 through uses of a @fork@ function or through asynchronous callbacks,
-which run in their own lightweight thread.
+which run in their own lightweight threads.
 
 \ifdefined\DISSERTATION
 \begin{wrapfigure}{l}{1.2in}
@@ -32,17 +32,15 @@ structure can take on correspond to the elements of a lattice, and
 that the exposed interface to it corresponds to some use of update
 operations, @get@, @freeze@, and event handlers.
 
-Yet our library also includes
- \emph{lattice-generic}
-infrastructure: the @Par@ monad itself, a thread scheduler, support
-for blocking and signaling threads, handler pools, and event handlers.
-Since this infrastructure is unsafe---that is, it does not guarantee
-determinism or quasi-determinism---only data structure authors should
-import it, subsequently exporting a \emph{limited} interface specific
-to their data structure.  For finite maps, for instance, this
-interface might include key/value insertion, lookup, event handlers
-and pools, and freezing---along with higher-level abstractions built
-on top of these.
+The LVish library also includes \emph{lattice-generic} infrastructure:
+the @Par@ monad itself, a thread scheduler, support for blocking and
+signaling threads, handler pools, and event handlers.  Since this
+infrastructure is unsafe---that is, it does not guarantee determinism
+or quasi-determinism---only data structure authors should import it,
+subsequently exporting a \emph{limited} interface specific to their
+data structure.  For finite maps, for instance, this interface might
+include key/value insertion, lookup, event handlers and pools, and
+freezing---along with higher-level abstractions built on top of these.
 Control operators like @fork@ are the only non-data-structure-specific
 operations exposed to application writers.
 
