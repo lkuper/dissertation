@@ -1,7 +1,5 @@
 \section{\il{Par}-monad transformers and disjoint parallel update}\label{s:lvish-disjoint}
 
-\TODO{This section needs to be reviewed.}
-
 The effect-tracking system of the previous section provides a way to
 toggle on and off a fixed set of basic capabilities, such as @HasPut@,
 using the type system---that is, with the effect level @e@ that
@@ -31,6 +29,8 @@ otherwise updated to note the fork.
 
 The below code promotes @StateT@ to be a @Par@-monad transformer:
 
+\TODO{Check if this is still correct.}
+
 \singlespacing
 \begin{lstlisting}
 class SplittableState a where
@@ -47,7 +47,7 @@ instance (SplittableState s, ParMonad m) =>
 \doublespacing
 
 Note that here, @put@ and @get@ are not LVar operations, but the
-standard procedures for setting and retrieving the state in a
+standard operations for setting and retrieving the state in a
 @StateT@.
 
 \subsection{Determinism guarantee}
@@ -67,101 +67,104 @@ other hand, require Haskell's @ST@ monad, the safer sister monad to
 The LVars model is based on the notion that it is fine for multiple
 threads to access and update shared memory, so long as updates commute
 and ``build on'' one another, only adding information rather than
-destroying it.  Yet it should be possible for threads to update memory
-destructively, so long as the memory updated by different threads is
-\emph{disjoint}.  This is the approach to deterministic parallelism
-taken by, for example, Deterministic Parallel Java
+destroying it.  But it should also be possible for threads to update
+memory destructively, so long as the memory updated by different
+threads is \emph{disjoint}.  This is the approach to deterministic
+parallelism taken by, for example, Deterministic Parallel Java
 (DPJ)~\cite{dpj-oopsla}, which uses a region-based type and effect
 system to ensure that each mutable region of the heap is passed
 linearly to a thread that then gains exclusive permission to update
-that region.  In order to add this capability to the LVish library,
-though, we need destructive updates to interoperate with LVar effects.
-Moreover, we wish to do so at the library level, without requiring
-language extensions.
+that region.
 
-Our solution is to provide a @ParST@ transformer, a variant of the
-@StateT@ transformer described above.  @ParST@ allows arbitrarily
-complex mutable state, such as tuples of vectors (arrays).  However,
-@ParST@ enforces the restriction that {every} memory location in the
-state is reachable by only one pointer: alias freedom.
+In order to add this capability to the LVish library, we need
+destructive updates to interoperate with LVar effects.  Moreover, we
+wish to do so at the library level, without requiring language
+extensions.  Our solution is to provide a monad called @ParST@ that
+uses the @StateT@ transformer described above to layer additional
+mutable state on top of the existing capabilities of the LVish @Par@
+monad.  @ParST@ allows arbitrarily complex mutable state, such as
+tuples of vectors (arrays).  However, @ParST@ enforces the restriction
+that every memory location in the state is reachable by only one
+pointer: alias freedom.
 
 Previous approaches to integrating mutable memory with pure functional
 code (\ie, the @ST@ monad) work with LVish, but only allow
 thread-private memory.  There is no way to operate on the same
 structure (for instance, on two halves of an array) from different
-threads.  @ParST@ exploits the fact that it is perfectly safe to do so
-as long as the different threads are accessing disjoint parts of the
-data structure.  Below we demonstrate the idea using a simplified
-convenience module provided alongside the general (@ParST@) library,
-which handles the specific case of a single vector as the mutable
-state being shared.
+threads.  @ParST@ exploits the fact that that simultaneous access from
+different threads can be deterministic, as long as the threads are
+accessing disjoint parts of the data structure.
+Listing~\ref{listing-disjoint-parallel-update} illustrates the idea
+using @ParVecT@, which is a specialized variant of @ParST@ that
+supports a particular kind of shared state: a single mutable vector.
 
-\singlespacing
-\begin{lstlisting}
-runParVecT 10 (
-  do -- Fill all 10 slots with "a":
-     set "a"
-     -- Get a pointer to the state:
-     ptr <- reify 
-     -- Call pre-existing ST code:
-     new <- pickLetter ptr
-     forkSTSplit (SplitAt 5)
-       (write 0 new)
-       (write 0 "c")
-     -- ptr is again accessible here
-     ellipses)
-\end{lstlisting}
+\singlespacing \lstinputlisting[float, caption={A program illustrating
+    disjoint parallel update inside an LVar computation.},
+  label=listing-disjoint-parallel-update]{chapter4/code/disjoint-parallel-update.hs}
 \doublespacing
 
-This program demonstrates running a parallel, stateful session within
-a @Par@ computation.  The shared mutable vector is implicit and global
-within the monadic @do@ block.  We fork the control flow of the
-program with @forkSTSplit@, where @(write 0 new)@ and @(write 0 "c")@
-are the two forked child computations.  The @SplitAt@ value describes
-how to partition the state into disjoint pieces: @(SplitAt 5)@
-indicates that the element at index $5$ in the vector is the ``split
-point'', and hence the first child computation passed to @forkSTSplit@
-may access only the first half of the vector, while the other may
-access only the second half.  (We will see shortly how this
-generalizes.)  Each child computation sees only a \emph{local} view of
-the vector, so writing @"c"@ to index @0@ in the second child
-computation is really writing to index $5$ of the global vector.
+The code in Listing~\ref{listing-disjoint-parallel-update} writes to
+each element in a six-element vector, then splits the vector into two
+parts and updates each part in parallel.  (The first argument to
+@runParVecT@, in this case @6@, specifies the length of the vector.)
+The call to @forkSTSplit@ forks the control flow of the program, and
+@(write 0 "bar")@ and @(write 0 "baz")@ are the two forked child
+computations.  @forkSTSplit@ takes as its first argument a ``split
+point'', which is the index at which the vector is to be split.  Here,
+that index is @3@, which means that the first child computation passed
+to @forkSTSplit@ may access only the first half of the vector, while
+the other may access only the second half.  Each child computation
+sees only a \emph{local} view of the vector, so writing @"bar"@ to
+index @0@ in the second child computation is really writing to index
+@3@ of the full vector.
 
-Ensuring the safety of @ParST@ hinges on two requirements:
+The call to @freeze@ in in
+Listing~\ref{listing-disjoint-parallel-update} is not to be confused
+with an LVar freeze operation; it is instead the @freeze@ operation
+from the @Data.Vector@ library which produces an immutable copy of a
+mutable vector.  In the last line of
+Listing~\ref{listing-disjoint-parallel-update}, calling @runParVecT@
+discharges the extra state effect that @ParVecT@ provides, leaving the
+underlying @Par@ computation, which is then run with @runPar@.  In
+this example, printing the result of the @runPar@ gives us
+@["bar","foo","foo","baz","foo","foo"]@.
+
+Ensuring the determinism of @ParST@ hinges on two requirements:
 
 \begin{itemize}
 \item \emph{Disjointness:} Any thread can get a direct pointer to its
-  state.  In the above example, @ptr@ is an @STVector@ that can be
-  passed to any standard library procedures in the @ST@ monad.
-  However, it must \emph{not} be possible to access @ptr@ from
-  @forkSTSplit@'s child computations.  We accomplish this using
-  Haskell's support for higher-rank types,\footnote{That is, the type
-    of a child computation begins with \il{(forall s DOT ParST
-      ellipses)}.} ensuring that accessing @ptr@ from a child
+  state.  In Listing~\ref{listing-disjoint-parallel-update}, @ptr@ is
+  an @STVector@ that can be passed to any standard library procedures
+  in the @ST@ monad.  However, it must \emph{not} be possible to
+  access @ptr@ from @forkSTSplit@'s child computations.  We accomplish
+  this using Haskell's support for higher-rank types,\footnote{That
+    is, the type of a child computation begins with \il{(forall s .
+      ParST ...)}.} ensuring that accessing @ptr@ from a child
   computation causes a type error.  Finally, @forkSTSplit@ is a
-  fork-join construct; after it completes the parent thread again has
+  fork-join construct; after it completes, the parent thread again has
   full access to @ptr@.
 
-\item \emph{Alias freedom:} Imagine that we expanded the example above
-  to have as its state a \emph{tuple} of two vectors: $(v_1,v_2)$.
-  \emph{If} we allowed the user to supply an arbitrary initial state
-  to their @ParST@ computation, then they might provide the state
-  $(v_1, v_1)$, \ie, two copies of the same pointer.  This breaks the
-  abstraction, enabling them to reach the same mutable location from
-  multiple threads (by splitting the supposedly-disjoint vectors at a
-  different index).  Thus, in LVish, users do not populate the state
-  directly, but only describe a \emph{recipe} for its creation.  Each
-  type used as a @ParST@ state has an associated type for descriptions
-  of (1) how to create an initial structure, and (2) how to split it
-  into disjoint pieces.  We provide a trusted library of instances for
-  commonly used types.
+\item \emph{Alias freedom:} Imagine that we expanded the example in
+  Listing~\ref{listing-disjoint-parallel-update} to have as its state
+  a \emph{tuple} of two vectors $(v_1, v_2)$.  If we allowed the
+  programmer to supply an arbitrary initial state to the @ParST@
+  computation, then they might provide the state $(v_1, v_1)$, \ie,
+  two copies of the same pointer.  This breaks the abstraction,
+  enabling them to reach the same mutable location from multiple
+  threads (by splitting the supposedly-disjoint vectors at a different
+  index).  Thus, in LVish, users do not populate the state directly,
+  but only describe a \emph{recipe} for its creation.  Each type used
+  as a @ParST@ state has an associated type for descriptions of (1)
+  how to create an initial structure, and (2) how to split it into
+  disjoint pieces.  LVish provides a library of instances for commonly
+  used types.
 \end{itemize}
 
 \subsection{Inter-thread communication}
 
 Disjoint state update does not solve the problem of communication
 between threads.  Hence systems built around this idea often include
-other means for performing reductions, or require ``commutativity
+other means for performing reductions, or require ''commutativity
 annotations'' for operations such as adding to a set.  For instance,
 DPJ provides a @commuteswith@ form for asserting that operations
 commute with one another to enable concurrent mutation.  In LVish,
