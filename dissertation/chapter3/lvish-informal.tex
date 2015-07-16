@@ -211,29 +211,19 @@ traversal in the simple fashion shown in
 Listing~\ref{listing-bfs_new}.  This code, written using the LVish
 Haskell library, discovers (in parallel) the set of nodes in a graph
 @g@ reachable from a given node @startNode@, and is guaranteed to
-produce a deterministic result.\footnote{In the LVish library, the
-  \lstinline|Par| type constructor is the monad in which LVar
-  computations run; see \either{Chapter}{Section}~\ref{ch:lvish} for
-  details.}  It works by creating a fresh @Set@ LVar (corresponding to
-a lattice whose elements are sets, with set union as lub), and seeding
-it with the starting node.
+produce a deterministic result.  It works by first creating a new
+LVar, @seen@, to represent the set of seen nodes, then adding
+@startNode@ to the set.  @newHandler@ is a helper function similar to
+@addHandlerInPool@.  It takes the LVar @seen@ as its first argument,
+and its second argument is the callback to be run whenever an event
+occurs (that is, whenever a new element is added to the set of seen
+nodes): for each new element that is seen, we look up its neighbors in
+@g@ and then insert each of those elements into the set of seen nodes
+as well.  The computation continues until there are no more events to
+handle and @quiesce h@ returns.  We will return to this example in
+Section~\ref{s:lvish-api}, which discusses the LVish library API in
+more detail.
 
 \singlespacing
-\lstinputlisting[float, caption={A parallel graph traversal in LVish.}, label=listing-bfs_new]{chapter3/code/bfs_new.hs}
+\lstinputlisting[float, caption={A deterministic parallel graph traversal that uses \il{runParThenFreeze}.}, label=listing-bfs_new]{chapter3/code/bfs_new.hs}
 \doublespacing
-
-\TODO{As it is, this is not actually running LVish code -- although
-  the versions in
-  Section~\ref{subsection:lvish-parallel-graph-traversal} are.  We
-  could point ahead to that, or we could make this running code, but
-  one way or another we either need to acknowledge this.}
-
-The @freezeSetAfter@ function implements a set-specific variant of the
-freeze-after pattern described above.  It combines freezing and
-event handlers: first, it registers the callback @handle@ as a handler
-for the @seen@ set, which will asynchronously put the neighbors of
-each visited node into the set, possibly triggering further callbacks,
-recursively.  Second, when no further callbacks are ready to
-run---\ie, when the @seen@ set has reached a
-fixpoint---@freezeSetAfter@ will freeze the set and return its exact
-value.
