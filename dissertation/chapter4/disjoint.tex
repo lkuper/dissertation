@@ -29,8 +29,6 @@ otherwise updated to note the fork.
 
 The below code promotes @StateT@ to be a @Par@-monad transformer:
 
-\TODO{Check if this is still correct.}
-
 \singlespacing
 \begin{lstlisting}
 class SplittableState a where
@@ -39,12 +37,24 @@ class SplittableState a where
 instance (SplittableState s, ParMonad m) => 
          ParMonad (StateT s m) where  
   fork task =
-     do s <- State.get 
+     do s <- oState.get 
         let (s1, s2) = splitState s
         State.put s2
         lift (fork (do runStateT task s1; return ()))
 \end{lstlisting}
 \doublespacing
+
+\lk{An aside: this code reflects what appeared in our PLDI '14
+  ``Effect Zoo'' paper, but it doesn't actually reflect how things are
+  done in the LVish library of 2015; ParST no longer uses StateT.
+  However, how ParST is implemented is really just an implementation
+  detail.  As Ryan puts it: ``It happens that when Omer and I were
+  overhauling it during one of our pair programming sessions, we
+  reimplemented StateT ourselves (it's a trivial monad), initially
+  because ParMonad's p and Monad's m now look different.  Later, we
+  figured out that we could still use StateT if we wanted, but it's
+  not important.  The important thing for ParST should be what API is
+  exposed to the user.''}
 
 Note that here, @put@ and @get@ are not LVar operations, but the
 standard operations for setting and retrieving the state in a
