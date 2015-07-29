@@ -57,7 +57,7 @@
     \config{\extS{(U_S(S))}{l}{\bot}{\frozenfalse}}{l}$.
 
     Also, since $U_S$ is non-conflicting with $\config{S}{\NEW}
-    \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$, we
+    \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$, \\ we
     have that $(U_S(\extS{S}{l}{\bot}{\frozenfalse}))(l) =
     (\extS{S}{l}{\bot}{\frozenfalse})(l) =
     \state{\bot}{\frozenfalse}$.
@@ -169,7 +169,7 @@
     Given:
 
     $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-          \dots}}{H}} \parstepsto
+          \dots}}{H}} \parstepsto \\
     \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
           e, \dots}}{\{d_2\}\cup H}}$.
 
@@ -223,16 +223,19 @@
       $\topS$.  Therefore $S(l) = \state{d_1}{\frozenfalse}$.
 
       Let $u_{p_i}$ be the state update operation in $U_S$ that
-      updates the contents of $l$.  Hence
-      $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$.
+      updates the contents of $l$.
+
+      Hence $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$.
 
       Recall that $U_S$ is freeze-safe with
       $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
             \dots}}{H}} \parstepsto
-      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.  By
-      Definition~\ref{def:freeze-safe-store-update-operation}, then,
-      since the contents of $l$ change in status during the transition
-      from $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+
+      By Definition~\ref{def:freeze-safe-store-update-operation},
+      then, since the contents of $l$ change in status during the
+      transition from
+      $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
             \dots}}{H}}$ to
       $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, we know that
       $U_S$ either freezes the contents of $l$ (having no other effect
@@ -278,14 +281,16 @@
       $\topS$.  Therefore $S(l) = \state{d_1}{\frozenfalse}$.
 
       Let $u_{p_i}$ be the state update operation in $U_S$ that
-      updates the contents of $l$.  Hence
-      $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$.
+      updates the contents of $l$.
+
+      Hence $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$.
 
       Recall that $U_S$ is freeze-safe with $\config{S}{\freeze{l}}
-      \parstepsto \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.  By
-      Definition~\ref{def:freeze-safe-store-update-operation}, then,
-      since the contents of $l$ change in status during the transition
-      from $\config{S}{\freeze{l}}$ to
+      \parstepsto \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+
+      By Definition~\ref{def:freeze-safe-store-update-operation},
+      then, since the contents of $l$ change in status during the
+      transition from $\config{S}{\freeze{l}}$ to
       $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, we know that
       $U_S$ either freezes the contents of $l$ (having no other effect
       on them), or it acts as the identity on the contents of $l$.

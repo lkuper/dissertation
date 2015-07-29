@@ -61,12 +61,13 @@
       is equal to
       $\config{\extS{(\pi(S))}{\pi(l)}{\bot}{\frozenfalse}}{\pi(l)}$.
 
-      So, we have to show that
+      We have to show that
       $\config{\extS{(\pi(S))}{l'}{\bot}{\frozenfalse}}{l'}$ is equal
       to
       $\config{\extS{(\pi(S))}{\pi(l)}{\bot}{\frozenfalse}}{\pi(l)}$.
-      Since we know (from the side condition of {\sc E-New}) that $l
-      \notin \dom{S}$, it follows that $\pi(l) \notin \pi(\dom{S})$.
+
+      We know (from the side condition of {\sc E-New}) that $l
+      \notin \dom{S}$, and so $\pi(l) \notin \pi(\dom{S})$.
       Therefore, in
       $\config{\extS{(\pi(S))}{l'}{\bot}{\frozenfalse}}{l'}$, we can
       $\alpha$-rename $l'$ to $\pi(l)$, and so the two configurations
@@ -83,6 +84,7 @@
 
       By {\sc E-Put}, $\config{\pi(S)}{\putiexp{\pi(l)}}$ steps to
       $\config{\extSRaw{(\pi(S))}{\pi(l)}{u_{p_i}(p_1)}}{\unit}$,
+
       since $S(l) = (\pi(S))(\pi(l)) = p_1$.
 
       It remains to show that
@@ -126,11 +128,13 @@
       and~\ref{def:permutation-expression}, $\pi(\config{S}{p_2}) =
       \config{\pi(S)}{p_2}$.  Therefore the case is complete.
     \item Case {\sc E-Freeze-Init}: $\conf =
-      \config{S}{\freezeafter{l}{Q}{\lam{x}{e}}}$, and $\conf' =
+      \config{S}{\freezeafter{l}{Q}{\lam{x}{e}}}$,
+
+      and $\conf' =
       \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
 
       To show: $\pi(\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}})
-      \parstepsto
+      \parstepsto \\
       \pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}})$.
 
       By Definitions~\ref{def:permutation-configuration}
@@ -139,37 +143,39 @@
 
       By {\sc E-Freeze-Init},
       $\config{\pi(S)}{\freezeafter{\pi(l)}{Q}{\lam{x}{\pi(e)}}}
-      \parstepsto
+      \parstepsto \\
       \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{}}{\setof{}}}$.
 
       By Definitions~\ref{def:permutation-configuration}
       and~\ref{def:permutation-expression},
       $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}})
-      =
+      = \\
       \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{}}{\setof{}}}$.
       Therefore the case is complete.
 
     \item Case {\sc E-Spawn-Handler}: $\conf =
       \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}}$, and $\conf' =
+            \dots}}{H}}$,
+
+      and $\conf' =
       \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
             e, \dots}} {\{d_2\}\cup H}}$.
 
       To show:
       $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}}) \parstepsto
+            \dots}}{H}}) \parstepsto \\
       \pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
             e, \dots}} {\{d_2\}\cup H}})$.
 
       By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression}, $\pi(\conf) =
+      and~\ref{def:permutation-expression}, $\pi(\conf) = \\
       \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(e),
             \dots}}{H}}$.
 
       Since $(\pi(S))(\pi(l)) = \state{d_1}{\status_1}$, by {\sc
-        E-Spawn-Handler} we have that
+        E-Spawn-Handler} we have that \\
       $\config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(e),
-            \dots}}{H}} \parstepsto
+            \dots}}{H}} \parstepsto \\
       \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\subst{\pi(e_0)}{x}{d_2},
             \pi(e), \dots}} {\{d_2\}\cup H}}$.
 
@@ -183,16 +189,16 @@
 
     \item Case {\sc E-Freeze-Final}: $\conf =
       \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}}$, and $\conf' =
+            \dots}}{H}}$, \\ and $\conf' =
       \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
       To show:
       $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}}) \parstepsto
+            \dots}}{H}}) \parstepsto \\
       \pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
 
       By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression}, $\pi(\conf) =
+      and~\ref{def:permutation-expression}, $\pi(\conf) = \\
       \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(v),
             \dots}}{H}}$.
 
@@ -201,9 +207,9 @@
         value it is.}
 
       Since $(\pi(S))(\pi(l)) = \state{d_1}{\status_1}$, by {\sc
-        E-Freeze-Final} we have that
+        E-Freeze-Final} we have that \\
       $\config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(v),
-            \dots}}{H}} \parstepsto
+            \dots}}{H}} \parstepsto \\
       \config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$.  (From
       Definition~\ref{def:permutation-expression}, we can see that if
       $v$ is a value, $\pi(v)$ is also a value.)
@@ -277,10 +283,13 @@
   $\pi(\config{S}{\E{e}}) \ctxstepsto \pi(\config{S'}{\E{e'}})$.
 
   By Definition~\ref{def:permutation-configuration},
-  $\pi(\config{S}{\E{e}})$ is equal to $\config{\pi(S)}{\pi(\E{e})}$,
-  and $\pi(\config{S'}{\E{e'}})$ is equal to
-  $\config{\pi(S')}{\pi(\E{e'})}$.  Furthermore,
-  $\config{\pi(S)}{\pi(\E{e})}$ is equal to
+  $\pi(\config{S}{\E{e}})$ is equal to $\config{\pi(S)}{\pi(\E{e})}$.
+
+  Also by Definition~\ref{def:permutation-configuration},
+  $\pi(\config{S'}{\E{e'}})$ is equal to
+  $\config{\pi(S')}{\pi(\E{e'})}$.
+
+  Furthermore, $\config{\pi(S)}{\pi(\E{e})}$ is equal to
   $\config{\pi(S)}{\evalctxt{(\pi(E))}{\pi(e)}}$ and
   $\config{\pi(S')}{\pi(\E{e'})}$ is equal to
   $\config{\pi(S')}{\evalctxt{(\pi(E))}{\pi(e')}}$.
@@ -298,9 +307,11 @@
   equal to $\config{\pi(S')}{\pi(e')}$.
 
   Hence $\config{\pi(S)}{\pi(e)} \parstepsto
-  \config{\pi(S')}{\pi(e')}$.  Therefore, by {\sc E-Eval-Ctxt},
-  $\config{\pi(S)}{\E{\pi(e)}} \ctxstepsto
-  \config{\pi(S')}{\E{\pi(e')}}$ for all evaluation contexts $E$.
+  \config{\pi(S')}{\pi(e')}$.
+
+  Therefore, by {\sc E-Eval-Ctxt}, $\config{\pi(S)}{\E{\pi(e)}}
+  \ctxstepsto \config{\pi(S')}{\E{\pi(e')}}$ for all evaluation
+  contexts $E$.
 
   In particular, it is true that
   $\config{\pi(S)}{\evalctxt{(\pi(E))}{\pi(e)}} \ctxstepsto

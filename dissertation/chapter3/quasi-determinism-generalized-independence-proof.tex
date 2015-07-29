@@ -34,7 +34,7 @@
       \config{U_S(\extS{S}{l}{\bot}{\frozenfalse})}{l}$.
 
       By {\sc E-New}, we have that $\config{U_S(S)}{\NEW} \parstepsto
-      \config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$, where $l'
+      \config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$, \\ where $l'
       \notin \dom{U_S(S)}$.
 
       By assumption, $U_S$ is non-conflicting with $\config{S}{\NEW}
@@ -49,7 +49,7 @@
       \config{\extS{(U_S(S))}{l}{\bot}{\frozenfalse}}{l}$.
 
       Also, since $U_S$ is non-conflicting with $\config{S}{\NEW}
-      \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$, we
+      \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$, \\ we
       have that $(U_S(\extS{S}{l}{\bot}{\frozenfalse}))(l) =
       (\extS{S}{l}{\bot}{\frozenfalse})(l) =
       \state{\bot}{\frozenfalse}$.
@@ -87,7 +87,7 @@
       Since state update operations commute, $u_{p_j}(u_{p_i}(p_1)) =
       \topp$.
       
-      But then $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) = \topS$,
+      But then $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) = \topS$, \\
       which contradicts the assumption that
       $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$.
 
@@ -104,7 +104,7 @@
       $\extSRaw{(U_S(S))}{l}{u_{p_j}(u_{p_i}(p_1))}$.
 
       Finally, since $u_{p_j}$ is the update operation in $U_S$ that
-      affects the contents of $l$, we have that
+      affects the contents of $l$, \\ we have that
       $\extSRaw{(U_S(S))}{l}{u_{p_j}(u_{p_i}(p_1))} =
       U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})$, and so the case is
       satisfied.
@@ -137,11 +137,11 @@
 
     \item Case {\sc E-Freeze-Init}:
 
-      Given: $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto
+      Given: $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto \\
       \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
 
       To show: $\config{U_S(S)}{\freezeafter{l}{Q}{\lam{x}{e}}}
-      \parstepsto
+      \parstepsto \\
       \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
 
       Immediate by {\sc E-Freeze-Init}.
@@ -151,14 +151,14 @@
       Given:
 
       $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}} \parstepsto
+            \dots}}{H}} \parstepsto \\
       \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
             e, \dots}} {\{d_2\}\cup H}}$.
 
       To show:
 
       $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}} \parstepsto
+            \dots}}{H}} \parstepsto \\
       \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
             e, \dots}} {\{d_2\}\cup H}}$.
 
@@ -182,7 +182,7 @@
       Therefore, by {\sc E-Spawn-Handler},
 
       $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}} \parstepsto
+            \dots}}{H}} \parstepsto \\
       \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
             e, \dots}} {\{d_2\}\cup H}}$,
 
@@ -192,12 +192,12 @@
 
       Given:
       $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}} \parstepsto
+            \dots}}{H}} \parstepsto \\
       \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
       To show:
       $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}} \parstepsto
+            \dots}}{H}} \parstepsto \\
       \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{d_1}$.
 
       From the premises of {\sc E-Freeze-Final}, $S(l) =
@@ -230,13 +230,13 @@
           already have from the premises of {\sc E-Freeze-Final} that
           $\forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q}
           \Rightarrow d_2 \in H)$.  Hence, by {\sc E-Freeze-Final}, we
-          have that
+          have that \\
           $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-                \dots}}{H}} \parstepsto
+                \dots}}{H}} \parstepsto \\
           \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
 
           Finally, since $u_{p_i}$ is the state update operation in
-          $U_S$ that affects the contents of $l$, and
+          $U_S$ that affects the contents of $l$, \\ and
           $u_{p_i}(\state{d_1}{\frozentrue}) =
           \state{d_1}{\frozentrue}$, we have that
           $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
@@ -304,13 +304,14 @@
           $u_{p_i}(\state{d_1}{\frozentrue}) =
           \state{d_1}{\frozentrue}$.
 
-          Hence $(U_S(S))(l) = \state{d_1}{\frozentrue}$.  Hence, by
-          {\sc E-Freeze-Simple}, we have that
-          $\config{U_S(S)}{\freeze{l}} \parstepsto
+          Hence $(U_S(S))(l) = \state{d_1}{\frozentrue}$.
+
+          Hence, by {\sc E-Freeze-Simple}, we have that
+          $\config{U_S(S)}{\freeze{l}} \parstepsto \\
           \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
 
           Finally, since $u_{p_i}$ is the state update operation in
-          $U_S$ that affects the contents of $l$, and
+          $U_S$ that affects the contents of $l$, \\ and
           $u_{p_i}(\state{d_1}{\frozentrue}) =
           \state{d_1}{\frozentrue}$, we have that
           $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
@@ -328,9 +329,10 @@
           the transition.  Therefore $U_S$ acts as the identity on the
           contents of $l$.
 
-          Hence $(U_S(S))(l) = S(l) = \state{d_1}{\status_1}$.  Hence,
-          by {\sc E-Freeze-Simple}, we have that
-          $\config{U_S(S)}{\freeze{l}} \parstepsto
+          Hence $(U_S(S))(l) = S(l) = \state{d_1}{\status_1}$.
+
+          Hence, by {\sc E-Freeze-Simple}, we have that
+          $\config{U_S(S)}{\freeze{l}} \parstepsto \\
           \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
 
           Finally, since $U_S$ acts as the identity on the contents of

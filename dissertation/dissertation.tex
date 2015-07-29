@@ -25,6 +25,13 @@
 \setromanfont[Mapping=tex-text]{PT Serif}
 \setsansfont[Mapping=tex-text]{PT Serif}
 
+% Stuff for ensuring that figure captions are single-spaced and
+% consistently spaced from the figure.  Not sure why this works, but
+% it seems to.
+\usepackage{subfig}
+\captionsetup[table]{aboveskip=5pt}
+\captionsetup[table]{belowskip=5pt}
+
 % Stuff needed for typesetting lambdaLVish and its metatheory
 \input{../latex_common/lang}
 \input{../latex_common/metatheory}

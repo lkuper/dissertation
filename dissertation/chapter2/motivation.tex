@@ -57,14 +57,16 @@ construction) program can meet the specification.
 
 \subsection{A purely functional attempt}
 
-\singlespacing \lstinputlisting[float, caption={A purely functional
-    Haskell program that finds the connected component of the
-    \lstinline|profiles| graph that is reachable from the node
-    \lstinline|profile0|, then maps the \lstinline|analyze| function
-    over the nodes found.  Although component discovery proceeds in
-    parallel, we cannot call \lstinline|analyze| on any of the nodes
-    in the connected component until they have all been discovered.},
-  label=listing-bfs_pure]{chapter2/code/bfs_pure.hs} \doublespacing
+\singlespacing
+\lstinputlisting[float, caption={A purely functional Haskell program
+    that finds the connected component of the \lstinline|profiles|
+    graph that is reachable from the node \lstinline|profile0|, then
+    maps the \lstinline|analyze| function over the nodes found.
+    Although component discovery proceeds in parallel, we cannot call
+    \lstinline|analyze| on any of the nodes in the connected component
+    until they have all been discovered.},
+  label=listing-bfs_pure]{chapter2/code/bfs_pure.hs}
+\doublespacing
 
 Listing~\ref{listing-bfs_pure} gives a Haskell implementation of a
 \emph{level-synchronized} breadth-first graph traversal that finds the

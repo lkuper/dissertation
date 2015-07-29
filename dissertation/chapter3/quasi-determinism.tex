@@ -188,12 +188,12 @@ Lemma~\ref{lem:lvars-independence}.  Furthermore,
 $\store{\storebinding{l}{1}{\frozenfalse}}$ is non-conflicting with
 the original transition, since no new locations are allocated between
 $\store{\storebinding{l}{0}{\frozenfalse}}$ and
-$\store{\storebinding{l}{1}{\frozenfalse}}$.  However, it is
-\emph{not} the case that
+$\store{\storebinding{l}{1}{\frozenfalse}}$.  But it is \emph{not} the
+case that
 $\config{\lubstore{\store{\storebinding{l}{0}{\frozenfalse}}}{\store{\storebinding{l}{1}{\frozenfalse}}}}{\putiexp{l}}$
 steps to
 $\config{\lubstore{\store{\storebinding{l}{1}{\frozenfalse}}}{\store{\storebinding{l}{1}{\frozenfalse}}}}{\unit}$,
-because $u_{p_i}((\lubstore{S}{S''})(l)) = \topp$.  (As before,
+since $u_{p_i}((\lubstore{S}{S''})(l)) = \topp$.  (As before,
 $u_{p_i}$ is the update operation $u_i$, lifted from lattice elements
 $d$ to states $\state{d}{\status}$.)
 
@@ -247,7 +247,7 @@ Definition~\ref{def:non-conflicting-store-update-operation} revises
 our previous definition of ``non-conflicting'' to apply to store update
 operations.  It says that $U_S$ is non-conflicting with the transition
 $\config{S}{e} \parstepsto \config{S'}{e'}$ if, for all locations
-allocated during the transition, $U_S$ does not interfere with those
+allocated in the transition, $U_S$ does not interfere with those
 locations.  For instance, if $l$ is allocated in the transition from
 $\config{S}{e}$ to $\config{S'}{e'}$, then $l \notin \dom{U_S(S)}$
 (that is, $U_S$ cannot add a binding at $l$ to $S$), and $(U_S(S'))(l)

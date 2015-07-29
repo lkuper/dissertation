@@ -36,7 +36,6 @@ behave nondeterministically.  Since we are still using monad-par here
 and not LVish, @get@ has IVar semantics, not LVar semantics: rather
 than performing a threshold read, it blocks until @num@ has been
 written, then unblocks and evaluates to the exact contents of @num@.
-
 However, when using monad-par, even multiple writes of the \emph{same}
 value to an IVar will raise a ``multiple put'' error, as in
 Listing~\ref{listing-repeated-4-ivar}.  This program differs from the
@@ -375,7 +374,7 @@ before the freeze---which is why @traverse@ must be run with
 is deterministic, the \emph{language-level} guarantee is merely of
 quasi-determinism, not determinism.
 
-However, just as we did with our final shopping-cart example in
+However, just as with our final shopping-cart example in
 Listing~\ref{listing-map-lvar-freezeafter}, we can use
 @runParThenFreeze@ to ensure that freezing happens last.
 Listing~\ref{listing-graph-traversal-implicit-freeze} gives a version
@@ -395,6 +394,6 @@ in the @ISet@ that @traverse@ returns can remain @s@ instead of being
 instantiated with @Frzn@.  Most importantly, since freezing is
 performed by @runParThenFreeze@ rather by an explicit call to
 @freeze@, it is no longer necessary for @traverse@ to explicitly call
-@quiesce@, either!  The implicit barrier of @runParThenFreeze@ ensures
-that all outstanding events that can be handled will be handled before
-it can return.
+@quiesce@, either!  Because of the implicit barrier created by
+@runParThenFreeze@, all outstanding events that can be handled will be
+handled before it can return.

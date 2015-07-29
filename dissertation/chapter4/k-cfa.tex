@@ -45,23 +45,21 @@ that combines all the information discovered into one store.
 
 \subsection{$k$-CFA phase one: breadth-first exploration}
 
-The @explore@ function from the original, sequential version of the
-analysis, shown in Listing~\ref{listing-pure-k-cfa}, expresses the
-heart of the search process.  @explore@ uses idiomatic Haskell data
-types like @Data.Set@ and lists.  However, it presents a dilemma with
-respect to exposing parallelism.  Consider attempting to parallelize
-@explore@ using purely functional parallelism with futures---for
-instance, using the Haskell Strategies library~\cite{marlow-par}.  An
-attempt to compute the next states in parallel would seem to be
-thwarted by the main thread rapidly forcing each new state to perform
-the seen-before check, @todo `S.member` seen@.  There is no way for
-independent threads to ``keep going'' further into the graph; rather,
-they check in with @seen@ after one step.
+The @explore@ function from the original, sequential $k$-CFA
+analysis, shown in Listing~\ref{listing-pure-k-cfa}, expresses
+the heart of the search process.  @explore@ uses idiomatic Haskell
+data types like @Data.Set@ and lists.  However, it presents a dilemma
+with respect to exposing parallelism.  Consider attempting to
+parallelize @explore@ using purely functional parallelism with
+futures---for instance, using the Haskell Strategies
+library~\cite{marlow-par}.  An attempt to compute the next states in
+parallel would seem to be thwarted by the main thread rapidly forcing
+each new state to perform the seen-before check, @todo `S.member` seen@.
+There is no way for independent threads to ``keep going'' further into
+the graph; rather, they check in with @seen@ after one step.
 
 We confirmed this prediction by adding a parallelism annotation from
 the aforementioned Strategies library:
-
-
 
 \singlespacing
 \begin{lstlisting}[float, caption={The \il{explore} function from a purely functional $k$-CFA implementation.}, label=listing-pure-k-cfa]
@@ -82,7 +80,7 @@ withStrategy (parBuffer 8 rseq) (next todo)
 \noindent The GHC runtime reported that 100\% of created futures were
 ``duds''---that is, the main thread forced them before any helper
 thread could assist.  Changing @rseq@ to @rdeepseq@ exposed a small
-amount of parallelism---238/5000 futures were successfully executed in
+amount of parallelism---238 of 5000 futures were successfully executed in
 parallel---yielding no actual speedup.
 
 \subsection{$k$-CFA phase two: summarization}
@@ -228,17 +226,17 @@ improvement over the purely functional version.
 \subsection{Parallel speedup results}\label{subsection:lvish-parallel-speedup-results}
 
 We implemented two versions of the $k$-CFA algorithm using set data
-structures that the LVish library provides.  The first of these,
-@PureSet@ (exported by the @Data.LVar.PureSet@ module), is the LVish
-library's reference implementation of a set, which uses a pure
-@Data.Set@ wrapped in a mutable container.  The other, @SLSet@,
-exported by @Data.LVar.SLSet@, is a lock-free set based on concurrent
-skip lists~\cite{art}.\footnote{LVish also provides analogous
-  reference and lock-free implementations of maps (\il{PureMap} and
-  \il{SLMap}).  In fact, LVish is the first project to incorporate
-  \emph{any} lock-free data structures in Haskell, which required
-  solving some unique problems pertaining to Haskell's laziness and
-  the GHC compiler's assumptions regarding referential
+structures that the LVish library provides.  The first, @PureSet@
+(exported by the @Data.LVar.PureSet@ module), is the LVish library's
+reference implementation of a set, which uses a pure @Data.Set@
+wrapped in a mutable container.  The other, @SLSet@, exported by
+@Data.LVar.SLSet@, is a lock-free set based on concurrent skip
+lists~\cite{art}.\footnote{LVish also provides analogous reference and
+  lock-free implementations of maps (\il{PureMap} and \il{SLMap}).  In
+  fact, LVish is the first project to incorporate \emph{any} lock-free
+  data structures in Haskell, which required solving some unique
+  problems pertaining to Haskell's laziness and the GHC compiler's
+  assumptions regarding referential
   transparency~\cite{RyanAtomicPrimopsTalk}.}
 
 We evaluated both the @PureSet@-based and @SLSet@-based $k$-CFA

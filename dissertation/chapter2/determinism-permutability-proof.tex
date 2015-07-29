@@ -32,8 +32,9 @@
       $\config{\pi(S)}{\pi(\subst{e}{x}{v})}$.
 
       Hence $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$ steps
-      to $\config{\pi(S)}{\pi(\subst{e}{x}{v})}$, which is equal to
-      $\pi(\config{S}{\subst{e}{x}{v}})$ by
+      to $\config{\pi(S)}{\pi(\subst{e}{x}{v})}$,
+
+      which is equal to $\pi(\config{S}{\subst{e}{x}{v}})$ by
       Definition~\ref{def:lvars-permutation-configuration}.  Hence the
       case is satisfied.
 
@@ -57,7 +58,9 @@
 
       By Definition~\ref{def:lvars-permutation-configuration},
       $\pi(\config{\extSRaw{S}{l}{\bot}}{l})$ is equal to
-      $\config{\pi(\extSRaw{S}{l}{\bot})}{\pi(l)}$, which is equal to
+      $\config{\pi(\extSRaw{S}{l}{\bot})}{\pi(l)}$,
+
+      which is equal to
       $\config{\extSRaw{(\pi(S))}{\pi(l)}{\bot}}{\pi(l)}$.
 
       So, we have to show that
@@ -81,6 +84,7 @@
 
       By {\sc E-Put}, $\config{\pi(S)}{\putexp{\pi(l)}{d_2}}$ steps to
       $\config{\extSRaw{(\pi(S))}{\pi(l)}{\userlub{d_1}{d_2}}}{\unit}$,
+
       since $S(l) = (\pi(S))(\pi(l)) = d_1$.
 
       It remains to show that
@@ -107,7 +111,9 @@
       \config{\pi(S)}{\putexp{\pi(l)}{d_2}}$.
 
       By {\sc E-Put-Err}, $\config{\pi(S)}{\putexp{\pi(l)}{d_2}}$
-      steps to $\error$, since $S(l) = (\pi(S))(\pi(l)) = d_1$.
+      steps to $\error$,
+
+      since $S(l) = (\pi(S))(\pi(l)) = d_1$.
 
       Since $\pi(\error) = \error$ by
       Definition~\ref{def:lvars-permutation-configuration}, the case
@@ -124,7 +130,9 @@
       \config{\pi(S)}{\getexp{\pi(l)}{T}}$.
 
       By {\sc E-Get}, $\config{\pi(S)}{\getexp{\pi(l)}{T}}$ steps to
-      $\config{\pi(S)}{d_2}$, since $S(l) = (\pi(S))(\pi(l)) = d_1$.
+      $\config{\pi(S)}{d_2}$,
+
+      since $S(l) = (\pi(S))(\pi(l)) = d_1$.
 
       By Definitions~\ref{def:lvars-permutation-configuration}
       and~\ref{def:lvars-permutation-expression},
@@ -159,10 +167,13 @@
   $\pi(\config{S}{\E{e}}) \ctxstepsto \pi(\config{S'}{\E{e'}})$.
 
   By Definition~\ref{def:lvars-permutation-configuration},
-  $\pi(\config{S}{\E{e}})$ is equal to $\config{\pi(S)}{\pi(\E{e})}$,
-  and $\pi(\config{S'}{\E{e'}})$ is equal to
-  $\config{\pi(S')}{\pi(\E{e'})}$.  Furthermore,
-  $\config{\pi(S)}{\pi(\E{e})}$ is equal to
+  $\pi(\config{S}{\E{e}})$ is equal to $\config{\pi(S)}{\pi(\E{e})}$.
+
+  Also by Definition~\ref{def:lvars-permutation-configuration},
+  $\pi(\config{S'}{\E{e'}})$ is equal to
+  $\config{\pi(S')}{\pi(\E{e'})}$.
+
+  Furthermore, $\config{\pi(S)}{\pi(\E{e})}$ is equal to
   $\config{\pi(S)}{\evalctxt{(\pi(E))}{\pi(e)}}$ and
   $\config{\pi(S')}{\pi(\E{e'})}$ is equal to
   $\config{\pi(S')}{\evalctxt{(\pi(E))}{\pi(e')}}$.
@@ -180,9 +191,11 @@
   $\pi(\config{S'}{e'})$ is equal to $\config{\pi(S')}{\pi(e')}$.
 
   Hence $\config{\pi(S)}{\pi(e)} \parstepsto
-  \config{\pi(S')}{\pi(e')}$.  Therefore, by {\sc E-Eval-Ctxt},
-  $\config{\pi(S)}{\E{\pi(e)}} \ctxstepsto
-  \config{\pi(S')}{\E{\pi(e')}}$ for all evaluation contexts $E$.
+  \config{\pi(S')}{\pi(e')}$.
+
+  Therefore, by {\sc E-Eval-Ctxt}, $\config{\pi(S)}{\E{\pi(e)}}
+  \ctxstepsto \config{\pi(S')}{\E{\pi(e')}}$ for all evaluation
+  contexts $E$.
 
   In particular, it is true that
   $\config{\pi(S)}{\evalctxt{(\pi(E))}{\pi(e)}} \ctxstepsto

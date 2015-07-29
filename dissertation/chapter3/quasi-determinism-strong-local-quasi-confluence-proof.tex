@@ -146,7 +146,7 @@
       \begin{itemize}
       \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
-        allocated during the transition;
+        allocated in the transition;
         \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
           and we know that $\conf_b \neq \error$; and
         \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
@@ -157,11 +157,11 @@
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      $\config{U_S(S)}{e_{a_1}} \parstepsto \\
       \config{U_S(S_a)}{e_{a_2}}$.  Hence $\config{S_b}{e_{a_1}}
       \parstepsto \config{S_b}{e_{a_2}}$.  By {\sc E-Eval-Ctxt}, it
-      follows that $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
+      follows that \\ $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, \\ as we were required to
       show.
 
     \item \label{slqc-beta-put}Case {\sc E-Put}: We have $S_a = S$ and
@@ -185,7 +185,7 @@
       \begin{itemize}
       \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
-        allocated during the transition;
+        allocated in the transition;
         \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
           and we know that $\conf_b \neq \error$; and
         \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
@@ -196,11 +196,11 @@
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      $\config{U_S(S)}{e_{a_1}} \parstepsto \\
       \config{U_S(S_a)}{e_{a_2}}$.  Hence $\config{S_b}{e_{a_1}}
       \parstepsto \config{S_b}{e_{a_2}}$.  By {\sc E-Eval-Ctxt}, it
-      follows that $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
+      follows that \\ $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, \\ as we were required to
       show.
 
     \item \label{slqc-beta-put-err}Case {\sc E-Put-Err}: We have $S_a
@@ -253,7 +253,7 @@
       \begin{itemize}
         \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
           \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
-          allocated during the transition;
+          allocated in the transition;
         \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
           and we know that $\conf_b \neq \error$; and
         \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
@@ -264,11 +264,11 @@
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      $\config{U_S(S)}{e_{a_1}} \parstepsto \\
       \config{U_S(S_a)}{e_{a_2}}$.  Hence $\config{S_b}{e_{a_1}}
       \parstepsto \config{S_b}{e_{a_2}}$.  By {\sc E-Eval-Ctxt}, it
-      follows that $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
+      follows that \\ $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, \\ as we were required to
       show.
 
     \item \label{slqc-beta-freeze-simple}Case {\sc E-Freeze-Simple}:
@@ -315,7 +315,7 @@
           \begin{itemize}
           \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
             \parstepsto \config{S_b}{e_{b_2}}$, since the only
-            location allocated during the transition is $l'$, and $l
+            location allocated in the transition is $l'$, and $l
             \neq l'$ in this case;
           \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
             \extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
@@ -332,14 +332,14 @@
 
           Therefore, by Lemma~\ref{lem:generalized-independence}
           (Generalized Independence), we have that
-          $\config{U_S(S)}{e_{b_1}} \parstepsto
+          $\config{U_S(S)}{e_{b_1}} \parstepsto \\
           \config{U_S(S_b)}{e_{b_2}}$.  Hence
           $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
           \parstepsto
           \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.  By
                  {\sc E-Eval-Ctxt} it follows that
                  $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
-                 \parstepsto
+                 \parstepsto \\
                  \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
                  which, since $S_b =
                  \extS{S}{l'}{\bot}{\frozenfalse}$, is what we were
@@ -367,7 +367,7 @@
           $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{\pi(e_{a_2})}}$
           or
           $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$
-          would work as a final configuration; we choose
+          would work as a final configuration; we choose \\
           $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
 
           We have to show that:
@@ -402,10 +402,10 @@
           \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$,
-            since the only location allocated during the transition is
+            since the only location allocated in the transition is
             $l''$;
           \item $U_S(\extS{S}{l''}{\bot}{\frozenfalse}) \neq \topS$,
-            since $U_S(\extS{S}{l''}{\bot}{\frozenfalse}) =
+            since $U_S(\extS{S}{l''}{\bot}{\frozenfalse}) = \\
             \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
             and we know $S \neq \topS$ and the addition of new
             bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
@@ -426,7 +426,7 @@
           Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
           \parstepsto
           \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.
-          By {\sc E-Eval-Ctxt} it follows that
+          By {\sc E-Eval-Ctxt} it follows that \\
           $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
           \parstepsto
           \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$,
@@ -438,9 +438,8 @@
           \extS{S}{l''}{\bot}{\frozenfalse}$.  Also, since $l$ does not occur in
           $e_{a_1}$, we have that $\pi(\evalctxt{E'_a}{e_{a_1}}) =
           \evalctxt{(\pi(E'_a))}{e_{a_1}}$.  Hence we have to show that
-
           $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_1}}}
-          \ctxstepsto
+          \ctxstepsto \\
           \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
 
           Let $U_S$ be the store update operation that acts as the
@@ -450,7 +449,7 @@
           \begin{itemize}
           \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
             \parstepsto \config{S_a}{e_{a_2}}$, since the only
-            location allocated during the transition is $l$;
+            location allocated in the transition is $l$;
           \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
             \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
             and we know $S \neq \topS$ and the addition of new
@@ -471,9 +470,9 @@
           $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{e_{a_1}}
           \parstepsto
           \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{e_{a_2}}$.
-          By {\sc E-Eval-Ctxt} it follows that
+          By {\sc E-Eval-Ctxt} it follows that \\
           $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_1}}}
-          \ctxstepsto
+          \ctxstepsto \\
           \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_2}}}$,
           which completes the case since
           $\evalctxt{E'_b}{\pi(e_{b_2})} =
@@ -508,7 +507,7 @@
       \begin{itemize}
       \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
         \parstepsto \config{S_b}{e_{b_2}}$, since no locations are
-        allocated during the transition;
+        allocated in the transition;
       \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
         \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
         \topS$ and the addition of a new binding
@@ -529,14 +528,14 @@
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{b_1}} \parstepsto
+      $\config{U_S(S)}{e_{b_1}} \parstepsto \\
       \config{U_S(S_b)}{e_{b_2}}$.  Hence
       $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
       \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.  By {\sc
-        E-Eval-Ctxt}, it follows that
+        E-Eval-Ctxt}, it follows that \\
       $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
       \ctxstepsto
-      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
+      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
       which, since $S_a = \extS{S}{l}{\bot}{\frozenfalse}$, is what we
       were required to show.
 
@@ -551,7 +550,7 @@
       \begin{itemize}
       \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since the only location
-        allocated during the transition is $l$;
+        allocated in the transition is $l$;
       \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
         \extSRaw{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{u_{p_i}(p_1)}$
         and we know $S \neq \topS$ and the addition of a new binding
@@ -569,13 +568,13 @@
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      $\config{U_S(S)}{e_{a_1}} \parstepsto \\
       \config{U_S(S_a)}{e_{a_2}}$.  Hence $\config{S_b}{e_{a_1}}
       \parstepsto
       \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{a_2}}$.  By {\sc
-        E-Eval-Ctxt}, it follows that
+        E-Eval-Ctxt}, it follows that \\
       $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{e_{a_2}}}$,
+      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{e_{a_2}}}$, \\
       as we were required to show.
 
     \item \label{slqc-new-put-err}Case {\sc E-Put-Err}: We have $S_a =
@@ -647,7 +646,7 @@
       \begin{itemize}
         \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
           \parstepsto \config{S_b}{e_{b_2}}$, since no locations are
-          allocated during the transition;
+          allocated in the transition;
         \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
           \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
           \topS$ and the addition of a new binding
@@ -661,14 +660,16 @@
       \end{itemize}
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{b_1}} \parstepsto
-      \config{U_S(S_b)}{e_{b_2}}$.  Hence
+      $\config{U_S(S)}{e_{b_1}} \parstepsto \\
+      \config{U_S(S_b)}{e_{b_2}}$.
+
+      Hence
       $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
       \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{e_{b_2}}$.
-      By {\sc E-Eval-Ctxt}, it follows that
+      By {\sc E-Eval-Ctxt}, it follows that \\
       $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
       \ctxstepsto
-      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
       as we were required to show.
 
       For the second, consider that $\extS{S}{l'}{d_1}{\frozentrue} =
@@ -678,7 +679,7 @@
       \begin{itemize}
         \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
           \parstepsto \config{S_a}{e_{a_2}}$, since the only location
-          allocated during the transition is $l$, and $l \neq l'$;
+          allocated in the transition is $l$, and $l \neq l'$;
         \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
           \extS{S_a}{l'}{d_1}{\frozentrue} =
           \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
@@ -694,14 +695,16 @@
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{a_1}} \parstepsto
-      \config{U_S(S_a)}{e_{a_2}}$.  Hence
+      $\config{U_S(S)}{e_{a_1}} \parstepsto \\
+      \config{U_S(S_a)}{e_{a_2}}$.
+
+      Hence
       $\config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{a_1}} \parstepsto
       \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{e_{a_2}}$.
-      By {\sc E-Eval-Ctxt} it follows that
+      By {\sc E-Eval-Ctxt} it follows that \\
       $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
       \ctxstepsto
-      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$,
+      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$, \\
       as we were required to show.
 
     \item \label{slqc-new-freeze-simple}Case {\sc E-Freeze-Simple}:
@@ -757,7 +760,7 @@
           \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{e_{b_2}}$, since
-            no locations are allocated during the transition;
+            no locations are allocated in the transition;
           \item $U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) \neq \topS$,
             since $U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) =
             \extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}$
@@ -787,10 +790,10 @@
           Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
           \parstepsto
           \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{e_{b_2}}$.
-          By {\sc E-Eval-Ctxt}, it follows that
+          By {\sc E-Eval-Ctxt}, it follows that \\
           $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
           \ctxstepsto
-          \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
           as we were required to show.  The argument for the second is
           symmetrical.
 
@@ -821,7 +824,7 @@
             \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
               \parstepsto
               \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
-              no locations are allocated during the transition;
+              no locations are allocated in the transition;
             \item $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) = \topS$, since
               $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
               \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$ and we know
@@ -893,7 +896,7 @@
             \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
               \parstepsto
               \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since no
-              locations are allocated during the transition;
+              locations are allocated in the transition;
             \item $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) \neq \topS$, since
               $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
               \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$ and we know $S \neq
@@ -913,16 +916,17 @@
             \end{itemize}
 
             Therefore, by Lemma~\ref{lem:generalized-independence}
-            (Generalized Independence), we have that
+            (Generalized Independence), we have that \\
             $\config{U_S(S)}{e_{b_1}} \parstepsto
             \config{U_S(\extSRaw{S}{l}{u_{p_j}(p_1)})}{e_{b_2}}$.
+
             Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
             \parstepsto
             \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{e_{b_2}}$.
-            By {\sc E-Eval-Ctxt}, it follows that
+            By {\sc E-Eval-Ctxt}, it follows that \\
             $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
             \ctxstepsto
-            \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_b}{e_{b_2}}}$,
+            \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
             as we were required to show.  The argument for the second
             is symmetrical.
 
@@ -1004,8 +1008,8 @@
           \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{b_2}}$, since
-            no locations are allocated during the transition;
-          \item $U_S(\extS{S}{l'}{d_1}{\frozentrue}) \neq \topS$,
+            no locations are allocated in the transition;
+          \item $U_S(\extS{S}{l'}{d_1}{\frozentrue}) \neq \topS$, \\
             since $U_S(\extS{S}{l'}{d_1}{\frozentrue}) =
             \extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}$
             and we know $S \neq \topS$ and updating the contents of
@@ -1023,14 +1027,14 @@
           Therefore, by Lemma~\ref{lem:generalized-independence}
           (Generalized Independence), we have that
           $\config{U_S(S)}{e_{b_1}} \parstepsto
-          \config{U_S(\extS{S}{l'}{d_1}{\frozentrue})}{e_{b_2}}$.
+          \config{U_S(\extS{S}{l'}{d_1}{\frozentrue})}{e_{b_2}}$. \\
           Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
           \parstepsto
           \config{\extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}}{e_{b_2}}$.
-          By {\sc E-Eval-Ctxt}, it follows that
+          By {\sc E-Eval-Ctxt}, it follows that \\
           $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
           \ctxstepsto
-          \config{\extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          \config{\extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
           as we were required to show.
 
           For the second, consider that
@@ -1042,7 +1046,7 @@
           \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
             \parstepsto
             \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since no
-            locations are allocated during the transition;
+            locations are allocated in the transition;
           \item $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$, since
             $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) =
             \extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}$,
@@ -1066,14 +1070,14 @@
           Therefore, by Lemma~\ref{lem:generalized-independence}
           (Generalized Independence), we have that
           $\config{U_S(S)}{e_{a_1}} \parstepsto
-          \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{e_{a_2}}$.  Hence
+          \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{e_{a_2}}$.  \\ Hence
           $\config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{a_1}}
           \parstepsto
           \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{e_{a_2}}$.
-          By {\sc E-Eval-Ctxt}, it follows that
+          By {\sc E-Eval-Ctxt}, it follows that \\
           $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
           \ctxstepsto
-          \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$,
+          \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$, \\
           as we were required to show.
 
         \item If $l = l'$:
@@ -1130,7 +1134,7 @@
                 freeze, but the put is a no-op, so it doesn't matter.}
 
               In this case, by the definition of $U_p$
-              (Definition~\ref{def:set-of-state-update-operations}),
+              (Definition~\ref{def:set-of-state-update-operations}), \\
               it must be the case that
               $u_{p_i}(\state{d_1}{\frozentrue}) =
               \state{d_1}{\frozentrue}$.
@@ -1162,9 +1166,9 @@
               \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
                 \parstepsto
                 \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$,
-                since no locations are allocated during the
+                since no locations are allocated in the
                 transition;
-              \item $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$,
+              \item $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$, \\
                 since $U_S(\extS{S}{l}{d_1}{\frozentrue}) =
                 \extSRaw{S}{l}{u_{p_i}(\state{d_1}{\frozentrue})}$ and
                 we know $S \neq \topS$ and
@@ -1177,21 +1181,23 @@
                 acts as the identity on $l$.
               \end{itemize}
               Therefore, by Lemma~\ref{lem:generalized-independence}
-              (Generalized Independence), we have that
+              (Generalized Independence), \\ we have that
               $\config{U_S(S)}{e_{b_1}} \parstepsto
               \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{e_{b_2}}$.
               Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
               \parstepsto
               \config{\extSRaw{S}{l}{u_{p_i}(\state{d_1}{\frozentrue})}}{e_{b_2}}$.
+
               Since $u_{p_i}(\state{d_1}{\frozentrue}) =
-              \state{d_1}{\frozentrue}$, we have that
+              \state{d_1}{\frozentrue}$, we have that \\
               $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
               \parstepsto
               \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$.
-              By {\sc E-Eval-Ctxt}, it follows that
+
+              By {\sc E-Eval-Ctxt}, it follows that \\
               $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
               \ctxstepsto
-              \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+              \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
               as we were required to show.
 
               For the second, consider that
@@ -1203,7 +1209,7 @@
               \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
                 \parstepsto
                 \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since no
-                locations are allocated during the transition;
+                locations are allocated in the transition;
               \item $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$,
                 since $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) =
                 \extS{S}{l}{d_1}{\frozentrue}$ (since, by
@@ -1228,16 +1234,16 @@
                 contradiction.)
               \end{itemize}
               Therefore, by Lemma~\ref{lem:generalized-independence}
-              (Generalized Independence), we have that
+              (Generalized Independence), \\ we have that
               $\config{U_S(S)}{e_{a_1}} \parstepsto
               \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{e_{a_2}}$.
               Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{a_1}}
               \parstepsto
               \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{a_2}}$.
-              By {\sc E-Eval-Ctxt}, it follows that
+              By {\sc E-Eval-Ctxt}, it follows that \\
               $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
               \ctxstepsto
-              \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$,
+              \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$, \\
               as we were required to show.
           \end{itemize}
 
@@ -1448,8 +1454,8 @@
           \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extS{S}{l'}{d'_1}{\frozentrue}}{e_{b_2}}$, since
-            no locations are allocated during the transition;
-          \item $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) \neq \topS$,
+            no locations are allocated in the transition;
+          \item $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) \neq \topS$, \\
             since $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) =
             \extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}$
             and we know $S \neq \topS$ and freezing the contents of
@@ -1466,14 +1472,14 @@
           Therefore, by Lemma~\ref{lem:generalized-independence}
           (Generalized Independence), we have that
           $\config{U_S(S)}{e_{b_1}} \parstepsto
-          \config{U_S(\extS{S}{l'}{d'_1}{\frozentrue})}{e_{b_2}}$.
+          \config{U_S(\extS{S}{l'}{d'_1}{\frozentrue})}{e_{b_2}}$. \\
           Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_1}}
           \parstepsto
           \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{e_{b_2}}$.
-          By {\sc E-Eval-Ctxt}, it follows that
+          By {\sc E-Eval-Ctxt}, it follows that \\
           $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_1}}}
           \ctxstepsto
-          \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
           as we were required to show.  The argument for the second is
           symmetrical.
 
@@ -1509,7 +1515,7 @@
           \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$, since no
-            locations are allocated during the transition;
+            locations are allocated in the transition;
           \item $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$, since
             $U_S(\extS{S}{l}{d_1}{\frozentrue}) =
             \extS{S}{l}{d_1}{\frozentrue}$, and we know $S \neq \topS$
@@ -1527,14 +1533,14 @@
           Therefore, by Lemma~\ref{lem:generalized-independence}
           (Generalized Independence), we have that
           $\config{U_S(S)}{e_{b_1}} \parstepsto
-          \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{e_{b_2}}$.
+          \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{e_{b_2}}$. \\
           Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_1}}
           \parstepsto
           \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$.
-          By {\sc E-Eval-Ctxt}, it follows that
+          By {\sc E-Eval-Ctxt}, it follows that \\
           $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_1}}}
           \ctxstepsto
-          \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
           as we were required to show.  The argument for the second is
           symmetrical.
 

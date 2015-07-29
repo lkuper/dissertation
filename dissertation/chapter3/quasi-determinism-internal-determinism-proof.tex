@@ -90,8 +90,10 @@
     = \pi(\conf'').$
 
     By inspection of the operational semantics, the only reduction
-    rule by which $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}}$ can
-    step is {\sc E-Freeze-Init}.  Hence $\conf'' =
+    rule by which \\ $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}}$ can
+    step is {\sc E-Freeze-Init}.
+
+    Hence $\conf'' =
     \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$,
     and the case is satisfied by choosing $\pi$ to be the identity
     function.
@@ -99,25 +101,27 @@
   \item Case {\sc E-Spawn-Handler}:
 
     Given: $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-          \dots}}{H}} \parstepsto
+          \dots}}{H}} \parstepsto \\
     \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-          e, \dots}} {\{d_2\}\cup H}}$, and
+          e, \dots}} {\{d_2\}\cup H}}$, and \\
     $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
           \dots}}{H}} \parstepsto \conf''$.
 
-    To show: There exists a $\pi$ such that
+    To show: There exists a $\pi$ such that \\
     $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
           e, \dots}} {\{d_2\}\cup H}} = \pi(\conf'').$
 
     By inspection of the operational semantics, the only reduction
-    rule by which
+    rule by which \\
     $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
           \dots}}{H}}$ can step is {\sc E-Spawn-Handler}.  (It cannot
     step by {\sc E-Freeze-Final}, because we have from the premises of
     {\sc E-Spawn-Handler} that $d_2 \userleq d_1$ and $d_2 \in Q$ and
     $d_2 \notin H$, and for the premises of {\sc E-Freeze-Final} to
     hold, we would need that for all $d_2$, if $d_2 \userleq d_1$ and
-    $d_2 \in Q$, then $d_2 \in H$.)  Hence $\conf'' =
+    $d_2 \in Q$, then $d_2 \in H$.)
+
+    Hence $\conf'' =
     \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d'_2},
           e, \dots}} {\{d'_2\}\cup H}}$, where $d'_2 \userleq d_1$ and
     $d'_2 \in Q$ and $d'_2 \notin H$, and the case is satisfied by
@@ -139,7 +143,7 @@
     $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} = \pi(\conf'').$
 
     By inspection of the operational semantics, the only reduction
-    rule by which
+    rule by which \\
     $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
           \dots}}{H}}$ can step is {\sc E-Freeze-Final}.  (It cannot
     step by {\sc E-Spawn-Handler}, because we have from the premises
