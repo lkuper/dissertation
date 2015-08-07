@@ -2,7 +2,7 @@ NAME := dissertation
 LATEX := xelatex
 UNAME := $(shell uname)
 SOURCES := $(wildcard *.tex *.bib) $(wildcard */*.tex) $(wildcard */figures/*.pdf) $(wildcard */code/*) $(wildcard ../latex_common/*.tex)
-PROSE_SOURCES := abstract.tex $(wildcard chapter*/*.tex)
+PROSE_SOURCES := abstract.tex acks.tex $(wildcard chapter*/*.tex)
 TEX_SOURCES := $(wildcard *.tex) $(wildcard */*.tex) $(wildcard ../latex_common/*.tex)
 JFP_NAME := jfp
 
