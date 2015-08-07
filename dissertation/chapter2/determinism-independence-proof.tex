@@ -1,229 +1,222 @@
 \begin{proof}
   Suppose $\config{S}{e} \parstepsto \config{S'}{e'}$, where
-  $\config{S'}{e'} \neq \error$.  Consider arbitrary $S''$ such that
-  $S''$ is non-conflicting with $\config{S}{e} \parstepsto
-  \config{S'}{e'}$ and $\lubstore{S'}{S''} \neq \topS$.  We are
-  required to show that $\config{\lubstore{S}{S''}}{e} \parstepsto
-  \config{\lubstore{S'}{S''}}{e'}$.
+  $\config{S'}{e'} \neq \error$.
+
+  Consider arbitrary $S''$ such that $S''$ is non-conflicting with
+  $\config{S}{e} \parstepsto \config{S'}{e'}$ and $\lubstore{S'}{S''}
+  \neq \topS$.
+
+  We are required to show that $\config{\lubstore{S}{S''}}{e}
+  \parstepsto \config{\lubstore{S'}{S''}}{e'}$.
 
   The proof is by cases on the rule of the reduction semantics by
-  which $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since
-  $\config{S'}{e'} \neq \error$, we do not need to consider the {\sc
-    E-Put-Err} rule.
+  which $\config{S}{e}$ steps to $\config{S'}{e'}$.
+
+  Since $\config{S'}{e'} \neq \error$, we do not need to consider the
+  {\sc E-Put-Err} rule.
   \begin{itemize}
 
-    \item Case {\sc E-Beta}:
+  \item Case {\sc E-Beta}:
 
-      Given: $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto
-      \config{S}{\subst{e}{x}{v}}$.
+    Given: $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto
+    \config{S}{\subst{e}{x}{v}}$.
 
-      To show: $\config{\lubstore{S}{S''}}{\app{(\lam{x}{e})}{v}}
-      \parstepsto \config{\lubstore{S}{S''}}{\subst{e}{x}{v}}$.
+    To show: $\config{\lubstore{S}{S''}}{\app{(\lam{x}{e})}{v}}
+    \parstepsto \config{\lubstore{S}{S''}}{\subst{e}{x}{v}}$.
 
-      Immediate by {\sc E-Beta}.
+    Immediate by {\sc E-Beta}.
 
-    \item Case {\sc E-New}:
+  \item Case {\sc E-New}:
 
-      Given: $\config{S}{\NEW} \parstepsto
-      \config{\extSRaw{S}{l}{\bot}}{l}$.
+    Given: $\config{S}{\NEW} \parstepsto
+    \config{\extSRaw{S}{l}{\bot}}{l}$.
 
-      To show: $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
-      \config{\lubstore{(\extSRaw{S}{l}{\bot})}{S''}}{l}$.
+    To show: $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
+    \config{\lubstore{(\extSRaw{S}{l}{\bot})}{S''}}{l}$.
 
-      By {\sc E-New}, we have that $\config{\lubstore{S}{S''}}{\NEW}
-      \parstepsto \config{\extSRaw{(\lubstore{S}{S''})}{l'}{\bot}}{l'}$,
-      where $l' \notin \dom{\lubstore{S}{S''}}$.
+    By {\sc E-New}, we have that $\config{\lubstore{S}{S''}}{\NEW}
+    \parstepsto \config{\extSRaw{(\lubstore{S}{S''})}{l'}{\bot}}{l'}$,
+    where $l' \notin \dom{\lubstore{S}{S''}}$.
 
-      By assumption, $S''$ is non-conflicting with $\config{S}{\NEW}
-      \parstepsto \config{\extSRaw{S}{l}{\bot}}{l}$.
- 
-      Therefore $l \notin \dom{S''}$.
+    By assumption, $S''$ is non-conflicting with $\config{S}{\NEW}
+    \parstepsto \config{\extSRaw{S}{l}{\bot}}{l}$.
+    
+    Therefore $l \notin \dom{S''}$.
 
-      From the side condition of {\sc E-New}, $l \notin \dom{S}$.
+    From the side condition of {\sc E-New}, $l \notin \dom{S}$.
 
-      Therefore $l \notin \dom{\lubstore{S}{S''}}$.
+    Therefore $l \notin \dom{\lubstore{S}{S''}}$.
 
-      Therefore, in
-      $\config{\extSRaw{(\lubstore{S}{S''})}{l'}{\bot}}{l'}$, we can
-      $\alpha$-rename $l'$ to $l$, resulting in
-      $\config{\extSRaw{(\lubstore{S}{S''})}{l}{\bot}}{l}$.
+    Therefore, in
+    $\config{\extSRaw{(\lubstore{S}{S''})}{l'}{\bot}}{l'}$, we can
+    $\alpha$-rename $l'$ to $l$, resulting in
+    $\config{\extSRaw{(\lubstore{S}{S''})}{l}{\bot}}{l}$.
 
-      Therefore $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
-      \config{\extSRaw{(\lubstore{S}{S''})}{l}{\bot}}{l}$.
+    Therefore $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
+    \config{\extSRaw{(\lubstore{S}{S''})}{l}{\bot}}{l}$.
 
-      Note that:
-      \begin{align*}
-        \extSRaw{(\lubstore{S}{S''})}{l}{\bot} &=
-        \lubstore{\extSRaw{S}{l}{\bot}}{\extSRaw{S''}{l}{\bot}} \\ &=
-        \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{\lubstore{S''}{\store{\storebindingRaw{l}{\bot}}}}
-        \\ &=
-        \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{S''}
-        \\ &= \lubstore{\extSRaw{S}{l}{\bot}}{S''}.
-      \end{align*}
-      Therefore $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
-      \config{\lubstore{\extSRaw{S}{l}{\bot}}{S''}}{l}$, as we were
-      required to show.
+    Note that:
+    \begin{align*}
+      \extSRaw{(\lubstore{S}{S''})}{l}{\bot} &=
+      \lubstore{\extSRaw{S}{l}{\bot}}{\extSRaw{S''}{l}{\bot}} \\ &=
+      \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{\lubstore{S''}{\store{\storebindingRaw{l}{\bot}}}}
+      \\ &=
+      \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{\bot}}}}{S''}
+      \\ &= \lubstore{\extSRaw{S}{l}{\bot}}{S''}.
+    \end{align*}
+    Therefore $\config{\lubstore{S}{S''}}{\NEW} \parstepsto
+    \config{\lubstore{\extSRaw{S}{l}{\bot}}{S''}}{l}$, as we were
+    required to show.
 
-    \item Case {\sc E-Put}:
+  \item Case {\sc E-Put}:
 
-      Given: $\config{S}{\putexp{l}{d_2}} \parstepsto
-      \config{\extSRaw{S}{l}{d_2}}{\unit}$.
+    Given: $\config{S}{\putexp{l}{d_2}} \parstepsto
+    \config{\extSRaw{S}{l}{d_2}}{\unit}$.
 
-      To show: $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}}
-      \parstepsto
-      \config{\lubstore{\extSRaw{S}{l}{d_2}}{S''}}{\unit}$.
+    To show: $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} \parstepsto
+    \config{\lubstore{\extSRaw{S}{l}{d_2}}{S''}}{\unit}$.
 
-      We will first show that
+    We will first show that
 
+    $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} \parstepsto
+    \config{\extSRaw{(\lubstore{S}{S''})}{l}{d_2}}{\unit}$
+
+    and then show why this is sufficient.
+
+    We proceed by cases on $l$:
+
+    \begin{itemize}
+    \item $l \notin \dom{S''}$:
+
+      By assumption, $\lubstore{\extSRaw{S}{l}{d_2}}{S''} \neq \topS$.
+
+      By Lemma~\ref{lem:lvars-monotonicity},
+      $\leqstore{S}{\extSRaw{S}{l}{d_2}}$.
+
+      Hence $\lubstore{S}{S''} \neq \topS$.
+
+      Therefore, by Definition~\ref{def:lvars-lubstore},
+      $(\lubstore{S}{S''})(l) = S(l)$.
+
+      From the premises of {\sc E-Put}, $S(l) = d_1$.
+
+      Hence $(\lubstore{S}{S''})(l) = d_1$.
+
+      From the premises of {\sc E-Put}, $d_2 = \userlub{d_1}{d_2}$
+      and $d_2 \neq \top$.
+
+      Therefore, by {\sc E-Put}, we have:
       $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} \parstepsto
-      \config{\extSRaw{(\lubstore{S}{S''})}{l}{d_2}}{\unit}$
+      \config{\extSRaw{(\lubstore{S}{S''})}{l}{d_2}}{\unit}$.
 
-      and then show why this is sufficient.
+    \item $l \in \dom{S''}$:
 
-      We proceed by cases on $l$:
+      By assumption, $\lubstore{\extSRaw{S}{l}{d_2}}{S''} \neq \topS$.
 
-      \begin{itemize}
-        \item $l \notin \dom{S''}$:
+      By Lemma~\ref{lem:lvars-monotonicity},
+      $\leqstore{S}{\extSRaw{S}{l}{d_2}}$.
 
-          By assumption, $\lubstore{\extSRaw{S}{l}{d_2}}{S''} \neq
-          \topS$.
+      Hence $\lubstore{S}{S''} \neq \topS$.
 
-          By Lemma~\ref{lem:lvars-monotonicity},
-          $\leqstore{S}{\extSRaw{S}{l}{d_2}}$.
+      Therefore $(\lubstore{S}{S''})(l) = \userlub{S(l)}{S''(l)}$.
 
-          Hence $\lubstore{S}{S''} \neq \topS$.
+      From the premises of {\sc E-Put}, $S(l) = d_1$.
+      
+      Hence $(\lubstore{S}{S''})(l) = d'_1$, where $d_1 \userleq
+      d'_1$.
 
-          Therefore, by Definition~\ref{def:lvars-lubstore},
-          $(\lubstore{S}{S''})(l) = S(l)$.
+      From the premises of {\sc E-Put}, $d_2 = \userlub{d_1}{d_2}$.
 
-          From the premises of {\sc E-Put}, $S(l) = d_1$.
+      Let $d'_2 = \userlub{d'_1}{d_2}$.
 
-          Hence $(\lubstore{S}{S''})(l) = d_1$.
+      Hence $d_2 \userleq d'_2$.
 
-          From the premises of {\sc E-Put}, $d_2 = \userlub{d_1}{d_2}$
-          and $d_2 \neq \top$.
+      By assumption, $\lubstore{\extSRaw{S}{l}{d_2}}{S''} \neq \topS$.
 
-          Therefore, by {\sc E-Put}, we have:
-          $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} \parstepsto
-          \config{\extSRaw{(\lubstore{S}{S''})}{l}{d_2}}{\unit}$.
-
-        \item $l \in \dom{S''}$:
-
-          By assumption, $\lubstore{\extSRaw{S}{l}{d_2}}{S''} \neq
-          \topS$.
-
-          By Lemma~\ref{lem:lvars-monotonicity},
-          $\leqstore{S}{\extSRaw{S}{l}{d_2}}$.
-
-          Hence $\lubstore{S}{S''} \neq \topS$.
-
-          Therefore $(\lubstore{S}{S''})(l) = \userlub{S(l)}{S''(l)}$.
-
-          From the premises of {\sc E-Put}, $S(l) = d_1$.
-          
-          Hence $(\lubstore{S}{S''})(l) = d'_1$, where $d_1 \userleq
-          d'_1$.
-
-          From the premises of {\sc E-Put}, $d_2 =
-          \userlub{d_1}{d_2}$.
-
-          Let $d'_2 = \userlub{d'_1}{d_2}$.
-
-          Hence $d_2 \userleq d'_2$.
-
-          By assumption, $\lubstore{\extSRaw{S}{l}{d_2}}{S''} \neq
-          \topS$.
-
-          Therefore, by Definition~\ref{def:lvars-lubstore},
-          $\userlub{d_2}{S''(l)} \neq \top$.
-
-          Note that:
-          \begin{align*}
-            \top &\neq \userlub{d_2}{S''(l)} \\ &=
-            \userlub{\userlub{d_1}{d_2}}{S''(l)} \\ &=
-            \userlub{\userlub{S(l)}{d_2}}{S''(l)} \\ &=
-            \userlub{\userlub{S(l)}{S''(l)}}{d_2} \\ &=
-            \userlub{(\lubstore{S}{S''})(l)}{d_2} \\ &=
-            \userlub{d'_1}{d_2} \\ &= d'_2.
-          \end{align*}
-          Hence $d'_2 \neq \top$.
-
-          Hence $(\lubstore{S}{S''})(l) = d'_1$ and $d'_2 =
-          \userlub{d'_1}{d_2}$ and $d'_2 \neq \top$.
-
-          Therefore, by {\sc E-Put} we have:
-          $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} \parstepsto
-          \config{\extSRaw{(\lubstore{S}{S''})}{l}{d'_2}}{\unit}$.
-
-          \lk{If we really wanted to be pedantic here, we'd actually
-            prove that the stores are equal.  I'm assuming that if I
-            can show that $\extSRaw{(\lubstore{S}{S''})}{l}{d'_2}$ and
-            $\extSRaw{(\lubstore{S}{S''})}{l}{d_2}$ bind $l$ to the
-            same value, then it will be obvious that they're equal.}
-
-          Note that:
-          \begin{align*}
-            (\extSRaw{(\lubstore{S}{S''})}{l}{d'_2})(l) &=
-            \userlub{(\lubstore{S}{S''})(l)}{(\store{\storebindingRaw{l}{d'_2}})(l)}
-            \\ &= \userlub{d'_1}{d'_2} \\ &=
-            \userlub{d'_1}{\userlub{d'_1}{d_2}} \\ &=
-            \userlub{d'_1}{d_2}
-          \end{align*}
-          and
-          \begin{align*}
-            (\extSRaw{(\lubstore{S}{S''})}{l}{d_2})(l) &=
-            \userlub{(\lubstore{S}{S''})(l)}{(\store{\storebindingRaw{l}{d_2}})(l)}
-            \\ &= \userlub{d'_1}{d_2} \\ &=
-            \userlub{d'_1}{\userlub{d_1}{d_2}} \\ &=
-            \userlub{d'_1}{d_2} & \textrm{(since $d_1 \userleq
-              d'_1$).}
-          \end{align*}
-          Therefore $\extSRaw{(\lubstore{S}{S''})}{l}{d'_2} =
-          \extSRaw{(\lubstore{S}{S''})}{l}{d_2}$.
-
-          Therefore, $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}}
-          \parstepsto
-          \config{\extSRaw{(\lubstore{S}{S''})}{l}{d_2}}{\unit}$.
-      \end{itemize}
+      Therefore, by Definition~\ref{def:lvars-lubstore},
+      $\userlub{d_2}{S''(l)} \neq \top$.
 
       Note that:
       \begin{align*}
-        \extSRaw{(\lubstore{S}{S''})}{l}{d_2} &=
-        \lubstore{\extSRaw{S}{l}{d_2}}{\extSRaw{S''}{l}{d_2}} \\ &=
-        \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{d_2}}}}{\lubstore{S''}{\store{\storebindingRaw{l}{d_2}}}}
-        \\ &=
-        \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{d_2}}}}{S''}
-        \\ &= \lubstore{\extSRaw{S}{l}{d_2}}{S''}.
+        \top &\neq \userlub{d_2}{S''(l)} \\ &=
+        \userlub{\userlub{d_1}{d_2}}{S''(l)} \\ &=
+        \userlub{\userlub{S(l)}{d_2}}{S''(l)} \\ &=
+        \userlub{\userlub{S(l)}{S''(l)}}{d_2} \\ &=
+        \userlub{(\lubstore{S}{S''})(l)}{d_2} \\ &=
+        \userlub{d'_1}{d_2} \\ &= d'_2.
       \end{align*}
-      Therefore $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}}
+      Hence $d'_2 \neq \top$.
+
+      Hence $(\lubstore{S}{S''})(l) = d'_1$ and $d'_2 =
+      \userlub{d'_1}{d_2}$ and $d'_2 \neq \top$.
+
+      Therefore, by {\sc E-Put} we have:
+      $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} \parstepsto
+      \config{\extSRaw{(\lubstore{S}{S''})}{l}{d'_2}}{\unit}$.
+
+      \lk{If we really wanted to be pedantic here, we'd actually prove
+        that the stores are equal.  I'm assuming that if I can show
+        that $\extSRaw{(\lubstore{S}{S''})}{l}{d'_2}$ and
+        $\extSRaw{(\lubstore{S}{S''})}{l}{d_2}$ bind $l$ to the same
+        value, then it will be obvious that they're equal.}
+
+      Note that:
+      \begin{align*}
+        (\extSRaw{(\lubstore{S}{S''})}{l}{d'_2})(l) &=
+        \userlub{(\lubstore{S}{S''})(l)}{(\store{\storebindingRaw{l}{d'_2}})(l)} \\ &=
+        \userlub{d'_1}{d'_2} \\ &=
+        \userlub{d'_1}{\userlub{d'_1}{d_2}} \\ &=
+        \userlub{d'_1}{d_2}
+      \end{align*}
+      and
+      \begin{align*}
+        (\extSRaw{(\lubstore{S}{S''})}{l}{d_2})(l) &=
+        \userlub{(\lubstore{S}{S''})(l)}{(\store{\storebindingRaw{l}{d_2}})(l)} \\ &=
+        \userlub{d'_1}{d_2} \\ &=
+        \userlub{d'_1}{\userlub{d_1}{d_2}} \\ &=
+        \userlub{d'_1}{d_2} & \textrm{(since $d_1 \userleq d'_1$).}
+      \end{align*}
+      Therefore $\extSRaw{(\lubstore{S}{S''})}{l}{d'_2} =
+      \extSRaw{(\lubstore{S}{S''})}{l}{d_2}$.
+
+      Therefore, $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}}
       \parstepsto
-      \config{\lubstore{\extSRaw{S}{l}{d_2}}{S''}}{\unit}$, as we were
-      required to show.
+      \config{\extSRaw{(\lubstore{S}{S''})}{l}{d_2}}{\unit}$.
+    \end{itemize}
 
-    \item Case {\sc E-Get}:
+    Note that:
+    \begin{align*}
+      \extSRaw{(\lubstore{S}{S''})}{l}{d_2} &=
+      \lubstore{\extSRaw{S}{l}{d_2}}{\extSRaw{S''}{l}{d_2}} \\ &=
+      \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{d_2}}}}{\lubstore{S''}{\store{\storebindingRaw{l}{d_2}}}} \\ &=
+      \lubstore{\lubstore{S}{\store{\storebindingRaw{l}{d_2}}}}{S''} \\ &=
+      \lubstore{\extSRaw{S}{l}{d_2}}{S''}.
+    \end{align*}
+    Therefore $\config{\lubstore{S}{S''}}{\putexp{l}{d_2}} \parstepsto
+    \config{\lubstore{\extSRaw{S}{l}{d_2}}{S''}}{\unit}$, as we were
+    required to show.
 
-      Given: $\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}$.
+  \item Case {\sc E-Get}:
 
-      To show: $\config{\lubstore{S}{S''}}{\getexp{l}{T}} \parstepsto
-      \config{\lubstore{S}{S''}}{d_2}$.
+    Given: $\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}$.
 
-      From the premises of {\sc E-Get}, $S(l) = d_1$ and $\incomp{T}$
-      and $d_2 \in T$ and $d_2 \userleq d_1$.
+    To show: $\config{\lubstore{S}{S''}}{\getexp{l}{T}} \parstepsto
+    \config{\lubstore{S}{S''}}{d_2}$.
 
-      By assumption, $\lubstore{S}{S''} \neq \topS$.
+    From the premises of {\sc E-Get}, $S(l) = d_1$ and $\incomp{T}$
+    and $d_2 \in T$ and $d_2 \userleq d_1$.
 
-      Hence $(\lubstore{S}{S''})(l) = d'_1$, where $d_1 \userleq d'_1$.
+    By assumption, $\lubstore{S}{S''} \neq \topS$.
 
-      By the transitivity of $\userleq$, $d_2 \userleq d'_1$.
+    Hence $(\lubstore{S}{S''})(l) = d'_1$, where $d_1 \userleq d'_1$.
 
-      Hence, $(\lubstore{S}{S''})(l) = d'_1$ and $\incomp{T}$ and $d_2
-      \in T$ and $d_2 \userleq d'_1$.
+    By the transitivity of $\userleq$, $d_2 \userleq d'_1$.
 
-      Therefore, by {\sc E-Get},
+    Hence, $(\lubstore{S}{S''})(l) = d'_1$ and $\incomp{T}$ and $d_2
+    \in T$ and $d_2 \userleq d'_1$.
 
-      $\config{\lubstore{S}{S''}}{\getexp{l}{T}} \parstepsto
-      \config{\lubstore{S}{S''}}{d_2}$,
-
-      as we were required to show.
+    Therefore, by {\sc E-Get},
+    $\config{\lubstore{S}{S''}}{\getexp{l}{T}} \parstepsto
+    \config{\lubstore{S}{S''}}{d_2}$, as we were required to show.
   \end{itemize}
 \end{proof}

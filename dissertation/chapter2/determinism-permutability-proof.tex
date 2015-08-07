@@ -1,15 +1,18 @@
 \begin{proof}
-  Consider an arbitrary permutation $\pi$.  For
-  part~\ref{thm:permutable-reduction-transitions}, we have to show
+  Consider an arbitrary permutation $\pi$.
+
+  For part~\ref{thm:permutable-reduction-transitions}, we have to show
   that if $\conf \parstepsto \conf'$ then $\pi(\conf) \parstepsto
   \pi(\conf')$, and that if $\pi(\conf) \parstepsto \pi(\conf')$ then
   $\conf \parstepsto \conf'$.
 
   For the forward direction of
   part~\ref{thm:permutable-reduction-transitions}, suppose $\conf
-  \parstepsto \conf'$.  We have to show that $\pi(\conf) \parstepsto
-  \pi(\conf')$.  We proceed by cases on the rule by which $\conf$
-  steps to $\conf'$.
+  \parstepsto \conf'$.
+
+  We have to show that $\pi(\conf) \parstepsto \pi(\conf')$.
+
+  We proceed by cases on the rule by which $\conf$ steps to $\conf'$.
 
   \begin{itemize}
     \item Case {\sc E-Beta}: $\conf =
@@ -35,8 +38,9 @@
       to $\config{\pi(S)}{\pi(\subst{e}{x}{v})}$,
 
       which is equal to $\pi(\config{S}{\subst{e}{x}{v}})$ by
-      Definition~\ref{def:lvars-permutation-configuration}.  Hence the
-      case is satisfied.
+      Definition~\ref{def:lvars-permutation-configuration}.
+
+      Hence the case is satisfied.
 
     \item Case {\sc E-New}: $\conf = \config{S}{\NEW}$, and $\conf' =
       \config{\extSRaw{S}{l}{\bot}}{l}$.
@@ -65,9 +69,13 @@
 
       So, we have to show that
       $\config{\extSRaw{(\pi(S))}{l'}{\bot}}{l'}$ is equal to
-      $\config{\extSRaw{(\pi(S))}{\pi(l)}{\bot}}{\pi(l)}$.  Since we
-      know (from the side condition of {\sc E-New}) that $l \notin
-      \dom{S}$, it follows that $\pi(l) \notin \pi(\dom{S})$.
+      $\config{\extSRaw{(\pi(S))}{\pi(l)}{\bot}}{\pi(l)}$.
+
+      Since we know (from the side condition of {\sc E-New}) that $l
+      \notin \dom{S}$,
+
+      it follows that $\pi(l) \notin \pi(\dom{S})$.
+
       Therefore, in $\config{\extSRaw{(\pi(S))}{l'}{\bot}}{l'}$, we
       can $\alpha$-rename $l'$ to $\pi(l)$, and so the two
       configurations are equal and the case is satisfied.
@@ -136,35 +144,42 @@
 
       By Definitions~\ref{def:lvars-permutation-configuration}
       and~\ref{def:lvars-permutation-expression},
-      $\pi(\config{S}{d_2}) \config{\pi(S)}{d_2}$.  Therefore the case
-      is complete.
+      $\pi(\config{S}{d_2}) \config{\pi(S)}{d_2}$.
+
+      Therefore the case is complete.
   \end{itemize}
 
   For the reverse direction of
   part~\ref{thm:permutable-reduction-transitions}, suppose $\pi(\conf)
-  \parstepsto \pi(\conf')$.  We have to show that $\conf \parstepsto
-  \conf'$.
+  \parstepsto \pi(\conf')$.
+
+  We have to show that $\conf \parstepsto \conf'$.
 
   We know from the forward direction of the proof that for all
   configurations $\conf$ and $\conf'$ and permutations $\pi$, if
   $\conf \parstepsto \conf'$ then $\pi(\conf) \parstepsto
-  \pi(\conf')$.  Hence since $\pi(\conf) \parstepsto \pi(\conf')$, and
-  since $\piinv$ is also a permutation, we have that
-  $\piinv(\pi(\conf)) \parstepsto \piinv(\pi(\conf'))$.  Since
-  $\piinv(\pi(l)) = l$ for every $l \in \Loc$, and that property lifts
-  to configurations as well, we have that $\conf \parstepsto \conf'$.
+  \pi(\conf')$.
 
-  \lk{Is the above enough of a proof?}
+  Hence since $\pi(\conf) \parstepsto \pi(\conf')$, and since $\piinv$
+  is also a permutation, we have that $\piinv(\pi(\conf)) \parstepsto
+  \piinv(\pi(\conf'))$.
+
+  Since $\piinv(\pi(l)) = l$ for every $l \in \Loc$, and that property
+  lifts to configurations as well, we have that $\conf \parstepsto
+  \conf'$.
 
   For the forward direction of
   part~\ref{thm:permutable-context-transitions}, suppose $\conf
-  \ctxstepsto \conf'$.  We have to show that $\pi(\conf) \ctxstepsto
-  \pi(\conf')$.
+  \ctxstepsto \conf'$.
+
+  We have to show that $\pi(\conf) \ctxstepsto \pi(\conf')$.
 
   By inspection of the operational semantics, $\conf$ must be of the
   form $\config{S}{\E{e}}$, and $\conf'$ must be of the form
-  $\config{S'}{\E{e'}}$.  Hence we have to show that
-  $\pi(\config{S}{\E{e}}) \ctxstepsto \pi(\config{S'}{\E{e'}})$.
+  $\config{S'}{\E{e'}}$.
+
+  Hence we have to show that $\pi(\config{S}{\E{e}}) \ctxstepsto
+  \pi(\config{S'}{\E{e'}})$.
 
   By Definition~\ref{def:lvars-permutation-configuration},
   $\pi(\config{S}{\E{e}})$ is equal to $\config{\pi(S)}{\pi(\E{e})}$.
@@ -183,10 +198,12 @@
   \config{\pi(S')}{\evalctxt{(\pi(E))}{\pi(e')}}$.
 
   From the premise of {\sc E-Eval-Ctxt}, $\config{S}{e} \parstepsto
-  \config{S'}{e'}$.  Hence, by
-  part~\ref{thm:permutable-reduction-transitions}, $\pi(\config{S}{e})
-  \parstepsto \pi(\config{S'}{e'})$.  By
-  Definition~\ref{def:lvars-permutation-configuration},
+  \config{S'}{e'}$.
+
+  Hence, by part~\ref{thm:permutable-reduction-transitions},
+  $\pi(\config{S}{e}) \parstepsto \pi(\config{S'}{e'})$.
+
+  By Definition~\ref{def:lvars-permutation-configuration},
   $\pi(\config{S}{e})$ is equal to $\config{\pi(S)}{\pi(e)}$ and
   $\pi(\config{S'}{e'})$ is equal to $\config{\pi(S')}{\pi(e')}$.
 
@@ -204,17 +221,20 @@
 
   For the reverse direction of
   part~\ref{thm:permutable-context-transitions}, suppose $\pi(\conf)
-  \ctxstepsto \pi(\conf')$.  We have to show that $\conf \ctxstepsto
-  \conf'$.
+  \ctxstepsto \pi(\conf')$.
+
+  We have to show that $\conf \ctxstepsto \conf'$.
 
   We know from the forward direction of the proof that for all
   configurations $\conf$ and $\conf'$ and permutations $\pi$, if
   $\conf \ctxstepsto \conf'$ then $\pi(\conf) \ctxstepsto
-  \pi(\conf')$.  Hence since $\pi(\conf) \ctxstepsto \pi(\conf')$, and
-  since $\piinv$ is also a permutation, we have that
-  $\piinv(\pi(\conf)) \ctxstepsto \piinv(\pi(\conf'))$.  Since
-  $\piinv(\pi(l)) = l$ for every $l \in \Loc$, and that property lifts
-  to configurations as well, we have that $\conf \ctxstepsto \conf'$.
+  \pi(\conf')$.
 
-  \lk{Is the above enough of a proof?}
+  Hence since $\pi(\conf) \ctxstepsto \pi(\conf')$, and since $\piinv$
+  is also a permutation, we have that $\piinv(\pi(\conf)) \ctxstepsto
+  \piinv(\pi(\conf'))$.
+
+  Since $\piinv(\pi(l)) = l$ for every $l \in \Loc$, and that property
+  lifts to configurations as well, we have that $\conf \ctxstepsto
+  \conf'$.
 \end{proof}

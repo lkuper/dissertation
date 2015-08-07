@@ -1,11 +1,14 @@
 \begin{proof}
   Suppose $\conf \ctxstepsto \conf'$ and $\conf \ctxstepsto^m
-  \conf''$, where $1 \leq m$.  We have to show that there exist
-  $\conf_c, i, j, \pi$ such that $\conf' \ctxstepsto^i \conf_c$ and
-  $\pi(\conf'') \ctxstepsto^j \conf_c$ and $i \leq m$ and $j \leq 1$.
+  \conf''$, where $1 \leq m$.
 
-  We proceed by induction on $m$.  In the base case of $m = 1$, the
-  result is immediate from
+  We have to show that there exist $\conf_c, i, j, \pi$ such that
+  $\conf' \ctxstepsto^i \conf_c$ and $\pi(\conf'') \ctxstepsto^j
+  \conf_c$ and $i \leq m$ and $j \leq 1$.
+
+  We proceed by induction on $m$.
+
+  In the base case of $m = 1$, the result is immediate from
   Lemma~\ref{lem:lvars-strong-local-confluence}.
 
   For the induction step, suppose $\conf \ctxstepsto^m \conf''
@@ -22,6 +25,7 @@
   \ctxstepsto^{j'} \conf_c'$ and $i' \leq m$ and $j' \leq 1$.
 
   We proceed by cases on $j'$:
+
   \begin{itemize}
 
   \item If $j' = 0$, then $\pi'(\conf'') = \conf_c'$.
@@ -31,9 +35,10 @@
     Lemma~\ref{lem:lvars-permutability} (Permutability).
 
     We can then choose $\conf_c = \pi'(\conf''')$ and $i = i' + 1$ and
-    $j = 0$ and $\pi = \pi'$.  The key is that $\conf'
-    \ctxstepsto^{i'} \conf'_c = \pi'(\conf'') \ctxstepsto
-    \pi'(\conf''')$ for a total of $i' + 1$ steps.
+    $j = 0$ and $\pi = \pi'$.
+
+    The key is that $\conf' \ctxstepsto^{i'} \conf'_c = \pi'(\conf'')
+    \ctxstepsto \pi'(\conf''')$ for a total of $i' + 1$ steps.
     
   \item If $j' = 1$:
 
@@ -65,4 +70,4 @@
     because $i = i' + i'' \leq m + 1$ and $j = j'' \leq 1$.
   \end{itemize}
 
- \end{proof}
+\end{proof}

@@ -1,88 +1,97 @@
 \begin{proof}
   Suppose $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$.
+
   We have to show that there is a permutation $\pi$ such that $\conf'
-  = \pi(\conf'')$.  The proof is by cases on the rule by which $\conf$
-  steps to $\conf'$.
+  = \pi(\conf'')$.
+
+  The proof is by cases on the rule by which $\conf$ steps to
+  $\conf'$.
 
   \begin{itemize}
 
-    \item Case {\sc E-Beta}:
+  \item Case {\sc E-Beta}:
 
-      Given:
-      $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \config{S}{\subst{e}{x}{v}}$,
-      and $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \conf''$.
+    Given: $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto
+    \config{S}{\subst{e}{x}{v}}$, and
+    $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto \conf''$.
 
-      To show: There exists a $\pi$ such that
-      $\config{S}{\subst{e}{x}{v}} = \pi(\conf'')$.
+    To show: There exists a $\pi$ such that
+    $\config{S}{\subst{e}{x}{v}} = \pi(\conf'')$.
 
-      By inspection of the operational semantics, the only reduction
-      rule by which $\config{S}{\app{(\lam{x}{e})}{v}}$ can step is
-      {\sc E-Beta}.  Hence $\conf'' = \config{S}{\subst{e}{x}{v}}$,
-      and the case is satisfied by choosing $\pi$ to be the identity
-      function.
+    By inspection of the operational semantics, the only reduction
+    rule by which $\config{S}{\app{(\lam{x}{e})}{v}}$ can step is {\sc
+      E-Beta}.
 
-      \item Case {\sc E-New}: 
+    Hence $\conf'' = \config{S}{\subst{e}{x}{v}}$, and the case is
+    satisfied by choosing $\pi$ to be the identity function.
 
-      Given:
-      $\config{S}{\NEW} \parstepsto \config{\extSRaw{S}{l}{\bot}}{l}$,
-      and $\config{S}{\NEW} \parstepsto \conf''$.
+  \item Case {\sc E-New}: 
 
-      To show: There exists a $\pi$ such that
-      $\config{\extSRaw{S}{l}{\bot}}{l} = \pi(\conf'')$.
+    Given: $\config{S}{\NEW} \parstepsto
+    \config{\extSRaw{S}{l}{\bot}}{l}$, and $\config{S}{\NEW}
+    \parstepsto \conf''$.
 
-      By inspection of the operational semantics, the only reduction
-      rule by which $\config{S}{\NEW}$ can step is {\sc E-New}.  Hence
-      $\conf'' = \config{\extSRaw{S}{l'}{\bot}}{l'}$.  Since, by the
-      side condition of {\sc E-New}, neither $l$ nor $l'$ occur in
-      $\dom{S}$, the case is satisfied by choosing $\pi$ to be the
-      permutation that maps $l'$ to $l$ and is the identity on every
-      other element of $\Loc$.
+    To show: There exists a $\pi$ such that
+    $\config{\extSRaw{S}{l}{\bot}}{l} = \pi(\conf'')$.
 
-      \item Case {\sc E-Put}:
+    By inspection of the operational semantics, the only reduction
+    rule by which $\config{S}{\NEW}$ can step is {\sc E-New}.
 
-      Given:
-      $\config{S}{\putexp{l}{d_2}} \parstepsto \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$,
-      and $\config{S}{\putexp{l}{d_2}} \parstepsto \conf''$.
+    Hence $\conf'' = \config{\extSRaw{S}{l'}{\bot}}{l'}$.
 
-      To show: There exists a $\pi$ such that
-      $\config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit} =
-      \pi(\conf'')$.
+    Since, by the side condition of {\sc E-New}, neither $l$ nor $l'$
+    occur in $\dom{S}$, the case is satisfied by choosing $\pi$ to be
+    the permutation that maps $l'$ to $l$ and is the identity on every
+    other element of $\Loc$.
 
-      By inspection of the operational semantics, and since
-      $\userlub{d_1}{d_2} \neq \top$ (from the premise of {\sc
-      E-Put}), the only reduction rule by which
-      $\config{S}{\putexp{l}{d_2}}$ can step is {\sc E-Put}.  Hence
-      $\conf'' = \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$,
-      and the case is satisfied by choosing $\pi$ to be the identity
-      function.
+  \item Case {\sc E-Put}:
 
-      \item Case {\sc E-Put-Err}:
+    Given: $\config{S}{\putexp{l}{d_2}} \parstepsto
+    \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$, and
+    $\config{S}{\putexp{l}{d_2}} \parstepsto \conf''$.
 
-      Given: $\config{S}{\putexp{l}{d_2}} \parstepsto \error$, and
-      $\config{S}{\putexp{l}{d_2}} \parstepsto \conf''$.
+    To show: There exists a $\pi$ such that
+    $\config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit} =
+    \pi(\conf'')$.
 
-      To show: There exists a $\pi$ such that
-      $\error = \pi(\conf'')$.
+    By inspection of the operational semantics, and since
+    $\userlub{d_1}{d_2} \neq \top$ (from the premise of {\sc E-Put}),
+    the only reduction rule by which $\config{S}{\putexp{l}{d_2}}$ can
+    step is {\sc E-Put}.
 
-      By inspection of the operational semantics, and since
-      $\userlub{d_1}{d_2} = \top$ (from the premise of {\sc
-      E-Put-Err}), the only reduction rule by which
-      $\config{S}{\putexp{l}{d_2}}$ can step is {\sc E-Put-Err}.
-      Hence $\conf'' = \error$, and the case is satisfied by choosing
-      $\pi$ to be the identity function.
+    Hence $\conf'' =
+    \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}$, and the case
+    is satisfied by choosing $\pi$ to be the identity function.
 
-      \item Case {\sc E-Get}:
+  \item Case {\sc E-Put-Err}:
 
-      Given: $\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}$,
-      and $\config{S}{\getexp{l}{T}} \parstepsto \conf''$.
+    Given: $\config{S}{\putexp{l}{d_2}} \parstepsto \error$, and
+    $\config{S}{\putexp{l}{d_2}} \parstepsto \conf''$.
 
-      To show: There exists a $\pi$ such that $\config{S}{d_2} =
-      \pi(\conf'')$.
+    To show: There exists a $\pi$ such that $\error = \pi(\conf'')$.
 
-      By inspection of the operational semantics, the only reduction
-      rule by which $\config{S}{\getexp{l}{T}}$ can step is {\sc
-        E-Get}.  Hence $\conf'' = \config{S}{d_2}$, and the case is
-      satisfied by choosing $\pi$ to be the identity function.
+    By inspection of the operational semantics, and since
+    $\userlub{d_1}{d_2} = \top$ (from the premise of {\sc E-Put-Err}),
+    the only reduction rule by which $\config{S}{\putexp{l}{d_2}}$ can
+    step is {\sc E-Put-Err}.
+
+    Hence $\conf'' = \error$, and the case is satisfied by choosing
+    $\pi$ to be the identity function.
+
+  \item Case {\sc E-Get}:
+
+    Given: $\config{S}{\getexp{l}{T}} \parstepsto \config{S}{d_2}$,
+    and $\config{S}{\getexp{l}{T}} \parstepsto \conf''$.
+
+    To show: There exists a $\pi$ such that $\config{S}{d_2} =
+    \pi(\conf'')$.
+
+    By inspection of the operational semantics, the only reduction
+    rule by which $\config{S}{\getexp{l}{T}}$ can step is {\sc
+      E-Get}.
+
+    Hence $\conf'' = \config{S}{d_2}$, and the case is satisfied by
+    choosing $\pi$ to be the identity function.
 
   \end{itemize}
 \end{proof}
