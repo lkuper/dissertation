@@ -101,7 +101,7 @@ Previous approaches to integrating mutable memory with pure functional
 code (\ie, the @ST@ monad) work with LVish, but only allow
 thread-private memory.  There is no way to operate on the same
 structure (for instance, on two halves of an array) from different
-threads.  @ParST@ exploits the fact that that simultaneous access from
+threads.  @ParST@ exploits the fact that simultaneous access from
 different threads can be deterministic, as long as the threads are
 accessing disjoint parts of the data structure.
 Listing~\ref{listing-disjoint-parallel-update} illustrates the idea
@@ -128,11 +128,10 @@ sees only a \emph{local} view of the vector, so writing @"bar"@ to
 index @0@ in the second child computation is really writing to index
 @3@ of the full vector.
 
-The call to @freeze@ in in
-Listing~\ref{listing-disjoint-parallel-update} is not to be confused
-with an LVar freeze operation; it is instead the @freeze@ operation
-from the @Data.Vector@ library which produces an immutable copy of a
-mutable vector.  In the last line of
+The call to @freeze@ in Listing~\ref{listing-disjoint-parallel-update}
+is not to be confused with an LVar freeze operation; it is instead the
+@freeze@ operation from the @Data.Vector@ library which produces an
+immutable copy of a mutable vector.  In the last line of
 Listing~\ref{listing-disjoint-parallel-update}, calling @runParVecT@
 discharges the extra state effect that @ParVecT@ provides, leaving the
 underlying @Par@ computation, which is then run with @runPar@.  In
