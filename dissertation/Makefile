@@ -2,6 +2,7 @@ NAME := dissertation
 LATEX := xelatex
 UNAME := $(shell uname)
 SOURCES := $(wildcard *.tex *.bib) $(wildcard */*.tex) $(wildcard */figures/*.pdf) $(wildcard */code/*) $(wildcard ../latex_common/*.tex)
+PROSE_SOURCES := abstract.tex $(wildcard chapter*/*.tex)
 TEX_SOURCES := $(wildcard *.tex) $(wildcard */*.tex) $(wildcard ../latex_common/*.tex)
 JFP_NAME := jfp
 
@@ -41,16 +42,16 @@ plain:
 # http://matt.might.net/articles/shell-scripts-for-passive-voice-weasel-words-duplicates/):
 style:
 	echo "weasel words: "
-	sh ../bin/weasel $(TEX_SOURCES)
+	sh ../bin/weasel $(PROSE_SOURCES)
 	echo
 	echo "passive voice: "
-	sh ../bin/passive $(TEX_SOURCES)
+	sh ../bin/passive $(PROSE_SOURCES)
 	echo
 	echo "duplicates: "
-	perl ../bin/dups $(TEX_SOURCES)
+	perl ../bin/dups $(PROSE_SOURCES)
 
 spell:
-	for file in $(TEX_SOURCES); do aspell -c $$file; done
+	for file in $(PROSE_SOURCES); do aspell -c $$file; done
 
 open: $(NAME).pdf
 ifeq ($(UNAME), Darwin)
