@@ -1,286 +1,302 @@
 \begin{proof}
-  Consider an arbitrary permutation $\pi$.  For
-  part~\ref{thm:quasi-permutable-reduction-transitions}, we have to
-  show that if $\conf \parstepsto \conf'$ then $\pi(\conf) \parstepsto
-  \pi(\conf')$, and that if $\pi(\conf) \parstepsto \pi(\conf')$ then
-  $\conf \parstepsto \conf'$.
+  Consider an arbitrary permutation $\pi$.
+
+  For part~\ref{thm:quasi-permutable-reduction-transitions}, we have
+  to show that if $\conf \parstepsto \conf'$ then $\pi(\conf)
+  \parstepsto \pi(\conf')$, and that if $\pi(\conf) \parstepsto
+  \pi(\conf')$ then $\conf \parstepsto \conf'$.
 
   For the forward direction of
   part~\ref{thm:quasi-permutable-reduction-transitions}, suppose
-  $\conf \parstepsto \conf'$.  We have to show that $\pi(\conf)
-  \parstepsto \pi(\conf')$.  We proceed by cases on the rule by which
-  $\conf$ steps to $\conf'$.
+  $\conf \parstepsto \conf'$.
+
+  We have to show that $\pi(\conf) \parstepsto \pi(\conf')$.
+
+  We proceed by cases on the rule by which $\conf$ steps to $\conf'$.
 
   \begin{itemize}
-    \item Case {\sc E-Beta}: $\conf =
-      \config{S}{\app{(\lam{x}{e})}{v}}$, and $\conf' =
-      \config{S}{\subst{e}{x}{v}}$.
+  \item Case {\sc E-Beta}: $\conf =
+    \config{S}{\app{(\lam{x}{e})}{v}}$, and $\conf' =
+    \config{S}{\subst{e}{x}{v}}$.
 
-      To show: $\pi(\config{S}{\app{(\lam{x}{e})}{v}}) \parstepsto
-      \pi(\config{S}{\subst{e}{x}{v}})$.
+    To show: $\pi(\config{S}{\app{(\lam{x}{e})}{v}}) \parstepsto
+    \pi(\config{S}{\subst{e}{x}{v}})$.
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression}, $\pi(\conf) =
-      \config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$.
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression}, $\pi(\conf) =
+    \config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$.
 
-      By {\sc E-Beta},
-      $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$ steps to
-      $\config{\pi(S)}{\subst{\pi(e)}{x}{\pi(v)}}$.
+    By {\sc E-Beta},
+    $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$ steps to
+    $\config{\pi(S)}{\subst{\pi(e)}{x}{\pi(v)}}$.
 
-      By Definition~\ref{def:permutation-expression},
-      $\config{\pi(S)}{\subst{\pi(e)}{x}{\pi(v)}}$ is equal to
-      $\config{\pi(S)}{\pi(\subst{e}{x}{v})}$.
+    By Definition~\ref{def:permutation-expression},
+    $\config{\pi(S)}{\subst{\pi(e)}{x}{\pi(v)}}$ is equal to
+    $\config{\pi(S)}{\pi(\subst{e}{x}{v})}$.
 
-      Hence $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$ steps
-      to $\config{\pi(S)}{\pi(\subst{e}{x}{v})}$, which is equal to
-      $\pi(\config{S}{\subst{e}{x}{v}})$ by
-      Definition~\ref{def:permutation-configuration}.  Hence the case
-      is satisfied.
+    Hence $\config{\pi(S)}{\app{(\lam{x}{\pi(e)})}{\pi(v)}}$ steps
+    to $\config{\pi(S)}{\pi(\subst{e}{x}{v})}$, which is equal to
+    $\pi(\config{S}{\subst{e}{x}{v}})$ by
+    Definition~\ref{def:permutation-configuration}.
 
-    \item Case {\sc E-New}: $\conf = \config{S}{\NEW}$, and $\conf' =
-      \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
+    Hence the case is satisfied.
 
-      To show: $\pi(\config{S}{\NEW}) \parstepsto
-      \pi(\config{\extS{S}{l}{\bot}{\frozenfalse}}{l})$.
+  \item Case {\sc E-New}: $\conf = \config{S}{\NEW}$, and $\conf' =
+    \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression}, $\pi(\conf) =
-      \config{\pi(S)}{\NEW}$.
+    To show: $\pi(\config{S}{\NEW}) \parstepsto
+    \pi(\config{\extS{S}{l}{\bot}{\frozenfalse}}{l})$.
 
-      By {\sc E-New}, $\config{\pi(S)}{\NEW}$ steps to
-      $\config{\extS{(\pi(S))}{l'}{\bot}{\frozenfalse}}{l'}$, where
-      $l' \notin \dom{\pi(S)}$.
-      
-      It remains to show that
-      $\config{\extS{(\pi(S))}{l'}{\bot}{\frozenfalse}}{l'}$ is equal
-      to $\pi(\config{\extS{S}{l}{\bot}{\frozenfalse}}{l})$.
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression}, $\pi(\conf) =
+    \config{\pi(S)}{\NEW}$.
 
-      By Definition~\ref{def:permutation-configuration},
-      $\pi(\config{\extS{S}{l}{\bot}{\frozenfalse}}{l})$ is equal to
-      $\config{\pi(\extS{S}{l}{\bot}{\frozenfalse})}{\pi(l)}$, which
-      is equal to
-      $\config{\extS{(\pi(S))}{\pi(l)}{\bot}{\frozenfalse}}{\pi(l)}$.
+    By {\sc E-New}, $\config{\pi(S)}{\NEW}$ steps to
+    $\config{\extS{(\pi(S))}{l'}{\bot}{\frozenfalse}}{l'}$, where
+    $l' \notin \dom{\pi(S)}$.
+    
+    It remains to show that
+    $\config{\extS{(\pi(S))}{l'}{\bot}{\frozenfalse}}{l'}$ is equal
+    to $\pi(\config{\extS{S}{l}{\bot}{\frozenfalse}}{l})$.
 
-      We have to show that
-      $\config{\extS{(\pi(S))}{l'}{\bot}{\frozenfalse}}{l'}$ is equal
-      to
-      $\config{\extS{(\pi(S))}{\pi(l)}{\bot}{\frozenfalse}}{\pi(l)}$.
+    By Definition~\ref{def:permutation-configuration},
+    $\pi(\config{\extS{S}{l}{\bot}{\frozenfalse}}{l})$ is equal to
+    $\config{\pi(\extS{S}{l}{\bot}{\frozenfalse})}{\pi(l)}$, which
+    is equal to
+    $\config{\extS{(\pi(S))}{\pi(l)}{\bot}{\frozenfalse}}{\pi(l)}$.
 
-      We know (from the side condition of {\sc E-New}) that $l
-      \notin \dom{S}$, and so $\pi(l) \notin \pi(\dom{S})$.
-      Therefore, in
-      $\config{\extS{(\pi(S))}{l'}{\bot}{\frozenfalse}}{l'}$, we can
-      $\alpha$-rename $l'$ to $\pi(l)$, and so the two configurations
-      are equal and the case is satisfied.
+    We have to show that
+    $\config{\extS{(\pi(S))}{l'}{\bot}{\frozenfalse}}{l'}$ is equal
+    to
+    $\config{\extS{(\pi(S))}{\pi(l)}{\bot}{\frozenfalse}}{\pi(l)}$.
 
-    \item Case {\sc E-Put}: $\conf = \config{S}{\putiexp{l}}$, and
-      $\conf' = \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}$.
+    We know (from the side condition of {\sc E-New}) that $l \notin
+    \dom{S}$, and so $\pi(l) \notin \pi(\dom{S})$.
 
-      To show: $\pi(\config{S}{\putiexp{l}}) \parstepsto
-      \pi(\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit})$.
+    Therefore, in
+    $\config{\extS{(\pi(S))}{l'}{\bot}{\frozenfalse}}{l'}$, we can
+    $\alpha$-rename $l'$ to $\pi(l)$, and so the two configurations
+    are equal and the case is satisfied.
 
-      By Definition~\ref{def:permutation-configuration}, $\pi(\conf) =
-      \config{\pi(S)}{\putiexp{\pi(l)}}$.
+  \item Case {\sc E-Put}: $\conf = \config{S}{\putiexp{l}}$, and
+    $\conf' = \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}$.
 
-      By {\sc E-Put}, $\config{\pi(S)}{\putiexp{\pi(l)}}$ steps to
-      $\config{\extSRaw{(\pi(S))}{\pi(l)}{u_{p_i}(p_1)}}{\unit}$,
+    To show: $\pi(\config{S}{\putiexp{l}}) \parstepsto
+    \pi(\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit})$.
 
-      since $S(l) = (\pi(S))(\pi(l)) = p_1$.
+    By Definition~\ref{def:permutation-configuration}, $\pi(\conf) =
+    \config{\pi(S)}{\putiexp{\pi(l)}}$.
 
-      It remains to show that
-      $\config{\extSRaw{(\pi(S))}{\pi(l)}{u_{p_i}(p_1)}}{\unit}$ is
-      equal to $\pi(\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit})$.
+    By {\sc E-Put}, $\config{\pi(S)}{\putiexp{\pi(l)}}$ steps to
+    $\config{\extSRaw{(\pi(S))}{\pi(l)}{u_{p_i}(p_1)}}{\unit}$,
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression},
-      $\pi(\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit})$ is equal to
-      $\config{\extSRaw{(\pi(S))}{\pi(l)}{u_{p_i}(p_1)}}{\unit}$, and
-      so the two configurations are equal and the case is satisfied.
-    \item Case {\sc E-Put-Err}: $\conf = \config{S}{\putiexp{l}}$,
-      and $\conf' = \error$.
+    since $S(l) = (\pi(S))(\pi(l)) = p_1$.
 
-      To show: $\pi(\config{S}{\putiexp{l}}) \parstepsto
-      \pi(\error)$.
+    It remains to show that
+    $\config{\extSRaw{(\pi(S))}{\pi(l)}{u_{p_i}(p_1)}}{\unit}$ is
+    equal to $\pi(\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit})$.
 
-      By Definition~\ref{def:permutation-configuration}, $\pi(\conf) =
-      \config{\pi(S)}{\putiexp{\pi(l)}}$.
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression},
+    $\pi(\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit})$ is equal to
+    $\config{\extSRaw{(\pi(S))}{\pi(l)}{u_{p_i}(p_1)}}{\unit}$, and
+    so the two configurations are equal and the case is satisfied.
 
-      By {\sc E-Put-Err}, $\config{\pi(S)}{\putiexp{\pi(l)}}$ steps to
-      $\error$, since $S(l) = (\pi(S))(\pi(l)) = p_1$.
+  \item Case {\sc E-Put-Err}: $\conf = \config{S}{\putiexp{l}}$,
+    and $\conf' = \error$.
 
-      Since $\pi(\error) = \error$ by
-      Definition~\ref{def:permutation-configuration}, the case is
-      complete.
-    \item Case {\sc E-Get}: $\conf = \config{S}{\getexp{l}{P}}$, and
-      $\conf' = \config{S}{p_2}$.
+    To show: $\pi(\config{S}{\putiexp{l}}) \parstepsto
+    \pi(\error)$.
 
-      To show: $\pi(\config{S}{\getexp{l}{P}}) \parstepsto
-      \pi(\config{S}{p_2})$.
+    By Definition~\ref{def:permutation-configuration}, $\pi(\conf) =
+    \config{\pi(S)}{\putiexp{\pi(l)}}$.
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression}, $\pi(\conf) =
-      \config{\pi(S)}{\getexp{\pi(l)}{P}}$.
+    By {\sc E-Put-Err}, $\config{\pi(S)}{\putiexp{\pi(l)}}$ steps to
+    $\error$, since $S(l) = (\pi(S))(\pi(l)) = p_1$.
 
-      By {\sc E-Get}, $\config{\pi(S)}{\getexp{\pi(l)}{P}}$ steps to
-      $\config{\pi(S)}{p_2}$, since $S(l) = (\pi(S))(\pi(l)) = p_1$.
+    Since $\pi(\error) = \error$ by
+    Definition~\ref{def:permutation-configuration}, the case is
+    complete.
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression}, $\pi(\config{S}{p_2}) =
-      \config{\pi(S)}{p_2}$.  Therefore the case is complete.
-    \item Case {\sc E-Freeze-Init}: $\conf =
-      \config{S}{\freezeafter{l}{Q}{\lam{x}{e}}}$,
+  \item Case {\sc E-Get}: $\conf = \config{S}{\getexp{l}{P}}$, and
+    $\conf' = \config{S}{p_2}$.
 
-      and $\conf' =
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
+    To show: $\pi(\config{S}{\getexp{l}{P}}) \parstepsto
+    \pi(\config{S}{p_2})$.
 
-      To show: $\pi(\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}})
-      \parstepsto \\
-      \pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}})$.
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression}, $\pi(\conf) =
+    \config{\pi(S)}{\getexp{\pi(l)}{P}}$.
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression}, $\pi(\conf) =
-      \config{\pi(S)}{\freezeafter{\pi(l)}{Q}{\lam{x}{\pi(e)}}}$.
+    By {\sc E-Get}, $\config{\pi(S)}{\getexp{\pi(l)}{P}}$ steps to
+    $\config{\pi(S)}{p_2}$, since $S(l) = (\pi(S))(\pi(l)) = p_1$.
 
-      By {\sc E-Freeze-Init},
-      $\config{\pi(S)}{\freezeafter{\pi(l)}{Q}{\lam{x}{\pi(e)}}}
-      \parstepsto \\
-      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{}}{\setof{}}}$.
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression}, $\pi(\config{S}{p_2}) =
+    \config{\pi(S)}{p_2}$.
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression},
-      $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}})
-      = \\
-      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{}}{\setof{}}}$.
-      Therefore the case is complete.
+    Therefore the case is complete.
 
-    \item Case {\sc E-Spawn-Handler}: $\conf =
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}}$,
+  \item Case {\sc E-Freeze-Init}: $\conf =
+    \config{S}{\freezeafter{l}{Q}{\lam{x}{e}}}$,
 
-      and $\conf' =
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-            e, \dots}} {\{d_2\}\cup H}}$.
+    and $\conf' =
+    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
 
-      To show:
-      $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}}) \parstepsto \\
-      \pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-            e, \dots}} {\{d_2\}\cup H}})$.
+    To show: $\pi(\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}})
+    \parstepsto \\
+    \pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}})$.
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression}, $\pi(\conf) = \\
-      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(e),
-            \dots}}{H}}$.
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression}, $\pi(\conf) =
+    \config{\pi(S)}{\freezeafter{\pi(l)}{Q}{\lam{x}{\pi(e)}}}$.
 
-      Since $(\pi(S))(\pi(l)) = \state{d_1}{\status_1}$, by {\sc
-        E-Spawn-Handler} we have that \\
-      $\config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(e),
-            \dots}}{H}} \parstepsto \\
-      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\subst{\pi(e_0)}{x}{d_2},
-            \pi(e), \dots}} {\{d_2\}\cup H}}$.
+    By {\sc E-Freeze-Init},
+    $\config{\pi(S)}{\freezeafter{\pi(l)}{Q}{\lam{x}{\pi(e)}}}
+    \parstepsto \\
+    \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{}}{\setof{}}}$.
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression},
-      $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-            e, \dots}} {\{d_2\}\cup H}}) =
-      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\subst{\pi(e_0)}{x}{d_2},
-            \pi(e), \dots}} {\{d_2\}\cup H}}$.  Therefore the case is
-      complete.
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression},
+    $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}) = \\
+    \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e)}}{\setof{}}{\setof{}}}$.
 
-    \item Case {\sc E-Freeze-Final}: $\conf =
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}}$, \\ and $\conf' =
-      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+    Therefore the case is complete.
 
-      To show:
-      $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}}) \parstepsto \\
-      \pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
+  \item Case {\sc E-Spawn-Handler}: $\conf =
+    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}}$,
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression}, $\pi(\conf) = \\
-      \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(v),
-            \dots}}{H}}$.
+    and $\conf' =
+    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+          e, \dots}} {\{d_2\}\cup H}}$.
 
-      \lk{How do we handle applying $\pi$ to an arbitrary value $v$?
-        I'm just writing $\pi(v)$ because we don't know what kind of
-        value it is.}
+    To show:
+    $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}}) \parstepsto \\
+    \pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+          e, \dots}} {\{d_2\}\cup H}})$.
 
-      Since $(\pi(S))(\pi(l)) = \state{d_1}{\status_1}$, by {\sc
-        E-Freeze-Final} we have that \\
-      $\config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(v),
-            \dots}}{H}} \parstepsto \\
-      \config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$.  (From
-      Definition~\ref{def:permutation-expression}, we can see that if
-      $v$ is a value, $\pi(v)$ is also a value.)
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression}, $\pi(\conf) = \\
+    \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(e),
+          \dots}}{H}}$.
 
-      It remains to show that
-      $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$ is equal
-      to $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
+    Since $(\pi(S))(\pi(l)) = \state{d_1}{\status_1}$, by {\sc
+      E-Spawn-Handler} we have that
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression},
-      $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$ is equal to
-      $\config{\pi(\extS{S}{l}{d_1}{\frozentrue})}{d_1})$, which is
-      equal to
-      $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$, and so
-      the two configurations are equal and the case is satisfied.
+    $\config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(e),
+          \dots}}{H}} \parstepsto \\
+    \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\subst{\pi(e_0)}{x}{d_2},
+          \pi(e), \dots}} {\{d_2\}\cup H}}$.
 
-    \item Case {\sc E-Freeze-Simple}: $\conf =
-      \config{S}{\freeze{l}}$, and $\conf' =
-      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression},
+    $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+          e, \dots}} {\{d_2\}\cup H}}) =
+    \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\subst{\pi(e_0)}{x}{d_2},
+          \pi(e), \dots}} {\{d_2\}\cup H}}$.
 
-      To show: $\pi(\config{S}{\freeze{l}}) \parstepsto
-      \pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
+    Therefore the case is complete.
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression}, $\pi(\conf) =
-      \config{\pi(S)}{\freeze{\pi(l)}}$.
+  \item Case {\sc E-Freeze-Final}: $\conf =
+    \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+          \dots}}{H}}$,
 
-      Since $(\pi(S))(\pi(l)) = \state{d_1}{\status_1}$, by {\sc
-        E-Freeze-Simple} we have that
-      $\config{\pi(S)}{\freeze{\pi(l)}} \parstepsto
-      \config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$.
+    and $\conf' = \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
-      It remains to show that
-      $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$ is equal
-      to $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
+    To show:
+    $\pi(\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+          \dots}}{H}}) \parstepsto \\
+    \pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
 
-      By Definitions~\ref{def:permutation-configuration}
-      and~\ref{def:permutation-expression},
-      $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$ is equal to
-      $\config{\pi(\extS{S}{l}{d_1}{\frozentrue})}{d_1})$, which is
-      equal to
-      $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$, and so
-      the two configurations are equal and the case is satisfied.
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression}, $\pi(\conf) = \\
+    \config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(v),
+          \dots}}{H}}$.
+
+    Since $(\pi(S))(\pi(l)) = \state{d_1}{\status_1}$, by {\sc
+      E-Freeze-Final} we have that \\
+    $\config{\pi(S)}{\freezeafterfull{\pi(l)}{Q}{\lam{x}{\pi(e_0)}}{\setof{\pi(v),
+          \dots}}{H}} \parstepsto \\
+    \config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$.
+
+    (From Definition~\ref{def:permutation-expression}, we can see that
+    if $v$ is a value, $\pi(v)$ is also a value.)
+
+    It remains to show that
+    $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$ is equal
+    to $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
+
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression},
+    $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$ is equal to
+    $\config{\pi(\extS{S}{l}{d_1}{\frozentrue})}{d_1})$, which is
+    equal to
+    $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$, and so
+    the two configurations are equal and the case is satisfied.
+
+  \item Case {\sc E-Freeze-Simple}: $\conf =
+    \config{S}{\freeze{l}}$, and $\conf' =
+    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+
+    To show: $\pi(\config{S}{\freeze{l}}) \parstepsto
+    \pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
+
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression}, $\pi(\conf) =
+    \config{\pi(S)}{\freeze{\pi(l)}}$.
+
+    Since $(\pi(S))(\pi(l)) = \state{d_1}{\status_1}$, by {\sc
+      E-Freeze-Simple} we have that
+    $\config{\pi(S)}{\freeze{\pi(l)}} \parstepsto
+    \config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$.
+
+    It remains to show that
+    $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$ is equal
+    to $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$.
+
+    By Definitions~\ref{def:permutation-configuration}
+    and~\ref{def:permutation-expression},
+    $\pi(\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1})$ is equal to
+    $\config{\pi(\extS{S}{l}{d_1}{\frozentrue})}{d_1})$, which is
+    equal to
+    $\config{\extS{\pi(S)}{\pi(l)}{d_1}{\frozentrue}}{d_1}$, and so
+    the two configurations are equal and the case is satisfied.
 
   \end{itemize}
 
   For the reverse direction of
   part~\ref{thm:quasi-permutable-reduction-transitions}, suppose
-  $\pi(\conf) \parstepsto \pi(\conf')$.  We have to show that $\conf
-  \parstepsto \conf'$.
+  $\pi(\conf) \parstepsto \pi(\conf')$.
+
+  We have to show that $\conf \parstepsto \conf'$.
 
   We know from the forward direction of the proof that for all
   configurations $\conf$ and $\conf'$ and permutations $\pi$, if
   $\conf \parstepsto \conf'$ then $\pi(\conf) \parstepsto
-  \pi(\conf')$.  Hence since $\pi(\conf) \parstepsto \pi(\conf')$, and
-  since $\piinv$ is also a permutation, we have that
-  $\piinv(\pi(\conf)) \parstepsto \piinv(\pi(\conf'))$.  Since
-  $\piinv(\pi(l)) = l$ for every $l \in \Loc$, and that property lifts
-  to configurations as well, we have that $\conf \parstepsto \conf'$.
+  \pi(\conf')$.
 
-  \lk{Is the above enough of a proof?}
+  Hence since $\pi(\conf) \parstepsto \pi(\conf')$, and since $\piinv$
+  is also a permutation, we have that $\piinv(\pi(\conf)) \parstepsto
+  \piinv(\pi(\conf'))$.
+
+  Since $\piinv(\pi(l)) = l$ for every $l \in \Loc$, and that property
+  lifts to configurations as well, we have that $\conf \parstepsto
+  \conf'$.
 
   For the forward direction of
   part~\ref{thm:quasi-permutable-context-transitions}, suppose $\conf
-  \ctxstepsto \conf'$.  We have to show that $\pi(\conf) \ctxstepsto
-  \pi(\conf')$.
+  \ctxstepsto \conf'$.
+
+  We have to show that $\pi(\conf) \ctxstepsto \pi(\conf')$.
 
   By inspection of the operational semantics, $\conf$ must be of the
   form $\config{S}{\E{e}}$, and $\conf'$ must be of the form
-  $\config{S'}{\E{e'}}$.  Hence we have to show that
-  $\pi(\config{S}{\E{e}}) \ctxstepsto \pi(\config{S'}{\E{e'}})$.
+  $\config{S'}{\E{e'}}$.
+
+  Hence we have to show that $\pi(\config{S}{\E{e}}) \ctxstepsto
+  \pi(\config{S'}{\E{e'}})$.
 
   By Definition~\ref{def:permutation-configuration},
   $\pi(\config{S}{\E{e}})$ is equal to $\config{\pi(S)}{\pi(\E{e})}$.
@@ -299,12 +315,14 @@
   \config{\pi(S')}{\evalctxt{(\pi(E))}{\pi(e')}}$.
 
   From the premise of {\sc E-Eval-Ctxt}, $\config{S}{e} \parstepsto
-  \config{S'}{e'}$.  Hence, by
-  part~\ref{thm:quasi-permutable-reduction-transitions},
-  $\pi(\config{S}{e}) \parstepsto \pi(\config{S'}{e'})$.  By
-  Definition~\ref{def:permutation-configuration}, $\pi(\config{S}{e})$
-  is equal to $\config{\pi(S)}{\pi(e)}$ and $\pi(\config{S'}{e'})$ is
-  equal to $\config{\pi(S')}{\pi(e')}$.
+  \config{S'}{e'}$.
+
+  Hence, by part~\ref{thm:quasi-permutable-reduction-transitions},
+  $\pi(\config{S}{e}) \parstepsto \pi(\config{S'}{e'})$.
+
+  By Definition~\ref{def:permutation-configuration},
+  $\pi(\config{S}{e})$ is equal to $\config{\pi(S)}{\pi(e)}$ and
+  $\pi(\config{S'}{e'})$ is equal to $\config{\pi(S')}{\pi(e')}$.
 
   Hence $\config{\pi(S)}{\pi(e)} \parstepsto
   \config{\pi(S')}{\pi(e')}$.
@@ -320,17 +338,21 @@
 
   For the reverse direction of
   part~\ref{thm:quasi-permutable-context-transitions}, suppose
-  $\pi(\conf) \ctxstepsto \pi(\conf')$.  We have to show that $\conf
-  \ctxstepsto \conf'$.
+  $\pi(\conf) \ctxstepsto \pi(\conf')$.
+
+  We have to show that $\conf \ctxstepsto \conf'$.
 
   We know from the forward direction of the proof that for all
   configurations $\conf$ and $\conf'$ and permutations $\pi$, if
   $\conf \ctxstepsto \conf'$ then $\pi(\conf) \ctxstepsto
-  \pi(\conf')$.  Hence since $\pi(\conf) \ctxstepsto \pi(\conf')$, and
-  since $\piinv$ is also a permutation, we have that
-  $\piinv(\pi(\conf)) \ctxstepsto \piinv(\pi(\conf'))$.  Since
-  $\piinv(\pi(l)) = l$ for every $l \in \Loc$, and that property lifts
-  to configurations as well, we have that $\conf \ctxstepsto \conf'$.
+  \pi(\conf')$.
 
-  \lk{Is the above enough of a proof?}
+  Hence since $\pi(\conf) \ctxstepsto \pi(\conf')$, and since $\piinv$
+  is also a permutation, we have that $\piinv(\pi(\conf)) \ctxstepsto
+  \piinv(\pi(\conf'))$.
+
+  Since $\piinv(\pi(l)) = l$ for every $l \in \Loc$, and that property
+  lifts to configurations as well, we have that $\conf \ctxstepsto
+  \conf'$.
+
 \end{proof}

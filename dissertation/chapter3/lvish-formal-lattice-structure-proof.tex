@@ -1,9 +1,10 @@
 \begin{proof}
-Suppose that $(D, \userleq, \bot, \top)$ is a lattice and $(D_p,
-\leqp, \botp, \topp) = \Freeze{D, \userleq, \bot, \top}$.  In order to
-show that $(D_p, \leqp, \botp, \topp)$ is a lattice, we have to show
-that:
-\begin{enumerate}
+  Suppose that $(D, \userleq, \bot, \top)$ is a lattice and $(D_p,
+  \leqp, \botp, \topp) = \Freeze{D, \userleq, \bot, \top}$.
+
+  In order to show that $(D_p, \leqp, \botp, \topp)$ is a lattice, we
+  have to show that:
+  \begin{enumerate}
   \item $\leqp$ is a partial order over $D_p$.
 
   \item Every nonempty finite subset of $D_p$ has a lub.
@@ -11,354 +12,593 @@ that:
   \item $\botp$ is the least element of $D_p$.
 
   \item $\topp$ is the greatest element of $D_p$.
-\end{enumerate}
-
-We prove each of these properties in turn:
-
-\begin{enumerate}
-\item $\leqp$ is a partial order over $D_p$.
-
-To show this, we need to show that $\leqp$ is reflexive, transitive,
-and antisymmetric. 
-\begin{enumerate}
-\item $\leqp$ is reflexive.
-
-  Suppose $v \in D_p$. Then, by Lemma~\ref{lem:partition-of-Dp},
-  either $v = \state{d}{\frozenfalse}$ with $d \in D$, or $v = \state{x}{\frozentrue}$ with $x \in X$, where $X = D - \setof{\top}$.
-  \begin{itemize}
-  \item Suppose $v = \state{d}{\frozenfalse}$:
-
-    By the reflexivity of $\userleq$, we know $d \userleq d$. \\ 
-    By the definition of $\leqp$, we know $\state{d}{\frozenfalse} \leqp \state{d}{\frozenfalse}$.
-
-  \item Suppose $v = \state{x}{\frozentrue}$: 
-   
-    By the reflexivity of equality, $x = x$. \\ 
-    By the definition of $\leqp$, we know $\state{x}{\frozentrue} \leqp \state{x}{\frozentrue}$. 
-  \end{itemize}
-
-\item $\leqp$ is transitive. 
-
-  Suppose $v_1 \leqp v_2$ and $v_2 \leqp v_3$. We want to show that $v_1 \leqp v_3$. We
-  proceed by case analysis on $v_1, v_2$, and $v_3$. 
-  \begin{itemize}
-  \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 = \state{d_2}{\frozenfalse}$ and $v_3 = \state{d_3}{\frozenfalse}$:
-    
-    By inversion on $\leqp$, it follows that $d_1 \userleq d_2$. \\ 
-    By inversion on $\leqp$, it follows that $d_2 \userleq d_3$. \\ 
-    By the transitivity of $\userleq$, we know $d_1 \userleq d_3$. \\ 
-    By the definition of $\leqp$, it follows that $\state{d_1}{\frozenfalse} \leqp \state{d_3}{\frozenfalse}$. \\ 
-    Hence $v_1 \leqp v_3$. 
-
-  \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 = \state{d_2}{\frozenfalse}$ and $v_3 = \state{x_3}{\frozentrue}$:
-
-    By inversion on $\leqp$, it follows that $d_1 \userleq d_2$. \\ 
-    By inversion on $\leqp$, it follows that $d_2 \userleq x_3$. \\ 
-    By the transitivity of $\userleq$, we know $d_1 \userleq x_3$. \\ 
-    By the definition of $\leqp$, it follows that $\state{d_1}{\frozenfalse} \leqp \state{x_3}{\frozentrue}$. \\ 
-    Hence $v_1 \leqp v_3$. 
-
-  \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 = \state{x_2}{\frozentrue}$ and $v_3 = \state{d_3}{\frozenfalse}$:
-
-    By inversion on $\leqp$, it follows that $d_1 \userleq x_2$. \\ 
-    By inversion on $\leqp$, it follows that $d_3 = \top$. \\ 
-    Since $\top$ is the maximal element of $D$, we know $d_1 \userleq \top \equiv d_3$. \\ 
-    By the definition of $\leqp$, it follows that $\state{d_1}{\frozenfalse} \leqp \state{d_3}{\frozenfalse}$. \\ 
-    Hence $v_1 \leqp v_3$. 
-
-  \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 = \state{x_2}{\frozentrue}$ and $v_3 = \state{x_3}{\frozentrue}$:
-
-    By inversion on $\leqp$, it follows that $d_1 \userleq x_2$. \\ 
-    By inversion on $\leqp$, it follows that $x_2 = x_3$. \\ 
-    Hence $d_1 \userleq x_3$. \\ 
-    By the definition of $\leqp$, it follows that $\state{d_1}{\frozenfalse} \leqp \state{x_3}{\frozentrue}$. \\ 
-    Hence $v_1 \leqp v_3$. 
-
-  \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 = \state{d_2}{\frozenfalse}$ and $v_3 = \state{d_3}{\frozenfalse}$:
-
-    By inversion on $\leqp$, it follows that $d_2 = \top$. \\ 
-    By inversion on $\leqp$, it follows that $d_2 \userleq d_3$. \\ 
-    Since $\top$ is maximal, it follows that $d_3 = \top$. \\ 
-    By the definition of $\leqp$, it follows that $\state{x_1}{\frozentrue} \leqp \state{d_3}{\frozenfalse}$. \\ 
-    Hence $v_1 \leqp v_3$. 
-
-  \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 = \state{d_2}{\frozenfalse}$ and $v_3 = \state{x_3}{\frozentrue}$:
-
-    By inversion on $\leqp$, it follows that $d_2 = \top$. \\ 
-    By inversion on $\leqp$, it follows that $d_2 \userleq x_3$. \\ 
-    Since $\top$ is maximal, it follows that $x_3 = \top$. \\
-    But since $x_3 \in X \subseteq D/\setof{\top}$, we know $x_3 \not= \top$. \\ 
-    This is a contradiction. \\
-    Hence $v_1 \leqp v_3$. 
-
-
-  \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 = \state{x_2}{\frozentrue}$ and $v_3 = \state{d_3}{\frozenfalse}$:
-
-    By inversion on $\leqp$, it follows that $x_1 = x_2$. \\ 
-    By inversion on $\leqp$, it follows that $d_3 = \top$. \\ 
-    By the definition of $\leqp$, it follows that $\state{x_1}{\frozentrue} \leqp \state{d_3}{\frozenfalse}$. \\ 
-    Hence $v_1 \leqp v_3$. 
-
-  \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 = \state{x_2}{\frozentrue}$ and $v_3 = \state{x_3}{\frozentrue}$:
-
-    By inversion on $\leqp$, it follows that $x_1 = x_2$. \\ 
-    By inversion on $\leqp$, it follows that $x_2 = x_3$. \\ 
-    By transitivity of $=$, $x_1 = x_3$. \\ 
-    By the definition of $\leqp$, it follows that $\state{x_1}{\frozentrue} \leqp \state{x_3}{\frozentrue}$. \\ 
-    Hence $v_1 \leqp v_3$. 
-    
-  \end{itemize}
-
-\item $\leqp$ is antisymmetric. 
-
-  Suppose $v_1 \leqp v_2$ and $v_2 \leqp v_1$. Now, we proceed by cases on $v_1$ and $v_2$. 
-  \begin{itemize}
-  \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 = \state{d_2}{\frozenfalse}$: 
-    
-    By inversion on $v_1 \leqp v_2$, we know that $d_1 \userleq d_2$. \\ 
-    By inversion on $v_2 \leqp v_1$, we know that $d_2 \userleq d_1$. \\ 
-    By the antisymmetry of $\leq$, we know $d_1 = d_2$. \\ 
-    Hence $v_1 = v_2$. 
-
-  \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 = \state{x_2}{\frozentrue}$: 
-
-    By inversion on $v_1 \leqp v_2$, we know that $d_1 \userleq x_2$. \\ 
-    By inversion on $v_2 \leqp v_1$, we know that $d_1 = \top$. \\ 
-    Since $\top$ is maximal in $D$, we know $x_2 = \top$. \\ 
-    But since $x_2 \in X \subseteq D/\setof{\top}$, we know $x_2 \not= \top$. \\ 
-    This is a contradiction. \\
-    Hence $v_1 = v_2$. 
-    
-  \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 = \state{d_2}{\frozenfalse}$: 
-
-    Similar to the previous case. 
-
-  \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 = \state{x_2}{\frozentrue}$: 
-
-    By inversion on $v_1 \leqp v_2$, we know that $x_1 = x_2$. \\
-    Hence $v_1 = v_2$. 
-  \end{itemize}
-\end{enumerate}
-
-\item Every nonempty finite subset of $D_p$ has a lub.
-
-To show this, it is sufficient to show that every two elements of
-$D_p$ have a lub, since a binary lub operation can be repeatedly
-applied to compute the lub of any finite set.  We will show that every
-two elements of $D_p$ have a lub by showing that the $\lubp{}{}$
-operation defined by Definition~\ref{def:lubp} computes their lub.
-
-%% $\lubp{v_1}{v_2}$ is the lub of $v_1$ and $v_2$ if it is an element
-%% $u$ of $D_p$ such that $v_1 \leqp u$, $v_2 \leqp u$, and for any $v
-%% \in D_p$ such that $v_1 \leqp v$ and $v_2 \leqp v$, it holds that
-%% $u \leqp v$.
-
-It suffices to show the following two properties:
-  \begin{enumerate}
-  \item For all $v_1, v_2, v \in D_p$, if $v_1 \leqp v$ and $v_2 \leqp v$, then $(\lubp{v_1}{v_2}) \leqp v$.
-  \item For all $v_1, v_2 \in D_p$, $v_1 \leqp (\lubp{v_1}{v_2})$ and $v_2 \leqp (\lubp{v_1}{v_2})$. 
   \end{enumerate}
+
+  We prove each of these properties in turn:
+
   \begin{enumerate}
-  \item For all $v_1, v_2, v \in D_p$, if $v_1 \leqp v$ and $v_2 \leqp v$, then $\lubp{v_1}{v_2} \leqp v$.
-    
-   Assume $v_1, v_2, v \in D_p$, and $v_1 \leqp v$ and $v_2 \leqp v$. Now we do a case analysis on 
-   $v_1$ and $v_2$. 
-   \begin{itemize}
-   \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 = \state{d_2}{\frozenfalse}$. 
-  
-     Now case on $v$: 
-     \begin{itemize}
-     \item Case $v = \state{d}{\frozenfalse}$: 
-  
-       By the definition of $\lubp{}{}$, $\lubp{\state{d_1}{\frozenfalse}}{\state{d_2}{\frozenfalse}} = \state{\userlub{d_1}{d_2}}{\frozenfalse}$. \\ 
-       By inversion on $\state{d_1}{\frozenfalse} \leqp \state{d}{\frozenfalse}$,  $d_1 \userleq l$. \\
-       By inversion on $\state{d_2}{\frozenfalse} \leqp \state{d}{\frozenfalse}$,  $d_2 \userleq l$. \\
-       Hence $l$ is an upper bound for $d_1$ and $d_2$. \\ 
-       Hence $\userlub{d_1}{d_2} \userleq l$. \\ 
-       Hence $\state{\userlub{d_1}{d_2}}{\frozenfalse} \leqp \state{d}{\frozenfalse}$. \\ 
-       Hence $\lubp{v_1}{v_2} \leqp v$. 
-  
-     \item Case $v = \state{x}{\frozentrue}$: 
-  
-       By the definition of $\lubp{}{}$, $\state{d_1}{\frozenfalse} \lubp{}{} \state{d_2}{\frozenfalse} = \state{\userlub{d_1}{d_2}}{\frozenfalse}$. \\ 
-       By inversion on $\state{d_1}{\frozenfalse} \leqp \state{x}{\frozentrue}$,  $d_1 \userleq x$. \\
-       By inversion on $\state{d_2}{\frozenfalse} \leqp \state{x}{\frozentrue}$,  $d_2 \userleq x$. \\
-       Hence $x$ is an upper bound for $d_1$ and $d_2$. \\ 
-       Hence $\userlub{d_1}{d_2} \userleq x$. \\ 
-       Hence $\state{\userlub{d_1}{d_2}}{\frozenfalse} \leqp \state{x}{\frozentrue}$. \\ 
-       Hence $\lubp{v_1}{v_2} \leqp v$. 
-     \end{itemize}
-  
-   \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 = \state{x_2}{\frozentrue}$: 
-  
-     Now case on $v$: 
-     \begin{itemize}
-     \item Case $v = \state{d}{\frozenfalse}$: 
-  
-       By inversion on $\state{x_1}{\frozentrue} \leqp \state{d}{\frozenfalse}$, we know $l = \top$. \\
-       By inversion on $\state{x_2}{\frozentrue} \leqp \state{d}{\frozenfalse}$, we know $l = \top$. \\
-       Now consider whether $x_1 = x_2$ or not. 
-       If it does, then  by the definition of $\lubp{}{}$, $\state{x_1}{\frozentrue} \lubp{}{} \state{x_2}{\frozentrue} = \state{x_1}{\frozentrue}$. \\ 
-       By definition of $\leqp$, we have $\state{x_1}{\frozentrue} \leqp \state{\top}{\frozenfalse}$. 
-       So $\lubp{v_1}{v_2} \leqp v$. \\ 
-       If it does not, then $\lubp{v_1}{v_2} = \state{\top}{\frozenfalse}$. \\ 
-       By the definition of $\leqp$, we have $\state{\top}{\frozenfalse} \leqp \state{\top}{\frozenfalse}$. 
-       So $\lubp{v_1}{v_2} \leqp v$. 
-  
-     \item Case $v = \state{x}{\frozentrue}$: 
-  
-       By inversion on $\state{x_1}{\frozentrue} \leqp \state{x}{\frozentrue}$, we know $x = x_1$. \\
-       By inversion on $\state{x_2}{\frozentrue} \leqp \state{x}{\frozentrue}$, we know $x = x_2$. \\
-       Hence $x_1 = x_2$. \\ 
-       By the definition of $\lubp{}{}$, $\state{x_1}{\frozentrue} \lubp{}{} \state{x_2}{\frozentrue} = \state{x_1}{\frozentrue}$. \\
-       Hence $\lubp{v_1}{v_2} \leqp v$. 
-     \end{itemize}
-   
-   \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 = \state{d_2}{\frozenfalse}$: 
-  
-     Now case on $v$:
-     \begin{itemize}
-     \item Case $v = \state{d}{\frozenfalse}$: 
+  \item $\leqp$ is a partial order over $D_p$.
+
+    To show this, we need to show that $\leqp$ is reflexive, transitive,
+    and antisymmetric. 
+    \begin{enumerate}
+    \item $\leqp$ is reflexive.
+
+      Suppose $v \in D_p$.
+
+      Then, by Lemma~\ref{lem:partition-of-Dp}, either $v =
+      \state{d}{\frozenfalse}$ with $d \in D$, or $v =
+      \state{x}{\frozentrue}$ with $x \in X$, where $X = D -
+      \setof{\top}$.
+      \begin{itemize}
+      \item Suppose $v = \state{d}{\frozenfalse}$:
+
+        By the reflexivity of $\userleq$, we know $d \userleq d$.
+
+        By the definition of $\leqp$, we know $\state{d}{\frozenfalse}
+        \leqp \state{d}{\frozenfalse}$.
+
+      \item Suppose $v = \state{x}{\frozentrue}$: 
+        
+        By the reflexivity of equality, $x = x$.
+
+        By the definition of $\leqp$, we know $\state{x}{\frozentrue}
+        \leqp \state{x}{\frozentrue}$.
+      \end{itemize}
+
+    \item $\leqp$ is transitive. 
+
+      Suppose $v_1 \leqp v_2$ and $v_2 \leqp v_3$.
+
+      We want to show that $v_1 \leqp v_3$.
+
+      We proceed by case analysis on $v_1, v_2$, and $v_3$.
+      \begin{itemize}
+      \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 =
+        \state{d_2}{\frozenfalse}$ and $v_3 =
+        \state{d_3}{\frozenfalse}$:
+        
+        By inversion on $\leqp$, it follows that $d_1 \userleq d_2$.
+
+        By inversion on $\leqp$, it follows that $d_2 \userleq d_3$.
+
+        By the transitivity of $\userleq$, we know $d_1 \userleq d_3$.
+
+        By the definition of $\leqp$, it follows that
+        $\state{d_1}{\frozenfalse} \leqp \state{d_3}{\frozenfalse}$.
+
+        Hence $v_1 \leqp v_3$.
+
+      \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 =
+        \state{d_2}{\frozenfalse}$ and $v_3 =
+        \state{x_3}{\frozentrue}$:
+
+        By inversion on $\leqp$, it follows that $d_1 \userleq d_2$.
+
+        By inversion on $\leqp$, it follows that $d_2 \userleq x_3$.
+
+        By the transitivity of $\userleq$, we know $d_1 \userleq x_3$.
+
+        By the definition of $\leqp$, it follows that
+        $\state{d_1}{\frozenfalse} \leqp \state{x_3}{\frozentrue}$.
+
+        Hence $v_1 \leqp v_3$.
+
+      \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 =
+        \state{x_2}{\frozentrue}$ and $v_3 =
+        \state{d_3}{\frozenfalse}$:
+
+        By inversion on $\leqp$, it follows that $d_1 \userleq x_2$.
+
+        By inversion on $\leqp$, it follows that $d_3 = \top$.
+
+        Since $\top$ is the maximal element of $D$, we know $d_1
+        \userleq \top \equiv d_3$.
+
+        By the definition of $\leqp$, it follows that
+        $\state{d_1}{\frozenfalse} \leqp \state{d_3}{\frozenfalse}$.
+
+        Hence $v_1 \leqp v_3$.
+
+      \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 =
+        \state{x_2}{\frozentrue}$ and $v_3 =
+        \state{x_3}{\frozentrue}$:
+
+        By inversion on $\leqp$, it follows that $d_1 \userleq x_2$.
+
+        By inversion on $\leqp$, it follows that $x_2 = x_3$.
+
+        Hence $d_1 \userleq x_3$.
+
+        By the definition of $\leqp$, it follows that
+        $\state{d_1}{\frozenfalse} \leqp \state{x_3}{\frozentrue}$.
+
+        Hence $v_1 \leqp v_3$.
+
+      \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 =
+        \state{d_2}{\frozenfalse}$ and $v_3 =
+        \state{d_3}{\frozenfalse}$:
+
+        By inversion on $\leqp$, it follows that $d_2 = \top$.
+
+        By inversion on $\leqp$, it follows that $d_2 \userleq d_3$.
+
+        Since $\top$ is maximal, it follows that $d_3 = \top$.
+
+        By the definition of $\leqp$, it follows that
+        $\state{x_1}{\frozentrue} \leqp \state{d_3}{\frozenfalse}$.
+
+        Hence $v_1 \leqp v_3$. 
+
+      \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 =
+        \state{d_2}{\frozenfalse}$ and $v_3 =
+        \state{x_3}{\frozentrue}$:
+
+        By inversion on $\leqp$, it follows that $d_2 = \top$.
+
+        By inversion on $\leqp$, it follows that $d_2 \userleq x_3$.
+
+        Since $\top$ is maximal, it follows that $x_3 = \top$.
+
+        But since $x_3 \in X \subseteq D/\setof{\top}$, we know $x_3
+        \not= \top$.
+
+        This is a contradiction. \\
+
+        Hence $v_1 \leqp v_3$. 
+
+      \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 =
+        \state{x_2}{\frozentrue}$ and $v_3 =
+        \state{d_3}{\frozenfalse}$:
+
+        By inversion on $\leqp$, it follows that $x_1 = x_2$.
+
+        By inversion on $\leqp$, it follows that $d_3 = \top$.
+
+        By the definition of $\leqp$, it follows that
+        $\state{x_1}{\frozentrue} \leqp \state{d_3}{\frozenfalse}$.
+
+        Hence $v_1 \leqp v_3$. 
+
+      \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 =
+        \state{x_2}{\frozentrue}$ and $v_3 =
+        \state{x_3}{\frozentrue}$:
+
+        By inversion on $\leqp$, it follows that $x_1 = x_2$.
+
+        By inversion on $\leqp$, it follows that $x_2 = x_3$.
+
+        By transitivity of $=$, $x_1 = x_3$.
+
+        By the definition of $\leqp$, it follows that
+        $\state{x_1}{\frozentrue} \leqp \state{x_3}{\frozentrue}$.
+
+        Hence $v_1 \leqp v_3$. 
+        
+      \end{itemize}
+
+    \item $\leqp$ is antisymmetric. 
+
+      Suppose $v_1 \leqp v_2$ and $v_2 \leqp v_1$. Now, we proceed by
+      cases on $v_1$ and $v_2$.
+      \begin{itemize}
+      \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 =
+        \state{d_2}{\frozenfalse}$:
+        
+        By inversion on $v_1 \leqp v_2$, we know that $d_1 \userleq
+        d_2$.
+
+        By inversion on $v_2 \leqp v_1$, we know that $d_2 \userleq
+        d_1$.
+
+        By the antisymmetry of $\leq$, we know $d_1 = d_2$.
+
+        Hence $v_1 = v_2$. 
+
+      \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 =
+        \state{x_2}{\frozentrue}$:
+
+        By inversion on $v_1 \leqp v_2$, we know that $d_1 \userleq x_2$.
+
+        By inversion on $v_2 \leqp v_1$, we know that $d_1 = \top$.
+
+        Since $\top$ is maximal in $D$, we know $x_2 = \top$.
+
+        But since $x_2 \in X \subseteq D/\setof{\top}$, we know $x_2 \not= \top$.
+
+        This is a contradiction.
+
+        Hence $v_1 = v_2$. 
+        
+      \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 =
+        \state{d_2}{\frozenfalse}$:
+
+        Similar to the previous case. 
+
+      \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 =
+        \state{x_2}{\frozentrue}$:
+
+        By inversion on $v_1 \leqp v_2$, we know that $x_1 = x_2$.
+
+        Hence $v_1 = v_2$. 
+      \end{itemize}
+    \end{enumerate}
+
+  \item Every nonempty finite subset of $D_p$ has a lub.
+
+    To show this, it is sufficient to show that every two elements of
+    $D_p$ have a lub, since a binary lub operation can be repeatedly
+    applied to compute the lub of any finite set.
+
+    We will show that every two elements of $D_p$ have a lub by
+    showing that the $\lubp{}{}$ operation defined by
+    Definition~\ref{def:lubp} computes their lub.
+
+    It suffices to show the following two properties:
+    \begin{enumerate}
+    \item For all $v_1, v_2, v \in D_p$, if $v_1 \leqp v$ and $v_2
+      \leqp v$, then $(\lubp{v_1}{v_2}) \leqp v$.
+    \item For all $v_1, v_2 \in D_p$, $v_1 \leqp (\lubp{v_1}{v_2})$
+      and $v_2 \leqp (\lubp{v_1}{v_2})$.
+    \end{enumerate}
+    \begin{enumerate}
+    \item For all $v_1, v_2, v \in D_p$, if $v_1 \leqp v$ and $v_2
+      \leqp v$, then $\lubp{v_1}{v_2} \leqp v$.
+      
+      Assume $v_1, v_2, v \in D_p$, and $v_1 \leqp v$ and $v_2 \leqp
+      v$.
+
+      Now we do a case analysis on $v_1$ and $v_2$.
+      \begin{itemize}
+      \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 =
+        \state{d_2}{\frozenfalse}$.
+        
+        Now case on $v$: 
+        \begin{itemize}
+        \item Case $v = \state{d}{\frozenfalse}$: 
+
+          By the definition of $\lubp{}{}$,
+          $\lubp{\state{d_1}{\frozenfalse}}{\state{d_2}{\frozenfalse}}
+          = \state{\userlub{d_1}{d_2}}{\frozenfalse}$.
+
+          By inversion on $\state{d_1}{\frozenfalse} \leqp
+          \state{d}{\frozenfalse}$, $d_1 \userleq l$.
+
+          By inversion on $\state{d_2}{\frozenfalse} \leqp
+          \state{d}{\frozenfalse}$, $d_2 \userleq l$.
+
+          Hence $l$ is an upper bound for $d_1$ and $d_2$.
+
+          Hence $\userlub{d_1}{d_2} \userleq l$.
+
+          Hence $\state{\userlub{d_1}{d_2}}{\frozenfalse} \leqp
+          \state{d}{\frozenfalse}$.
+
+          Hence $\lubp{v_1}{v_2} \leqp v$.
+          
+        \item Case $v = \state{x}{\frozentrue}$: 
+          
+          By the definition of $\lubp{}{}$, $\state{d_1}{\frozenfalse}
+          \lubp{}{} \state{d_2}{\frozenfalse} =
+          \state{\userlub{d_1}{d_2}}{\frozenfalse}$.
+
+          By inversion on $\state{d_1}{\frozenfalse} \leqp
+          \state{x}{\frozentrue}$, $d_1 \userleq x$.
+
+          By inversion on $\state{d_2}{\frozenfalse} \leqp
+          \state{x}{\frozentrue}$, $d_2 \userleq x$.
      
-       Now consider whether $d_2 \userleq x_1$. \\
-       If it is, then $\state{x_1}{\frozentrue} \lubp{}{} \state{d_2}{\frozenfalse} = \state{x_1}{\frozentrue} = v_1$. \\ 
-       Hence $\lubp{v_1}{v_2} \leqp v$. \\ 
-       Otherwise, $\state{x_1}{\frozentrue} \lubp{}{} \state{d_2}{\frozenfalse} = \state{\top}{\frozenfalse}$. \\ 
-       By inversion on $\state{x_1}{\frozentrue} \leqp \state{d}{\frozenfalse}$, we know $l = \top$. \\
-       By reflexivity, $\state{\top}{\frozenfalse} \leqp \state{\top}{\frozenfalse}$. \\ 
-       Hence $\lubp{v_1}{v_2} \leqp v$. 
-       
-     \item Case $v = \state{x}{\frozentrue}$:  
-  
-       By inversion on $\state{x_1}{\frozentrue} \leqp \state{x}{\frozentrue}$, we know that $x_1 = x$. \\ 
-       By inversion on $\state{d_2}{\frozenfalse} \leqp \state{x}{\frozentrue}$, we know that $d_2 \userleq x$. \\ 
-       By transitivity, $d_2 \userleq x_1$. \\ 
-       By the definition of $\lubp{}{}$, it follows that $\state{x_1}{\frozentrue} \lubp{}{} \state{d_2}{\frozenfalse} = \state{x_1}{\frozentrue}$. \\ 
-       By definition of $\leqp$, $\state{x_1}{\frozentrue} \leqp \state{x_1}{\frozentrue}$. \\ 
-       Hence $\lubp{v_1}{v_2} \leqp v$. 
-     \end{itemize}
-  
-   \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 = \state{x_2}{\frozentrue}$: 
-  
-     Symmetric with the previous case. 
-   \end{itemize}
- \item For all $v_1, v_2 \in D_p$, $v_1 \leqp \lubp{v_1}{v_2}$ and $v_2 \leqp \lubp{v_1}{v_2}$.
-    
-    Assume $v_1, v_2 \in D_p$, and proceed by case analysis. 
-    \begin{itemize}
-      \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 = \state{d_2}{\frozenfalse}$:
+          Hence $x$ is an upper bound for $d_1$ and $d_2$.
 
-        Since $\userlub{}{}$ is a join operator, we know $d_1 \userleq \userlub{d_1}{d_2}$.\\
-        By the definition of $\leqp$, $\state{d_1}{\frozenfalse} \userleq \state{\userlub{d_1}{d_2}}{\frozenfalse}$.\\
-        By the definition of $\lubp{}{}$, $\lubp{v_1}{v_2} = \state{\userlub{d_1}{d_2}}{\frozenfalse}$.\\
-        Hence $v_1 \leqp \lubp{v_1}{v_2}$.  \\
+          Hence $\userlub{d_1}{d_2} \userleq x$.
 
-        Since $\userlub{}{}$ is a join operator, we know $d_1 \userleq \userlub{d_1}{d_2}$.\\
-        By the definition of $\leqp$, $\state{d_2}{\frozenfalse} \userleq \state{\userlub{d_1}{d_2}}{\frozenfalse}$.\\
-        By the definition of $\lubp{}{}$, $\lubp{v_1}{v_2} = \state{\userlub{d_1}{d_2}}{\frozenfalse}$.\\
+          Hence $\state{\userlub{d_1}{d_2}}{\frozenfalse} \leqp
+          \state{x}{\frozentrue}$.
+
+          Hence $\lubp{v_1}{v_2} \leqp v$.
+        \end{itemize}
+        
+      \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 =
+        \state{x_2}{\frozentrue}$:
+        
+        Now case on $v$: 
+        \begin{itemize}
+        \item Case $v = \state{d}{\frozenfalse}$: 
+          
+          By inversion on $\state{x_1}{\frozentrue} \leqp
+          \state{d}{\frozenfalse}$, we know $l = \top$.
+
+          By inversion on $\state{x_2}{\frozentrue} \leqp
+          \state{d}{\frozenfalse}$, we know $l = \top$.
+
+          Now consider whether $x_1 = x_2$ or not.
+        
+          If it does, then by the definition of $\lubp{}{}$,
+          $\state{x_1}{\frozentrue} \lubp{}{} \state{x_2}{\frozentrue}
+          = \state{x_1}{\frozentrue}$.
+
+          By definition of $\leqp$, we have $\state{x_1}{\frozentrue}
+          \leqp \state{\top}{\frozenfalse}$.
+
+          So $\lubp{v_1}{v_2} \leqp v$.
+
+          If it does not, then $\lubp{v_1}{v_2} =
+          \state{\top}{\frozenfalse}$.
+
+          By the definition of $\leqp$, we have
+          $\state{\top}{\frozenfalse} \leqp
+          \state{\top}{\frozenfalse}$.
+
+          So $\lubp{v_1}{v_2} \leqp v$.
+          
+        \item Case $v = \state{x}{\frozentrue}$: 
+          
+          By inversion on $\state{x_1}{\frozentrue} \leqp
+          \state{x}{\frozentrue}$, we know $x = x_1$.
+
+          By inversion on $\state{x_2}{\frozentrue} \leqp
+          \state{x}{\frozentrue}$, we know $x = x_2$.
+
+          Hence $x_1 = x_2$.
+
+          By the definition of $\lubp{}{}$, $\state{x_1}{\frozentrue}
+          \lubp{}{} \state{x_2}{\frozentrue} =
+          \state{x_1}{\frozentrue}$.
+
+          Hence $\lubp{v_1}{v_2} \leqp v$.
+        \end{itemize}
+        
+      \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 =
+        \state{d_2}{\frozenfalse}$:
+        
+        Now case on $v$:
+        \begin{itemize}
+        \item Case $v = \state{d}{\frozenfalse}$:
+          
+          Now consider whether $d_2 \userleq x_1$.
+
+          If it is, then $\state{x_1}{\frozentrue} \lubp{}{}
+          \state{d_2}{\frozenfalse} = \state{x_1}{\frozentrue} = v_1$.
+
+          Hence $\lubp{v_1}{v_2} \leqp v$.
+
+          Otherwise, $\state{x_1}{\frozentrue} \lubp{}{}
+          \state{d_2}{\frozenfalse} = \state{\top}{\frozenfalse}$.
+
+          By inversion on $\state{x_1}{\frozentrue} \leqp
+          \state{d}{\frozenfalse}$, we know $l = \top$.
+
+          By reflexivity, $\state{\top}{\frozenfalse} \leqp
+          \state{\top}{\frozenfalse}$.
+
+          Hence $\lubp{v_1}{v_2} \leqp v$. 
+          
+        \item Case $v = \state{x}{\frozentrue}$:  
+          
+          By inversion on $\state{x_1}{\frozentrue} \leqp
+          \state{x}{\frozentrue}$, we know that $x_1 = x$.
+
+          By inversion on $\state{d_2}{\frozenfalse} \leqp
+          \state{x}{\frozentrue}$, we know that $d_2 \userleq x$.
+
+          By transitivity, $d_2 \userleq x_1$.
+
+          By the definition of $\lubp{}{}$, it follows that
+          $\state{x_1}{\frozentrue} \lubp{}{}
+          \state{d_2}{\frozenfalse} = \state{x_1}{\frozentrue}$.
+
+          By definition of $\leqp$, $\state{x_1}{\frozentrue} \leqp
+          \state{x_1}{\frozentrue}$.
+
+          Hence $\lubp{v_1}{v_2} \leqp v$. 
+        \end{itemize}
+        
+      \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 =
+        \state{x_2}{\frozentrue}$:
+        
+        Symmetric with the previous case. 
+      \end{itemize}
+    \item For all $v_1, v_2 \in D_p$, $v_1 \leqp \lubp{v_1}{v_2}$ and
+      $v_2 \leqp \lubp{v_1}{v_2}$.
+      
+      Assume $v_1, v_2 \in D_p$, and proceed by case analysis. 
+      \begin{itemize}
+      \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 =
+        \state{d_2}{\frozenfalse}$:
+
+        Since $\userlub{}{}$ is a join operator, we know $d_1 \userleq
+        \userlub{d_1}{d_2}$.
+
+        By the definition of $\leqp$, $\state{d_1}{\frozenfalse}
+        \userleq \state{\userlub{d_1}{d_2}}{\frozenfalse}$.
+
+        By the definition of $\lubp{}{}$, $\lubp{v_1}{v_2} =
+        \state{\userlub{d_1}{d_2}}{\frozenfalse}$.
+
+        Hence $v_1 \leqp \lubp{v_1}{v_2}$.
+
+        Since $\userlub{}{}$ is a join operator, we know $d_1 \userleq
+        \userlub{d_1}{d_2}$.
+
+        By the definition of $\leqp$, $\state{d_2}{\frozenfalse}
+        \userleq \state{\userlub{d_1}{d_2}}{\frozenfalse}$.
+
+        By the definition of $\lubp{}{}$, $\lubp{v_1}{v_2} =
+        \state{\userlub{d_1}{d_2}}{\frozenfalse}$.
+
         Hence $v_2 \leqp \lubp{v_1}{v_2}$. 
 
-        Therefore $v_1 \leqp v_1 \userlub{}{} v_2$ and $v_2 \leqp v_1 \userlub{}{} v_2$. 
+        Therefore $v_1 \leqp v_1 \userlub{}{} v_2$ and $v_2 \leqp v_1
+        \userlub{}{} v_2$.
+ 
       \item Case $v_1 = \state{d_1}{\frozenfalse}$ and $v_2 = \state{x_2}{\frozentrue}$:
 
         Consider whether $d_1 \userleq x_2$. 
         \begin{itemize}
-          \item Case  $d_1 \userleq x_2$:
+        \item Case  $d_1 \userleq x_2$:
 
-            By the definition of $\lubp{}{}$, we know $\state{d_1}{\frozenfalse} \lubp{}{} \state{x_2}{\frozentrue} = \state{x_2}{\frozentrue}$. \\ 
-            By the definition of $\lubp{}{}$, we know $\state{d_1}{\frozenfalse} \leqp \state{x_2}{\frozentrue}$. \\ 
-            Hence $v_1 \leqp \lubp{v_1}{v_2}$. \\ 
-            By reflexivity, $\state{x_2}{\frozentrue} \leqp \state{x_2}{\frozentrue}$. \\ 
-            Hence $v_2 \leqp \lubp{v_1}{v_2}$. \\ 
-            Therefore $v_1 \leqp v_1 \userlub{}{} v_2$ and $v_2 \leqp v_1 \userlub{}{} v_2$. 
+          By the definition of $\lubp{}{}$, we know
+          $\state{d_1}{\frozenfalse} \lubp{}{}
+          \state{x_2}{\frozentrue} = \state{x_2}{\frozentrue}$.
 
-          \item Case $d_1 \not\userleq x_2$:
+          By the definition of $\lubp{}{}$, we know
+          $\state{d_1}{\frozenfalse} \leqp \state{x_2}{\frozentrue}$.
 
-            By the definition of $\lubp{}{}$, we know $\state{d_1}{\frozenfalse} \lubp{}{} \state{x_2}{\frozentrue} = \state{\top}{\frozenfalse}$. \\ 
-            Since $d_1 \userleq \top$, by the definition of $\leqp$ we know $\state{d_1}{\frozenfalse} \userleq \state{\top}{\frozenfalse}$. \\ 
-            Hence $v_1 \leqp \lubp{v_1}{v_2}$. \\ 
-            By the definition of $\leqp$, we know $\state{x_2}{\frozentrue} \userleq \state{\top}{\frozenfalse}$. \\ 
-            Hence $v_2 \leqp \lubp{v_1}{v_2}$. \\ 
-            Therefore $v_1 \leqp v_1 \userlub{}{} v_2$ and $v_2 \leqp v_1 \userlub{}{} v_2$. 
-          \end{itemize}
-        \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 = \state{d_2}{\frozenfalse}$: 
+          Hence $v_1 \leqp \lubp{v_1}{v_2}$.
 
-          Symmetric with the previous case. 
-        \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 = \state{x_2}{\frozentrue}$:
+          By reflexivity, $\state{x_2}{\frozentrue} \leqp
+          \state{x_2}{\frozentrue}$.
 
-          Consider whether $x_1$ equals $x_2$. 
-          \begin{itemize}
-            \item Case $x_1 = x_2$:
-  
-              By the definition $\lubp{}{}$, $\state{x_1}{\frozentrue} \lubp{}{} \state{x_2}{\frozentrue} = \state{x_1}{\frozentrue}$. \\ 
-              By reflexivity, $\state{x_1}{\frozentrue} \leqp \state{x_1}{\frozentrue}$. \\ 
-              Hence $v_1 \leqp \lubp{v_1}{v_2}$. \\ 
-              By reflexivity, $\state{x_2}{\frozentrue} \leqp \state{x_1}{\frozentrue}$. \\ 
-              Hence $v_2 \leqp \lubp{v_1}{v_2}$. \\ 
-              Therefore $v_1 \leqp v_1 \userlub{}{} v_2$ and $v_2 \leqp v_1 \userlub{}{} v_2$. 
+          Hence $v_2 \leqp \lubp{v_1}{v_2}$.
 
-            \item Case $x_1 \not= x_2$: 
+          Therefore $v_1 \leqp v_1 \userlub{}{} v_2$ and $v_2 \leqp
+          v_1 \userlub{}{} v_2$.
 
-              By the definition $\lubp{}{}$, $\state{x_1}{\frozentrue} \lubp{}{} \state{x_2}{\frozentrue} = \state{\top}{\frozenfalse}$. \\ 
-              By the definition of $\leqp$, $\state{x_1}{\frozentrue} \leqp \state{\top}{\frozenfalse}$. \\
-              Hence $v_1 \leqp \lubp{v_1}{v_2}$. \\ 
-              By the definition of $\leqp$, $\state{x_2}{\frozentrue} \leqp \state{\top}{\frozenfalse}$. \\
-              Hence $v_2 \leqp \lubp{v_1}{v_2}$. \\ 
-              Therefore $v_1 \leqp v_1 \userlub{}{} v_2$ and $v_2 \leqp v_1 \userlub{}{} v_2$. 
-          \end{itemize}
+        \item Case $d_1 \not\userleq x_2$:
+
+          By the definition of $\lubp{}{}$, we know
+          $\state{d_1}{\frozenfalse} \lubp{}{}
+          \state{x_2}{\frozentrue} = \state{\top}{\frozenfalse}$.
+
+          Since $d_1 \userleq \top$, by the definition of $\leqp$ we
+          know $\state{d_1}{\frozenfalse} \userleq
+          \state{\top}{\frozenfalse}$.
+
+          Hence $v_1 \leqp \lubp{v_1}{v_2}$.
+
+          By the definition of $\leqp$, we know
+          $\state{x_2}{\frozentrue} \userleq
+          \state{\top}{\frozenfalse}$.
+
+          Hence $v_2 \leqp \lubp{v_1}{v_2}$.
+
+          Therefore $v_1 \leqp v_1 \userlub{}{} v_2$ and $v_2 \leqp
+          v_1 \userlub{}{} v_2$.
+        \end{itemize}
+      \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 =
+        \state{d_2}{\frozenfalse}$:
+
+        Symmetric with the previous case. 
+      \item Case $v_1 = \state{x_1}{\frozentrue}$ and $v_2 =
+        \state{x_2}{\frozentrue}$:
+
+        Consider whether $x_1$ equals $x_2$. 
+        \begin{itemize}
+        \item Case $x_1 = x_2$:
+          
+          By the definition $\lubp{}{}$, $\state{x_1}{\frozentrue}
+          \lubp{}{} \state{x_2}{\frozentrue} =
+          \state{x_1}{\frozentrue}$.
+ 
+          By reflexivity, $\state{x_1}{\frozentrue} \leqp
+          \state{x_1}{\frozentrue}$.
+
+          Hence $v_1 \leqp \lubp{v_1}{v_2}$.
+
+          By reflexivity, $\state{x_2}{\frozentrue} \leqp
+          \state{x_1}{\frozentrue}$.
+
+          Hence $v_2 \leqp \lubp{v_1}{v_2}$.
+
+          Therefore $v_1 \leqp v_1 \userlub{}{} v_2$ and $v_2 \leqp
+          v_1 \userlub{}{} v_2$.
+
+        \item Case $x_1 \not= x_2$: 
+
+          By the definition $\lubp{}{}$, $\state{x_1}{\frozentrue}
+          \lubp{}{} \state{x_2}{\frozentrue} =
+          \state{\top}{\frozenfalse}$.
+
+          By the definition of $\leqp$, $\state{x_1}{\frozentrue}
+          \leqp \state{\top}{\frozenfalse}$.
+
+          Hence $v_1 \leqp \lubp{v_1}{v_2}$.
+
+          By the definition of $\leqp$, $\state{x_2}{\frozentrue}
+          \leqp \state{\top}{\frozenfalse}$.
+
+          Hence $v_2 \leqp \lubp{v_1}{v_2}$.
+
+          Therefore $v_1 \leqp v_1 \userlub{}{} v_2$ and $v_2 \leqp
+          v_1 \userlub{}{} v_2$.
+        \end{itemize}
+      \end{itemize}
+    \end{enumerate}
+
+  \item $\botp$ is the least element of $D_p$. 
+
+    $\botp$ is defined to be $\state{\bot}{\frozenfalse}$.
+
+    In order to be the least element of $D_p$, it must be less than or
+    equal to every element of $D_p$.
+
+    By Lemma~\ref{lem:partition-of-Dp}, the elements of $D_p$
+    partition into $\state{d}{\frozenfalse}$ for all $d \in D$, and
+    $\state{x}{\frozentrue}$ for all $x \in X$, where $X = D -
+    \setof{\top}$.
+
+    We consider both cases:
+
+    \begin{itemize}
+    \item $\state{d}{\frozenfalse}$ for all $d \in D$:
+
+      By the definition of $\leqp$, $\state{\bot}{\frozenfalse} \leqp
+      \state{d}{\frozenfalse}$ iff $\bot \userleq d$.
+
+      Since $\bot$ is the least element of $D$, $\bot \userleq d$.
+
+      Therefore $\botp = \state{\bot}{\frozenfalse} \leqp
+      \state{d}{\frozenfalse}$.
+
+    \item $\state{x}{\frozentrue}$ for all $x \in X$:
+
+      By the definition of $\leqp$, $\state{\bot}{\frozenfalse} \leqp
+      \state{x}{\frozentrue}$ iff $\bot \userleq x$.
+
+      Since $\bot$ is the least element of $D$, $\bot \userleq x$.
+
+      Therefore $\botp = \state{\bot}{\frozenfalse} \leqp
+      \state{x}{\frozentrue}$.
+
     \end{itemize}
+
+    Therefore $\botp$ is less than or equal to all elements of $D_p$.
+
+  \item $\topp$ is the greatest element of $D_p$.
+
+    $\topp$ is defined to be $\state{\top}{\frozenfalse}$.
+
+    In order to be the greatest element of $D_p$, every element of
+    $D_p$ must be less than or equal to it.
+
+    By Lemma~\ref{lem:partition-of-Dp}, the elements of $D_p$
+    partition into $\state{d}{\frozenfalse}$ for all $d \in D$, and
+    $\state{x}{\frozentrue}$ for all $x \in X$, where $X = D -
+    \setof{\top}$.
+
+    We consider both cases:
+
+    \begin{itemize}
+    \item $\state{d}{\frozenfalse}$ for all $d \in D$:
+
+      By the definition of $\leqp$, $\state{d}{\frozenfalse} \leqp
+      \state{\top}{\frozenfalse}$ iff $d \userleq \top$.
+
+      Since $\top$ is the greatest element of $D$, $d \userleq \top$.
+
+      Therefore $\state{d}{\frozenfalse} \leqp
+      \state{\top}{\frozenfalse} = \topp$.
+
+    \item $\state{x}{\frozentrue}$ for all $x \in X$:
+
+      By the definition of $\leqp$, $\state{x}{\frozentrue} \leqp
+      \state{\top}{\frozenfalse}$ iff $\top \userleq \top$.
+
+      Therefore $\state{x}{\frozentrue} \leqp
+      \state{\top}{\frozenfalse} = \topp$.
+
+    \end{itemize}
+
+    Therefore all elements of $D_p$ are less than or equal to $\topp$.
   \end{enumerate}
-
-\item $\botp$ is the least element of $D_p$. 
-
-$\botp$ is defined to be $\state{\bot}{\frozenfalse}$.  In order to be the
-  least element of $D_p$, it must be less than or equal to every
-  element of $D_p$.  By Lemma~\ref{lem:partition-of-Dp}, the elements
-  of $D_p$ partition into $\state{d}{\frozenfalse}$ for all $d \in D$, and
-  $\state{x}{\frozentrue}$ for all $x \in X$, where $X = D - \setof{\top}$.
-
-  We consider both cases:
-
-  \begin{itemize}
-  \item $\state{d}{\frozenfalse}$ for all $d \in D$:
-
-  By the definition of $\leqp$, $\state{\bot}{\frozenfalse} \leqp \state{d}{\frozenfalse}$ iff $\bot \userleq d$. \\
-  Since $\bot$ is the least element of $D$, $\bot \userleq d$. \\
-  Therefore $\botp = \state{\bot}{\frozenfalse} \leqp \state{d}{\frozenfalse}$.
-
-  \item $\state{x}{\frozentrue}$ for all $x \in X$:
-
-  By the definition of $\leqp$, $\state{\bot}{\frozenfalse} \leqp \state{x}{\frozentrue}$ iff $\bot \userleq x$. \\
-  Since $\bot$ is the least element of $D$, $\bot \userleq x$. \\
-  Therefore $\botp = \state{\bot}{\frozenfalse} \leqp \state{x}{\frozentrue}$.
-
-  \end{itemize}
-
-  Therefore $\botp$ is less than or equal to all elements of $D_p$.
-
-\item $\topp$ is the greatest element of $D_p$.
-
-$\topp$ is defined to be $\state{\top}{\frozenfalse}$.  In order to be the
-  greatest element of $D_p$, every element of $D_p$ must be less than
-  or equal to it. By Lemma~\ref{lem:partition-of-Dp}, the elements of
-  $D_p$ partition into $\state{d}{\frozenfalse}$ for all $d \in D$, and $\state{x}{\frozentrue}$ for all $x \in X$, where $X = D - \setof{\top}$.
-
-  We consider both cases:
-
-  \begin{itemize}
-  \item $\state{d}{\frozenfalse}$ for all $d \in D$:
-
-  By the definition of $\leqp$, $\state{d}{\frozenfalse} \leqp \state{\top}{\frozenfalse}$ iff $d \userleq \top$. \\
-  Since $\top$ is the greatest element of $D$, $d \userleq \top$. \\
-  Therefore $\state{d}{\frozenfalse} \leqp \state{\top}{\frozenfalse} = \topp$.
-
-  \item $\state{x}{\frozentrue}$ for all $x \in X$:
-
-  By the definition of $\leqp$, $\state{x}{\frozentrue} \leqp \state{\top}{\frozenfalse}$ iff $\top \userleq \top$. \\
-  Therefore $\state{x}{\frozentrue} \leqp \state{\top}{\frozenfalse} = \topp$.
-
-  \end{itemize}
-
-  Therefore all elements of $D_p$ are less than or equal to $\topp$.
-\end{enumerate}
 \end{proof}

@@ -1,8 +1,11 @@
 \begin{proof}
   Suppose $\conf \parstepsto \conf'$ and $\conf \parstepsto \conf''$.
+
   We have to show that there is a permutation $\pi$ such that $\conf'
-  = \pi(\conf'')$, modulo choice of events.  The proof is by cases on
-  the rule by which $\conf$ steps to $\conf'$.
+  = \pi(\conf'')$, modulo choice of events.
+
+  The proof is by cases on the rule by which $\conf$ steps to
+  $\conf'$.
 
   \begin{itemize}
 
@@ -17,9 +20,10 @@
 
     By inspection of the operational semantics, the only reduction
     rule by which $\config{S}{\app{(\lam{x}{e})}{v}}$ can step is
-    {\sc E-Beta}.  Hence $\conf'' = \config{S}{\subst{e}{x}{v}}$,
-    and the case is satisfied by choosing $\pi$ to be the identity
-    function.
+    {\sc E-Beta}.
+
+    Hence $\conf'' = \config{S}{\subst{e}{x}{v}}$, and the case is
+    satisfied by choosing $\pi$ to be the identity function.
 
   \item Case {\sc E-New}:
 
@@ -31,11 +35,13 @@
     $\config{\extS{S}{l}{\bot}{\frozenfalse}}{l} = \pi(\conf'')$.
 
     By inspection of the operational semantics, the only reduction
-    rule by which $\config{S}{\NEW}$ can step is {\sc E-New}.  Hence
-    $\conf'' = \config{\extS{S}{l'}{\bot}{\frozenfalse}}{l'}$.  Since,
-    by the side condition of {\sc E-New}, neither $l$ nor $l'$ occur
-    in $\dom{S}$, the case is satisfied by choosing $\pi$ to be the
-    permutation that maps $l'$ to $l$ and is the identity on every
+    rule by which $\config{S}{\NEW}$ can step is {\sc E-New}.
+
+    Hence $\conf'' = \config{\extS{S}{l'}{\bot}{\frozenfalse}}{l'}$.
+
+    Since, by the side condition of {\sc E-New}, neither $l$ nor $l'$
+    occur in $\dom{S}$, the case is satisfied by choosing $\pi$ to be
+    the permutation that maps $l'$ to $l$ and is the identity on every
     other element of $\Loc$.
 
   \item Case {\sc E-Put}:
@@ -50,9 +56,11 @@
     By inspection of the operational semantics, and since
     $u_{p_i}(p_1) \neq \topp$ (from the premise of {\sc E-Put}), the
     only reduction rule by which $\config{S}{\putiexp{l}}$ can step is
-    {\sc E-Put}.  Hence $\conf'' =
-    \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}$, and the case is
-    satisfied by choosing $\pi$ to be the identity function.
+    {\sc E-Put}.
+
+    Hence $\conf'' = \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}$,
+    and the case is satisfied by choosing $\pi$ to be the identity
+    function.
 
   \item Case {\sc E-Put-Err}:
 
@@ -60,11 +68,14 @@
     $\config{S}{\putiexp{l}} \parstepsto \conf''$.
 
     To show: There exists a $\pi$ such that $\error = \pi(\conf'')$.
+
     By inspection of the operational semantics, and since
     $u_{p_i}(p_1) = \topp$ (from the premise of {\sc E-Put-Err}), the
     only reduction rule by which $\config{S}{\putiexp{l}}$ can step is
-    {\sc E-Put-Err}.  Hence $\conf'' = \error$, and the case is
-    satisfied by choosing $\pi$ to be the identity function.
+    {\sc E-Put-Err}.
+
+    Hence $\conf'' = \error$, and the case is satisfied by choosing
+    $\pi$ to be the identity function.
 
   \item Case {\sc E-Get}:
 
@@ -76,6 +87,7 @@
 
     By inspection of the operational semantics, the only reduction
     rule by which $\config{S}{\getexp{l}{P}}$ can step is {\sc E-Get}.
+
     Hence $\conf'' = \config{S}{p_2}$, and the case is satisfied by
     choosing $\pi$ to be the identity function.
 
@@ -90,8 +102,10 @@
     = \pi(\conf'').$
 
     By inspection of the operational semantics, the only reduction
-    rule by which \\ $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}}$ can
-    step is {\sc E-Freeze-Init}.
+    rule by which
+
+    $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}}$ can step is {\sc
+      E-Freeze-Init}.
 
     Hence $\conf'' =
     \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$,
@@ -103,33 +117,39 @@
     Given: $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
           \dots}}{H}} \parstepsto \\
     \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-          e, \dots}} {\{d_2\}\cup H}}$, and \\
+          e, \dots}} {\{d_2\}\cup H}}$, and
+
     $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
           \dots}}{H}} \parstepsto \conf''$.
 
-    To show: There exists a $\pi$ such that \\
+    To show: There exists a $\pi$ such that
+
     $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
           e, \dots}} {\{d_2\}\cup H}} = \pi(\conf'').$
 
     By inspection of the operational semantics, the only reduction
-    rule by which \\
+    rule by which
+
     $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-          \dots}}{H}}$ can step is {\sc E-Spawn-Handler}.  (It cannot
-    step by {\sc E-Freeze-Final}, because we have from the premises of
-    {\sc E-Spawn-Handler} that $d_2 \userleq d_1$ and $d_2 \in Q$ and
-    $d_2 \notin H$, and for the premises of {\sc E-Freeze-Final} to
-    hold, we would need that for all $d_2$, if $d_2 \userleq d_1$ and
-    $d_2 \in Q$, then $d_2 \in H$.)
+          \dots}}{H}}$ can step is {\sc E-Spawn-Handler}.
+
+    (It cannot step by {\sc E-Freeze-Final}, because we have from the
+    premises of {\sc E-Spawn-Handler} that $d_2 \userleq d_1$ and $d_2
+    \in Q$ and $d_2 \notin H$, and for the premises of {\sc
+      E-Freeze-Final} to hold, we would need that for all $d_2$, if
+    $d_2 \userleq d_1$ and $d_2 \in Q$, then $d_2 \in H$.)
 
     Hence $\conf'' =
     \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d'_2},
           e, \dots}} {\{d'_2\}\cup H}}$, where $d'_2 \userleq d_1$ and
     $d'_2 \in Q$ and $d'_2 \notin H$, and the case is satisfied by
-    choosing $\pi$ to be the identity function.  (It may be the case
-    that $d'_2 \neq d_2$; if so, then we have internal nondeterminism
-    modulo \emph{choice of events}, as we were required to show.  If
-    $d'_2 = d_2$ then we have internal nondeterminism even without
-    that additional qualification, which also satisfies the case.)
+    choosing $\pi$ to be the identity function.
+
+    (It may be the case that $d'_2 \neq d_2$; if so, then we have
+    internal nondeterminism modulo \emph{choice of events}, as we were
+    required to show.  If $d'_2 = d_2$ then we have internal
+    nondeterminism even without that additional qualification, which
+    also satisfies the case.)
 
   \item Case {\sc E-Freeze-Final}:
 
@@ -143,16 +163,20 @@
     $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1} = \pi(\conf'').$
 
     By inspection of the operational semantics, the only reduction
-    rule by which \\
+    rule by which
+
     $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-          \dots}}{H}}$ can step is {\sc E-Freeze-Final}.  (It cannot
-    step by {\sc E-Spawn-Handler}, because we have from the premises
-    of {\sc E-Freeze-Final} that, for all $d_2$, if $d_2 \userleq d_1$
-    and $d_2 \in Q$, then $d_2 \in H$, and for the premises of {\sc
-      E-Spawn-Handler} to hold, we would need that $d_2 \userleq d_1$
-    and $d_2 \in Q$ and $d_2 \notin H$.)  Hence $\conf'' =
-    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and the case is
-    satisfied by choosing $\pi$ to be the identity function.
+          \dots}}{H}}$ can step is {\sc E-Freeze-Final}.
+
+    (It cannot step by {\sc E-Spawn-Handler}, because we have from the
+    premises of {\sc E-Freeze-Final} that, for all $d_2$, if $d_2
+    \userleq d_1$ and $d_2 \in Q$, then $d_2 \in H$, and for the
+    premises of {\sc E-Spawn-Handler} to hold, we would need that $d_2
+    \userleq d_1$ and $d_2 \in Q$ and $d_2 \notin H$.)
+
+    Hence $\conf'' = \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
+    the case is satisfied by choosing $\pi$ to be the identity
+    function.
 
   \item Case {\sc E-Freeze-Simple}:
 
@@ -165,9 +189,11 @@
 
     By inspection of the operational semantics, the only reduction
     rule by which $\config{S}{\freeze{l}}$ can step is {\sc
-      E-Freeze-Simple}.  Hence $\conf'' =
-    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and the case is
-    satisfied by choosing $\pi$ to be the identity function.
+      E-Freeze-Simple}.
+
+    Hence $\conf'' = \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, and
+    the case is satisfied by choosing $\pi$ to be the identity
+    function.
 
   \end{itemize}
 \end{proof}
