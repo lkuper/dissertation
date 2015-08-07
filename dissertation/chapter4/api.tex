@@ -335,7 +335,7 @@ freezing.  In Listing~\ref{listing-graph-traversal-explicit-freeze},
 the function @traverse@ takes a graph @g@ and a vertex @startNode@ and
 finds the set of all vertices reachable from @startNode@, in parallel.
 The @traverse@ function first creates a new LVar, called @seen@, to
-represent a montonically growing set of @Int@s that will identify
+represent a monotonically growing set of @Int@s that will identify
 nodes in the graph.  For this purpose, we use the @ISet@ type,
 provided by the @Data.LVar.PureSet@ module.  (As with @IMap@, the
 individual elements of the @ISet@ are immutable, but the set itself
