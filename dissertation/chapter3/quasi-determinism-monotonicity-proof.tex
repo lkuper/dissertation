@@ -1,149 +1,158 @@
 \begin{proof}
-  Suppose $\config{S}{e} \parstepsto \config{S'}{e'}$.  We are
-  required to show that $\leqstore{S}{S'}$.  The proof is by cases on
-  the rule by which $\config{S}{e}$ steps to $\config{S'}{e'}$.
+  Suppose $\config{S}{e} \parstepsto \config{S'}{e'}$.
+
+  We are required to show that $\leqstore{S}{S'}$.
+
+  The proof is by cases on the rule by which $\config{S}{e}$ steps to
+  $\config{S'}{e'}$.
 
   \begin{itemize}
-    \item Case {\sc E-Beta}:
+  \item Case {\sc E-Beta}:
 
-      Immediate by the definition of $\leqstore{}{}$, since $S$ does
-      not change.
+    Immediate by the definition of $\leqstore{}{}$, since $S$ does
+    not change.
 
-    \item Case {\sc E-New}:
+  \item Case {\sc E-New}:
 
-      Given: $\config{S}{\NEW} \parstepsto
-      \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
+    Given: $\config{S}{\NEW} \parstepsto
+    \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
 
-      To show: $\leqstore{S}{\extS{S}{l}{\bot}{\frozenfalse}}$.
+    To show: $\leqstore{S}{\extS{S}{l}{\bot}{\frozenfalse}}$.
 
-      By Definition~\ref{def:leqstore}, we have to show that $\dom{S}
-      \subseteq \dom{\extS{S}{l}{\bot}{\frozenfalse}}$ and that for
-      all $l' \in \dom{S}$, $S(l') \leqp
-      (\extS{S}{l}{\bot}{\frozenfalse})(l')$.
+    By Definition~\ref{def:leqstore}, we have to show that $\dom{S}
+    \subseteq \dom{\extS{S}{l}{\bot}{\frozenfalse}}$ and that for
+    all $l' \in \dom{S}$, $S(l') \leqp
+    (\extS{S}{l}{\bot}{\frozenfalse})(l')$.
 
-      By definition, a store update operation on $S$ can only either
-      update an existing binding in $S$ or extend $S$ with a new
-      binding.  Hence $\dom{S} \subseteq
-      \dom{\extS{S}{l}{\bot}{\frozenfalse}}$.
+    By definition, a store update operation on $S$ can only either
+    update an existing binding in $S$ or extend $S$ with a new
+    binding.
 
-      From the side condition of {\sc E-New}, $l \notin \dom{S}$.
-      Hence $\extS{S}{l}{\bot}{\frozenfalse}$ adds a new binding for
-      $l$ in $S$.
+    Hence $\dom{S} \subseteq \dom{\extS{S}{l}{\bot}{\frozenfalse}}$.
 
-      Hence $\extS{S}{l}{\bot}{\frozenfalse}$ does not update any
-      existing bindings in $S$.
+    From the side condition of {\sc E-New}, $l \notin \dom{S}$.
 
-      Hence, for all $l' \in \dom{S}, S(l') \leqp
-      (\extS{S}{l}{\bot}{\frozenfalse})(l')$.
+    Hence $\extS{S}{l}{\bot}{\frozenfalse}$ adds a new binding for
+    $l$ in $S$.
 
-      Therefore $\leqstore{S}{\extS{S}{l}{\bot}{\frozenfalse}}$, as
-      required.
+    Hence $\extS{S}{l}{\bot}{\frozenfalse}$ does not update any
+    existing bindings in $S$.
 
-    \item Case {\sc E-Put}:
+    Hence, for all $l' \in \dom{S}, S(l') \leqp
+    (\extS{S}{l}{\bot}{\frozenfalse})(l')$.
 
-      Given: $\config{S}{\putiexp{l}} \parstepsto
-      \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}$.
+    Therefore $\leqstore{S}{\extS{S}{l}{\bot}{\frozenfalse}}$, as
+    required.
 
-      To show: $\leqstore{S}{\extSRaw{S}{l}{u_{p_i}(p_1)}}$.
+  \item Case {\sc E-Put}:
 
-      By Definition~\ref{def:leqstore}, we have to show that $\dom{S}
-      \subseteq \dom{\extSRaw{S}{l}{u_{p_i}(p_1)}}$ and that for all
-      $l' \in \dom{S}$, $S(l') \leqp
-      (\extSRaw{S}{l}{u_{p_i}(p_1)})(l')$.
+    Given: $\config{S}{\putiexp{l}} \parstepsto
+    \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}$.
 
-      By definition, a store update operation on $S$ can only either
-      update an existing binding in $S$ or extend $S$ with a new
-      binding.  Hence $\dom{S} \subseteq
-      \dom{\extSRaw{S}{l}{u_{p_i}(p_1)}}$.
+    To show: $\leqstore{S}{\extSRaw{S}{l}{u_{p_i}(p_1)}}$.
 
-      From the premises of {\sc E-Put}, $S(l) = p_1$.  Therefore $l
-      \in \dom{S}$.
+    By Definition~\ref{def:leqstore}, we have to show that $\dom{S}
+    \subseteq \dom{\extSRaw{S}{l}{u_{p_i}(p_1)}}$ and that for all
+    $l' \in \dom{S}$, $S(l') \leqp
+    (\extSRaw{S}{l}{u_{p_i}(p_1)})(l')$.
 
-      Hence $\extSRaw{S}{l}{u_{p_i}(p_1)}$ updates the existing
-      binding for $l$ in $S$ from $p_1$ to $u_{p_i}(p_1)$.
+    By definition, a store update operation on $S$ can only either
+    update an existing binding in $S$ or extend $S$ with a new
+    binding.
 
-      By definition, $u_{p_i}$ is inflationary.  Hence $p_1 \leqp
-      u_{p_i}(p_1)$.
+    Hence $\dom{S} \subseteq \dom{\extSRaw{S}{l}{u_{p_i}(p_1)}}$.
 
-      $\extSRaw{S}{l}{u_{p_i}(p_1)}$ does not update any other
-      bindings in $S$, hence, for all $l' \in \dom{S}, S(l') \leqp
-      (\extSRaw{S}{l}{u_{p_i}(p_1)})(l')$.
+    From the premises of {\sc E-Put}, $S(l) = p_1$.
 
-      Hence $\leqstore{S}{\extSRaw{S}{l}{u_{p_i}(p_1)}}$, as required.
+    Therefore $l \in \dom{S}$.
 
-    \item Case {\sc E-Put-Err}:
+    Hence $\extSRaw{S}{l}{u_{p_i}(p_1)}$ updates the existing
+    binding for $l$ in $S$ from $p_1$ to $u_{p_i}(p_1)$.
 
-      Given: $\config{S}{\putiexp{l}} \parstepsto \error$.
+    By definition, $u_{p_i}$ is inflationary.
 
-      By the definition of $\error$, $\error = \config{\topS}{e}$ for
-      any $e$.
+    Hence $p_1 \leqp u_{p_i}(p_1)$.
 
-      To show: $\leqstore{S}{\topS}$.
+    $\extSRaw{S}{l}{u_{p_i}(p_1)}$ does not update any other
+    bindings in $S$, hence, for all $l' \in \dom{S}, S(l') \leqp
+    (\extSRaw{S}{l}{u_{p_i}(p_1)})(l')$.
 
-      Immediate by the definition of $\leqstore{}{}$.
+    Hence $\leqstore{S}{\extSRaw{S}{l}{u_{p_i}(p_1)}}$, as required.
 
-    \item Case {\sc E-Get}:
+  \item Case {\sc E-Put-Err}:
 
-      Immediate by the definition of $\leqstore{}{}$, since $S$ does
-      not change.
+    Given: $\config{S}{\putiexp{l}} \parstepsto \error$.
 
-    \item Case {\sc E-Freeze-Init}:
+    By the definition of $\error$, $\error = \config{\topS}{e}$ for
+    any $e$.
 
-      Immediate by the definition of $\leqstore{}{}$, since $S$ does
-      not change.
+    To show: $\leqstore{S}{\topS}$.
 
-    \item Case {\sc E-Spawn-Handler}:
+    Immediate by the definition of $\leqstore{}{}$.
 
-      Immediate by the definition of $\leqstore{}{}$, since $S$ does
-      not change.
+  \item Case {\sc E-Get}:
 
-    \item Case {\sc E-Freeze-Final}:
+    Immediate by the definition of $\leqstore{}{}$, since $S$ does
+    not change.
 
-      Given:
-      $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}} \parstepsto
-      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+  \item Case {\sc E-Freeze-Init}:
 
-      To show: $\leqstore{S}{\extS{S}{l}{d_1}{\frozentrue}}$.
+    Immediate by the definition of $\leqstore{}{}$, since $S$ does
+    not change.
 
-      By Definition~\ref{def:leqstore}, we have to show that $\dom{S}
-      \subseteq \dom{\extS{S}{l}{d_1}{\frozentrue}}$ and that for all
-      $l' \in \dom{S}$, $S(l') \leqp
-      (\extS{S}{l}{d_1}{\frozentrue})(l')$.
+  \item Case {\sc E-Spawn-Handler}:
 
-      \lk{We could spell this out in even more excruciating detail,
-        but I think it's obvious enough.}
+    Immediate by the definition of $\leqstore{}{}$, since $S$ does
+    not change.
 
-      By definition, a store update operation on $S$ can only either
-      update an existing binding in $S$ or extend $S$ with a new
-      binding.  Hence $\dom{S} \subseteq
-      \dom{\extS{S}{l}{d_1}{\frozentrue}}$.
+  \item Case {\sc E-Freeze-Final}:
 
-      From the premises of {\sc E-Freeze-Final}, $S(l) =
-      \state{d_1}{\status_1}$.  Therefore $l \in \dom{S}$.
+    Given:
+    $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+          \dots}}{H}} \parstepsto
+    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
-      Hence $\extS{S}{l}{d_1}{\frozentrue}$ updates the existing
-      binding for $l$ in $S$ from $\state{d_1}{\status_1}$ to
-      $\state{d_1}{\frozentrue}$.
+    To show: $\leqstore{S}{\extS{S}{l}{d_1}{\frozentrue}}$.
 
-      By the definition of $\leqp$, $\state{d_1}{\status_1} \leqp
-      \state{d_1}{\frozentrue}$.
+    By Definition~\ref{def:leqstore}, we have to show that $\dom{S}
+    \subseteq \dom{\extS{S}{l}{d_1}{\frozentrue}}$ and that for all
+    $l' \in \dom{S}$, $S(l') \leqp
+    (\extS{S}{l}{d_1}{\frozentrue})(l')$.
 
-      $\extS{S}{l}{d_1}{\frozentrue}$ does not update any other
-      bindings in $S$, hence, for all $l' \in \dom{S}$, $S(l') \leqp
-      (\extS{S}{l}{d_1}{\frozentrue})(l')$.
+    \lk{We could spell this out in even more excruciating detail,
+      but I think it's obvious enough.}
 
-      Hence $\leqstore{S}{\extS{S}{l}{d_1}{\frozentrue}}$, as
-      required.
+    By definition, a store update operation on $S$ can only either
+    update an existing binding in $S$ or extend $S$ with a new
+    binding.
 
-    \item Case {\sc E-Freeze-Simple}:
+    Hence $\dom{S} \subseteq \dom{\extS{S}{l}{d_1}{\frozentrue}}$.
 
-      Given: $\config{S}{\freeze{l}} \parstepsto
-      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+    From the premises of {\sc E-Freeze-Final}, $S(l) =
+    \state{d_1}{\status_1}$.  Therefore $l \in \dom{S}$.
 
-      To show: $\leqstore{S}{\extS{S}{l}{d_1}{\frozentrue}}$.
+    Hence $\extS{S}{l}{d_1}{\frozentrue}$ updates the existing
+    binding for $l$ in $S$ from $\state{d_1}{\status_1}$ to
+    $\state{d_1}{\frozentrue}$.
 
-      Similar to the previous case.
+    By the definition of $\leqp$, $\state{d_1}{\status_1} \leqp
+    \state{d_1}{\frozentrue}$.
+
+    $\extS{S}{l}{d_1}{\frozentrue}$ does not update any other
+    bindings in $S$, hence, for all $l' \in \dom{S}$, $S(l') \leqp
+    (\extS{S}{l}{d_1}{\frozentrue})(l')$.
+
+    Hence $\leqstore{S}{\extS{S}{l}{d_1}{\frozentrue}}$, as
+    required.
+
+  \item Case {\sc E-Freeze-Simple}:
+
+    Given: $\config{S}{\freeze{l}} \parstepsto
+    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+
+    To show: $\leqstore{S}{\extS{S}{l}{d_1}{\frozentrue}}$.
+
+    Similar to the previous case.
 
   \end{itemize}
 

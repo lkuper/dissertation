@@ -1,18 +1,24 @@
 \begin{proof}
   Suppose $\config{S}{e} \parstepsto \config{S'}{e'}$, where
-  $\config{S'}{e'} \neq \error$. Consider arbitrary $U_S$ such that
-  $U_S$ is non-conflicting with $\config{S}{e} \parstepsto
-  \config{S'}{e'}$ and $U_S(S') = \topS$ and $U_S$ is freeze-safe with
-  $\config{S}{e} \parstepsto \config{S'}{e'}$.  We are required to
-  show that there exists $i \leq 1$ such that $\config{U_S(S)}{e}
-  \parstepsto^i \error$.
+  $\config{S'}{e'} \neq \error$.
+
+  Consider arbitrary $U_S$ such that $U_S$ is non-conflicting with
+  $\config{S}{e} \parstepsto \config{S'}{e'}$ and $U_S(S') = \topS$
+  and $U_S$ is freeze-safe with $\config{S}{e} \parstepsto
+  \config{S'}{e'}$.
+
+  We are required to show that there exists $i \leq 1$ such that
+  $\config{U_S(S)}{e} \parstepsto^i \error$.
 
   The proof is by cases on the rule of the reduction semantics by
-  which $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since
-  $\config{S'}{e'} \neq \error$, we do not need to consider the {\sc
-    E-Put-Err} rule.  The assumption that $U_S$ is freeze-safe with
-  $\config{S}{e} \parstepsto \config{S'}{e'}$ is only needed in the
-  {\sc E-Freeze-Final} and {\sc E-Freeze-Simple} cases.
+  which $\config{S}{e}$ steps to $\config{S'}{e'}$.
+
+  Since $\config{S'}{e'} \neq \error$, we do not need to consider the
+  {\sc E-Put-Err} rule.
+
+  The assumption that $U_S$ is freeze-safe with $\config{S}{e}
+  \parstepsto \config{S'}{e'}$ is only needed in the {\sc
+    E-Freeze-Final} and {\sc E-Freeze-Simple} cases.
 
   \begin{itemize}
 
@@ -24,8 +30,10 @@
     To show: $\config{U_S(S)}{\app{(\lam{x}{e})}{v}} \parstepsto
     \error$, where $i \leq 1$.
 
-    By assumption, $U_S(S') = \topS$.  Since $S' = S$, it must be the
-    case that $U_S(S') = U_S(S) = \topS$.
+    By assumption, $U_S(S') = \topS$.
+
+    Since $S' = S$, it must be the case that $U_S(S') = U_S(S) =
+    \topS$.
 
     Hence, by the definition of $\error$,
     $\config{U_S(S)}{\app{(\lam{x}{e})}{v}} = \error$.
@@ -47,6 +55,7 @@
 
     By assumption, $U_S$ is non-conflicting with $\config{S}{\NEW}
     \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
+
     Therefore $l \notin \dom{U_S(S)}$.
 
     Therefore, in
@@ -57,8 +66,9 @@
     \config{\extS{(U_S(S))}{l}{\bot}{\frozenfalse}}{l}$.
 
     Also, since $U_S$ is non-conflicting with $\config{S}{\NEW}
-    \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$, \\ we
-    have that $(U_S(\extS{S}{l}{\bot}{\frozenfalse}))(l) =
+    \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$,
+
+    we have that $(U_S(\extS{S}{l}{\bot}{\frozenfalse}))(l) =
     (\extS{S}{l}{\bot}{\frozenfalse})(l) =
     \state{\bot}{\frozenfalse}$.
 
@@ -88,48 +98,51 @@
     Consider whether $U_S(S) = \topS$:
     \begin{itemize}
 
-      \item If $U_S(S) = \topS$:
+    \item If $U_S(S) = \topS$:
 
-        In this case, by the definition of $\error$,
-        $\config{U_S(S)}{\putiexp{l}} = \error$.
+      In this case, by the definition of $\error$,
+      $\config{U_S(S)}{\putiexp{l}} = \error$.
 
-        Hence $\config{U_S(S)}{\putiexp{l}}
-        \parstepsto^{i'} \error$, with $i' = 0$.
+      Hence $\config{U_S(S)}{\putiexp{l}} \parstepsto^{i'} \error$,
+      with $i' = 0$.
 
-      \item If $U_S(S) \neq \topS$:
+    \item If $U_S(S) \neq \topS$:
 
-        Since $U_S(S) \neq \topS$, we know that $S \neq \topS$.  Also,
-        from the premises of {\sc E-Put}, we have that $u_{p_i}(p_1)
-        \neq \topp$.  Hence $\extSRaw{S}{l}{u_{p_i}(p_1)} \neq \topS$.
+      Since $U_S(S) \neq \topS$, we know that $S \neq \topS$.
 
-        Since $U_S(S) \neq \topS$ and $\extSRaw{S}{l}{u_{p_i}(p_1)}
-        \neq \topS$, but $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) = \topS$,
-        it must be $U_S$'s action on the contents of $l$ that updates
-        $\extSRaw{S}{l}{u_{p_i}(p_1)}$ to $\topS$.
+      Also, from the premises of {\sc E-Put}, we have that
+      $u_{p_i}(p_1) \neq \topp$.
 
-        Let $u_{p_j}$ be the state update operation in $U_S$ that
-        affects the contents of $l$.
+      Hence $\extSRaw{S}{l}{u_{p_i}(p_1)} \neq \topS$.
 
-        Then $u_{p_j}(u_{p_i}(p_1)) = \topp$.
+      Since $U_S(S) \neq \topS$ and $\extSRaw{S}{l}{u_{p_i}(p_1)}
+      \neq \topS$, but $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) = \topS$,
+      it must be $U_S$'s action on the contents of $l$ that updates
+      $\extSRaw{S}{l}{u_{p_i}(p_1)}$ to $\topS$.
 
-        Since state update operations commute, $u_{p_i}(u_{p_j}(p_1))
-        = \topp$.
+      Let $u_{p_j}$ be the state update operation in $U_S$ that
+      affects the contents of $l$.
 
-        Since $u_{p_j}$ is the state update operation in $U_S$ that
-        affects the contents of $l$, we have that $(U_S(S))(l) =
-        u_{p_j}(p_1)$.
+      Then $u_{p_j}(u_{p_i}(p_1)) = \topp$.
 
-        Since $U_S(S) \neq \topS$, $u_{p_J}(p_1) \neq \topp$.
+      Since state update operations commute, $u_{p_i}(u_{p_j}(p_1))
+      = \topp$.
 
-        Therefore, by {\sc E-Put}, $\config{U_S(S)}{\putiexp{l}}
-        \parstepsto
-        \config{\extSRaw{(U_S(S))}{l}{u_{p_i}(u_{p_j}(p_1))}}{\unit}$.
+      Since $u_{p_j}$ is the state update operation in $U_S$ that
+      affects the contents of $l$, we have that $(U_S(S))(l) =
+      u_{p_j}(p_1)$.
 
-        Since $u_{p_j}(u_{p_i}(p_1)) = \topp$,
-        $\config{U_S(S)}{\putiexp{l}} \parstepsto \error$.
+      Since $U_S(S) \neq \topS$, $u_{p_J}(p_1) \neq \topp$.
 
-        Hence $\config{U_S(S)}{\putiexp{l}}
-        \parstepsto^{i'} \error$, with $i' = 1$.
+      Therefore, by {\sc E-Put}, $\config{U_S(S)}{\putiexp{l}}
+      \parstepsto
+      \config{\extSRaw{(U_S(S))}{l}{u_{p_i}(u_{p_j}(p_1))}}{\unit}$.
+
+      Since $u_{p_j}(u_{p_i}(p_1)) = \topp$,
+      $\config{U_S(S)}{\putiexp{l}} \parstepsto \error$.
+
+      Hence $\config{U_S(S)}{\putiexp{l}}
+      \parstepsto^{i'} \error$, with $i' = 1$.
 
     \end{itemize}
 
@@ -216,11 +229,14 @@
       \neq \topS$, but $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$,
       it must be $U_S$'s action on the contents of $l$ in
       $\extS{S}{l}{d_1}{\frozentrue}$ that updates
-      $\extS{S}{l}{d_1}{\frozentrue}$ to $\topS$.  Since the contents
-      of $l$ in $\extS{S}{l}{d_1}{\frozentrue}$ are
+      $\extS{S}{l}{d_1}{\frozentrue}$ to $\topS$.
+
+      Since the contents of $l$ in $\extS{S}{l}{d_1}{\frozentrue}$ are
       $\state{d_1}{\frozentrue}$, it must not be the case that $S(l) =
       \state{d_1}{\frozentrue}$, because otherwise, $U_S(S)$ would be
-      $\topS$.  Therefore $S(l) = \state{d_1}{\frozenfalse}$.
+      $\topS$.
+
+      Therefore $S(l) = \state{d_1}{\frozenfalse}$.
 
       Let $u_{p_i}$ be the state update operation in $U_S$ that
       updates the contents of $l$.
@@ -240,11 +256,15 @@
       $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, we know that
       $U_S$ either freezes the contents of $l$ (having no other effect
       on them), or it acts as the identity on the contents of $l$.
+
       Hence $(U_S(\extS{S}{l}{d_1}{\frozentrue}))(l) =
-      \state{d_1}{\frozentrue}$.  But this is a contradiction since
+      \state{d_1}{\frozentrue}$.
+
+      But this is a contradiction since
       $(U_S(\extS{S}{l}{d_1}{\frozentrue}))(l) =
-      u_{p_i}(\state{d_1}{\frozentrue}) = \topp$.  Hence this case
-      cannot occur.
+      u_{p_i}(\state{d_1}{\frozentrue}) = \topp$.
+
+      Hence this case cannot occur.
     \end{itemize}
 
     \lk{Is this argument convincing?}
@@ -274,11 +294,14 @@
       \neq \topS$, but $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$,
       it must be $U_S$'s action on the contents of $l$ in
       $\extS{S}{l}{d_1}{\frozentrue}$ that updates
-      $\extS{S}{l}{d_1}{\frozentrue}$ to $\topS$.  Since the contents
-      of $l$ in $\extS{S}{l}{d_1}{\frozentrue}$ are
+      $\extS{S}{l}{d_1}{\frozentrue}$ to $\topS$.
+
+      Since the contents of $l$ in $\extS{S}{l}{d_1}{\frozentrue}$ are
       $\state{d_1}{\frozentrue}$, it must not be the case that $S(l) =
       \state{d_1}{\frozentrue}$, because otherwise, $U_S(S)$ would be
-      $\topS$.  Therefore $S(l) = \state{d_1}{\frozenfalse}$.
+      $\topS$.
+
+      Therefore $S(l) = \state{d_1}{\frozenfalse}$.
 
       Let $u_{p_i}$ be the state update operation in $U_S$ that
       updates the contents of $l$.
@@ -294,11 +317,15 @@
       $\config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$, we know that
       $U_S$ either freezes the contents of $l$ (having no other effect
       on them), or it acts as the identity on the contents of $l$.
+
       Hence $(U_S(\extS{S}{l}{d_1}{\frozentrue}))(l) =
-      \state{d_1}{\frozentrue}$.  But this is a contradiction since
+      \state{d_1}{\frozentrue}$.
+
+      But this is a contradiction since
       $(U_S(\extS{S}{l}{d_1}{\frozentrue}))(l) =
-      u_{p_i}(\state{d_1}{\frozentrue}) = \topp$.  Hence this case
-      cannot occur.
+      u_{p_i}(\state{d_1}{\frozentrue}) = \topp$.
+
+      Hence this case cannot occur.
     \end{itemize}
 
     \lk{Is this argument convincing?  (It's basically the same as that

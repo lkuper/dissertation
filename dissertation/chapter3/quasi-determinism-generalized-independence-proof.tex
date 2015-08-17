@@ -1,345 +1,369 @@
 \begin{proof}
   Suppose $\config{S}{e} \parstepsto \config{S'}{e'}$, where
-  $\config{S'}{e'} \neq \error$.  Consider arbitrary $U_S$ such that
-  $U_S$ is non-conflicting with $\config{S}{e} \parstepsto
-  \config{S'}{e'}$ and $U_S(S') \neq \topS$ and $U_S$ is freeze-safe
-  with $\config{S}{e} \parstepsto \config{S'}{e'}$.  We are required
-  to show that $\config{U_S(S)}{e} \parstepsto \config{U_S(S')}{e'}$.
+  $\config{S'}{e'} \neq \error$.
+
+  Consider arbitrary $U_S$ such that $U_S$ is non-conflicting with
+  $\config{S}{e} \parstepsto \config{S'}{e'}$ and $U_S(S') \neq \topS$
+  and $U_S$ is freeze-safe with $\config{S}{e} \parstepsto
+  \config{S'}{e'}$.
+
+  We are required to show that $\config{U_S(S)}{e} \parstepsto
+  \config{U_S(S')}{e'}$.
 
   The proof is by cases on the rule of the reduction semantics by
-  which $\config{S}{e}$ steps to $\config{S'}{e'}$.  Since
-  $\config{S'}{e'} \neq \error$, we do not need to consider the {\sc
-    E-Put-Err} rule.  The assumption that $U_S$ is freeze-safe with
-  $\config{S}{e} \parstepsto \config{S'}{e'}$ is only needed in the
-  {\sc E-Freeze-Final} and {\sc E-Freeze-Simple} cases.
+  which $\config{S}{e}$ steps to $\config{S'}{e'}$.
+
+  Since $\config{S'}{e'} \neq \error$, we do not need to consider the
+  {\sc E-Put-Err} rule.
+
+  The assumption that $U_S$ is freeze-safe with $\config{S}{e}
+  \parstepsto \config{S'}{e'}$ is only needed in the {\sc
+    E-Freeze-Final} and {\sc E-Freeze-Simple} cases.
 
   \begin{itemize}
 
-    \item Case {\sc E-Beta}:
+  \item Case {\sc E-Beta}:
 
-      Given: $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto
-      \config{S}{\subst{e}{x}{v}}$.
+    Given: $\config{S}{\app{(\lam{x}{e})}{v}} \parstepsto
+    \config{S}{\subst{e}{x}{v}}$.
 
-      To show: $\config{U_S(S)}{\app{(\lam{x}{e})}{v}} \parstepsto
-      \config{U_S(S)}{\subst{e}{x}{v}}$.
+    To show: $\config{U_S(S)}{\app{(\lam{x}{e})}{v}} \parstepsto
+    \config{U_S(S)}{\subst{e}{x}{v}}$.
 
-      Immediate by {\sc E-Beta}.
+    Immediate by {\sc E-Beta}.
 
-    \item Case {\sc E-New}:
+  \item Case {\sc E-New}:
 
-      Given: $\config{S}{\NEW} \parstepsto
-      \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
+    Given: $\config{S}{\NEW} \parstepsto
+    \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
 
-      To show: $\config{U_S(S)}{\NEW} \parstepsto
-      \config{U_S(\extS{S}{l}{\bot}{\frozenfalse})}{l}$.
+    To show: $\config{U_S(S)}{\NEW} \parstepsto
+    \config{U_S(\extS{S}{l}{\bot}{\frozenfalse})}{l}$.
 
-      By {\sc E-New}, we have that $\config{U_S(S)}{\NEW} \parstepsto
-      \config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$, \\ where $l'
-      \notin \dom{U_S(S)}$.
+    By {\sc E-New}, we have that $\config{U_S(S)}{\NEW} \parstepsto
+    \config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$,
 
-      By assumption, $U_S$ is non-conflicting with $\config{S}{\NEW}
-      \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
-      Therefore $l \notin \dom{U_S(S)}$.
+    where $l' \notin \dom{U_S(S)}$.
 
-      Therefore, in
-      $\config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$, we
-      can $\alpha$-rename $l'$ to $l$.
+    By assumption, $U_S$ is non-conflicting with $\config{S}{\NEW}
+    \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$.
 
-      Therefore $\config{U_S(S)}{\NEW} \parstepsto
-      \config{\extS{(U_S(S))}{l}{\bot}{\frozenfalse}}{l}$.
+    Therefore $l \notin \dom{U_S(S)}$.
 
-      Also, since $U_S$ is non-conflicting with $\config{S}{\NEW}
-      \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$, \\ we
-      have that $(U_S(\extS{S}{l}{\bot}{\frozenfalse}))(l) =
-      (\extS{S}{l}{\bot}{\frozenfalse})(l) =
-      \state{\bot}{\frozenfalse}$.
+    Therefore, in
+    $\config{\extS{(U_S(S))}{l'}{\bot}{\frozenfalse}}{l'}$, we can
+    $\alpha$-rename $l'$ to $l$.
 
-      Hence $\extS{(U_S(S))}{l}{\bot}{\frozenfalse} =
-      U_S(\extS{S}{l}{\bot}{\frozenfalse})$.
+    Therefore $\config{U_S(S)}{\NEW} \parstepsto
+    \config{\extS{(U_S(S))}{l}{\bot}{\frozenfalse}}{l}$.
 
-      Therefore $\config{U_S(S)}{\NEW} \parstepsto
-      \config{U_S(\extS{S}{l}{\bot}{\frozenfalse})}{l}$, as we were
-      required to show.
+    Also, since $U_S$ is non-conflicting with $\config{S}{\NEW}
+    \parstepsto \config{\extS{S}{l}{\bot}{\frozenfalse}}{l}$,
 
-    \item Case {\sc E-Put}:
+    we have that $(U_S(\extS{S}{l}{\bot}{\frozenfalse}))(l) =
+    (\extS{S}{l}{\bot}{\frozenfalse})(l) =
+    \state{\bot}{\frozenfalse}$.
 
-      Given: $\config{S}{\putiexp{l}} \parstepsto
-      \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}$.
+    Hence $\extS{(U_S(S))}{l}{\bot}{\frozenfalse} =
+    U_S(\extS{S}{l}{\bot}{\frozenfalse})$.
 
-      To show: $\config{U_S(S)}{\putiexp{l}} \parstepsto
-      \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{\unit}$.
+    Therefore $\config{U_S(S)}{\NEW} \parstepsto
+    \config{U_S(\extS{S}{l}{\bot}{\frozenfalse})}{l}$, as we were
+    required to show.
 
-      From the premises of {\sc E-Put}, $S(l) = p_1$.
+  \item Case {\sc E-Put}:
 
-      Hence $(U_S(S))(l) = p'_1$, where $p_1 \leqp p'_1$.
+    Given: $\config{S}{\putiexp{l}} \parstepsto
+    \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\unit}$.
 
-      Next, we want to show that $u_{p_i}(p'_1) \neq \topp$.
+    To show: $\config{U_S(S)}{\putiexp{l}} \parstepsto
+    \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{\unit}$.
 
-      Assume for the sake of a contradiction that $u_{p_i}(p'_1) =
-      \topp$.
+    From the premises of {\sc E-Put}, $S(l) = p_1$.
 
-      Then $u_{p_i}((U_S(S))(l)) = \topp$.
+    Hence $(U_S(S))(l) = p'_1$, where $p_1 \leqp p'_1$.
 
-      Let $u_{p_j}$ be the state update operation in $U_S$ that
-      affects the contents of $l$.  Hence $(U_S(S))(l) =
-      u_{p_j}(p_1)$. Then $u_{p_i}(u_{p_j}(p_1)) = \topp$.
+    Next, we want to show that $u_{p_i}(p'_1) \neq \topp$.
 
-      Since state update operations commute, $u_{p_j}(u_{p_i}(p_1)) =
-      \topp$.
-      
-      But then $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) = \topS$, \\
-      which contradicts the assumption that
-      $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$.
+    Assume for the sake of a contradiction that $u_{p_i}(p'_1) =
+    \topp$.
 
-      Hence, $u_{p_i}(p'_1) \neq \topp$.
+    Then $u_{p_i}((U_S(S))(l)) = \topp$.
 
-      Therefore, by {\sc E-Put}, $\config{U_S(S)}{\putiexp{l}}
-      \parstepsto
-      \config{\extSRaw{(U_S(S))}{l}{u_{p_i}(p'_1)}}{\unit}$.
+    Let $u_{p_j}$ be the state update operation in $U_S$ that affects
+    the contents of $l$.
 
-      Since $p'_1 = u_{p_j}(p_1)$, we have that
-      $\extSRaw{(U_S(S))}{l}{u_{p_i}(p'_1)} =
-      \extSRaw{(U_S(S))}{l}{u_{p_i}(u_{p_j}(p_1))}$, which, since
-      $u_{p_i}$ and $u_{p_j}$ commute, is equal to
-      $\extSRaw{(U_S(S))}{l}{u_{p_j}(u_{p_i}(p_1))}$.
+    Hence $(U_S(S))(l) = u_{p_j}(p_1)$. Then $u_{p_i}(u_{p_j}(p_1)) =
+    \topp$.
 
-      Finally, since $u_{p_j}$ is the update operation in $U_S$ that
-      affects the contents of $l$, \\ we have that
-      $\extSRaw{(U_S(S))}{l}{u_{p_j}(u_{p_i}(p_1))} =
-      U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})$, and so the case is
+    Since state update operations commute, $u_{p_j}(u_{p_i}(p_1)) =
+    \topp$.
+    
+    But then $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) = \topS$,
+
+    which contradicts the assumption that
+    $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$.
+
+    Hence, $u_{p_i}(p'_1) \neq \topp$.
+
+    Therefore, by {\sc E-Put}, $\config{U_S(S)}{\putiexp{l}}
+    \parstepsto \config{\extSRaw{(U_S(S))}{l}{u_{p_i}(p'_1)}}{\unit}$.
+
+    Since $p'_1 = u_{p_j}(p_1)$, we have that
+    $\extSRaw{(U_S(S))}{l}{u_{p_i}(p'_1)} =
+    \extSRaw{(U_S(S))}{l}{u_{p_i}(u_{p_j}(p_1))}$,
+
+    which, since $u_{p_i}$ and $u_{p_j}$ commute, is equal to
+    $\extSRaw{(U_S(S))}{l}{u_{p_j}(u_{p_i}(p_1))}$.
+
+    Finally, since $u_{p_j}$ is the update operation in $U_S$ that
+    affects the contents of $l$,
+
+    we have that $\extSRaw{(U_S(S))}{l}{u_{p_j}(u_{p_i}(p_1))} =
+    U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})$, and so the case is satisfied.
+
+  \item Case {\sc E-Get}:
+
+    Given: $\config{S}{\getexp{l}{P}} \parstepsto \config{S}{p_2}$.
+
+    To show: $\config{U_S(S)}{\getexp{l}{P}} \parstepsto
+    \config{U_S(S)}{p_2}$.
+
+    From the premises of {\sc E-Get}, $S(l) = p_1$ and $\incomp{P}$
+    and $p_2 \in P$ and $p_2 \leqp p_1$.
+
+    By assumption, $U_S(S) \neq \topS$.
+
+    Hence $(U_S(S))(l) = p'_1$, where $p_1 \leqp p'_1$.
+
+    By the transitivity of $\leqp$, $p_2 \leqp p'_1$.
+
+    Hence, $(U_S(S))(l) = p'_1$ and $\incomp{P}$ and $p_2 \in P$ and
+    $p_2 \leqp p'_1$.
+
+    Therefore, by {\sc E-Get},
+
+    $\config{U_S(S)}{\getexp{l}{P}} \parstepsto \config{U_S(S)}{p_2}$,
+
+    as we were required to show.
+
+  \item Case {\sc E-Freeze-Init}:
+
+    Given: $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto
+    \\ \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
+
+    To show: $\config{U_S(S)}{\freezeafter{l}{Q}{\lam{x}{e}}}
+    \parstepsto
+    \\ \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
+
+    Immediate by {\sc E-Freeze-Init}.
+
+  \item Case {\sc E-Spawn-Handler}:
+
+    Given:
+
+    $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}} \parstepsto
+    \\ \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+          e, \dots}} {\{d_2\}\cup H}}$.
+
+    To show:
+
+    $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}} \parstepsto
+    \\ \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+          e, \dots}} {\{d_2\}\cup H}}$.
+
+    From the premises of {\sc E-Spawn-Handler}, $S(l) =
+    \state{d_1}{\status_1}$ and $d_2 \userleq d_1$ and $d_2 \notin H$
+    and $d_2 \in Q$.
+
+    By assumption, $U_S(S) \neq \topS$.
+
+    Hence $(U_S(S))(l) = \state{d'_1}{\status'_1}$ where
+    $\state{d_1}{\status_1} \leqp \state{d'_1}{\status'_1}$.
+
+    By Definition~\ref{def:lattice-with-status-bits}, $d_1 \userleq
+    d'_1$.
+
+    By the transitivity of $\userleq$, $d_2 \userleq d'_1$.
+
+    Hence $(U_S(S))(l) = \state{d'_1}{\status'_1}$ and $d_2 \userleq
+    d'_1$ and $d_2 \notin H$ and $d_2 \in Q$.
+
+    Therefore, by {\sc E-Spawn-Handler},
+
+    $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
+          \dots}}{H}} \parstepsto
+    \\ \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
+          e, \dots}} {\{d_2\}\cup H}}$,
+
+    as we were required to show.
+
+  \item Case {\sc E-Freeze-Final}:
+
+    Given: $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+          \dots}}{H}} \parstepsto
+    \\ \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+
+    To show:
+    $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+          \dots}}{H}} \parstepsto
+    \\ \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{d_1}$.
+
+    From the premises of {\sc E-Freeze-Final}, $S(l) =
+    \state{d_1}{\status_1}$.
+
+    We have two cases to consider:
+    \begin{itemize}
+    \item $\status_1 = \frozentrue$:
+
+      In this case, $S(l) = \state{d_1}{\frozentrue}$.
+
+      Let $u_{p_i}$ be the state update operation in $U_S$ that
+      affects the contents of $l$.
+
+      Hence $(U_S(S))(l) = u_{p_i}(\state{d_1}{\frozentrue})$.
+
+      We know from Definition~\ref{def:set-of-state-update-operations}
+      that $u_{p_i}(\state{d_1}{\frozentrue})$ is either
+      $\state{d_1}{\frozentrue}$ or $\state{\top}{\frozenfalse}$.
+
+      But if $u_{p_i}(\state{d_1}{\frozentrue}) =
+      \state{\top}{\frozenfalse}$, then
+      $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$, which contradicts
+      our assumption that $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq
+      \topS$.
+
+      Hence $u_{p_i}(\state{d_1}{\frozentrue}) =
+      \state{d_1}{\frozentrue}$.
+
+      Hence $(U_S(S))(l) = \state{d_1}{\frozentrue}$, and we already
+      have from the premises of {\sc E-Freeze-Final} that
+      $\forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q}
+      \Rightarrow d_2 \in H)$.
+
+      Hence, by {\sc E-Freeze-Final}, we have that
+
+      $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
+            \dots}}{H}} \parstepsto
+      \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
+
+      Finally, since $u_{p_i}$ is the state update operation in $U_S$
+      that affects the contents of $l$,
+
+      and $u_{p_i}(\state{d_1}{\frozentrue}) =
+      \state{d_1}{\frozentrue}$, we have that
+      $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
+      $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case is
       satisfied.
 
-    \item Case {\sc E-Get}:
+    \item $\status_1 = \frozenfalse$:
 
-      Given: $\config{S}{\getexp{l}{P}} \parstepsto \config{S}{p_2}$.
-
-      To show: $\config{U_S(S)}{\getexp{l}{P}} \parstepsto
-      \config{U_S(S)}{p_2}$.
-
-      From the premises of {\sc E-Get}, $S(l) = p_1$ and $\incomp{P}$
-      and $p_2 \in P$ and $p_2 \leqp p_1$.
-
-      By assumption, $U_S(S) \neq \topS$.
-
-      Hence $(U_S(S))(l) = p'_1$, where $p_1 \leqp p'_1$.
-
-      By the transitivity of $\leqp$, $p_2 \leqp p'_1$.
-
-      Hence, $(U_S(S))(l) = p'_1$ and $\incomp{P}$ and $p_2 \in P$ and
-      $p_2 \leqp p'_1$.
-
-      Therefore, by {\sc E-Get},
-
-      $\config{U_S(S)}{\getexp{l}{P}} \parstepsto
-      \config{U_S(S)}{p_2}$,
-
-      as we were required to show.
-
-    \item Case {\sc E-Freeze-Init}:
-
-      Given: $\config{S}{\freezeafter{l}{Q}{\lam{x}{e}}} \parstepsto \\
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
-
-      To show: $\config{U_S(S)}{\freezeafter{l}{Q}{\lam{x}{e}}}
-      \parstepsto \\
-      \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e}}{\setof{}}{\setof{}}}$.
-
-      Immediate by {\sc E-Freeze-Init}.
-
-    \item Case {\sc E-Spawn-Handler}:
-
-      Given:
-
-      $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}} \parstepsto \\
-      \config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-            e, \dots}} {\{d_2\}\cup H}}$.
-
-      To show:
-
-      $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}} \parstepsto \\
-      \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-            e, \dots}} {\{d_2\}\cup H}}$.
-
-      From the premises of {\sc E-Spawn-Handler}, $S(l) =
-      \state{d_1}{\status_1}$ and $d_2 \userleq d_1$ and $d_2 \notin
-      H$ and $d_2 \in Q$.
-
-      By assumption, $U_S(S) \neq \topS$.
-
-      Hence $(U_S(S))(l) = \state{d'_1}{\status'_1}$ where
-      $\state{d_1}{\status_1} \leqp \state{d'_1}{\status'_1}$.
-
-      By Definition~\ref{def:lattice-with-status-bits}, $d_1 \userleq
-      d'_1$.
-
-      By the transitivity of $\userleq$, $d_2 \userleq d'_1$.
-
-      Hence $(U_S(S))(l) = \state{d'_1}{\status'_1}$ and $d_2 \userleq
-      d'_1$ and $d_2 \notin H$ and $d_2 \in Q$.
-
-      Therefore, by {\sc E-Spawn-Handler},
-
-      $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{e,
-            \dots}}{H}} \parstepsto \\
-      \config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{\subst{e_0}{x}{d_2},
-            e, \dots}} {\{d_2\}\cup H}}$,
-
-      as we were required to show.
-
-    \item Case {\sc E-Freeze-Final}:
-
-      Given:
+      By assumption, $U_S$ is freeze-safe with
       $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}} \parstepsto \\
+            \dots}}{H}} \parstepsto
       \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
-      To show:
+      Therefore $U_S$ acts as the identity on the contents of any
+      locations that change status during the transition.
+
+      Since $\status_1 = \frozenfalse$, the contents of $l$ change
+      status during the transition.
+
+      Therefore $U_S$ acts as the identity on the contents of $l$.
+
+      Hence $(U_S(S))(l) = S(l) = \state{d_1}{\status_1}$, and we
+      already have from the premises of {\sc E-Freeze-Final} that
+      $\forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q}
+      \Rightarrow d_2 \in H)$.
+
+      Hence, by {\sc E-Freeze-Final}, we have that
+
       $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-            \dots}}{H}} \parstepsto \\
-      \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{d_1}$.
+            \dots}}{H}} \parstepsto
+      \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
 
-      From the premises of {\sc E-Freeze-Final}, $S(l) =
-      \state{d_1}{\status_1}$.
+      Finally, since $U_S$ acts as the identity on the contents of
+      $l$, we have that $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is
+      equal to $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case
+      is satisfied.
+    \end{itemize}
 
-      We have two cases to consider:
-      \begin{itemize}
-        \item $\status_1 = \frozentrue$:
+  \item Case {\sc E-Freeze-Simple}:
 
-          In this case, $S(l) = \state{d_1}{\frozentrue}$.
+    Given: $\config{S}{\freeze{l}} \parstepsto
+    \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
-          Let $u_{p_i}$ be the state update operation in $U_S$ that
-          affects the contents of $l$.  Hence $(U_S(S))(l) =
-          u_{p_i}(\state{d_1}{\frozentrue})$.
+    To show: $\config{U_S(S)}{\freeze{l}} \parstepsto
+    \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{d_1}$.
 
-          We know from
-          Definition~\ref{def:set-of-state-update-operations} that
-          $u_{p_i}(\state{d_1}{\frozentrue})$ is either
-          $\state{d_1}{\frozentrue}$ or $\state{\top}{\frozenfalse}$.
+    From the premises of {\sc E-Freeze-Simple}, $S(l) =
+    \state{d_1}{\status_1}$.
 
-          But if $u_{p_i}(\state{d_1}{\frozentrue}) =
-          \state{\top}{\frozenfalse}$, then
-          $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$, which
-          contradicts our assumption that
-          $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$.  Hence
-          $u_{p_i}(\state{d_1}{\frozentrue}) =
-          \state{d_1}{\frozentrue}$.
+    We have two cases to consider:
+    \begin{itemize}
+    \item $\status_1 = \frozentrue$:
 
-          Hence $(U_S(S))(l) = \state{d_1}{\frozentrue}$, and we
-          already have from the premises of {\sc E-Freeze-Final} that
-          $\forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q}
-          \Rightarrow d_2 \in H)$.  Hence, by {\sc E-Freeze-Final}, we
-          have that \\
-          $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-                \dots}}{H}} \parstepsto \\
-          \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
+      In this case, $S(l) = \state{d_1}{\frozentrue}$.
 
-          Finally, since $u_{p_i}$ is the state update operation in
-          $U_S$ that affects the contents of $l$, \\ and
-          $u_{p_i}(\state{d_1}{\frozentrue}) =
-          \state{d_1}{\frozentrue}$, we have that
-          $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
-          $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case is
-          satisfied.
+      Let $u_{p_i}$ be the state update operation in $U_S$ that
+      affects the contents of $l$.
 
-        \item $\status_1 = \frozenfalse$:
+      Hence $(U_S(S))(l) = u_{p_i}(\state{d_1}{\frozentrue})$.
 
-          By assumption, $U_S$ is freeze-safe with
-          $\config{S}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-                \dots}}{H}} \parstepsto
-          \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.  Therefore
-          $U_S$ acts as the identity on the contents of any locations
-          that change status during the transition.  Since $\status_1
-          = \frozenfalse$, the contents of $l$ change status during
-          the transition.  Therefore $U_S$ acts as the identity on the
-          contents of $l$.
+      We know from Definition~\ref{def:set-of-state-update-operations}
+      that $u_{p_i}(\state{d_1}{\frozentrue})$ is either
+      $\state{d_1}{\frozentrue}$ or $\state{\top}{\frozenfalse}$.
 
-          Hence $(U_S(S))(l) = S(l) = \state{d_1}{\status_1}$, and we
-          already have from the premises of {\sc E-Freeze-Final} that
-          $\forall{d_2} ~.~ ( {d_2 \userleq d_1 \land d_2 \in Q}
-          \Rightarrow d_2 \in H)$.  Hence, by {\sc E-Freeze-Final}, we
-          have that
-          $\config{U_S(S)}{\freezeafterfull{l}{Q}{\lam{x}{e_0}}{\setof{v,
-                \dots}}{H}} \parstepsto
-          \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
+      But if $u_{p_i}(\state{d_1}{\frozentrue}) =
+      \state{\top}{\frozenfalse}$, then
+      $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$, which contradicts
+      our assumption that $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq
+      \topS$.
 
-          Finally, since $U_S$ acts as the identity on the contents of
-          $l$, we have that $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is
-          equal to $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the
-          case is satisfied.
-      \end{itemize}
+      Hence $u_{p_i}(\state{d_1}{\frozentrue}) =
+      \state{d_1}{\frozentrue}$.
 
-    \item Case {\sc E-Freeze-Simple}:
+      Hence $(U_S(S))(l) = \state{d_1}{\frozentrue}$.
 
-      Given: $\config{S}{\freeze{l}} \parstepsto
-      \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
+      Hence, by {\sc E-Freeze-Simple}, we have that
+      $\config{U_S(S)}{\freeze{l}} \parstepsto
+      \\ \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
 
-      To show: $\config{U_S(S)}{\freeze{l}} \parstepsto
-      \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{d_1}$.
+      Finally, since $u_{p_i}$ is the state update operation in $U_S$
+      that affects the contents of $l$,
 
-      From the premises of {\sc E-Freeze-Simple}, $S(l) =
-      \state{d_1}{\status_1}$.
+      and $u_{p_i}(\state{d_1}{\frozentrue}) =
+      \state{d_1}{\frozentrue}$, we have that
+      $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
+      $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case is
+      satisfied.
 
-      We have two cases to consider:
-      \begin{itemize}
-        \item $\status_1 = \frozentrue$:
+    \item $\status_1 = \frozenfalse$:
 
-          In this case, $S(l) = \state{d_1}{\frozentrue}$.
+      By assumption, $U_S$ is freeze-safe with $\config{S}{\freeze{l}}
+      \parstepsto \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.
 
-          Let $u_{p_i}$ be the state update operation in $U_S$ that
-          affects the contents of $l$.  Hence $(U_S(S))(l) =
-          u_{p_i}(\state{d_1}{\frozentrue})$.
+      Therefore $U_S$ acts as the identity on the contents of any
+      locations that change status during the transition.
 
-          We know from
-          Definition~\ref{def:set-of-state-update-operations} that
-          $u_{p_i}(\state{d_1}{\frozentrue})$ is either
-          $\state{d_1}{\frozentrue}$ or $\state{\top}{\frozenfalse}$.
+      Since $\status_1 = \frozenfalse$, the contents of $l$ change
+      status during the transition.
 
-          But if $u_{p_i}(\state{d_1}{\frozentrue}) =
-          \state{\top}{\frozenfalse}$, then
-          $U_S(\extS{S}{l}{d_1}{\frozentrue}) = \topS$, which
-          contradicts our assumption that
-          $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$.  Hence
-          $u_{p_i}(\state{d_1}{\frozentrue}) =
-          \state{d_1}{\frozentrue}$.
+      Therefore $U_S$ acts as the identity on the contents of $l$.
 
-          Hence $(U_S(S))(l) = \state{d_1}{\frozentrue}$.
+      Hence $(U_S(S))(l) = S(l) = \state{d_1}{\status_1}$.
 
-          Hence, by {\sc E-Freeze-Simple}, we have that
-          $\config{U_S(S)}{\freeze{l}} \parstepsto \\
-          \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
+      Hence, by {\sc E-Freeze-Simple}, we have that
+      $\config{U_S(S)}{\freeze{l}} \parstepsto
+      \\ \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
 
-          Finally, since $u_{p_i}$ is the state update operation in
-          $U_S$ that affects the contents of $l$, \\ and
-          $u_{p_i}(\state{d_1}{\frozentrue}) =
-          \state{d_1}{\frozentrue}$, we have that
-          $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is equal to
-          $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case is
-          satisfied.
-
-        \item $\status_1 = \frozenfalse$:
-
-          By assumption, $U_S$ is freeze-safe with
-          $\config{S}{\freeze{l}} \parstepsto
-          \config{\extS{S}{l}{d_1}{\frozentrue}}{d_1}$.  Therefore
-          $U_S$ acts as the identity on the contents of any locations
-          that change status during the transition.  Since $\status_1
-          = \frozenfalse$, the contents of $l$ change status during
-          the transition.  Therefore $U_S$ acts as the identity on the
-          contents of $l$.
-
-          Hence $(U_S(S))(l) = S(l) = \state{d_1}{\status_1}$.
-
-          Hence, by {\sc E-Freeze-Simple}, we have that
-          $\config{U_S(S)}{\freeze{l}} \parstepsto \\
-          \config{\extS{(U_S(S))}{l}{d_1}{\frozentrue}}{d_1}$.
-
-          Finally, since $U_S$ acts as the identity on the contents of
-          $l$, we have that $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is
-          equal to $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the
-          case is satisfied.
-      \end{itemize}
+      Finally, since $U_S$ acts as the identity on the contents of
+      $l$, we have that $\extS{(U_S(S))}{l}{d_1}{\frozentrue}$ is
+      equal to $U_S(\extS{S}{l}{d_1}{\frozentrue})$, and so the case
+      is satisfied.
+    \end{itemize}
 
   \end{itemize}
 \end{proof}

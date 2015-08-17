@@ -1,18 +1,21 @@
 \begin{proof}
   Suppose $\conf \ctxstepsto \conf_a$ and $\conf \ctxstepsto \conf_b$.
+
   We have to show that either there exist $\conf_c, i, j, \pi$ such
   that $\conf_a \ctxstepsto^i \conf_c$ and $\pi(\conf_b) \ctxstepsto^j
   \conf_c$ and $i \leq 1$ and $j \leq 1$, or that $\conf_a \ctxstepsto
   \error$ or $\conf_b \ctxstepsto \error$.
 
   By inspection of the operational semantics, it must be the case that
-  $\conf$ steps to $\conf_a$ by the {\sc E-Eval-Ctxt} rule.  Let
-  $\conf = \config{S}{\evalctxt{E_a}{e_{a_1}}}$ and let $\conf_a =
+  $\conf$ steps to $\conf_a$ by the {\sc E-Eval-Ctxt} rule.
+
+  Let $\conf = \config{S}{\evalctxt{E_a}{e_{a_1}}}$ and let $\conf_a =
   \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$.
 
   Likewise, it must be the case that $\conf$ steps to $\conf_b$ by the
-  {\sc E-Eval-Ctxt} rule.  Let $\conf =
-  \config{S}{\evalctxt{E_b}{e_{b_1}}}$ and let $\conf_b =
+  {\sc E-Eval-Ctxt} rule.
+
+  Let $\conf = \config{S}{\evalctxt{E_b}{e_{b_1}}}$ and let $\conf_b =
   \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$.
 
   Note that $\conf = \config{S}{\evalctxt{E_a}{e_{a_1}}} =
@@ -21,40 +24,49 @@
   $E_b$ may differ and $e_{a_1}$ and $e_{b_1}$ may differ.
 
   First, consider the possibility that $E_a = E_b$ (and $e_{a_1} =
-  e_{b_1}$).  Since $\config{S}{\evalctxt{E_a}{e_{a_1}}} \ctxstepsto
+  e_{b_1}$).
+
+  Since $\config{S}{\evalctxt{E_a}{e_{a_1}}} \ctxstepsto
   \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$ by {\sc E-Eval-Ctxt} and
   $\config{S}{\evalctxt{E_b}{e_{b_1}}} \ctxstepsto
   \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$ by {\sc E-Eval-Ctxt}, we have
   from the premise of {\sc E-Eval-Ctxt} that $\config{S}{e_{a_1}}
   \parstepsto \config{S_a}{e_{a_2}}$ and $\config{S}{e_{b_1}}
-  \parstepsto \config{S_b}{e_{b_2}}$.  But then, since $e_{a_1} =
-  e_{b_1}$, by Internal Determinism
+  \parstepsto \config{S_b}{e_{b_2}}$.
+
+  But then, since $e_{a_1} = e_{b_1}$, by Internal Determinism
   (Lemma~\ref{lem:internal-determinism}) there is a permutation $\pi'$
   such that $\config{S_a}{e_{a_2}} = \pi'(\config{S_b}{e_{b_2}})$,
-  modulo choice of events.  We have two cases:
+  modulo choice of events.
+
+  We have two cases:
 
   \begin{itemize}
-    \item In the case where the steps $\conf \ctxstepsto \conf_a$ and
-      $\conf \ctxstepsto \conf_b$ are both by {\sc E-Spawn-Handler}
-      and they handle different events $d_2$ and $d'_2$, then we can
-      satisfy the proof by choosing the final configuration $\conf_c$
-      as the configuration where both $d_2$ and $d'_2$ have been
-      handled.  Both $\conf_a$ and $\conf_b$ can step to this
-      configuration by {\sc E-Spawn-Handler}: if the step from $\conf$
-      to $\conf_a$ handles $d_2$ then the step from $\conf_a$ to
-      $\conf_c$ handles $d'_2$, while if the step from $\conf$ to
-      $\conf_b$ handles $d'_2$ then the step from $\conf_b$ to
-      $\conf_c$ handles $d_2$.  The store in the final configuration
-      is $S_a$ or $S_b$, which are equal because {\sc E-Spawn-Handler}
-      does not affect the store, and we can satisfy the proof by
-      choosing $i = 1$ and $j = 0$ and $\pi = \id$.
-    \item Otherwise, we can satisfy the proof by choosing $\conf_c =
-      \config{S_a}{e_{a_2}}$ and $i = 0$ and $j = 0$ and $\pi = \id$.
+  \item In the case where the steps $\conf \ctxstepsto \conf_a$ and
+    $\conf \ctxstepsto \conf_b$ are both by {\sc E-Spawn-Handler} and
+    they handle different events $d_2$ and $d'_2$, then we can satisfy
+    the proof by choosing the final configuration $\conf_c$ as the
+    configuration where both $d_2$ and $d'_2$ have been handled.
+
+    Both $\conf_a$ and $\conf_b$ can step to this configuration by
+    {\sc E-Spawn-Handler}: if the step from $\conf$ to $\conf_a$
+    handles $d_2$ then the step from $\conf_a$ to $\conf_c$ handles
+    $d'_2$, while if the step from $\conf$ to $\conf_b$ handles $d'_2$
+    then the step from $\conf_b$ to $\conf_c$ handles $d_2$.
+
+    The store in the final configuration is $S_a$ or $S_b$, which are
+    equal because {\sc E-Spawn-Handler} does not affect the store, and
+    we can satisfy the proof by choosing $i = 1$ and $j = 0$ and $\pi
+    = \id$.
+
+  \item Otherwise, we can satisfy the proof by choosing $\conf_c =
+    \config{S_a}{e_{a_2}}$ and $i = 0$ and $j = 0$ and $\pi = \id$.
   \end{itemize}
 
   The rest of this proof deals with the more interesting case in which
-  $E_a \neq E_b$ (and $e_{a_1} \neq e_{b_1}$).  Since
-  $\config{S}{\evalctxt{E_a}{e_{a_1}}} \ctxstepsto
+  $E_a \neq E_b$ (and $e_{a_1} \neq e_{b_1}$).
+
+  Since $\config{S}{\evalctxt{E_a}{e_{a_1}}} \ctxstepsto
   \config{S_a}{\evalctxt{E_a}{e_{a_2}}}$ and
   $\config{S}{\evalctxt{E_b}{e_{b_1}}} \ctxstepsto
   \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$ and $\evalctxt{E_a}{e_{a_1}}
@@ -66,13 +78,15 @@
   \item $\evalctxt{E'_a}{e_{a_1}} = \evalctxt{E_b}{e_{b_2}}$, and
   \item $\evalctxt{E'_b}{e_{b_1}} = \evalctxt{E_a}{e_{a_2}}$, and
   \item $\evalctxt{E'_a}{e_{a_2}} =
-  \evalctxt{E'_b}{e_{b_2}}$.
+    \evalctxt{E'_b}{e_{b_2}}$.
   \end{itemize}
 
   In some of the cases that follow, we will choose $\conf_c = \error$,
   and in some we will prove that one of $\conf_a$ or $\conf_b$ steps
-  to $\error$.  In most cases, however, our approach will be to show
-  that there exist $S', i, j, \pi$ such that:
+  to $\error$.
+
+  In most cases, however, our approach will be to show that there
+  exist $S', i, j, \pi$ such that:
   \begin{itemize}
   \item $\config{S_a}{\evalctxt{E_a}{e_{a_2}}} \ctxstepsto^i
     \config{S'}{\evalctxt{E'_a}{e_{a_2}}}$, and
@@ -91,20 +105,24 @@
   \end{itemize}
   From the premise of {\sc E-Eval-Ctxt}, we have that
   $\config{S}{e_{a_1}} \parstepsto \config{S_a}{e_{a_2}}$ and
-  $\config{S}{e_{b_1}} \parstepsto \config{S_b}{e_{b_2}}$.  We proceed
-  by case analysis on the rule by which $\config{S}{e_{a_1}}$ steps to
-  $\config{S_a}{e_{a_2}}$.  Since the only way an $\error$
-  configuration can arise is by the {\sc E-Put-Err} rule, we can
-  assume in all other cases that $\conf_a \neq \error$.
+  $\config{S}{e_{b_1}} \parstepsto \config{S_b}{e_{b_2}}$.
+
+  We proceed by case analysis on the rule by which
+  $\config{S}{e_{a_1}}$ steps to $\config{S_a}{e_{a_2}}$.
+
+  Since the only way an $\error$ configuration can arise is by the
+  {\sc E-Put-Err} rule, we can assume in all other cases that $\conf_a
+  \neq \error$.
 
   \begin{enumerate}
   \item Case {\sc E-Beta}: We have $S_a = S$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
-    only way an $\error$ configuration can arise is by the {\sc
-      E-Put-Err} rule, we can assume in all other cases that $\conf_b
-    \neq \error$.
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.
+
+    Since the only way an $\error$ configuration can arise is by the
+    {\sc E-Put-Err} rule, we can assume in all other cases that
+    $\conf_b \neq \error$.
     \begin{enumerate}
     \item \label{slqc-beta-beta}Case {\sc E-Beta}: We have $S_a = S$
       and $S_b = S$.
@@ -137,32 +155,40 @@
       \end{itemize}
 
       The first of these follows immediately from $\config{S}{e_{b_1}}
-      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
-      the second, consider that $S_b = \extS{S}{l}{\bot}{\frozenfalse}
-      = U_S(S)$, where $U_S$ is the store update operation that acts
-      as the identity on the contents of all existing locations, and
-      adds the binding $\storebinding{l}{\bot}{\frozenfalse}$ if no
-      binding for $l$ exists.  Note that:
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.
+
+      For the second, consider that $S_b =
+      \extS{S}{l}{\bot}{\frozenfalse} = U_S(S)$, where $U_S$ is the
+      store update operation that acts as the identity on the contents
+      of all existing locations, and adds the binding
+      $\storebinding{l}{\bot}{\frozenfalse}$ if no binding for $l$
+      exists.
+
+      Note that:
       \begin{itemize}
       \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
         allocated in the transition;
-        \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
-          and we know that $\conf_b \neq \error$; and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
-          \parstepsto \config{S_a}{e_{a_2}}$, since $S_a = S$, so
-          there are no locations whose contents differ in status
-          between them.
+      \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
+        and we know that $\conf_b \neq \error$; and
+      \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+        \parstepsto \config{S_a}{e_{a_2}}$, since $S_a = S$, so
+        there are no locations whose contents differ in status
+        between them.
       \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{a_1}} \parstepsto \\
-      \config{U_S(S_a)}{e_{a_2}}$.  Hence $\config{S_b}{e_{a_1}}
-      \parstepsto \config{S_b}{e_{a_2}}$.  By {\sc E-Eval-Ctxt}, it
-      follows that \\ $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, \\ as we were required to
-      show.
+
+      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      \config{U_S(S_a)}{e_{a_2}}$.
+
+      Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
+
+      By {\sc E-Eval-Ctxt}, it follows that
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$,
+      as we were required to show.
 
     \item \label{slqc-beta-put}Case {\sc E-Put}: We have $S_a = S$ and
       $S_b = \extSRaw{S}{l}{u_{p_i}(p_1)}$.
@@ -178,35 +204,43 @@
       \end{itemize}
 
       The first of these follows immediately from $\config{S}{e_{b_1}}
-      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
-      the second, consider that $S_b = U_S(S)$, where $U_S$ is the
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.
+
+      For the second, consider that $S_b = U_S(S)$, where $U_S$ is the
       store update operation that applies $u_{p_i}$ to the contents of
-      $l$ and acts as the identity on all other locations.  Note that:
+      $l$ and acts as the identity on all other locations.
+
+      Note that:
       \begin{itemize}
       \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
         allocated in the transition;
-        \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
-          and we know that $\conf_b \neq \error$; and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
-          \parstepsto \config{S_a}{e_{a_2}}$, since $S_a = S$, so
-          there are no locations whose contents differ in status
-          between them.
+      \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
+        and we know that $\conf_b \neq \error$; and
+      \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+        \parstepsto \config{S_a}{e_{a_2}}$, since $S_a = S$, so
+        there are no locations whose contents differ in status
+        between them.
       \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{a_1}} \parstepsto \\
-      \config{U_S(S_a)}{e_{a_2}}$.  Hence $\config{S_b}{e_{a_1}}
-      \parstepsto \config{S_b}{e_{a_2}}$.  By {\sc E-Eval-Ctxt}, it
-      follows that \\ $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, \\ as we were required to
+
+      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      \config{U_S(S_a)}{e_{a_2}}$.
+
+      Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
+
+      By {\sc E-Eval-Ctxt}, it follows that
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
       show.
 
     \item \label{slqc-beta-put-err}Case {\sc E-Put-Err}: We have $S_a
       = S$ and $\config{S_b}{e_{b_2}} = \error$, and so we choose
-      $\conf_c = \error$, $i = 1$, $j = 0$, and $\pi = \id$.  We have
-      to show that:
+      $\conf_c = \error$, $i = 1$, $j = 0$, and $\pi = \id$.
+
+      We have to show that:
       \begin{itemize}
       \item $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto \error$,
         and
@@ -216,13 +250,17 @@
       The second of these is immediately true because since
       $\config{S_b}{e_{b_2}} = \error$, $S_b = \topS$, and so
       $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ is equal to $\error$ as
-      well.  For the first, observe that $\config{S}{e_{b_1}}
-      \parstepsto \config{S_b}{e_{b_2}}$, hence by {\sc E-Eval-Ctxt},
+      well.
+
+      For the first, observe that $\config{S}{e_{b_1}} \parstepsto
+      \config{S_b}{e_{b_2}}$, hence by {\sc E-Eval-Ctxt},
       $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-      \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$.  But $S_b = \topS$, so
-      $\config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$ is equal to $\error$,
-      and so $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-      \error$, as required.
+      \config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$.
+
+      But $S_b = \topS$, so $\config{S_b}{\evalctxt{E'_b}{e_{b_2}}}$
+      is equal to $\error$, and so
+      $\config{S}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto \error$, as
+      required.
 
     \item \label{slqc-beta-get}Case {\sc E-Get}: Similar to
       case~\ref{slqc-beta-beta}, since $S_a = S$ and $S_b = S$.
@@ -246,29 +284,36 @@
       \end{itemize}
 
       The first of these follows immediately from $\config{S}{e_{b_1}}
-      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.  For
-      the second, note that $S_b = U_S(S)$, where $U_S$ is the store
-      update operation that freezes the contents of $l$ and acts as
-      the identity on the contents of all other locations.  Note that:
+      \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.
+
+      For the second, note that $S_b = U_S(S)$, where $U_S$ is the
+      store update operation that freezes the contents of $l$ and acts
+      as the identity on the contents of all other locations.
+
+      Note that:
       \begin{itemize}
-        \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
-          \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
-          allocated in the transition;
-        \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
-          and we know that $\conf_b \neq \error$; and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
-          \parstepsto \config{S_a}{e_{a_2}}$, since $S_a = S$, so
-          there are no locations whose contents differ in status
-          between them.
+      \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+        \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
+        allocated in the transition;
+      \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
+        and we know that $\conf_b \neq \error$; and
+      \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+        \parstepsto \config{S_a}{e_{a_2}}$, since $S_a = S$, so
+        there are no locations whose contents differ in status
+        between them.
       \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{a_1}} \parstepsto \\
-      \config{U_S(S_a)}{e_{a_2}}$.  Hence $\config{S_b}{e_{a_1}}
-      \parstepsto \config{S_b}{e_{a_2}}$.  By {\sc E-Eval-Ctxt}, it
-      follows that \\ $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, \\ as we were required to
+
+      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      \config{U_S(S_a)}{e_{a_2}}$.
+
+      Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
+
+      By {\sc E-Eval-Ctxt}, it follows that
+      $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{S_b}{\evalctxt{E'_a}{e_{a_2}}}$, as we were required to
       show.
 
     \item \label{slqc-beta-freeze-simple}Case {\sc E-Freeze-Simple}:
@@ -279,10 +324,11 @@
   \item Case {\sc E-New}: We have $S_a = \extS{S}{l}{\bot}{\frozenfalse}$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
-    only way an $\error$ configuration can arise is by the {\sc
-      E-Put-Err} rule, we can assume in all other cases that $\conf_b
-    \neq \error$.
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.
+
+    Since the only way an $\error$ configuration can arise is by the
+    {\sc E-Put-Err} rule, we can assume in all other cases that
+    $\conf_b \neq \error$.
     \begin{enumerate}
     \item \label{slqc-new-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-new}.
     \item \label{slqc-new-new}Case {\sc E-New}: We have $S_a =
@@ -291,196 +337,229 @@
 
       Now consider whether $l = l'$:
       \begin{itemize}
-        \item If $l \neq l'$:
+      \item If $l \neq l'$:
 
-          Choose $S' =
-          \extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$,
-          $i = 1$, $j = 1$, and $\pi = \id$.
+        Choose $S' =
+        \extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$,
+        $i = 1$, $j = 1$, and $\pi = \id$.
 
-          We have to show that:
-          \begin{itemize}
-          \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-            \config{\extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
-            and
-          \item $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-            \config{\extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{e_{a_2}}}$.
-          \end{itemize}
+        We have to show that:
+        \begin{itemize}
+        \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+          \config{\extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          and
+        \item $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+          \config{\extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{e_{a_2}}}$.
+        \end{itemize}
 
-          For the first of these, consider that $S_a =
-          \extS{S}{l}{\bot}{\frozenfalse} = U_S(S)$, where $U_S$ is
-          the store update operation that acts as the identity on the
-          contents of all existing locations, and adds the binding
-          $\storebinding{l}{\bot}{\frozenfalse}$ if no binding for $l$
-          exists.  Note that:
-          \begin{itemize}
-          \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
-            \parstepsto \config{S_b}{e_{b_2}}$, since the only
-            location allocated in the transition is $l'$, and $l
-            \neq l'$ in this case;
-          \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
-            \extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
-            and we know $S \neq \topS$ and the addition of new
-            bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
-            $\storebinding{l'}{\bot}{\frozenfalse}$ cannot cause it to
-            become $\topS$; and
-          \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
-            \parstepsto \config{S_b}{e_{b_2}}$, since $S_b =
-            \extS{S}{l'}{\bot}{\frozenfalse}$ and $l' \notin \dom{S}$,
-            so there are no locations whose contents differ in status
-            between $S$ and $S_b$.
-          \end{itemize}
+        For the first of these, consider that $S_a =
+        \extS{S}{l}{\bot}{\frozenfalse} = U_S(S)$, where $U_S$ is
+        the store update operation that acts as the identity on the
+        contents of all existing locations, and adds the binding
+        $\storebinding{l}{\bot}{\frozenfalse}$ if no binding for $l$
+        exists.
 
-          Therefore, by Lemma~\ref{lem:generalized-independence}
-          (Generalized Independence), we have that
-          $\config{U_S(S)}{e_{b_1}} \parstepsto \\
-          \config{U_S(S_b)}{e_{b_2}}$.  Hence
-          $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
-          \parstepsto
-          \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.  By
-                 {\sc E-Eval-Ctxt} it follows that
-                 $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
-                 \parstepsto \\
-                 \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
-                 which, since $S_b =
-                 \extS{S}{l'}{\bot}{\frozenfalse}$, is what we were
-                 required to show.  The argument for the second is
-                 symmetrical.
+        Note that:
+        \begin{itemize}
+        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+          \parstepsto \config{S_b}{e_{b_2}}$, since the only
+          location allocated in the transition is $l'$, and $l
+          \neq l'$ in this case;
+        \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
+          \extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
+          and we know $S \neq \topS$ and the addition of new
+          bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
+          $\storebinding{l'}{\bot}{\frozenfalse}$ cannot cause it to
+          become $\topS$; and
+        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+          \parstepsto \config{S_b}{e_{b_2}}$, since $S_b =
+          \extS{S}{l'}{\bot}{\frozenfalse}$ and $l' \notin \dom{S}$,
+          so there are no locations whose contents differ in status
+          between $S$ and $S_b$.
+        \end{itemize}
 
-        \item If $l = l'$:
+        Therefore, by Lemma~\ref{lem:generalized-independence}
+        (Generalized Independence), we have that
 
-          In this case, observe that we do \emph{not} want the
-          expression in the final configuration to be
-          $\evalctxt{E'_a}{e_{a_2}}$ (nor its equivalent,
-          $\evalctxt{E'_b}{e_{b_2}}$).  The reason for this is that
-          $\evalctxt{E'_a}{e_{a_2}}$ contains both occurrences of $l$.
-          Rather, we want both configurations to step to a
-          configuration in which exactly one occurrence of $l$ has
-          been renamed to a fresh location $l''$.
+        $\config{U_S(S)}{e_{b_1}} \parstepsto
+        \config{U_S(S_b)}{e_{b_2}}$.
 
-          Let $l''$ be a location such that $l'' \notin \dom{S}$ and
-          $l'' \neq l$ (and hence $l'' \neq l'$, as well).  Then
-          choose $S' =
-          \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$,
-          $i = 1$, $j = 1$, and $\pi = \setof{(l, l'')}$.
+        Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
+        \parstepsto
+        \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.
 
-          Either
-          $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{\pi(e_{a_2})}}$
-          or
-          $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$
-          would work as a final configuration; we choose \\
-          $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
+        By {\sc E-Eval-Ctxt} it follows that
 
-          We have to show that:
-          \begin{itemize}
-          \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-            \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$,
-            and
-          \item $\pi(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}})
-            \ctxstepsto
-            \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
-          \end{itemize}
+        $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
+        \parstepsto
+        \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
+        which, since $S_b = \extS{S}{l'}{\bot}{\frozenfalse}$, is what
+        we were required to show.
 
-          For the first of these, since $\config{S}{e_{b_1}}
-          \parstepsto \config{S_b}{e_{b_2}}$, we have by
-          Lemma~\ref{lem:permutability} (Permutability) that
-          $\pi(\config{S}{e_{b_1}}) \parstepsto
-          \pi(\config{S_b}{e_{b_2}})$.  Since $\pi = \setof{(l,
-            l'')}$, but $l \notin S$ (from the side condition on {\sc
-            E-New}), we have that $\pi(\config{S}{e_{b_1}}) =
-          \config{S}{e_{b_1}}$. Since $\config{S_b}{e_{b_2}} =
-          \config{\extS{S}{l'}{\bot}{\frozenfalse}}{l'}$, and $l = l'$, we have
-          that $\pi(\config{S_b}{e_{b_2}}) =
-          \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.  Hence
-          $\config{S}{e_{b_1}} \parstepsto
-          \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.
+        The argument for the second is symmetrical.
 
-          Let $U_S$ be the store update operation that acts as the
-          identity on the contents of all existing locations, and adds
-          the binding $\storebinding{l}{\bot}{\frozenfalse}$ if no
-          binding for $l$ exists.  Note that:
-          \begin{itemize}
-          \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
-            \parstepsto
-            \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$,
-            since the only location allocated in the transition is
-            $l''$;
-          \item $U_S(\extS{S}{l''}{\bot}{\frozenfalse}) \neq \topS$,
-            since $U_S(\extS{S}{l''}{\bot}{\frozenfalse}) = \\
-            \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
-            and we know $S \neq \topS$ and the addition of new
-            bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
-            $\storebinding{l''}{\bot}{\frozenfalse}$ cannot cause it
-            to become $\topS$; and
-          \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
-            \parstepsto
-            \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$,
-            since $l'' \notin \dom{S}$, so there are no locations
-            whose contents differ in status between $S$ and
-            $\extS{S}{l''}{\bot}{\frozenfalse}$.
-          \end{itemize}
+      \item If $l = l'$:
 
-          Therefore, by Lemma~\ref{lem:generalized-independence}
-          (Generalized Independence), we have that
-          $\config{U_S(S)}{e_{b_1}} \parstepsto
-          \config{U_S(\extS{S}{l''}{\bot}{\frozenfalse})}{\pi(e_{b_2})}$.
-          Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
-          \parstepsto
-          \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.
-          By {\sc E-Eval-Ctxt} it follows that \\
-          $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
-          \parstepsto
+        In this case, observe that we do \emph{not} want the
+        expression in the final configuration to be
+        $\evalctxt{E'_a}{e_{a_2}}$ (nor its equivalent,
+        $\evalctxt{E'_b}{e_{b_2}}$).
+
+        The reason for this is that $\evalctxt{E'_a}{e_{a_2}}$
+        contains both occurrences of $l$.
+
+        Rather, we want both configurations to step to a configuration
+        in which exactly one occurrence of $l$ has been renamed to a
+        fresh location $l''$.
+
+        Let $l''$ be a location such that $l'' \notin \dom{S}$ and
+        $l'' \neq l$ (and hence $l'' \neq l'$, as well).
+
+        Then choose $S' =
+        \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$,
+        $i = 1$, $j = 1$, and $\pi = \setof{(l, l'')}$.
+
+        Either
+        $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{\pi(e_{a_2})}}$
+        or
+        $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$
+        would work as a final configuration; we choose
+
+        $\config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
+
+        We have to show that:
+        \begin{itemize}
+        \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
           \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$,
-          which, since $\extS{S}{l}{\bot}{\frozenfalse} = S_a$, is
-          what we were required to show.
-
-          For the second, observe that since $S_b =
-          \extS{S}{l}{\bot}{\frozenfalse}$, we have that $\pi(S_b) =
-          \extS{S}{l''}{\bot}{\frozenfalse}$.  Also, since $l$ does not occur in
-          $e_{a_1}$, we have that $\pi(\evalctxt{E'_a}{e_{a_1}}) =
-          \evalctxt{(\pi(E'_a))}{e_{a_1}}$.  Hence we have to show that
-          $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_1}}}
-          \ctxstepsto \\
+          and
+        \item $\pi(\config{S_b}{\evalctxt{E'_a}{e_{a_1}}})
+          \ctxstepsto
           \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
+        \end{itemize}
 
-          Let $U_S$ be the store update operation that acts as the
-          identity on the contents of all existing locations, and adds
-          the binding $\storebinding{l''}{\bot}{\frozenfalse}$ if no
-          binding for $l''$ exists.  Note that:
-          \begin{itemize}
-          \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
-            \parstepsto \config{S_a}{e_{a_2}}$, since the only
-            location allocated in the transition is $l$;
-          \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
-            \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
-            and we know $S \neq \topS$ and the addition of new
-            bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
-            $\storebinding{l''}{\bot}{\frozenfalse}$ cannot cause it
-            to become $\topS$; and
-          \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
-            \parstepsto \config{S_a}{e_{a_2}}$, since $S_a =
-            \extS{S}{l}{\bot}{\frozenfalse}$ and $l \notin \dom{S}$,
-            so there are no locations whose contents differ in status
-            between $S$ and $S_a$.
-          \end{itemize}
+        For the first of these, since $\config{S}{e_{b_1}}
+        \parstepsto \config{S_b}{e_{b_2}}$, we have by
+        Lemma~\ref{lem:permutability} (Permutability) that
+        $\pi(\config{S}{e_{b_1}}) \parstepsto
+        \pi(\config{S_b}{e_{b_2}})$.
 
-          Therefore, by Lemma~\ref{lem:generalized-independence}
-          (Generalized Independence), we have that
-          $\config{U_S(S)}{e_{a_1}} \parstepsto
-          \config{U_S(S_a)}{e_{a_2}}$.  Hence
-          $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{e_{a_1}}
+        Since $\pi = \setof{(l, l'')}$, but $l \notin S$ (from the
+        side condition on {\sc E-New}), we have that
+        $\pi(\config{S}{e_{b_1}}) = \config{S}{e_{b_1}}$.
+
+        Since $\config{S_b}{e_{b_2}} =
+        \config{\extS{S}{l'}{\bot}{\frozenfalse}}{l'}$, and $l = l'$,
+        we have that $\pi(\config{S_b}{e_{b_2}}) =
+        \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.
+
+        Hence $\config{S}{e_{b_1}} \parstepsto
+        \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.
+
+        Let $U_S$ be the store update operation that acts as the
+        identity on the contents of all existing locations, and adds
+        the binding $\storebinding{l}{\bot}{\frozenfalse}$ if no
+        binding for $l$ exists.
+
+        Note that:
+        \begin{itemize}
+        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
           \parstepsto
-          \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{e_{a_2}}$.
-          By {\sc E-Eval-Ctxt} it follows that \\
-          $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_1}}}
-          \ctxstepsto \\
-          \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_2}}}$,
-          which completes the case since
-          $\evalctxt{E'_b}{\pi(e_{b_2})} =
-          \evalctxt{(\pi(E'_a))}{e_{a_2}}$.
+          \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$,
+          since the only location allocated in the transition is
+          $l''$;
+        \item $U_S(\extS{S}{l''}{\bot}{\frozenfalse}) \neq \topS$,
+          since $U_S(\extS{S}{l''}{\bot}{\frozenfalse}) = \\
+          \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
+          and we know $S \neq \topS$ and the addition of new
+          bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
+          $\storebinding{l''}{\bot}{\frozenfalse}$ cannot cause it
+          to become $\topS$; and
+        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+          \parstepsto
+          \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$,
+          since $l'' \notin \dom{S}$, so there are no locations
+          whose contents differ in status between $S$ and
+          $\extS{S}{l''}{\bot}{\frozenfalse}$.
+        \end{itemize}
 
-          \lk{This is really sketchy -- I should really explain why
-            $\evalctxt{E'_b}{\pi(e_{b_2})} =
-            \evalctxt{(\pi(E'_a))}{e_{a_2}}$.}
+        Therefore, by Lemma~\ref{lem:generalized-independence}
+        (Generalized Independence), we have that
+
+        $\config{U_S(S)}{e_{b_1}} \parstepsto
+        \config{U_S(\extS{S}{l''}{\bot}{\frozenfalse})}{\pi(e_{b_2})}$.
+
+        Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
+        \parstepsto
+        \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.
+
+        By {\sc E-Eval-Ctxt} it follows that
+
+        $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
+        \parstepsto
+        \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$,
+
+        which, since $\extS{S}{l}{\bot}{\frozenfalse} = S_a$, is what
+        we were required to show.
+
+        For the second, observe that since $S_b =
+        \extS{S}{l}{\bot}{\frozenfalse}$, we have that $\pi(S_b) =
+        \extS{S}{l''}{\bot}{\frozenfalse}$.
+
+        Also, since $l$ does not occur in $e_{a_1}$, we have that
+        $\pi(\evalctxt{E'_a}{e_{a_1}}) =
+        \evalctxt{(\pi(E'_a))}{e_{a_1}}$.
+
+        Hence we have to show that
+
+        $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_1}}}
+        \ctxstepsto \\
+        \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
+
+        Let $U_S$ be the store update operation that acts as the
+        identity on the contents of all existing locations, and adds
+        the binding $\storebinding{l''}{\bot}{\frozenfalse}$ if no
+        binding for $l''$ exists.
+
+        Note that:
+        \begin{itemize}
+        \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+          \parstepsto \config{S_a}{e_{a_2}}$, since the only
+          location allocated in the transition is $l$;
+        \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
+          \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
+          and we know $S \neq \topS$ and the addition of new
+          bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
+          $\storebinding{l''}{\bot}{\frozenfalse}$ cannot cause it
+          to become $\topS$; and
+        \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+          \parstepsto \config{S_a}{e_{a_2}}$, since $S_a =
+          \extS{S}{l}{\bot}{\frozenfalse}$ and $l \notin \dom{S}$,
+          so there are no locations whose contents differ in status
+          between $S$ and $S_a$.
+        \end{itemize}
+
+        Therefore, by Lemma~\ref{lem:generalized-independence}
+        (Generalized Independence), we have that
+
+        $\config{U_S(S)}{e_{a_1}} \parstepsto
+        \config{U_S(S_a)}{e_{a_2}}$.
+
+        Hence $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{e_{a_1}}
+        \parstepsto
+        \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{e_{a_2}}$.
+
+        By {\sc E-Eval-Ctxt} it follows that
+        
+        $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_1}}}
+        \ctxstepsto \\
+        \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{(\pi(E'_a))}{e_{a_2}}}$,
+
+        which completes the case since $\evalctxt{E'_b}{\pi(e_{b_2})}
+        = \evalctxt{(\pi(E'_a))}{e_{a_2}}$.
+
+        \lk{This is really sketchy -- I should really explain why
+          $\evalctxt{E'_b}{\pi(e_{b_2})} =
+          \evalctxt{(\pi(E'_a))}{e_{a_2}}$.}
 
       \end{itemize}
 
@@ -503,7 +582,9 @@
       store update operation that acts as the identity on the contents
       of all existing locations, and adds the binding
       $\storebinding{l}{\bot}{\frozenfalse}$ if no binding for $l$
-      exists.  Note that:
+      exists.
+
+      Note that:
       \begin{itemize}
       \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
         \parstepsto \config{S_b}{e_{b_2}}$, since no locations are
@@ -516,11 +597,12 @@
       \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}} \parstepsto
         \config{S_b}{e_{b_2}}$, since $S_b =
         \extSRaw{S}{l'}{u_{p_i}(p_1)}$ and $u_{p_i}$ does not alter
-        the status of $p_1$.  (By
-        Definition~\ref{def:set-of-state-update-operations}, $u_{p_i}$
-        can only change the status bit of a location if its contents
-        are $\state{d}{\frozentrue}$ and $u_i(d) \neq d$, in which
-        case $u_{p_i}$ changes the contents of the location to
+        the status of $p_1$.
+
+        (By Definition~\ref{def:set-of-state-update-operations},
+        $u_{p_i}$ can only change the status bit of a location if its
+        contents are $\state{d}{\frozentrue}$ and $u_i(d) \neq d$, in
+        which case $u_{p_i}$ changes the contents of the location to
         $\state{\top}{\frozenfalse}$; however, that cannot be the case
         here since then $u_{p_i}(p_1)$ would be $\topp$, contradicting
         the premise of {\sc E-Put}.)
@@ -528,14 +610,20 @@
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{b_1}} \parstepsto \\
-      \config{U_S(S_b)}{e_{b_2}}$.  Hence
-      $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
-      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.  By {\sc
-        E-Eval-Ctxt}, it follows that \\
+
+      $\config{U_S(S)}{e_{b_1}} \parstepsto
+      \config{U_S(S_b)}{e_{b_2}}$.
+
+      Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
+      \parstepsto
+      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{b_2}}$.
+
+      By {\sc E-Eval-Ctxt}, it follows that
+
       $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
       \ctxstepsto
-      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
+      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_2}}}$,
+      
       which, since $S_a = \extS{S}{l}{\bot}{\frozenfalse}$, is what we
       were required to show.
 
@@ -546,7 +634,9 @@
 
       Consider that $S_b = U_S(S)$, and
       $\extS{S_b}{l}{\bot}{\frozenfalse} =
-      \extSRaw{S_a}{l'}{u_{p_i}(p_1)} = U_S(S_a)$.  Note that:
+      \extSRaw{S_a}{l'}{u_{p_i}(p_1)} = U_S(S_a)$.
+
+      Note that:
       \begin{itemize}
       \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since the only location
@@ -568,19 +658,27 @@
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{a_1}} \parstepsto \\
-      \config{U_S(S_a)}{e_{a_2}}$.  Hence $\config{S_b}{e_{a_1}}
+
+      $\config{U_S(S)}{e_{a_1}} \parstepsto
+      \config{U_S(S_a)}{e_{a_2}}$.
+
+      Hence $\config{S_b}{e_{a_1}}
       \parstepsto
-      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{a_2}}$.  By {\sc
-        E-Eval-Ctxt}, it follows that \\
+      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{e_{a_2}}$.
+
+      By {\sc E-Eval-Ctxt}, it follows that
+      
       $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{e_{a_2}}}$, \\
+      \config{\extS{S_b}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_a}{e_{a_2}}}$,
+      
       as we were required to show.
 
     \item \label{slqc-new-put-err}Case {\sc E-Put-Err}: We have $S_a =
       \extS{S}{l}{\bot}{\frozenfalse}$ and $\config{S_b}{e_{b_2}} =
       \error$, and so we choose $\conf_c = \error$, $i = 1$, $j = 0$,
-      and $\pi = \id$.  We have to show that:
+      and $\pi = \id$.
+
+      We have to show that:
       \begin{itemize}
       \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
         \error$, and
@@ -590,20 +688,28 @@
       The second of these is immediately true because since
       $\config{S_b}{e_{b_2}} = \error$, $S_b = \topS$, and so
       $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ is equal to $\error$ as
-      well.  For the first, observe that since $\config{S}{e_{a_1}}
+      well.
+
+      For the first, observe that since $\config{S}{e_{a_1}}
       \parstepsto \config{S_a}{e_{a_2}}$, we have by
       Lemma~\ref{lem:monotonicity} (Monotonicity) that
-      $\leqstore{S}{S_a}$.  Therefore, since $\config{S}{e_{b_1}}
-      \parstepsto \error$, we have by
-      Lemma~\ref{lem:error-preservation} (Error Preservation) that
-      $\config{S_a}{e_{b_1}} \parstepsto \error$.  Since $\error$ is
-      equal to $\config{\topS}{e}$ for all expressions $e$,
-      $\config{S_a}{e_{b_1}} \parstepsto \config{\topS}{e}$ for all
-      $e$.  Therefore, by {\sc E-Eval-Ctxt},
+      $\leqstore{S}{S_a}$.
+
+      Therefore, since $\config{S}{e_{b_1}} \parstepsto \error$,
+
+      we have by Lemma~\ref{lem:error-preservation} (Error
+      Preservation) that $\config{S_a}{e_{b_1}} \parstepsto \error$.
+
+      Since $\error$ is equal to $\config{\topS}{e}$ for all
+      expressions $e$, $\config{S_a}{e_{b_1}} \parstepsto
+      \config{\topS}{e}$ for all $e$.
+
+      Therefore, by {\sc E-Eval-Ctxt},
       $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-      \config{\topS}{\evalctxt{E'_b}{e}}$ for all $e$.  Since
-      $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal to $\error$, we
-      have that $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \config{\topS}{\evalctxt{E'_b}{e}}$ for all $e$.
+
+      Since $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal to $\error$,
+      we have that $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
       \error$, as we were required to show.
 
     \item \label{slqc-new-get}Case {\sc E-Get}: Similar to
@@ -642,69 +748,81 @@
       store update operation that acts as the identity on the contents
       of all existing locations, and adds the binding
       $\storebinding{l}{\bot}{\frozenfalse}$ if no binding for $l$
-      exists.  Note that:
+      exists.
+
+      Note that:
       \begin{itemize}
-        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
-          \parstepsto \config{S_b}{e_{b_2}}$, since no locations are
-          allocated in the transition;
-        \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
-          \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
-          \topS$ and the addition of a new binding
-          $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
-          become $\topS$; and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
-          \parstepsto \config{S_b}{e_{b_2}}$, since $S_b =
-          \extS{S}{l'}{d_1}{\frozentrue}$ and so the only location
-          that can change in status between $S$ and $S_b$ is $l'$, and
-          $U_S$ acts as the identity on $l'$.
+      \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+        \parstepsto \config{S_b}{e_{b_2}}$, since no locations are
+        allocated in the transition;
+      \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
+        \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
+        \topS$ and the addition of a new binding
+        $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
+        become $\topS$; and
+      \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+        \parstepsto \config{S_b}{e_{b_2}}$, since $S_b =
+        \extS{S}{l'}{d_1}{\frozentrue}$ and so the only location
+        that can change in status between $S$ and $S_b$ is $l'$, and
+        $U_S$ acts as the identity on $l'$.
       \end{itemize}
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{b_1}} \parstepsto \\
+
+      $\config{U_S(S)}{e_{b_1}} \parstepsto
       \config{U_S(S_b)}{e_{b_2}}$.
 
-      Hence
-      $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}} \parstepsto
+      Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
+      \parstepsto
       \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{e_{b_2}}$.
-      By {\sc E-Eval-Ctxt}, it follows that \\
+
+      By {\sc E-Eval-Ctxt}, it follows that
+
       $\config{\extS{S}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{e_{b_1}}}
       \ctxstepsto
-      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
+      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+
       as we were required to show.
 
       For the second, consider that $\extS{S}{l'}{d_1}{\frozentrue} =
       U_S(S)$, where $U_S$ is the store update operation that freezes
       the contents of $l'$ and acts as the identity on the contents of
-      all other locations.  Note that:
+      all other locations.
+
+      Note that:
       \begin{itemize}
-        \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
-          \parstepsto \config{S_a}{e_{a_2}}$, since the only location
-          allocated in the transition is $l$, and $l \neq l'$;
-        \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
-          \extS{S_a}{l'}{d_1}{\frozentrue} =
-          \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
-          \topS$ and the addition of a new binding
-          $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
-          become $\topS$; and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
-          \parstepsto \config{S_a}{e_{a_2}}$, since $S_a =
-          \extS{S}{l}{\bot}{\frozenfalse}$ and $l \notin \dom{S}$, so
-          there are no locations whose contents differ in status
-          between $S$ and $S_a$.
+      \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+        \parstepsto \config{S_a}{e_{a_2}}$, since the only location
+        allocated in the transition is $l$, and $l \neq l'$;
+      \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
+        \extS{S_a}{l'}{d_1}{\frozentrue} =
+        \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
+        \topS$ and the addition of a new binding
+        $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
+        become $\topS$; and
+      \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+        \parstepsto \config{S_a}{e_{a_2}}$, since $S_a =
+        \extS{S}{l}{\bot}{\frozenfalse}$ and $l \notin \dom{S}$, so
+        there are no locations whose contents differ in status
+        between $S$ and $S_a$.
       \end{itemize}
 
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
-      $\config{U_S(S)}{e_{a_1}} \parstepsto \\
+
+      $\config{U_S(S)}{e_{a_1}} \parstepsto
       \config{U_S(S_a)}{e_{a_2}}$.
 
-      Hence
-      $\config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{a_1}} \parstepsto
+      Hence $\config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{a_1}}
+      \parstepsto
       \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{e_{a_2}}$.
-      By {\sc E-Eval-Ctxt} it follows that \\
+
+      By {\sc E-Eval-Ctxt} it follows that
+
       $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
       \ctxstepsto
-      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$, \\
+      \config{\extS{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$,
+
       as we were required to show.
 
     \item \label{slqc-new-freeze-simple}Case {\sc E-Freeze-Simple}:
@@ -718,10 +836,11 @@
     \extSRaw{S}{l}{u_{p_i}(p_1)}$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
-    only way an $\error$ configuration can arise is by the {\sc
-      E-Put-Err} rule, we can assume in all other cases that $\conf_b
-    \neq \error$.
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.
+
+    Since the only way an $\error$ configuration can arise is by the
+    {\sc E-Put-Err} rule, we can assume in all other cases that
+    $\conf_b \neq \error$.
     \begin{enumerate}
     \item \label{slqc-put-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-put}.
     \item \label{slqc-put-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-put}.
@@ -731,213 +850,243 @@
 
       Now consider whether $l = l'$:
       \begin{itemize}
-        \item If $l \neq l'$:
+      \item If $l \neq l'$:
 
-          Choose $S' =
-          \extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}$,
-          $i = 1$, $j = 1$, and $\pi = \id$.
+        Choose $S' =
+        \extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}$,
+        $i = 1$, $j = 1$, and $\pi = \id$.
+
+        We have to show that:
+        \begin{itemize}
+        \item
+          $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+          \ctxstepsto
+          \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          and
+        \item
+          $\config{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{\evalctxt{E'_a}{e_{a_1}}}
+          \ctxstepsto
+          \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_a}{e_{a_2}}}$.
+        \end{itemize}
+
+        For the first of these, consider that
+        $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
+        store update operation that applies $u_{p_i}$ to the
+        contents of $l$ if it exists, and adds a binding
+        $\storebindingRaw{l}{u_{p_i}(p_1)}$ if no binding for $l$
+        exists.
+
+        Note that:
+        \begin{itemize}
+        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+          \parstepsto
+          \config{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{e_{b_2}}$, since
+          no locations are allocated in the transition;
+        \item $U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) \neq \topS$,
+          since $U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) =
+          \extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}$
+          and we know $S \neq \topS$ and updating the contents of
+          location $l$ to $u_{p_i}(p_1)$ and the contents of
+          location $l'$ to $u_{p_j}(p'_1)$ in $S$ cannot cause it to
+          become $\topS$ (because if so, then we would have $S_a =
+          \topS$ or $S_b = \topS$, which we know are not the case);
+          and
+        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+          \parstepsto
+          \config{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{e_{b_2}}$, since
+          $u_{p_j}$ does not alter the status of $p'_1$.
+
+          (By Definition~\ref{def:set-of-state-update-operations},
+          $u_{p_j}$ can only change the status bit of a location if
+          its contents are $\state{d}{\frozentrue}$ and $u_j(d) \neq
+          d$, in which case $u_{p_j}$ changes the contents of the
+          location to $\state{\top}{\frozenfalse}$; however, that
+          cannot be the case here since then $u_{p_j}(p'_1)$ would be
+          $\topp$, contradicting the premise of {\sc E-Put}.)
+        \end{itemize}
+
+        Therefore, by Lemma~\ref{lem:generalized-independence}
+        (Generalized Independence), we have that
+
+        $\config{U_S(S)}{e_{b_1}} \parstepsto
+        \config{U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)})}{e_{b_2}}$.
+
+        Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
+        \parstepsto
+        \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{e_{b_2}}$.
+
+        By {\sc E-Eval-Ctxt}, it follows that
+
+        $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+        \ctxstepsto
+        \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_2}}}$,
+
+        as we were required to show.
+
+        The argument for the second is symmetrical.
+
+      \item If $l = l'$:
+        Note that since $l = l'$, $p_1 = p'_1$ as well.
+
+        Consider whether $u_{p_i}(u_{p_j}(p_1)) = \topp$:
+        \begin{itemize}
+        \item If $u_{p_i}(u_{p_j}(p_1)) = \topp$:
+
+          Choose $\conf_c = \error$, $i = 1$, $j = 1$, and $\pi =
+          \id$.
+
+          We have to show that:
+
+          \begin{itemize}
+          \item
+            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+            \ctxstepsto \error$, and
+          \item
+            $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{\evalctxt{E'_a}{e_{a_1}}}
+            \ctxstepsto \error$.
+          \end{itemize}
+
+          For the first of these, consider that
+          $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
+          store update operation that applies $u_{p_i}$ to the
+          contents of $l$ if it exists.
+
+          Note that:
+          \begin{itemize}
+          \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+            \parstepsto
+            \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
+            no locations are allocated in the transition;
+          \item $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) = \topS$, since
+            $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
+            \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$ and we know
+            $u_{p_i}(u_{p_j}(p_1)) = \topp$ in this case;
+          \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+            \parstepsto
+            \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
+            $u_{p_j}$ does not alter the status of $p_1$.
+
+            (By Definition~\ref{def:set-of-state-update-operations},
+            $u_{p_j}$ can only change the status bit of a location if
+            its contents are $\state{d}{\frozentrue}$ and $u_j(d) \neq
+            d$, in which case $u_{p_j}$ changes the contents of the
+            location to $\state{\top}{\frozenfalse}$; however, that
+            cannot be the case here since then $u_{p_j}(p_1)$ would be
+            $\topp$, contradicting the premise of {\sc E-Put}.)
+          \end{itemize}
+
+          Therefore, by Lemma~\ref{lem:generalized-clash}
+          (Generalized Clash), we have that there exists $i' \leq 1$
+          such that $\config{U_S(S)}{e_{b_1}} \parstepsto^{i'}
+          \error$.
+
+          Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
+          \parstepsto^{i'} \error$.
+
+          If $i' = 0$, we would have
+          $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}} =
+          \config{S_a}{e_{b_1}} = \error$.
+
+          So we would have $S_a = \topS$ by the definition of
+          $\error$, but then we would have $\conf_a = \error$, a
+          contradiction.
+
+          Therefore $i' = 1$, and so we have
+          $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}} \parstepsto
+          \error$.
+
+          Since $\error = \config{\topS}{e}$ for all $e$, we have
+          $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
+          \parstepsto \config{\topS}{e}$ for all $e$.
+
+          So, by {\sc E-Eval-Ctxt}, we have that
+          $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+          \parstepsto \config{\topS}{\evalctxt{E'_b}{e}}$ for all $e$.
+
+          Hence
+          $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+          \parstepsto \error$.
+
+          The argument for the second is symmetrical.
+
+        \item If $u_{p_i}(u_{p_j}(p_1)) \neq \topp$:
+
+          Choose $S' = \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$, $i =
+          1$, $j = 1$, and $\pi = \id$.
 
           We have to show that:
           \begin{itemize}
           \item
             $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
             \ctxstepsto
-            \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_2}}}$,
+            \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_b}{e_{b_2}}}$,
             and
           \item
-            $\config{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{\evalctxt{E'_a}{e_{a_1}}}
+            $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{\evalctxt{E'_a}{e_{a_1}}}
             \ctxstepsto
-            \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_a}{e_{a_2}}}$.
+            \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_a}{e_{a_2}}}$.
           \end{itemize}
 
           For the first of these, consider that
           $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
           store update operation that applies $u_{p_i}$ to the
-          contents of $l$ if it exists, and adds a binding
-          $\storebindingRaw{l}{u_{p_i}(p_1)}$ if no binding for $l$
-          exists.  Note that:
+          contents of $l$ if it exists.
+
+          Note that:
           \begin{itemize}
           \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
             \parstepsto
-            \config{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{e_{b_2}}$, since
-            no locations are allocated in the transition;
-          \item $U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) \neq \topS$,
-            since $U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) =
-            \extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}$
-            and we know $S \neq \topS$ and updating the contents of
-            location $l$ to $u_{p_i}(p_1)$ and the contents of
-            location $l'$ to $u_{p_j}(p'_1)$ in $S$ cannot cause it to
-            become $\topS$ (because if so, then we would have $S_a =
-            \topS$ or $S_b = \topS$, which we know are not the case);
-            and
+            \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since no
+            locations are allocated in the transition;
+          \item $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) \neq \topS$, since
+            $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
+            \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$ and we know $S \neq
+            \topS$ and $u_{p_i}(u_{p_j}(p_1)) \neq \topp$ in this
+            case;
           \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
             \parstepsto
-            \config{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{e_{b_2}}$, since
-            $u_{p_j}$ does not alter the status of $p'_1$.  (By
-            Definition~\ref{def:set-of-state-update-operations},
+            \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
+            $u_{p_j}$ does not alter the status of $p_1$.
+
+            (By Definition~\ref{def:set-of-state-update-operations},
             $u_{p_j}$ can only change the status bit of a location if
             its contents are $\state{d}{\frozentrue}$ and $u_j(d) \neq
             d$, in which case $u_{p_j}$ changes the contents of the
             location to $\state{\top}{\frozenfalse}$; however, that
-            cannot be the case here since then $u_{p_j}(p'_1)$ would be
+            cannot be the case here since then $u_{p_j}(p_1)$ would be
             $\topp$, contradicting the premise of {\sc E-Put}.)
           \end{itemize}
 
           Therefore, by Lemma~\ref{lem:generalized-independence}
           (Generalized Independence), we have that
+
           $\config{U_S(S)}{e_{b_1}} \parstepsto
-          \config{U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)})}{e_{b_2}}$.
+          \config{U_S(\extSRaw{S}{l}{u_{p_j}(p_1)})}{e_{b_2}}$.
+
           Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
           \parstepsto
-          \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{e_{b_2}}$.
-          By {\sc E-Eval-Ctxt}, it follows that \\
+          \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{e_{b_2}}$.
+
+          By {\sc E-Eval-Ctxt}, it follows that
+
           $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
           \ctxstepsto
-          \config{\extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
-          as we were required to show.  The argument for the second is
-          symmetrical.
+          \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_b}{e_{b_2}}}$,
 
-        \item If $l = l'$:
-          Note that since $l = l'$, $p_1 = p'_1$ as well.
+          as we were required to show.
 
-          Consider whether $u_{p_i}(u_{p_j}(p_1)) = \topp$:
-          \begin{itemize}
-          \item If $u_{p_i}(u_{p_j}(p_1)) = \topp$:
+          The argument for the second is symmetrical.
 
-            Choose $\conf_c = \error$, $i = 1$, $j = 1$, and $\pi =
-            \id$.  We have to show that:
-
-            \begin{itemize}
-            \item
-              $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
-              \ctxstepsto \error$, and
-            \item
-              $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{\evalctxt{E'_a}{e_{a_1}}}
-              \ctxstepsto \error$.
-            \end{itemize}
-
-            For the first of these, consider that
-            $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
-            store update operation that applies $u_{p_i}$ to the
-            contents of $l$ if it exists.  Note that:
-            \begin{itemize}
-            \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
-              \parstepsto
-              \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
-              no locations are allocated in the transition;
-            \item $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) = \topS$, since
-              $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
-              \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$ and we know
-              $u_{p_i}(u_{p_j}(p_1)) = \topp$ in this case;
-            \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
-              \parstepsto
-              \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
-              $u_{p_j}$ does not alter the status of $p_1$.  (By
-              Definition~\ref{def:set-of-state-update-operations},
-              $u_{p_j}$ can only change the status bit of a location if
-              its contents are $\state{d}{\frozentrue}$ and $u_j(d) \neq
-              d$, in which case $u_{p_j}$ changes the contents of the
-              location to $\state{\top}{\frozenfalse}$; however, that
-              cannot be the case here since then $u_{p_j}(p_1)$ would be
-              $\topp$, contradicting the premise of {\sc E-Put}.)
-            \end{itemize}
-
-            Therefore, by Lemma~\ref{lem:generalized-clash}
-            (Generalized Clash), we have that there exists $i' \leq 1$
-            such that $\config{U_S(S)}{e_{b_1}} \parstepsto^{i'}
-            \error$.  Hence
-            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
-            \parstepsto^{i'} \error$.
-
-            If $i' = 0$, we would have
-            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}} =
-            \config{S_a}{e_{b_1}} = \error$.  So we would have $S_a =
-            \topS$ by the definition of $\error$, but then we would
-            have $\conf_a = \error$, a contradiction.  Therefore $i' =
-            1$, and so we have
-            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
-            \parstepsto \error$.
-
-            Since $\error = \config{\topS}{e}$ for all $e$, we have
-            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
-            \parstepsto \config{\topS}{e}$ for all $e$.  So, by {\sc
-              E-Eval-Ctxt}, we have that
-            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
-            \parstepsto \config{\topS}{\evalctxt{E'_b}{e}}$ for all
-            $e$.  Hence
-            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
-            \parstepsto \error$.  The argument for the second is
-            symmetrical.
-
-
-          \item If $u_{p_i}(u_{p_j}(p_1)) \neq \topp$:
-
-            Choose $S' = \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$, $i =
-            1$, $j = 1$, and $\pi = \id$.
-
-            We have to show that:
-            \begin{itemize}
-            \item
-              $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
-              \ctxstepsto
-              \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_b}{e_{b_2}}}$,
-              and
-            \item
-              $\config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{\evalctxt{E'_a}{e_{a_1}}}
-              \ctxstepsto
-              \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_a}{e_{a_2}}}$.
-            \end{itemize}
-
-            For the first of these, consider that
-            $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
-            store update operation that applies $u_{p_i}$ to the
-            contents of $l$ if it exists.  Note that:
-            \begin{itemize}
-            \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
-              \parstepsto
-              \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since no
-              locations are allocated in the transition;
-            \item $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) \neq \topS$, since
-              $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
-              \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$ and we know $S \neq
-              \topS$ and $u_{p_i}(u_{p_j}(p_1)) \neq \topp$ in this
-              case;
-            \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
-              \parstepsto
-              \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
-              $u_{p_j}$ does not alter the status of $p_1$.  (By
-              Definition~\ref{def:set-of-state-update-operations},
-              $u_{p_j}$ can only change the status bit of a location if
-              its contents are $\state{d}{\frozentrue}$ and $u_j(d) \neq
-              d$, in which case $u_{p_j}$ changes the contents of the
-              location to $\state{\top}{\frozenfalse}$; however, that
-              cannot be the case here since then $u_{p_j}(p_1)$ would be
-              $\topp$, contradicting the premise of {\sc E-Put}.)
-            \end{itemize}
-
-            Therefore, by Lemma~\ref{lem:generalized-independence}
-            (Generalized Independence), we have that \\
-            $\config{U_S(S)}{e_{b_1}} \parstepsto
-            \config{U_S(\extSRaw{S}{l}{u_{p_j}(p_1)})}{e_{b_2}}$.
-
-            Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
-            \parstepsto
-            \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{e_{b_2}}$.
-            By {\sc E-Eval-Ctxt}, it follows that \\
-            $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
-            \ctxstepsto
-            \config{\extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
-            as we were required to show.  The argument for the second
-            is symmetrical.
-
-          \end{itemize}
+        \end{itemize}
 
       \end{itemize}
 
     \item \label{slqc-put-put-err}Case {\sc E-Put-Err}: We have $S_a =
       \extSRaw{S}{l}{u_{p_i}(p_1)}$ and $\config{S_b}{e_{b_2}} =
       \error$, and so we choose $\conf_c = \error$, $i = 1$, $j = 0$,
-      and $\pi = \id$.  We have to show that:
+      and $\pi = \id$.
+
+      We have to show that:
       \begin{itemize}
       \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
         \error$, and
@@ -947,20 +1096,28 @@
       The second of these is immediately true because since
       $\config{S_b}{e_{b_2}} = \error$, $S_b = \topS$, and so
       $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}$ is equal to $\error$ as
-      well.  For the first, observe that since $\config{S}{e_{a_1}}
+      well.
+
+      For the first, observe that since $\config{S}{e_{a_1}}
       \parstepsto \config{S_a}{e_{a_2}}$, we have by
       Lemma~\ref{lem:monotonicity} (Monotonicity) that
-      $\leqstore{S}{S_a}$.  Therefore, since $\config{S}{e_{b_1}}
-      \parstepsto \error$, we have by
-      Lemma~\ref{lem:error-preservation} (Error Preservation) that
-      $\config{S_a}{e_{b_1}} \parstepsto \error$.  Since $\error$ is
-      equal to $\config{\topS}{e}$ for all expressions $e$,
-      $\config{S_a}{e_{b_1}} \parstepsto \config{\topS}{e}$ for all
-      $e$.  Therefore, by {\sc E-Eval-Ctxt},
+      $\leqstore{S}{S_a}$.
+
+      Therefore, since $\config{S}{e_{b_1}} \parstepsto \error$,
+
+      we have by Lemma~\ref{lem:error-preservation} (Error
+      Preservation) that $\config{S_a}{e_{b_1}} \parstepsto \error$.
+      
+      Since $\error$ is equal to $\config{\topS}{e}$ for all
+      expressions $e$, $\config{S_a}{e_{b_1}} \parstepsto
+      \config{\topS}{e}$ for all $e$.
+
+      Therefore, by {\sc E-Eval-Ctxt},
       $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
-      \config{\topS}{\evalctxt{E'_b}{e}}$ for all $e$.  Since
-      $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal to $\error$, we
-      have that $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
+      \config{\topS}{\evalctxt{E'_b}{e}}$ for all $e$.
+
+      Since $\config{\topS}{\evalctxt{E'_b}{e}}$ is equal to $\error$,
+      we have that $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} \ctxstepsto
       \error$, as we were required to show.
 
     \item \label{slqc-put-get}Case {\sc E-Get}: Similar to
@@ -978,274 +1135,307 @@
 
       Now consider whether $l = l'$:
       \begin{itemize}
-        \item If $l \neq l'$:
+      \item If $l \neq l'$:
 
-          Choose $S' =
+        Choose $S' =
+        \extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}$,
+        $i = 1$, $j = 1$, and $\pi = \id$.
+
+        We have to show that:
+        \begin{itemize}
+        \item
+          $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+          \ctxstepsto
+          \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          and
+        \item
+          $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
+          \ctxstepsto
+          \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
+        \end{itemize}
+
+        For the first of these, consider that
+        $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
+        store update operation that applies $u_{p_i}$ to the
+        contents of $l$ if it exists, and adds a binding
+        $\storebindingRaw{l}{u_{p_i}(p_1)}$ if no binding for $l$
+        exists, and acts as the identity on all other locations.
+
+        Note that:
+        \begin{itemize}
+        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+          \parstepsto
+          \config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{b_2}}$, since
+          no locations are allocated in the transition;
+        \item $U_S(\extS{S}{l'}{d_1}{\frozentrue}) \neq \topS$,
+
+          since $U_S(\extS{S}{l'}{d_1}{\frozentrue}) =
+          \extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}$
+          and we know $S \neq \topS$ and updating the contents of
+          location $l$ to $u_{p_i}(p_1)$ and freezing the contents
+          of location $l'$ in $S$ cannot cause it to become $\topS$
+          (because if so, then we would have $S_a = \topS$ or $S_b =
+          \topS$, which we know are not the case); and
+        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+          \parstepsto
+          \config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{b_2}}$, since
+          the only location that can change in status between $S$
+          and $\extS{S}{l'}{d_1}{\frozentrue}$ is $l'$, and $U_S$
+          acts as the identity on $l'$.
+        \end{itemize}
+        Therefore, by Lemma~\ref{lem:generalized-independence}
+        (Generalized Independence), we have that
+
+        $\config{U_S(S)}{e_{b_1}} \parstepsto
+        \config{U_S(\extS{S}{l'}{d_1}{\frozentrue})}{e_{b_2}}$.
+
+        Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
+        \parstepsto
+        \config{\extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}}{e_{b_2}}$.
+
+        By {\sc E-Eval-Ctxt}, it follows that
+
+        $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
+        \ctxstepsto
+        \config{\extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_2}}}$,
+        
+        as we were required to show.
+
+        For the second, consider that
+        $\extS{S}{l'}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is
+        the store update operation that freezes the contents of $l'$
+        and acts as the identity on the contents of all other
+        locations.
+
+        Note that:
+        \begin{itemize}
+        \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+          \parstepsto
+          \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since no
+          locations are allocated in the transition;
+        \item $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$, since
+          $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) =
           \extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}$,
-          $i = 1$, $j = 1$, and $\pi = \id$.
+          and we know $S \neq \topS$ and updating the contents of
+          location $l$ to $u_{p_i}(p_1)$ and freezing the contents
+          of location $l$ in $S$ cannot cause it to become $\topS$
+          (because if so, then we would have $S_a = \topS$ or $S_b =
+          \topS$, which we know are not the case); and
+        \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+          \parstepsto
+          \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since
+          $u_{p_i}$ does not alter the status of $p_1$.
+
+          (By Definition~\ref{def:set-of-state-update-operations},
+          $u_{p_i}$ can only change the status bit of a location if
+          its contents are $\state{d}{\frozentrue}$ and $u_i(d) \neq
+          d$, in which case $u_{p_i}$ changes the contents of the
+          location to $\state{\top}{\frozenfalse}$; however, that
+          cannot be the case here since then $u_{p_i}(p_1)$ would be
+          $\topp$, and we would have $S_a = \topS$, a contradiction.)
+        \end{itemize}
+        Therefore, by Lemma~\ref{lem:generalized-independence}
+        (Generalized Independence), we have that
+
+        $\config{U_S(S)}{e_{a_1}} \parstepsto
+        \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{e_{a_2}}$.
+
+        Hence $\config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{a_1}}
+        \parstepsto
+        \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{e_{a_2}}$.
+
+        By {\sc E-Eval-Ctxt}, it follows that
+        $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
+        \ctxstepsto
+        \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$,
+        
+        as we were required to show.
+
+      \item If $l = l'$:
+
+        We have two cases to consider:
+
+        \begin{itemize}
+        \item $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$:
+
+          \lk{This is the interesting case: the potential
+            put-after-freeze case.  It's important to note that
+            this case doesn't necessarily end in a
+            put-after-freeze (and hence an error); all we're
+            required to show is that it \emph{can} end that way.}
+
+          Since $(\extSRaw{S}{l}{\state{d_1}{\frozentrue}})(l) =
+          \state{d_1}{\frozentrue}$ and
+          $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$, by {\sc
+            E-Put-Err} we have that
+          $\config{\extSRaw{S}{l}{\state{d_1}{\frozentrue}}}{\putiexp{l}}
+          \parstepsto \error$.
+
+          Since $S_b = \extSRaw{S}{l}{\state{d_1}{\frozentrue}}$,
+          we have that $\config{S_b}{\putiexp{l}} \parstepsto
+          \error$.
+
+          Since $\config{S}{e_{a_1}} \parstepsto
+          \config{S_a}{e_{a_2}}$ by {\sc E-Put}, it must be the
+          case that $e_{a_1} = \putiexp{l}$.
+
+          Hence $\config{S_b}{e_{a_1}} \parstepsto \error$.
+
+          Since $\error$ is equal to $\config{\topS}{e}$ for all
+          expressions $e$, $\config{S_b}{e_{a_1}} \parstepsto
+          \config{\topS}{e}$ for all $e$.
+
+          Therefore, by {\sc E-Eval-Ctxt},
+          $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+          \config{\topS}{\evalctxt{E'_a}{e}}$ for all $e$.
+
+          Since $\config{\topS}{\evalctxt{E'_a}{e}}$ is equal to
+          $\error$, we have that
+          $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto \error$.
+
+          Since $\evalctxt{E'_a}{e_{a_1}} =
+          \evalctxt{E_b}{e_{b_2}}$, we have that
+          $\config{S_b}{\evalctxt{E_b}{e_{b_2}}} \ctxstepsto
+          \error$.
+
+          Since $\conf_b = \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$,
+          we therefore have that $\conf_b \ctxstepsto \error$, and
+          the case is satisfied.
+
+        \item $u_{p_i}(\state{d_1}{\frozentrue}) \neq \topp$:
+
+          \lk{This is the case where there's a conflicting put and
+            freeze, but the put is a no-op, so it doesn't matter.}
+
+          In this case, by the definition of $U_p$
+          (Definition~\ref{def:set-of-state-update-operations}),
+          
+          it must be the case that $u_{p_i}(\state{d_1}{\frozentrue})
+          = \state{d_1}{\frozentrue}$.
+
+          Choose $S' = \extS{S}{l}{d_1}{\frozentrue}$, $i = 1$, $j
+          = 1$, and $\pi = \id$.
 
           We have to show that:
           \begin{itemize}
           \item
             $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
             \ctxstepsto
-            \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+            \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
             and
           \item
-            $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
+            $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
             \ctxstepsto
-            \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
+            \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
           \end{itemize}
 
           For the first of these, consider that
-          $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
-          store update operation that applies $u_{p_i}$ to the
+          $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is
+          the store update operation that applies $u_{p_i}$ to the
           contents of $l$ if it exists, and adds a binding
-          $\storebindingRaw{l}{u_{p_i}(p_1)}$ if no binding for $l$
-          exists, and acts as the identity on all other locations.
+          $\storebindingRaw{l}{u_{p_i}(p_1)}$ if no binding for
+          $l$ exists, and acts as the identity on all other
+          locations.
+
           Note that:
           \begin{itemize}
           \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
             \parstepsto
-            \config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{b_2}}$, since
-            no locations are allocated in the transition;
-          \item $U_S(\extS{S}{l'}{d_1}{\frozentrue}) \neq \topS$, \\
-            since $U_S(\extS{S}{l'}{d_1}{\frozentrue}) =
-            \extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}$
-            and we know $S \neq \topS$ and updating the contents of
-            location $l$ to $u_{p_i}(p_1)$ and freezing the contents
-            of location $l'$ in $S$ cannot cause it to become $\topS$
-            (because if so, then we would have $S_a = \topS$ or $S_b =
-            \topS$, which we know are not the case); and
+            \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$,
+            since no locations are allocated in the
+            transition;
+          \item $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$,
+            
+            since $U_S(\extS{S}{l}{d_1}{\frozentrue}) =
+            \extSRaw{S}{l}{u_{p_i}(\state{d_1}{\frozentrue})}$ and
+            we know $S \neq \topS$ and
+            $u_{p_i}(\state{d_1}{\frozentrue}) \neq \topp$; and
           \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
             \parstepsto
-            \config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{b_2}}$, since
+            \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$, since
             the only location that can change in status between $S$
-            and $\extS{S}{l'}{d_1}{\frozentrue}$ is $l'$, and $U_S$
-            acts as the identity on $l'$.
+            and $\extS{S}{l}{d_1}{\frozentrue}$ is $l$, and $U_S$
+            acts as the identity on $l$.
           \end{itemize}
           Therefore, by Lemma~\ref{lem:generalized-independence}
           (Generalized Independence), we have that
+
           $\config{U_S(S)}{e_{b_1}} \parstepsto
-          \config{U_S(\extS{S}{l'}{d_1}{\frozentrue})}{e_{b_2}}$. \\
+          \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{e_{b_2}}$.
+
           Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
           \parstepsto
-          \config{\extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}}{e_{b_2}}$.
-          By {\sc E-Eval-Ctxt}, it follows that \\
+          \config{\extSRaw{S}{l}{u_{p_i}(\state{d_1}{\frozentrue})}}{e_{b_2}}$.
+
+          Since $u_{p_i}(\state{d_1}{\frozentrue}) =
+          \state{d_1}{\frozentrue}$,
+
+          we have that
+          $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
+          \parstepsto
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$.
+
+          By {\sc E-Eval-Ctxt}, it follows that
+
           $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
           \ctxstepsto
-          \config{\extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+
           as we were required to show.
 
           For the second, consider that
-          $\extS{S}{l'}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is
-          the store update operation that freezes the contents of $l'$
+          $\extS{S}{l}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is
+          the store update operation that freezes the contents of $l$
           and acts as the identity on the contents of all other
-          locations.  Note that:
+          locations.
+
+          Note that:
           \begin{itemize}
           \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
             \parstepsto
             \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since no
             locations are allocated in the transition;
-          \item $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$, since
-            $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) =
-            \extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}$,
-            and we know $S \neq \topS$ and updating the contents of
-            location $l$ to $u_{p_i}(p_1)$ and freezing the contents
-            of location $l$ in $S$ cannot cause it to become $\topS$
-            (because if so, then we would have $S_a = \topS$ or $S_b =
-            \topS$, which we know are not the case); and
+          \item $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$,
+            since $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) =
+            \extS{S}{l}{d_1}{\frozentrue}$ (since, by
+            Definition~\ref{def:set-of-state-update-operations},
+            $u_i(d_1) = d_1$; otherwise we would have
+            $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$, a
+            contradiction), and we know $S \neq \topS$ and
+            freezing the contents of location $l$ in $S$ cannot
+            cause it to become $\topS$; and
           \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
             \parstepsto
             \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since
-            $u_{p_i}$ does not alter the status of $p_1$.    (By
-            Definition~\ref{def:set-of-state-update-operations},
+            $u_{p_i}$ does not alter the status of $p_1$.
+
+            (By Definition~\ref{def:set-of-state-update-operations},
             $u_{p_i}$ can only change the status bit of a location if
             its contents are $\state{d}{\frozentrue}$ and $u_i(d) \neq
             d$, in which case $u_{p_i}$ changes the contents of the
             location to $\state{\top}{\frozenfalse}$; however, that
             cannot be the case here since then $u_{p_i}(p_1)$ would be
-            $\topp$, and we would have $S_a = \topS$, a contradiction.)
+            $\topp$, and we would have $S_a = \topS$, a
+            contradiction.)
           \end{itemize}
           Therefore, by Lemma~\ref{lem:generalized-independence}
           (Generalized Independence), we have that
+
           $\config{U_S(S)}{e_{a_1}} \parstepsto
-          \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{e_{a_2}}$.  \\ Hence
-          $\config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{a_1}}
+          \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{e_{a_2}}$.
+
+          Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{a_1}}
           \parstepsto
-          \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{e_{a_2}}$.
-          By {\sc E-Eval-Ctxt}, it follows that \\
-          $\config{\extS{S}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{a_2}}$.
+
+          By {\sc E-Eval-Ctxt}, it follows that
+
+          $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
           \ctxstepsto
-          \config{\extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$, \\
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$,
+
           as we were required to show.
-
-        \item If $l = l'$:
-
-          We have two cases to consider:
-
-          \begin{itemize}
-            \item $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$:
-
-              \lk{This is the interesting case: the potential
-                put-after-freeze case.  It's important to note that
-                this case doesn't necessarily end in a
-                put-after-freeze (and hence an error); all we're
-                required to show is that it \emph{can} end that way.}
-
-              Since $(\extSRaw{S}{l}{\state{d_1}{\frozentrue}})(l) =
-              \state{d_1}{\frozentrue}$ and
-              $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$, by {\sc
-                E-Put-Err} we have that
-              $\config{\extSRaw{S}{l}{\state{d_1}{\frozentrue}}}{\putiexp{l}}
-              \parstepsto \error$.
-
-              Since $S_b = \extSRaw{S}{l}{\state{d_1}{\frozentrue}}$,
-              we have that $\config{S_b}{\putiexp{l}} \parstepsto
-              \error$.
-
-              Since $\config{S}{e_{a_1}} \parstepsto
-              \config{S_a}{e_{a_2}}$ by {\sc E-Put}, it must be the
-              case that $e_{a_1} = \putiexp{l}$.  Hence
-              $\config{S_b}{e_{a_1}} \parstepsto \error$.
-
-              Since $\error$ is equal to $\config{\topS}{e}$ for all
-              expressions $e$, $\config{S_b}{e_{a_1}} \parstepsto
-              \config{\topS}{e}$ for all $e$.  Therefore, by {\sc
-                E-Eval-Ctxt}, $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}}
-              \ctxstepsto \config{\topS}{\evalctxt{E'_a}{e}}$ for all
-              $e$.  Since $\config{\topS}{\evalctxt{E'_a}{e}}$ is
-              equal to $\error$, we have that
-              $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-              \error$.
-
-              Since $\evalctxt{E'_a}{e_{a_1}} =
-              \evalctxt{E_b}{e_{b_2}}$, we have that
-              $\config{S_b}{\evalctxt{E_b}{e_{b_2}}} \ctxstepsto
-              \error$.
-
-              Since $\conf_b = \config{S_b}{\evalctxt{E_b}{e_{b_2}}}$,
-              we therefore have that $\conf_b \ctxstepsto \error$, and
-              the case is satisfied.
-
-            \item $u_{p_i}(\state{d_1}{\frozentrue}) \neq \topp$:
-
-              \lk{This is the case where there's a conflicting put and
-                freeze, but the put is a no-op, so it doesn't matter.}
-
-              In this case, by the definition of $U_p$
-              (Definition~\ref{def:set-of-state-update-operations}), \\
-              it must be the case that
-              $u_{p_i}(\state{d_1}{\frozentrue}) =
-              \state{d_1}{\frozentrue}$.
-
-              Choose $S' = \extS{S}{l}{d_1}{\frozentrue}$, $i = 1$, $j
-              = 1$, and $\pi = \id$.
-
-              We have to show that:
-              \begin{itemize}
-              \item
-                $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
-                \ctxstepsto
-                \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
-                and
-              \item
-                $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
-                \ctxstepsto
-                \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
-              \end{itemize}
-
-              For the first of these, consider that
-              $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is
-              the store update operation that applies $u_{p_i}$ to the
-              contents of $l$ if it exists, and adds a binding
-              $\storebindingRaw{l}{u_{p_i}(p_1)}$ if no binding for
-              $l$ exists, and acts as the identity on all other
-              locations.  Note that:
-              \begin{itemize}
-              \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
-                \parstepsto
-                \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$,
-                since no locations are allocated in the
-                transition;
-              \item $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$, \\
-                since $U_S(\extS{S}{l}{d_1}{\frozentrue}) =
-                \extSRaw{S}{l}{u_{p_i}(\state{d_1}{\frozentrue})}$ and
-                we know $S \neq \topS$ and
-                $u_{p_i}(\state{d_1}{\frozentrue}) \neq \topp$; and
-              \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
-                \parstepsto
-                \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$, since
-                the only location that can change in status between $S$
-                and $\extS{S}{l}{d_1}{\frozentrue}$ is $l$, and $U_S$
-                acts as the identity on $l$.
-              \end{itemize}
-              Therefore, by Lemma~\ref{lem:generalized-independence}
-              (Generalized Independence), \\ we have that
-              $\config{U_S(S)}{e_{b_1}} \parstepsto
-              \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{e_{b_2}}$.
-              Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
-              \parstepsto
-              \config{\extSRaw{S}{l}{u_{p_i}(\state{d_1}{\frozentrue})}}{e_{b_2}}$.
-
-              Since $u_{p_i}(\state{d_1}{\frozentrue}) =
-              \state{d_1}{\frozentrue}$, we have that \\
-              $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
-              \parstepsto
-              \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$.
-
-              By {\sc E-Eval-Ctxt}, it follows that \\
-              $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{\evalctxt{E'_b}{e_{b_1}}}
-              \ctxstepsto
-              \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
-              as we were required to show.
-
-              For the second, consider that
-              $\extS{S}{l}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is
-              the store update operation that freezes the contents of $l$
-              and acts as the identity on the contents of all other
-              locations.  Note that:
-              \begin{itemize}
-              \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
-                \parstepsto
-                \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since no
-                locations are allocated in the transition;
-              \item $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$,
-                since $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) =
-                \extS{S}{l}{d_1}{\frozentrue}$ (since, by
-                Definition~\ref{def:set-of-state-update-operations},
-                $u_i(d_1) = d_1$; otherwise we would have
-                $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$, a
-                contradiction), and we know $S \neq \topS$ and
-                freezing the contents of location $l$ in $S$ cannot
-                cause it to become $\topS$; and
-              \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
-                \parstepsto
-                \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since
-                $u_{p_i}$ does not alter the status of $p_1$.  (By
-                Definition~\ref{def:set-of-state-update-operations},
-                $u_{p_i}$ can only change the status bit of a location
-                if its contents are $\state{d}{\frozentrue}$ and
-                $u_i(d) \neq d$, in which case $u_{p_i}$ changes the
-                contents of the location to
-                $\state{\top}{\frozenfalse}$; however, that cannot be
-                the case here since then $u_{p_i}(p_1)$ would be
-                $\topp$, and we would have $S_a = \topS$, a
-                contradiction.)
-              \end{itemize}
-              Therefore, by Lemma~\ref{lem:generalized-independence}
-              (Generalized Independence), \\ we have that
-              $\config{U_S(S)}{e_{a_1}} \parstepsto
-              \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{e_{a_2}}$.
-              Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{a_1}}
-              \parstepsto
-              \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{a_2}}$.
-              By {\sc E-Eval-Ctxt}, it follows that \\
-              $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
-              \ctxstepsto
-              \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$, \\
-              as we were required to show.
-          \end{itemize}
+        \end{itemize}
 
       \end{itemize}
 
@@ -1259,10 +1449,11 @@
     \error$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
-    only way an $\error$ configuration can arise is by the {\sc
-      E-Put-Err} rule, we can assume in all other cases that $\conf_b
-    \neq \error$.
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.
+
+    Since the only way an $\error$ configuration can arise is by the
+    {\sc E-Put-Err} rule, we can assume in all other cases that
+    $\conf_b \neq \error$.
     \begin{enumerate}
     \item \label{slqc-put-err-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-put-err}.
     \item \label{slqc-put-err-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-put-err}.
@@ -1270,7 +1461,9 @@
     \item \label{slqc-put-err-put-err}Case {\sc E-Put-Err}: We have
       $\config{S_a}{e_{a_2}} = \error$ and $\config{S_b}{e_{b_2}} =
       \error$, and so we choose $\conf_c = \error$, $i = 0$, $j = 0$,
-      and $\pi = \id$.  We have to show that:
+      and $\pi = \id$.
+
+      We have to show that:
       \begin{itemize}
       \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} = \error$, and
       \item $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} = \error$.
@@ -1292,8 +1485,9 @@
     \item \label{slqc-put-err-freeze-final}Case {\sc E-Freeze-Final}:
       We have $\config{S_a}{e_{a_2}} = \error$ and $S_b =
       \extS{S}{l}{d_1}{\frozentrue}$, and so we choose $\conf_c =
-      \error$, $i = 0$, $j = 1$, and $\pi = \id$.  We have to show
-      that:
+      \error$, $i = 0$, $j = 1$, and $\pi = \id$.
+
+      We have to show that:
       \begin{itemize}
       \item $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}} = \error$,
         and
@@ -1304,20 +1498,27 @@
       The first of these is immediately true because since
       $\config{S_a}{e_{a_2}} = \error$, $S_a = \topS$, and so
       $\config{S_a}{\evalctxt{E'_b}{e_{b_1}}}$ is equal to $\error$ as
-      well.  For the second, observe that since $\config{S}{e_{b_1}}
+      well.
+
+      For the second, observe that since $\config{S}{e_{b_1}}
       \parstepsto \config{S_b}{e_{b_2}}$, we have by
       Lemma~\ref{lem:monotonicity} (Monotonicity) that
-      $\leqstore{S}{S_b}$.  Therefore, since $\config{S}{e_{a_1}}
-      \parstepsto \error$, we have by
-      Lemma~\ref{lem:error-preservation} that $\config{S_b}{e_{a_1}}
-      \parstepsto \error$.  Since $\error$ is equal to
-      $\config{\topS}{e}$ for all expressions $e$,
-      $\config{S_b}{e_{a_1}} \parstepsto \config{\topS}{e}$ for all
-      $e$.  Therefore, by {\sc E-Eval-Ctxt},
+      $\leqstore{S}{S_b}$.
+
+      Therefore, since $\config{S}{e_{a_1}} \parstepsto \error$, we
+      have by Lemma~\ref{lem:error-preservation} that
+      $\config{S_b}{e_{a_1}} \parstepsto \error$.
+
+      Since $\error$ is equal to $\config{\topS}{e}$ for all
+      expressions $e$, $\config{S_b}{e_{a_1}} \parstepsto
+      \config{\topS}{e}$ for all $e$.
+
+      Therefore, by {\sc E-Eval-Ctxt},
       $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
-      \config{\topS}{\evalctxt{E'_a}{e}}$ for all $e$.  Since
-      $\config{\topS}{\evalctxt{E'_a}{e}}$ is equal to $\error$, we
-      have that $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
+      \config{\topS}{\evalctxt{E'_a}{e}}$ for all $e$.
+
+      Since $\config{\topS}{\evalctxt{E'_a}{e}}$ is equal to $\error$,
+      we have that $\config{S_b}{\evalctxt{E'_a}{e_{a_1}}} \ctxstepsto
       \error$, as we were required to show.
 
     \item \label{slqc-put-err-freeze-simple}Case {\sc
@@ -1329,10 +1530,11 @@
   \item Case {\sc E-Get}: We have $S_a = S$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
-    only way an $\error$ configuration can arise is by the {\sc
-      E-Put-Err} rule, we can assume in all other cases that $\conf_b
-    \neq \error$.
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.
+
+    Since the only way an $\error$ configuration can arise is by the
+    {\sc E-Put-Err} rule, we can assume in all other cases that
+    $\conf_b \neq \error$.
     \begin{enumerate}
     \item \label{slqc-get-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-get}.
     \item \label{slqc-get-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-get}.
@@ -1355,10 +1557,11 @@
   \item Case {\sc E-Freeze-Init}: We have $S_a = S$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
-    only way an $\error$ configuration can arise is by the {\sc
-      E-Put-Err} rule, we can assume in all other cases that $\conf_b
-    \neq \error$.
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.
+
+    Since the only way an $\error$ configuration can arise is by the
+    {\sc E-Put-Err} rule, we can assume in all other cases that
+    $\conf_b \neq \error$.
     \begin{enumerate}
     \item \label{slqc-freeze-init-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-freeze-init}.
     \item \label{slqc-freeze-init-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-freeze-init}.
@@ -1382,10 +1585,11 @@
   \item Case {\sc E-Spawn-Handler}: We have $S_a = S$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
-    only way an $\error$ configuration can arise is by the {\sc
-      E-Put-Err} rule, we can assume in all other cases that $\conf_b
-    \neq \error$.
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.
+
+    Since the only way an $\error$ configuration can arise is by the
+    {\sc E-Put-Err} rule, we can assume in all other cases that
+    $\conf_b \neq \error$.
     \begin{enumerate}
     \item \label{slqc-spawn-handler-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-spawn-handler}.
     \item \label{slqc-spawn-handler-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-spawn-handler}.
@@ -1408,10 +1612,11 @@
     \extS{S}{l}{d_1}{\frozentrue}$.
 
     We proceed by case analysis on the rule by which
-    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.  Since the
-    only way an $\error$ configuration can arise is by the {\sc
-      E-Put-Err} rule, we can assume in all other cases that $\conf_b
-    \neq \error$.
+    $\config{S}{e_{b_1}}$ steps to $\config{S_b}{e_{b_2}}$.
+
+    Since the only way an $\error$ configuration can arise is by the
+    {\sc E-Put-Err} rule, we can assume in all other cases that
+    $\conf_b \neq \error$.
     \begin{enumerate}
     \item \label{slqc-freeze-final-beta}Case {\sc E-Beta}: By symmetry with case~\ref{slqc-beta-freeze-final}.
     \item \label{slqc-freeze-final-new}Case {\sc E-New}: By symmetry with case~\ref{slqc-new-freeze-final}.
@@ -1426,123 +1631,139 @@
 
       Now consider whether $l = l'$:
       \begin{itemize}
-        \item If $l \neq l'$:
+      \item If $l \neq l'$:
 
-          Choose $S' =
-          \extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}$,
-          $i = 1$, $j = 1$, and $\pi = \id$.
+        Choose $S' =
+        \extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}$,
+        $i = 1$, $j = 1$, and $\pi = \id$.
 
-          We have to show that:
-          \begin{itemize}
-          \item
-            $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_1}}}
-            \ctxstepsto
-            \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
-            and
-          \item
-            $\config{\extS{S}{l'}{d'_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
-            \ctxstepsto
-            \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
-          \end{itemize}
-
-          For the first of these, consider that
-          $\extS{S}{l}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is the
-          store update operation that freezes the contents of $l$
-          and acts as the identity on the contents of all other
-          locations.  Note that:
-          \begin{itemize}
-          \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
-            \parstepsto
-            \config{\extS{S}{l'}{d'_1}{\frozentrue}}{e_{b_2}}$, since
-            no locations are allocated in the transition;
-          \item $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) \neq \topS$, \\
-            since $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) =
-            \extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}$
-            and we know $S \neq \topS$ and freezing the contents of
-            locations $l$ and $l'$ in $S$ cannot cause it to become
-            $\topS$ (because if so, then we would have $S_a = \topS$
-            or $S_b = \topS$, which we know are not the case); and
-          \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
-            \parstepsto
-            \config{\extS{S}{l'}{d'_1}{\frozentrue}}{e_{b_2}}$, since
-            the only location that can change in status between $S$
-            and $\extS{S}{l'}{d'_1}{\frozentrue}$ is $l'$, and $U_S$
-            acts as the identity on $l'$.
-          \end{itemize}
-          Therefore, by Lemma~\ref{lem:generalized-independence}
-          (Generalized Independence), we have that
-          $\config{U_S(S)}{e_{b_1}} \parstepsto
-          \config{U_S(\extS{S}{l'}{d'_1}{\frozentrue})}{e_{b_2}}$. \\
-          Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_1}}
-          \parstepsto
-          \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{e_{b_2}}$.
-          By {\sc E-Eval-Ctxt}, it follows that \\
+        We have to show that:
+        \begin{itemize}
+        \item
           $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_1}}}
           \ctxstepsto
-          \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
-          as we were required to show.  The argument for the second is
-          symmetrical.
+          \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          and
+        \item
+          $\config{\extS{S}{l'}{d'_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
+          \ctxstepsto
+          \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
+        \end{itemize}
 
-        \item If $l = l'$:
+        For the first of these, consider that
+        $\extS{S}{l}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is the
+        store update operation that freezes the contents of $l$
+        and acts as the identity on the contents of all other
+        locations.
 
-          \lk{This is the case where we freeze the same location
-            twice, which is no problem; the second freeze is a no-op.}
-
-          Note that since $l = l'$, $d_1 = d'_1$ as well.
-
-          Choose $S' = \extS{S}{l}{d_1}{\frozentrue}$, $i = 1$, $j =
-          1$, and $\pi = \id$.
-
-          We have to show that:
-          \begin{itemize}
-          \item
-            $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_1}}}
-            \ctxstepsto
-            \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
-            and
-          \item
-            $\config{\extS{S}{l'}{d'_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
-            \ctxstepsto
-            \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
-          \end{itemize}
-
-          For the first of these, consider that
-          $\extS{S}{l}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is the
-          store update operation that freezes the contents of $l$ and
-          acts as the identity on the contents of all other locations.
-          Note that:
-          \begin{itemize}
-          \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
-            \parstepsto
-            \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$, since no
-            locations are allocated in the transition;
-          \item $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$, since
-            $U_S(\extS{S}{l}{d_1}{\frozentrue}) =
-            \extS{S}{l}{d_1}{\frozentrue}$, and we know $S \neq \topS$
-            and freezing the contents of location $l$ in $S$ cannot
-            cause it to become $\topS$; and
-          \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
-            \parstepsto
-            \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$, since
-            the only location that can change in status between $S$
-            and $\extS{S}{l}{d_1}{\frozentrue}$ is $l$, and $U_S$
-            freezes the contents of $l$ but has no other effect on
-            them.
-          \end{itemize}
-
-          Therefore, by Lemma~\ref{lem:generalized-independence}
-          (Generalized Independence), we have that
-          $\config{U_S(S)}{e_{b_1}} \parstepsto
-          \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{e_{b_2}}$. \\
-          Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_1}}
+        Note that:
+        \begin{itemize}
+        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
           \parstepsto
-          \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$.
-          By {\sc E-Eval-Ctxt}, it follows that \\
+          \config{\extS{S}{l'}{d'_1}{\frozentrue}}{e_{b_2}}$, since
+          no locations are allocated in the transition;
+        \item $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) \neq \topS$,
+
+          since $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) =
+          \extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}$
+          and we know $S \neq \topS$ and freezing the contents of
+          locations $l$ and $l'$ in $S$ cannot cause it to become
+          $\topS$ (because if so, then we would have $S_a = \topS$
+          or $S_b = \topS$, which we know are not the case); and
+        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+          \parstepsto
+          \config{\extS{S}{l'}{d'_1}{\frozentrue}}{e_{b_2}}$, since
+          the only location that can change in status between $S$
+          and $\extS{S}{l'}{d'_1}{\frozentrue}$ is $l'$, and $U_S$
+          acts as the identity on $l'$.
+        \end{itemize}
+        Therefore, by Lemma~\ref{lem:generalized-independence}
+        (Generalized Independence), we have that
+
+        $\config{U_S(S)}{e_{b_1}} \parstepsto
+        \config{U_S(\extS{S}{l'}{d'_1}{\frozentrue})}{e_{b_2}}$.
+
+        Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_1}}
+        \parstepsto
+        \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{e_{b_2}}$.
+
+        By {\sc E-Eval-Ctxt}, it follows that
+
+        $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_1}}}
+        \ctxstepsto
+        \config{\extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+        
+        as we were required to show.
+
+        The argument for the second is symmetrical.
+
+      \item If $l = l'$:
+
+        \lk{This is the case where we freeze the same location
+          twice, which is no problem; the second freeze is a no-op.}
+
+        Note that since $l = l'$, $d_1 = d'_1$ as well.
+
+        Choose $S' = \extS{S}{l}{d_1}{\frozentrue}$, $i = 1$, $j =
+        1$, and $\pi = \id$.
+
+        We have to show that:
+        \begin{itemize}
+        \item
           $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_1}}}
           \ctxstepsto
-          \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$, \\
-          as we were required to show.  The argument for the second is
-          symmetrical.
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+          and
+        \item
+          $\config{\extS{S}{l'}{d'_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_1}}}
+          \ctxstepsto
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_a}{e_{a_2}}}$.
+        \end{itemize}
+
+        For the first of these, consider that
+        $\extS{S}{l}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is the
+        store update operation that freezes the contents of $l$ and
+        acts as the identity on the contents of all other locations.
+
+        Note that:
+        \begin{itemize}
+        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+          \parstepsto
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$, since no
+          locations are allocated in the transition;
+        \item $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$, since
+          $U_S(\extS{S}{l}{d_1}{\frozentrue}) =
+          \extS{S}{l}{d_1}{\frozentrue}$, and we know $S \neq \topS$
+          and freezing the contents of location $l$ in $S$ cannot
+          cause it to become $\topS$; and
+        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+          \parstepsto
+          \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$, since
+          the only location that can change in status between $S$
+          and $\extS{S}{l}{d_1}{\frozentrue}$ is $l$, and $U_S$
+          freezes the contents of $l$ but has no other effect on
+          them.
+        \end{itemize}
+
+        Therefore, by Lemma~\ref{lem:generalized-independence}
+        (Generalized Independence), we have that
+
+        $\config{U_S(S)}{e_{b_1}} \parstepsto
+        \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{e_{b_2}}$.
+
+        Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_1}}
+        \parstepsto
+        \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$.
+
+        By {\sc E-Eval-Ctxt}, it follows that
+
+        $\config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_1}}}
+        \ctxstepsto
+        \config{\extS{S}{l}{d_1}{\frozentrue}}{\evalctxt{E'_b}{e_{b_2}}}$,
+
+        as we were required to show.
+
+        The argument for the second is symmetrical.
 
       \end{itemize}
 
