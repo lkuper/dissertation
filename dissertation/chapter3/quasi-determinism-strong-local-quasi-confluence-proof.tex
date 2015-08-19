@@ -557,7 +557,7 @@
         which completes the case since $\evalctxt{E'_b}{\pi(e_{b_2})}
         = \evalctxt{(\pi(E'_a))}{e_{a_2}}$.
 
-        \lk{This is really sketchy -- I should really explain why
+        \lk{This assumes that you believe that
           $\evalctxt{E'_b}{\pi(e_{b_2})} =
           \evalctxt{(\pi(E'_a))}{e_{a_2}}$.}
 
@@ -1259,10 +1259,10 @@
         \item $u_{p_i}(\state{d_1}{\frozentrue}) = \topp$:
 
           \lk{This is the interesting case: the potential
-            put-after-freeze case.  It's important to note that
-            this case doesn't necessarily end in a
-            put-after-freeze (and hence an error); all we're
-            required to show is that it \emph{can} end that way.}
+            put-after-freeze case.  It's important to note that this
+            case doesn't necessarily end in a put-after-freeze (and
+            hence an error); all we're required to show is that it
+            \emph{can} end that way.}
 
           Since $(\extSRaw{S}{l}{\state{d_1}{\frozentrue}})(l) =
           \state{d_1}{\frozentrue}$ and
@@ -1699,8 +1699,8 @@
 
       \item If $l = l'$:
 
-        \lk{This is the case where we freeze the same location
-          twice, which is no problem; the second freeze is a no-op.}
+        \lk{This is the case where we freeze the same location twice,
+          which is no problem; the second freeze is a no-op.}
 
         Note that since $l = l'$, $d_1 = d'_1$ as well.
 

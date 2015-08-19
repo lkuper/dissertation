@@ -58,10 +58,9 @@ updates must not be observable.\footnote{Of course, commutativity of
   not observable; for that we also need threshold reads.}
 
 \lk{``update'' used to be called ``bump'', but I think ``update'' is a
-  better name because I want it to be clear that \il{put} is a special
-  case of it, and ``bump'' sounds like something that is specifically
-  \emph{not} idempotent, while ``update'' is merely something that
-  \emph{doesn't have to be} idempotent.}
+  better name: ``bump'' sounds like something that is
+  specifically \emph{not} idempotent, while ``update'' is merely
+  something that \emph{doesn't have to be} idempotent.}
 
 In fact, the @put@ operation meets the above two conditions, and
 therefore can be viewed as a special case of an update operation that,
@@ -111,20 +110,6 @@ will see in Section~\ref{subsection:quasi-generalized-independence},
 we will need to generalize the Independence lemma
 (Lemma~\ref{lem:lvars-independence}) in order to accommodate this
 change to the language.
-
-\lk{The Chapter~\ref{ch:quasi} $\lambdaLVish$ result is
-  quasi-determinism, not determinism.  So, if I really wanted to be
-  serious about showing that update is deterministic and not merely
-  quasi-deterministic, I would do this more modularly: I would
-  actually present another version of the $\lambdaLVar$ language here,
-  with \il{put} replaced with $\PUTi$, and then re-do the determinism
-  proof for it, instead of just lumping it into the quasi-determinism
-  result in the next chapter.  If I did that, though, then this
-  section would be big enough to justify being its own chapter.  I'm
-  going to just appeal to people's common sense that the
-  quasi-determinism in $\lambdaLVish$ comes from freezing, not from
-  update.  I hope that this is OK!  (There's a footnote about this in
-  Section~\ref{subsection:quasi-generalized-independence}.)}
 
 \ifdefined\DISSERTATION
 \subsection{A more general formulation of threshold sets}\label{subsection:lvars-a-more-general-formulation-of-threshold-sets}
@@ -370,24 +355,18 @@ which a threshold function is defined, its return value need not be
 its threshold point. The activation set $Q$ is a particularly useful
 return value, but \emph{any} constant return value will suffice.
 
-\lk{By itself, this is kinda unconvincing; what I should really do if
-  I want to convince people of the determinism of threshold functions
-  is add a generalized version of \il{get} based on threshold
-  functions to the language and prove determinism about that.  IMO it
-  ends up being less elegant than threshold sets, though, because you
-  need many threshold functions to represent a threshold set.  I think
-  it would look something like this: the language has to be
-  parameterized by some set $F$ of threshold functions $f_i : D
-  \rightarrow C$ (where $C$ is the type of the results (which could be
-  $D$, but could also be the set of all activation sets, or anything
-  we want).  Then, if someone calls $\getexp{l}{\setof{f_1, f_2,
-      \dots}}$, it means that they want to get the result of threshold
-  function $f_1$ if $l$ is at or above $f_1$'s threshold point; the
-  result of threshold function $f_2$ if $l$ is at or above $f_2$'s
-  threshold point, and so on.  In order for this to be deterministic,
-  we still need the notion of pairwise incompatibility: I think we
-  need all the \emph{threshold points} of threshold functions in a
-  particular call to \il{get} to have $\top$ as their lub.  Augh,
-  maybe I should actually do this...I didn't promise I would, but
-  maybe I should...}
+\lk{A generalized version of \il{get} based on
+threshold functions might look something like this: the language would
+be parameterized by some set $F$ of threshold functions $f_i :
+D \rightarrow C$ (where $C$ is the type of the results (which could be
+$D$, but could also be the set of all activation sets, or anything we
+want).  Then, calling $\getexp{l}{\setof{f_1, f_2, \dots}}$ means that
+you want to get: the result of threshold function $f_1$ if $l$ is at
+or above $f_1$'s threshold point; the result of threshold function
+$f_2$ if $l$ is at or above $f_2$'s threshold point, and so on.  In
+order for this to be deterministic, we still need the notion of
+pairwise incompatibility: we need all the \emph{threshold points} of
+threshold functions in a particular call to \il{get} to have $\top$ as
+their lub.  I haven't checked the details of all this, though.}
+
 \fi

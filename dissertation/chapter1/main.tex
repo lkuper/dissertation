@@ -28,8 +28,8 @@ dissertation I will define}{we will define} the observable behavior of a program
 \emph{the value to which the program evaluates}.
 
 \lk{In my proposal, I had a footnote here: ``We assume that programs
-  have no side effects other than state effects.'' I think I instead
-  just want to say that we \emph{ignore} other side effects.  They can
+  have no side effects other than state effects.'' But what I really
+  mean is that we \emph{ignore} other side effects.  They can
   \emph{happen}; it's just that they don't count.}
 
 This definition of observable behavior ignores side effects other than
@@ -394,16 +394,19 @@ avoiding unnecessary synchronization.
 \ifdefined\DISSERTATION
 \section{Thesis statement, and organization of the rest of this dissertation}\label{s:intro-thesis}
 
-With the above background, I can state my thesis:\lk{This format
-  ripped off from Josh Dunfield.}
+\lk{``With the above background, I can state my thesis'' is cribbed
+  from Josh Dunfield's thesis proposal.}
+
+\lk{My thesis statement is the same as the one in my proposal, except
+  that I changed ``foundation'' to ``unifying abstraction''.}
+
+With the above background, I can state my thesis:
 \begin{quote}
   Lattice-based data structures are a general and practical unifying
   abstraction for deterministic and quasi-deterministic parallel and
   distributed programming.
 \end{quote}
-\lk{Changed from ``foundation'' to ``unifying abstraction'' --
-  otherwise it's the same as in my proposal.}  The rest of this
-dissertation supports my thesis as follows:
+The rest of this dissertation supports my thesis as follows:
 \begin{itemize}
   \item \emph{Lattice-based data structures}: In
     Chapter~\ref{ch:lvars}, I formally define LVars and use them to
@@ -439,14 +442,13 @@ dissertation supports my thesis as follows:
     implementation of the LVish Haskell library, which is based on the
     LVars programming model, and demonstrate how it is used for
     practical programming with the two case studies described above,
-    including performance results on parallel hardware.\lk{I threw in
-      ``parallel'' here because I wasn't counting it under any of the
-      other bullets.  Parallelism is a resource; we have a ``parallel
-      language semantics'' in the sense that it's a semantics that
-      gives the scheduler lots of purchase to schedule it onto
-      parallel hardware, and the only proof of that is in the pudding.
-      So I'm not sure where else to support the claim of parallelism
-      but here.}
+    including performance results on parallel hardware.
+
+    \lk{I put ``parallel'' here for lack of a better place to fit it
+      in.  Parallelism is a resource; we have a ``parallel language
+      semantics'' in the sense that it's a semantics that gives the
+      scheduler lots of purchase to schedule it onto parallel
+      hardware, and the only proof of that is in the pudding.}
 
   \item \emph{distributed programming}: In
     Chapter~\ref{ch:distributed}, I show how LVar-style threshold
@@ -462,9 +464,9 @@ dissertation supports my thesis as follows:
 \section{Previously published work}
 
 \ifdefined\DISSERTATION
-The material in this dissertation is based in large part on research
-done jointly with several collaborators, some of which appears in the
-following previously published papers:
+The material in this dissertation is based on research done jointly
+with several collaborators, some of which appears in the following
+previously published papers:
 
 \lk{These are formatted in ``ACM Ref'' style.}
 
@@ -496,19 +498,15 @@ following previously published papers:
     Implementation} (PLDI '14).
 \end{itemize}
 
-\lk{I was going to put something like, ``The material in this chapter
-  is based on research done jointly with...'' in individual chapters,
-  and cite each paper at the start of its chapter.  But chapters don't
-  really correspond to the papers, so I'm just going to try citing all
-  the papers up front like this.  In particular, Chapter 2 is a hybrid
-  of the first and second papers listed above, except for material in
-  Section 2.6, which is new; Chapter 3 is based on the second paper
-  listed above; except for everything pertaining to update operations,
-  which is new; Chapter 4 is based on the second and fourth papers
-  listed above; and Chapter 5 is based very loosely on the third paper
-  listed above, but is largely new (and we have an as-yet-unpublished
-  new paper about it).  If this is actually useful information, I'll
-  add it; if not, I'll leave it out.}
+\lk{In particular: Chapter~\ref{ch:lvars} is a hybrid of the first and
+  second papers listed above, except for material in
+  Section~\ref{s:lvars-generalizing}, which is new;
+  Chapter~\ref{ch:quasi} is based on the second paper listed above,
+  except for everything pertaining to update operations, which is new;
+  Chapter~\ref{ch:lvish} is based on the second and fourth papers
+  listed above; and Chapter~\ref{ch:distributed} is based very loosely
+  on the third paper listed above, but is largely new.}
+
 \fi
 
 \ifdefined\JOURNAL

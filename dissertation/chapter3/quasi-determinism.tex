@@ -453,10 +453,6 @@ are the same configuration, or one of them is $\error$.
 
 \subsection{Discussion: quasi-determinism in practice}
 
-\lk{I kinda threw this subsection in here on a whim.  Maybe it should
-  actually go somewhere in Chapter 4, or maybe it should be its own
-  section.}
-
 The quasi-determinism result for $\lambdaLVish$ shows that it is not
 possible to get multiple ``answers'' from the same program: every run
 will either produce the same answer or an error.  Importantly, this
@@ -483,6 +479,6 @@ debug the race.
 However, if we \emph{can} ensure that an LVar is only ever frozen
 \emph{after} all writes to that LVar have completed, then we can
 guarantee full determinism, because we will have ruled out races
-between write operations and freeze operations.  In the next \either{chapter}{section},
-\either{I}{we} discuss how the LVish Haskell library enforces this ``freeze after
-writing'' property.
+between write operations and freeze operations.  In the next
+\either{chapter}{section}, \either{I}{we} discuss how the LVish
+Haskell library enforces this ``freeze after writing'' property.

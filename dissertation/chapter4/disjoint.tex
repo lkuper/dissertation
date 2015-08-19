@@ -44,17 +44,18 @@ instance (SplittableState s, ParMonad m) =>
 \end{lstlisting}
 \doublespacing
 
-\lk{An aside: this code reflects what appeared in our PLDI '14
-  ``Effect Zoo'' paper, but it doesn't actually reflect how things are
-  done in the LVish library of 2015; ParST no longer uses StateT.
-  However, how ParST is implemented is really just an implementation
-  detail.  As Ryan puts it: ``It happens that when Omer and I were
-  overhauling it during one of our pair programming sessions, we
-  reimplemented StateT ourselves (it's a trivial monad), initially
-  because ParMonad's p and Monad's m now look different.  Later, we
-  figured out that we could still use StateT if we wanted, but it's
-  not important.  The important thing for ParST should be what API is
-  exposed to the user.''}
+\lk{This code reflects what appeared in our PLDI '14 ``Effect Zoo''
+  paper, but it doesn't actually reflect how things are done in the
+  LVish library of 2015; \il{ParST} no longer uses \il{StateT}.
+  However, how \il{ParST} is implemented is really just an
+  implementation detail.  As Ryan puts it: ``It happens that when Omer
+  and I were overhauling it during one of our pair programming
+  sessions, we reimplemented \il{StateT} ourselves (it's a trivial
+  monad), initially because \il{ParMonad}'s \il{p} and \il{Monad}'s
+  \il{m} now look different.  Later, we figured out that we could
+  still use \il{StateT} if we wanted, but it's not important.  The
+  important thing for \il{ParST} should be what API is exposed to the
+  user.''}
 
 Note that here, @put@ and @get@ are not LVar operations, but the
 standard operations for setting and retrieving the state in a
