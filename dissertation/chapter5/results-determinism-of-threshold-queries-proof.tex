@@ -1,131 +1,177 @@
 \begin{proof}
-Consider replica $i$ of a threshold CvRDT $(S, \leq, s^0, q, t, u,
-m)$.  Let $\mathcal{S}$ be a threshold set with respect to
-$(S, \leq)$.  Consider a method execution $t^{k+1}_i(\mathcal{S})$
-(\ie, a threshold query that is the $k+1$th method execution
-on replica $i$, with threshold set $\mathcal{S}$ as its argument) that
-returns some set of activation states $S_a \in \mathcal{S}$.
+  Consider replica $i$ of a threshold CvRDT $(S, \leq, s^0, q, t, u,
+  m)$.
 
-For part~\ref{thm:this-replica} of the theorem, we have to show that
-threshold queries with $\mathcal{S}$ as their argument will always
-return $S_a$ on subsequent executions at $i$.  That is, we have to
-show that, for all $k' > (k+1)$, the threshold query
-$t^{k'}_i(\mathcal{S})$ on $i$ returns $S_a$.
+  Let $\mathcal{S}$ be a threshold set with respect to
+  $(S, \leq)$.
 
-Since $t^{k+1}_i(\mathcal{S})$ returns $S_a$, from
-Definition~\ref{def:cvrdt-with-threshold-queries} we have that for
-some activation state $s_a \in S_a$, the condition $s_a \leq s^k_i$
-holds.  Consider arbitrary $k' > (k+1)$.  Since state is inflationary
-across updates, we know that the state $s^{k'}_i$ after method
-execution $k'$ is at least $s^k_i$.  That is, $s^k_i \leq s^{k'}_i$.
-By transitivity of $\leq$, then, $s_a \leq s^{k'}_i$.  Hence, by
-Definition~\ref{def:cvrdt-with-threshold-queries},
-$t^{k'}_i(\mathcal{S})$ returns $S_a$.
+  Consider a method execution $t^{k+1}_i(\mathcal{S})$ (\ie, a
+  threshold query that is the $k+1$th method execution on replica $i$,
+  with threshold set $\mathcal{S}$ as its argument) that returns some
+  set of activation states $S_a \in \mathcal{S}$.
 
-For part~\ref{thm:any-replica} of the theorem, consider some replica
-$j$ of $(S, \leq, s^0, q, t, u, m)$, located at process $p_j$.  We are
-required to show that, for all $x \geq 0$, the threshold query
-$t^{x+1}_j(\mathcal{S})$ returns $S_a$ eventually, and blocks until it
-does.\footnote{The occurrences of $k+1$ and $x+1$ in this proof are an
-  artifact of how we index method executions starting from $1$, but
-  states starting from $0$.  The initial state (of every replica) is
-  $s^0$, and so $s^k_i$ is the state of replica $i$ after method
-  execution $k$ has completed at $i$.}
-That is, we must show that, for all $x \geq 0$, there exists some
-finite $n \geq 0$ such that
-\begin{itemize}
-\item 
-for all $i$ in the range $0 \leq i \leq n-1$, the threshold query
-$t^{x+1+i}_j(\mathcal{S})$ returns $\block$, and
-\item
-for all $i \geq n$, the threshold query $t^{x+1+i}_j(\mathcal{S})$
-returns $S_a$.
-\end{itemize}
-Consider arbitrary $x \geq 0$.  Recall that $s^x_j$ is the state of
-replica $j$ after the $x$th method execution, and therefore $s^x_j$ is
-also the state of $j$ when $t^{x+1}_j(\mathcal{S})$ runs.
-%
-We have three cases to consider:
-\begin{itemize}
-\item $s^k_i \leq s^x_j$.
-(That is, replica $i$'s state after the $k$th method execution on $i$
-is \emph{at or below} replica $j$'s state after the $x$th method
-execution on $j$.)
-%
-Choose $n = 0$.  We have to show that, for all $i \geq n$, the
-threshold query $t^{x+1+i}_j(\mathcal{S})$ returns $S_a$.  Since
-$t^{k+1}_i(\mathcal{S})$ returns $S_a$, we know that there exists an
-$s_a \in S_a$ such that $s_a \leq s^k_i$.  Since $s^k_i \leq s^x_j$,
-we have by transitivity of $\leq$ that $s_a \leq s^x_j$.  Therefore,
-by Definition~\ref{def:cvrdt-with-threshold-queries},
-$t^{x+1}_j(\mathcal{S})$ returns $S_a$.  Then, by
-part~\ref{thm:this-replica} of the theorem, we have that subsequent
-executions $t^{x+1+i}_j(\mathcal{S})$ at replica $j$ will also return
-$S_a$, and so the case holds.  (Note that this case includes the
-possibility $s^k_i \equiv s^0$, in which no updates have executed at
-replica $i$.)
+  For part~\ref{thm:this-replica} of the theorem, we have to show that
+  threshold queries with $\mathcal{S}$ as their argument will always
+  return $S_a$ on subsequent executions at $i$.
 
-\item $s^k_i > s^x_j$.
-(That is, replica $i$'s state after the $k$th method execution on $i$
-is \emph{above} replica $j$'s state after the $x$th method execution
-on $j$.)
+  That is, we have to show that, for all $k' > (k+1)$, the threshold
+  query $t^{k'}_i(\mathcal{S})$ on $i$ returns $S_a$.
 
-  We have two subcases:
+  Since $t^{k+1}_i(\mathcal{S})$ returns $S_a$, from
+  Definition~\ref{def:cvrdt-with-threshold-queries} we have that for
+  some activation state $s_a \in S_a$, the condition $s_a \leq s^k_i$
+  holds.
 
-\begin{itemize}
-\item
-There exists some activation state $s'_a \in S_a$ for which $s'_a \leq
-s^x_j$.  In this case, we choose $n = 0$.  We have to show that, for
-all $i \geq n$, the threshold query $t^{x+1+i}_j(\mathcal{S})$ returns
-$S_a$.  Since $s'_a \leq s^x_j$, by
-Definition~\ref{def:cvrdt-with-threshold-queries},
-$t^{x+1}_j(\mathcal{S})$ returns $S_a$.  Then, by
-part~\ref{thm:this-replica} of the theorem, we have that subsequent
-executions $t^{x+1+i}_j(\mathcal{S})$ at replica $j$ will also return
-$S_a$, and so the case holds.
+  Consider arbitrary $k' > (k+1)$.
 
-\item
-There is no activation state $s'_a \in S_a$ for which $s'_a \leq
-s^x_j$.  Since $t^{k+1}_i(\mathcal{S})$ returns $S_a$, we know that
-there is some update $u^{k'}_i(a)$ in $i$'s causal history, for some
-$k' < (k+1)$, that updates $i$ from a state at or below $s^x_j$ to
-$s^k_i$.\footnote{We know that $i$'s state was once at or below
-$s^x_j$, because $i$ and $j$ started at the same state $s^0$ and can
-both only grow.  Hence the least that $s^x_j$ can be is $s^0$, and we
-know that $i$ was originally $s^0$ as well.} By eventual delivery,
-$u^{k'}_i(a)$ is eventually delivered at $j$.  Hence some update or
-updates that will increase $j$'s state from $s^x_j$ to a state at or
-above some $s'_a$ must reach replica $j$.\footnote{We say ``some
-update or updates'' because the exact update $u^{k'}_i(a)$ may not be
-the update that causes the threshold query at $j$ to unblock; a
-different update or updates could do it.  Nevertheless, the existence
-of $u^{k'}_i(a)$ means that there is at least one update that will
-suffice to unblock the threshold query.}
+  Since state is inflationary across updates, we know that the state
+  $s^{k'}_i$ after method execution $k'$ is at least $s^k_i$.
 
-Let the $x+1+r$th method execution on $j$ be the first update on $j$
-that updates its state to some $s^{x+1+r}_j \geq s'_a$, for some
-activation state $s'_a \in S_a$.  Choose $n = r+1$.  We have to show that, for
-all $i$ in the range $0 \leq i \leq r$, the threshold query
-$t^{x+1+i}_j(\mathcal{S})$ returns $\block$, and that for all $i \geq
-r+1$, the threshold query $t^{x+1+i}_j(\mathcal{S})$ returns $S_a$.
+  That is, $s^k_i \leq s^{k'}_i$.
 
-For the former, since the $x+1+r$th method execution on $j$ is the
-first one that updates its state to $s^{x+1+r}_j \geq s'_a$, we have
-by Definition~\ref{def:cvrdt-with-threshold-queries} that for all $i$
-in the range $0 \leq i \leq r$, the threshold query
-$t^{x+1+i}_j(\mathcal{S})$ returns $\block$.
+  By transitivity of $\leq$, then, $s_a \leq s^{k'}_i$.
 
-For the latter, since $s^{x+1+r}_j \geq s'_a$, by
-Definition~\ref{def:cvrdt-with-threshold-queries} we have that
-$t^{x+1+r+1}_j(\mathcal{S})$ returns $S_a$, and by
-part~\ref{thm:this-replica} of the theorem, we have that for $i \geq
-r+1$, subsequent executions $t^{x+1+i}_j(\mathcal{S})$ at replica $j$
-will also return $S_a$, and so the case holds.
-\end{itemize}
+  Hence, by Definition~\ref{def:cvrdt-with-threshold-queries},
+  $t^{k'}_i(\mathcal{S})$ returns $S_a$.
 
-\item $s^k_i \nleq s^x_j$ and $s^x_j \nleq s^k_i$.
-(That is, replica $i$'s state after the $k$th method execution on $i$
-is \emph{not comparable} to replica $j$'s state after the $x$th method
-execution on $j$.)  Similar to the previous case.
-\end{itemize}
+  For part~\ref{thm:any-replica} of the theorem, consider some replica
+  $j$ of $(S, \leq, s^0, q, t, u, m)$, located at process $p_j$.
+
+  We are required to show that, for all $x \geq 0$, the threshold
+  query $t^{x+1}_j(\mathcal{S})$ returns $S_a$ eventually, and blocks
+  until it does.\footnote{The occurrences of $k+1$ and $x+1$ in this
+    proof are an artifact of how we index method executions starting
+    from $1$, but states starting from $0$.  The initial state (of
+    every replica) is $s^0$, and so $s^k_i$ is the state of replica
+    $i$ after method execution $k$ has completed at $i$.}
+
+  That is, we must show that, for all $x \geq 0$, there exists some
+  finite $n \geq 0$ such that
+  \begin{itemize}
+  \item 
+    for all $i$ in the range $0 \leq i \leq n-1$, the threshold query
+    $t^{x+1+i}_j(\mathcal{S})$ returns $\block$, and
+  \item
+    for all $i \geq n$, the threshold query $t^{x+1+i}_j(\mathcal{S})$
+    returns $S_a$.
+  \end{itemize}
+  Consider arbitrary $x \geq 0$.
+
+  Recall that $s^x_j$ is the state of replica $j$ after the $x$th
+  method execution, and therefore $s^x_j$ is also the state of $j$
+  when $t^{x+1}_j(\mathcal{S})$ runs.
+  %
+  We have three cases to consider:
+  \begin{itemize}
+  \item $s^k_i \leq s^x_j$.
+
+    (That is, replica $i$'s state after the $k$th method execution on $i$
+    is \emph{at or below} replica $j$'s state after the $x$th method
+    execution on $j$.)
+
+    Choose $n = 0$.
+
+    We have to show that, for all $i \geq n$, the threshold query
+    $t^{x+1+i}_j(\mathcal{S})$ returns $S_a$.
+
+    Since $t^{k+1}_i(\mathcal{S})$ returns $S_a$, we know that there
+    exists an $s_a \in S_a$ such that $s_a \leq s^k_i$.
+
+    Since $s^k_i \leq s^x_j$, we have by transitivity of $\leq$ that
+    $s_a \leq s^x_j$.
+
+    Therefore, by Definition~\ref{def:cvrdt-with-threshold-queries},
+    $t^{x+1}_j(\mathcal{S})$ returns $S_a$.
+
+    Then, by part~\ref{thm:this-replica} of the theorem, we have that
+    subsequent executions $t^{x+1+i}_j(\mathcal{S})$ at replica $j$
+    will also return $S_a$, and so the case holds.
+
+    (Note that this case includes the possibility $s^k_i \equiv s^0$,
+    in which no updates have executed at replica $i$.)
+
+  \item $s^k_i > s^x_j$.
+
+    (That is, replica $i$'s state after the $k$th method execution on $i$
+    is \emph{above} replica $j$'s state after the $x$th method execution
+    on $j$.)
+
+    We have two subcases:
+
+    \begin{itemize}
+    \item
+      There exists some activation state $s'_a \in S_a$ for which $s'_a \leq
+      s^x_j$.
+
+      In this case, we choose $n = 0$.
+
+      We have to show that, for all $i \geq n$, the threshold query
+      $t^{x+1+i}_j(\mathcal{S})$ returns $S_a$.
+
+      Since $s'_a \leq s^x_j$, by
+      Definition~\ref{def:cvrdt-with-threshold-queries},
+      $t^{x+1}_j(\mathcal{S})$ returns $S_a$.
+
+      Then, by part~\ref{thm:this-replica} of the theorem, we have
+      that subsequent executions $t^{x+1+i}_j(\mathcal{S})$ at replica
+      $j$ will also return $S_a$, and so the case holds.
+
+    \item
+      There is no activation state $s'_a \in S_a$ for which $s'_a \leq
+      s^x_j$.
+
+      Since $t^{k+1}_i(\mathcal{S})$ returns $S_a$, we know that there
+      is some update $u^{k'}_i(a)$ in $i$'s causal history, for some
+      $k' < (k+1)$, that updates $i$ from a state at or below $s^x_j$
+      to $s^k_i$.\footnote{We know that $i$'s state was once at or
+        below $s^x_j$, because $i$ and $j$ started at the same state
+        $s^0$ and can both only grow.  Hence the least that $s^x_j$
+        can be is $s^0$, and we know that $i$ was originally $s^0$ as
+        well.}
+
+      By eventual delivery, $u^{k'}_i(a)$ is eventually delivered at
+      $j$.
+
+      Hence some update or updates that will increase $j$'s state from
+      $s^x_j$ to a state at or above some $s'_a$ must reach replica
+      $j$.\footnote{We say ``some update or updates'' because the
+        exact update $u^{k'}_i(a)$ may not be the update that causes
+        the threshold query at $j$ to unblock; a different update or
+        updates could do it.  Nevertheless, the existence of
+        $u^{k'}_i(a)$ means that there is at least one update that
+        will suffice to unblock the threshold query.}
+
+      Let the $x+1+r$th method execution on $j$ be the first update on $j$
+      that updates its state to some $s^{x+1+r}_j \geq s'_a$, for some
+      activation state $s'_a \in S_a$.
+
+      Choose $n = r+1$.
+
+      We have to show that, for all $i$ in the range $0 \leq i \leq
+      r$, the threshold query $t^{x+1+i}_j(\mathcal{S})$ returns
+      $\block$, and that for all $i \geq r+1$, the threshold query
+      $t^{x+1+i}_j(\mathcal{S})$ returns $S_a$.
+
+      For the former, since the $x+1+r$th method execution on $j$ is the
+      first one that updates its state to $s^{x+1+r}_j \geq s'_a$, we have
+      by Definition~\ref{def:cvrdt-with-threshold-queries} that for all $i$
+      in the range $0 \leq i \leq r$, the threshold query
+      $t^{x+1+i}_j(\mathcal{S})$ returns $\block$.
+
+      For the latter, since $s^{x+1+r}_j \geq s'_a$, by
+      Definition~\ref{def:cvrdt-with-threshold-queries} we have that
+      $t^{x+1+r+1}_j(\mathcal{S})$ returns $S_a$, and by
+      part~\ref{thm:this-replica} of the theorem, we have that for $i \geq
+      r+1$, subsequent executions $t^{x+1+i}_j(\mathcal{S})$ at replica $j$
+      will also return $S_a$, and so the case holds.
+    \end{itemize}
+
+  \item $s^k_i \nleq s^x_j$ and $s^x_j \nleq s^k_i$.
+
+    (That is, replica $i$'s state after the $k$th method execution on $i$
+    is \emph{not comparable} to replica $j$'s state after the $x$th method
+    execution on $j$.)
+
+    Similar to the previous case.
+  \end{itemize}
 \end{proof}
