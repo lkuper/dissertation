@@ -86,10 +86,10 @@ interesting direction to pursue for future work would be a
 \emph{verified} implementation of LVish, for instance, in a
 dependently typed programming language.  Even though a fully verified
 implementation of LVish (including the scheduler implementation) is an
-ambitious goal, a more manageable first step might be individually
-verified LVar data structures, implemented in a dependently typed
-language such as Coq or Agda.  The type system of such a language is
-rich enough to express properties that must be true of an LVar, such
+ambitious goal, a more manageable first step might be to implement
+individual LVar data structures in a dependently typed language such
+as Coq or Agda.  The type system of such a language is rich enough to
+express properties that must be true of an LVar data structure, such
 as that the states that it can take on form a lattice and that writes
 are commutative and inflationary.
 
@@ -107,15 +107,15 @@ are commutative and inflationary.
 \section{Distributed programming and the future of LVars and LVish}
 
 Most of this dissertation concerns the problem of how to program
-\emph{parallel} systems, in which programs are running on multiple
-processors.  However, I am also concerned with the problem of how to
-program \emph{distributed} systems, in which programs must run on
-networked computers around the world.  Enormous bodies of work have
-been developed to deal with both of these problems, and one of the
-roles that programming languages research can play is to try to find
-unifying abstractions between the two. It is in that spirit that I
-have explored the relationship of LVars to existing work on
-distributed systems.
+\emph{parallel} systems, in which programs run on multiple processors
+that share memory.  However, I am also concerned with the problem of
+how to program \emph{distributed} systems, in which programs run on
+networked computers with distributed memory.  Enormous bodies of work
+have been developed to deal with programming parallel and distributed
+systems, and one of the roles that programming languages research can
+play is to seek unifying abstractions between the two. It is in that
+spirit that I have explored the relationship of LVars to existing work
+on distributed systems.
 
 LVars are a close cousin to convergent replicated data types
 (CvRDTs)~\cite{crdts,crdts-tr}, which leverage lattice properties to
