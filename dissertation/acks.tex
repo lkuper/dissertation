@@ -35,48 +35,48 @@ influence on the culture of the PL group at IU.  Weekly ``PL Wonks''
 meetings are a given these days, but it wasn't so very long ago that
 the PL group didn't have regular meetings or even much of a group
 identity.  It was Amal who rounded us all up and told us that from
-then on, we were all to give talks every semester.  (Happily, this
-process has now become entirely student-run and self-sustaining.)  It
-was also at Amal's urging that I attended my first PL conference, ICFP
-2010 in Baltimore, which was where I first met an astonishing number
-of the people who have since become my mentors, colleagues,
+then on, we were all going to give talks every semester.  (Happily,
+this process has now become entirely student-driven and
+self-sustaining.)  It was also at Amal's urging that I attended my
+first PL conference, ICFP 2010 in Baltimore, and got to know many of
+the people who have since become my mentors, colleagues,
 collaborators, and dear friends in the PL community, including Neel
 Krishnaswami, Chung-chieh Shan, Tim Chevalier, Rob Simmons, Jason
 Reed, Ron Garcia, Stevie Strickland, Dan Licata, and Chris Martens.
 
 When Amal left IU for Northeastern in 2011, I had to make the
-difficult decision between going with her or staying, and although I
-chose to stay at IU and work with Ryan Newton on what would eventually
+difficult decision between staying at IU or leaving, and although I
+chose to stay and work with Ryan Newton on what would eventually
 become this dissertation, I think that Amal's influence on the flavor
 of the work I ended up doing is evident.  (In fact, it was Amal who
 originally pointed out the similarity between the Independence Lemma
 and the frame rule that I discuss in
 Section~\ref{subsection:lvars-independence}.)
 
-Ryan Newton's first act as a new faculty member at Indiana in 2011 was
-to arrange for our building to get a fancy espresso machine (and to
+Ryan's first act as a new faculty member at Indiana in 2011 was to
+arrange for our building to get a fancy espresso machine (and to
 kick-start a community of espresso enthusiasts who lovingly maintain
-it); clearly, we were going to get along well.  That fall, I took
+it).  Clearly, we were going to get along well!  That fall I took
 Ryan's seminar course on high-performance DSLs, which was how I
 started learning about deterministic parallel programming models.
 Soon, we began discussing the idea of generalizing single-assignment
-models, and Ryan suggested that I could help him write a grant
-proposal to continue working on the idea.  We submitted our proposal
-in December 2011, and to my surprise, it was funded on our first try.
-I gratefully acknowledge everyone at the National Science Foundation
-who was involved in the decision to fund grant CCF-1218375, since
-without that early vote of confidence, I'm not sure I would have been
-able to keep my spirits up during the year that followed, in which it
-took us four attempts to get our first LVars paper published.  Ryan's
-non-stop energy and enthusiasm were crucial ingredients, too.  (And,
-although I didn't feel thankful at the time, I'm now also thankful to
-the anonymous reviewers of POPL 2013, ESOP 2013, and ICFP 2013, whose
+languages, and Ryan suggested that I help him write a grant proposal
+to continue working on the idea.  We submitted our proposal in
+December 2011, and to my surprise, it was funded on our first try.  I
+gratefully acknowledge everyone at the National Science Foundation who
+was involved in the decision to fund grant CCF-1218375, since without
+that early vote of confidence, I'm not sure I would have been able to
+keep my spirits up during the year that followed, in which it took us
+four attempts to get our first LVars paper published.  Ryan's non-stop
+energy and enthusiasm were crucial ingredients, too.  (And, although I
+didn't feel thankful at the time, I'm now also thankful to the
+anonymous reviewers of POPL 2013, ESOP 2013, and ICFP 2013, whose
 constructive criticism helped us turn LVars from a half-baked idea
 into a convincing research contribution.)
 
 In addition to Ryan, I was lucky to have a wonderful dissertation
 committee consisting of Amr Sabry, Larry Moss, and Chung-chieh Shan.
-Amr, Larry, and Ken all played an important part early in the
+Amr, Larry, and Ken all played important roles in the early
 development of LVars and helped resolve subtle issues with the
 semantics of $\lambdaLVar$ and its determinism proof.  What appears
 now in Chapter~\ref{ch:lvars} is relatively simple --- but it is only
@@ -90,32 +90,33 @@ this project that I think of them as \emph{de facto} committee
 members, too.
 
 By fall 2012, working on LVars had gotten me interested in the idea of
-developing a separation logic for deterministic parallelism.  I
-reached out to Aaron and Neel, and they liked the idea, too.  When we
-all met up in Saarbr{\"u}cken in January 2013, though, they suggested
-that we first focus on making the LVars programming model more
-expressive, and we put the separation logic idea on hold while we went
-on an exciting side trip into language design.  That ``side trip''
-eventually took us all the way to event handlers, quiescence,
-freezing, and quasi-determinism, the topics of Chapter~\ref{ch:quasi}
-and to our POPL 2014 paper.  It also led to the LVish Haskell library,
-the topic of Chapter~\ref{ch:lvish}, which was largely implemented by
-Aaron and Ryan.  Neel and I collaborated on the original proof of
-quasi-determinism for $\lambdaLVish$, and he also gave me lots of
-guidance on the revised versions of the proofs that appear in this
-dissertation.  I'm thankful also to Derek Dreyer for helping
-facilitate our collaboration, as well as for giving me an excuse to
-give a \emph{Big Lebowski}-themed talk at MPI-SWS.
+developing a separation logic for deterministic parallelism.  Aaron
+and Neel liked the idea, too, and expressed interest in working on it
+with me.  When we all met up in Saarbr{\"u}cken in January 2013,
+though, we realized that we should first focus on making the LVars
+programming model more expressive, and we put the separation logic
+idea on hold while we went on an exciting side trip into language
+design.  That ``side trip'' eventually took us all the way to event
+handlers, quiescence, freezing, and quasi-determinism, the topics of
+Chapter~\ref{ch:quasi} and of our POPL 2014 paper.  It also led to the
+LVish Haskell library, the topic of Chapter~\ref{ch:lvish}, which was
+largely implemented by Aaron and Ryan.  Neel and I collaborated on the
+original proof of quasi-determinism for $\lambdaLVish$, and Neel also
+provided lots of essential guidance as I worked on the revised
+versions of the proofs that appear in this dissertation.  I also want
+to acknowledge Derek Dreyer for helping facilitate our collaboration,
+as well as for giving me an excuse to give a \emph{Big
+Lebowski}-themed talk at MPI-SWS.
 
 One of the most exciting and rewarding parts of my dissertation work
 has been pursuing the connection between LVars and distributed data
-consistency --- the topic of Chapter~\ref{ch:distributed}.  It's often
-a challenge for people coming from different subfields to find common
+consistency, the topic of Chapter~\ref{ch:distributed}.  It can be a
+challenge for people coming from different subfields to find common
 ground, and I'm indebted to the many distributed systems researchers
-and practitioners who have met me more than halfway, particularly the
-BOOM group at Berkeley and the Riak folks at Basho.  Speaking at RICON
-2013 about LVars was one of the highlights of my Ph.D. experience;
-thanks to everyone who made it so.
+and practitioners who have met me much more than halfway, particularly
+the BOOM group at Berkeley and the Riak folks at Basho.  Speaking at
+RICON 2013 about LVars was one of the highlights of my
+Ph.D. experience; thanks to everyone who made it so.
 
 Katerina Barone-Adesi, Jos\'{e} Valim, and Zach Allaun --- not
 coincidentally, all members of the Recurse Center community, which is
