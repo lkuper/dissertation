@@ -1,0 +1,676 @@
+% A tweaked version of my CV, just for dissertation purposes.  The
+% only differences between this and my standard CV are:
+% - no page headers
+% - no page numbering
+% - black font everywhere
+% - no date footer on the last page
+
+\documentclass[10pt,letterpaper]{article}
+
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{amssymb}
+\usepackage{xcolor}
+
+% Font stuff.
+\usepackage{xltxtra,fontspec,xunicode}
+\defaultfontfeatures{Scale=MatchLowercase}
+\setromanfont[Mapping=tex-text]{PT Serif}
+\setsansfont[Mapping=tex-text]{PT Serif}
+
+% Name.
+\def\name{Lindsey Kuper}
+
+% The following metadata will show up in the PDF properties.
+\hypersetup{
+  colorlinks = true,
+  urlcolor = black,
+  pdfauthor = {\name},
+  pdftitle = {\name: Curriculum Vitae},
+  pdfsubject = {Curriculum Vitae},
+  pdfpagemode = UseNone
+}
+\urlstyle{same}
+
+\geometry{
+  body={6.6in, 9.0in},
+  left=0.95in,
+  top=1.0in
+}
+
+% Custom section fonts.
+\usepackage{sectsty}
+\sectionfont{\mdseries\Large}
+\subsectionfont{\mdseries\itshape\large}
+
+% Don't indent paragraphs.
+\setlength\parindent{0em}
+
+% Suppress page numbers.
+\pagestyle{empty}
+
+% One way to get a small square bullet.
+\newcommand{\localtextbulletone}{\textcolor{gray}{\raisebox{.45ex}{\rule{.6ex}{.6ex}}}}
+\renewcommand{\labelitemii}{\localtextbulletone}
+\renewcommand{\labelitemi}{\localtextbulletone}
+
+\newenvironment{itemize*}
+  {\begin{itemize}
+      % An opportunity to tweak spacing.
+      \setlength{\itemsep}{1pt}
+      \setlength{\parskip}{3pt}
+  }
+  {\end{itemize}}
+
+\begin{document}
+
+\centerline{\Huge \textbf{\name}}
+
+\bigskip
+\bigskip
+
+\begin{minipage}[t]{0.5\textwidth}
+  \small
+  Programming Systems Lab, \href{http://www.intel.com/content/www/us/en/research/intel-research.html}{Intel Labs} \\
+  Intel Corporation \\
+  3600 Juliette Lane \\
+  Santa Clara, CA 95054
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+  \small
+  \raggedleft
+  \href{mailto:lindsey.kuper@intel.com}{\nolinkurl{lindsey.kuper@intel.com}} \\
+  \href{mailto:lindsey@composition.al}{\nolinkurl{lindsey@composition.al}} \\ 
+  \url{http://www.cs.indiana.edu/~lkuper} \\
+  \url{http://composition.al}
+\end{minipage}
+
+\section*{Education}
+
+\begin{itemize*}
+\item
+\textbf{Indiana University}, School of Informatics and Computing, 2008--2015
+\begin{itemize*}
+\item Ph.D. Computer Science, September 2015. \\
+      Research committee: Ryan R. Newton (chair), Lawrence S. Moss,
+      Amr Sabry, Chung-chieh Shan. \\
+      Dissertation: \emph{Lattice-based Data Structures for
+        Deterministic Parallel and Distributed Programming}.
+
+\item M.S. Computer Science, May 2010.
+\end{itemize*}
+
+\item
+\textbf{Grinnell College}, 2000--2004
+\begin{itemize*}
+\item B.A. Computer Science and Music (with honors), May 2004.
+\end{itemize*}
+
+\item Additional coursework and summer schools:
+\begin{itemize*}
+\item
+  \href{http://www.cs.uoregon.edu/research/summerschool/summer13/}{Oregon
+    Programming Languages Summer School: Types, Logic, and
+    Verification}, Summer 2013.
+\item
+  \href{http://www.cs.uoregon.edu/research/summerschool/summer12/}{Oregon
+    Programming Languages Summer School: Logic, Languages,
+    Compilation, and Verification}, Summer 2012.
+\item Operating Systems, Cornell University, Summer 2010.
+\end{itemize*}
+
+\end{itemize*}
+
+\section*{Employment history}
+
+\begin{itemize*}
+\item{\textbf{Intel Corporation (Programming Systems Lab, \href{http://www.intel.com/content/www/us/en/research/intel-research.html}{Intel Labs})}, Santa Clara, CA}
+  \begin{itemize*}
+  \item \textit{Research Scientist}, September 2014--present.
+  \end{itemize*}
+
+\item{\textbf{Indiana University}, Bloomington, IN}
+  \begin{itemize*}
+  \item \textit{Research Assistant} (with Ryan Newton), January 2012--August 2014.
+  \item \textit{Associate Instructor} (with William E. Byrd), August 2011--December 2011.
+  \item \textit{Research Assistant} (with Amal Ahmed), August 2010--December 2010.
+  \item \textit{Associate Instructor} (with Daniel P. Friedman), January 2009--May 2010.
+  \end{itemize*}
+
+\item \textbf{\href{http://www.mozilla.org}{Mozilla Corporation}},
+  Mountain View, CA
+  \begin{itemize*}
+  \item \textit{Research Engineering Intern} (supervised by Brian Anderson, Niko Matsakis and Patrick Walton), May--August 2012.
+  \item \textit{Research Engineering Intern} (supervised by Dave Herman), March--August 2011.
+  \end{itemize*}
+
+\item \textbf{\href{http://www.grammatech.com}{GrammaTech, Inc.}},
+  Ithaca, NY
+  \begin{itemize*}
+  \item \textit{Software Engineering Intern} (supervised by David Melski), May--August 2010.
+  \end{itemize*}
+
+\item \textbf{\href{http://www.bfwpub.com}{Bedford, Freeman and Worth
+      Publishing Group}}, New York, NY and Portland, OR
+  \begin{itemize*}
+  \item \textit{Associate Project Manager}, July 2006--June 2008.
+  \end{itemize*}
+
+\item \textbf{IBCTV, LLC}, Chicago, IL and Portland, OR
+  \begin{itemize*}
+  \item \textit{Web Designer/Developer}, August 2004--June 2006.
+  \end{itemize*}
+
+%% \item \textbf{\href{http://www.internaldrive.com/}{internalDrive,
+%%       Inc.}}, Austin, TX and Evanston, IL
+%%   \begin{itemize*}
+%%   \item \textit{Instructor}, June--August 2004.
+%%   \item \textit{Instructor}, June--August 2003.
+%%   \end{itemize*}
+\end{itemize*}
+
+\section*{Research funding}
+
+\begin{itemize*}
+\item Co-wrote (with Ryan Newton) NSF grant CCF-1218375,
+  \href{http://nsf.gov/awardsearch/showAward?AWD_ID=1218375}{Generalizing
+    Monotonic Data Structures for Expressive, \\
+    Deterministic Parallel Programming} (\$377,315; 8/1/2012--7/31/2015),
+  which funded my dissertation work.
+\end{itemize*}
+
+\section*{Conference publications}
+
+\begin{itemize*}
+\item
+  \textbf{Lindsey Kuper}, Aaron Todd, Sam Tobin-Hochstadt and Ryan
+  R. Newton. \\
+  \href{http://www.cs.indiana.edu/~lkuper/papers/effectzoo-pldi14.pdf}{Taming
+    the parallel effect zoo: extensible deterministic parallelism with
+    LVish.} \\
+  In \emph{Proceedings of the
+    \href{http://conferences.inf.ed.ac.uk/pldi2014/}{35th ACM SIGPLAN
+      Conference on Programming Language Design and Implementation
+      (PLDI '14)}}, \\
+  Edinburgh, UK, June 2014. \\
+  (52/287 $\approx$ 18\% accepted)
+
+\item
+  \textbf{Lindsey Kuper}, Aaron Turon, Neelakantan R. Krishnaswami and
+  Ryan R. Newton. \\
+  \href{http://www.cs.indiana.edu/~lkuper/papers/lvish-popl14.pdf}{Freeze
+    after writing: quasi-deterministic parallel programming with
+    LVars.} \\
+  In \emph{Proceedings of the
+    \href{http://popl.mpi-sws.org/2014/}{41st ACM SIGPLAN-SIGACT
+      Symposium on Principles of Programming Languages (POPL '14)}}, \\
+  San Diego, CA, January 2014. \\
+  (51/220 $\approx$ 23\% accepted)
+\end{itemize*}
+
+\section*{Workshop publications}
+\begin{itemize*}
+\item
+  \textbf{Lindsey Kuper} and Ryan R. Newton. \\
+  \href{http://www.cs.indiana.edu/~lkuper/papers/joining-wodet14.pdf}{Joining
+    forces: toward a unified account of LVars and convergent
+    replicated data types.} \\
+  In the \emph{\href{http://wodet.cs.washington.edu/}{5th Workshop on
+      Determinism and Correctness in Parallel Programming (WoDet
+      '14)}}, \\
+  Salt Lake City, UT, March 2014.
+  % (9/11 $\approx$ 82\% accepted)
+
+\item
+  \textbf{Lindsey Kuper} and Ryan R. Newton. \\
+  \href{http://www.cs.indiana.edu/~lkuper/papers/lvars-fhpc13.pdf}{LVars:
+    lattice-based data structures for deterministic parallelism.} \\
+  In \emph{Proceedings of the
+    \href{http://hiperfit.dk/fhpc13.html}{2nd ACM SIGPLAN Workshop on
+      Functional High-Performance Computing (FHPC '13)}}, \\
+  Boston, MA, September 2013.
+  %% (8/14 $\approx$ 57\% accepted)
+
+\item
+  Andrew W. Keep, Michael D. Adams, \textbf{Lindsey Kuper}, William
+  E. Byrd and Daniel P. Friedman. \\
+  \href{http://www.cs.indiana.edu/~lkuper/papers/lambdae.pdf}{A
+    pattern matcher for miniKanren, or, how to get into trouble with
+    CPS macros.}  \\
+  In \emph{Proceedings of the
+    \href{http://www.schemeworkshop.org/2009/}{2009 Scheme and
+      Functional Programming Workshop (Scheme '09)}}, \\
+  Boston, MA, August 2009.
+\end{itemize*}
+
+\section*{Technical reports}
+
+\begin{itemize*}
+\item
+  \textbf{Lindsey Kuper}, Aaron Turon, Neelakantan R. Krishnaswami
+  and Ryan R. Newton. \\
+  \href{http://www.cs.indiana.edu/cgi-bin/techreports/TRNNN.cgi?trnum=TR710}{Freeze
+    after writing: quasi-deterministic parallel programming with LVars.} (56 pages) \\
+  Indiana University Technical Report TR710, November 2013.
+
+\item 
+  \textbf{Lindsey Kuper} and Ryan R. Newton. \\
+  \href{http://www.cs.indiana.edu/cgi-bin/techreports/TRNNN.cgi?trnum=TR702}{A
+    lattice-theoretical approach to deterministic parallelism with
+    shared state.} (60 pages) \\
+  Indiana University Technical Report TR702, October 2012.
+
+\item David Melski, David Cok, John Phillips, Scott Wisniewski, Suan
+  Hsi Yong, Nathan Lloyd, \textbf{Lindsey Kuper}, Denis Gopan and
+  Alexey Loginov. \\
+  \href{http://www.dtic.mil/dtic/tr/fulltext/u2/a532995.pdf}{Safety in
+    numbers.} (104 pages) \\
+  % http://www.dtic.mil/docs/citations/ADA532995
+  GrammaTech, Inc. project final report, November 2010.
+\end{itemize*}
+
+\newpage
+
+\section*{Talks}
+
+\begin{itemize*}
+\item
+  \emph{LVars for distributed programming, or, LVars and CRDTs join forces.}
+  \begin{itemize*}
+  \item
+    \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/wg28-may-2015.pdf}{IFIP Working Group 2.8 (Functional Programming), Kefalonia, Greece, May 26, 2015.}
+  \end{itemize*}
+\item
+  \emph{LVars: lattice-based data structures for deterministic
+    parallel and distributed programming.}
+  \begin{itemize*}
+  \item
+    \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/compose-2015.pdf}{Compose :: Conference, New York, NY, January 31, 2015.}
+  \item
+    \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/hacker-school-march-2014.pdf}{Hacker
+      School, New York, NY, March 24, 2014.}
+  \item
+    \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/intel-labs-march-2014.pdf}{Intel
+      Labs, Santa Clara, CA, March 21, 2014.}
+  \item
+    \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/utah-march-2014.pdf}{University
+      of Utah, Salt Lake City, UT, March 4, 2014.}
+  \item
+    \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/msr-january-2014.pdf}{Microsoft
+      Research, Mountain View, CA, January 27, 2014.}
+  \end{itemize*}
+
+\item
+  \emph{Joining forces: toward a unified account of LVars and convergent replicated data types.}
+  \begin{itemize*}
+  \item
+    \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/wodet-march-2014.pdf}{WoDet
+      2014, Salt Lake City, UT, March 2, 2014.}
+  \end{itemize*}
+
+\item
+  \emph{Freeze after writing: quasi-deterministic parallel programming
+    with LVars.}
+  \begin{itemize*}
+  \item
+    \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/lvish-popl-2014.pdf}{POPL
+      2014, San Diego, CA, January 23, 2014.}
+  \end{itemize*}
+
+\item
+  \emph{LVars: lattice-based data structures for deterministic parallelism.}
+  \begin{itemize*}
+    \item
+      \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/lvars-mozilla-2013.pdf}{Mozilla
+        Corporation, Mountain View, CA, October 31, 2013.}
+    \item
+      \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/ricon-2013.pdf}{RICON
+        West 2013, San Francisco, CA, October 29, 2013.}
+    \item
+      \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/fhpc-2013.pdf}{FHPC
+        2013, Boston, MA, September 23, 2013.}
+    \item
+      \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/hacker-school-june-2013.pdf}{Hacker
+        School, New York, NY, June 10, 2013.}
+    \end{itemize*}
+
+%% \item
+%%   \emph{LVars: deterministic parallelism through shared monotonic data
+%%     structures.}
+%%   \begin{itemize*}
+%%     \item
+%%       \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/cnc-april-2013.pdf}{Open
+%%         CnC Meeting, April 17, 2013.}
+%%     \end{itemize*}
+
+\item
+  \emph{A lattice-based approach to deterministic parallelism.}
+  \begin{itemize*}
+    \item \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/mpi-sws-january-2013.pdf}{MPI-SWS,
+      Saarbr\"{u}cken, Germany, January 30, 2013.}
+
+    \item
+      \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/popl-student-session-2013.pdf}{POPL
+        2013 student talk session, Rome, Italy, January 25, 2013.}
+  \end{itemize*}
+
+%% \item
+%%   \emph{You gotta keep 'em separated: frame rules for reasoning about
+%%     stateful and/or concurrent programs.}
+%%   \begin{itemize*}
+%%     \item
+%%       \href{http://www.math.indiana.edu/seminars/event.phtml?id=3547}{IU Logic Seminar, November 28, 2012}
+%%   \end{itemize*}
+
+\item
+  \emph{A lattice-based approach to deterministic parallelism with
+    shared state.}
+  \begin{itemize*}
+    %% \item IU PL Colloquium Series, October 5, 2012.
+    \item
+      \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/monotonic-determinism-aarhus-2012.pdf}{Aarhus
+        University, Aarhus, Denmark, September 14, 2012.}
+    \item
+      \href{http://www.cs.indiana.edu/~lkuper/talks/monotonic-determinism/monotonic-determinism-berkeley-2012.pdf}{University
+        of California--Berkeley, Berkeley, CA, August 16, 2012.}
+  \end{itemize*}
+
+\item \emph{Rust typeclasses turn trait-er.}
+  \begin{itemize*}
+  \item \href{http://www.cs.indiana.edu/~lkuper/talks/rust-traits/typeclasses-turn-trait-er-mozilla.pdf}{Mozilla
+    Corporation, Mountain View, CA, August 9, 2012.}
+  \end{itemize*}
+
+\item \emph{Hacking the Rust object system at Mozilla.}
+  \begin{itemize*}
+  \item
+    \href{http://www.cs.indiana.edu/~lkuper/talks/rust-objects/rust-objects-grinnell.pdf}{Grinnell
+      College, Grinnell, IA, April 5, 2012.} \\ 
+    (invited talk, hosted by the Grinnell
+    \href{http://www.grinnell.edu/offices/dean/alumscholars/}{Alumni
+      Scholars Program})
+  \end{itemize*}
+
+%% \item \emph{Monotonic data structures as a guiding principle for deterministic parallel programming}.
+%%   \begin{itemize*}
+%%   \item IU PL Colloquium Series, March 30, 2012.
+%%   \end{itemize*}
+%% \item \emph{A loopy introduction to dependence analysis}.
+%%   \begin{itemize*}
+%%   \item IU PL Colloquium Series, December 9, 2011.
+%%   \end{itemize*}
+
+\item
+  \emph{Some pieces of the Rust object system: extension, overriding,
+    and self.}
+  \begin{itemize*}
+    %% \item
+    %%   \href{http://www.cs.indiana.edu/~lkuper/talks/rust-objects/rust-objects-iu.pdf}{
+    %%     IU PL Colloquium Series, September 9, 2011.}
+    \item
+      \href{http://www.cs.indiana.edu/~lkuper/talks/rust-objects/rust-objects.pdf}{Mozilla
+        Corporation, Mountain View, CA, August 18, 2011.}
+  \end{itemize*}
+
+\item
+  \emph{Parametric
+      polymorphism through run-time sealing, or, theorems for low, low
+      prices!}
+  \begin{itemize*}
+    \item
+      \href{http://www.cs.indiana.edu/~lkuper/talks/multilang-param/multilang-param-northeastern.pdf}{Northeastern University, Boston, MA, February 23,
+        2011.}
+    %% \item IU PL Colloquium Series, February 18, 2011.
+  \end{itemize*}
+
+\item \emph{A system for testing specifications of CPU semantics, or,
+  what I did on my summer vacation}.
+  \begin{itemize*}
+    %% \item IU PL Colloquium Series, October 8, 2010.
+    \item \href{http://www.cs.indiana.edu/~lkuper/talks/tsl-validator/tsl-validator.pdf}{GrammaTech, Inc., Ithaca, NY, August 20, 2010.}
+  \end{itemize*}
+
+%% \item \emph{Efficient representations of triangular substitutions: a
+%%   comparison in miniKanren}.
+%%   \begin{itemize*}
+%%   \item IU PL Colloquium Series, January 15, 2010.
+%%   \end{itemize*}
+
+\end{itemize*}
+
+\section*{Undergraduate projects advised}
+\begin{itemize*}
+\item Isaiah Weating, Indiana University, Spring 2013.  Project title:
+  \emph{Parallel Programming with LVars}.  Awarded third place in IU
+  Undergraduate Research Opportunities in Computing (UROC) Poster
+  Competition, May 2013.
+\end{itemize*}
+
+\section*{Teaching}
+\begin{itemize*}
+\item{\textbf{Associate Instructor, Indiana University}}
+\begin{itemize*}
+\item Fall 2011: \href{http://www.cs.indiana.edu/cgi-pub/h211/}{CSCI
+  H211 Introduction to Computer Science, Honors}, taught by Will Byrd.
+  Taught labs on Scheme programming and Arduino development, with a
+  focus on procedural music generation.  Graded homework assignments
+  and exams and held office hours.
+
+\item Spring 2009, Fall 2009, Spring 2010:
+  \href{http://www.cs.indiana.edu/classes/b521}{CSCI B521 Programming
+    Language Principles} and
+  \href{http://www.cs.indiana.edu/classes/c311}{CSCI C311 Programming
+    Languages}, taught by Dan Friedman.  Taught lab sections, graded
+  homework assignments and exams, and held office hours.  Course
+  topics included environment-passing and continuation-passing
+  interpreters; continuation-passing style, trampolining,
+  registerization, and other correctness-preserving transformations;
+  hygienic macro expansion; types and type inference; and functional
+  and logic programming.  Nominated by students for 2009--2010
+  Associate Instructor of the Year award.
+
+\end{itemize*}
+\item{\textbf{Instructor, internalDrive, Inc.}}
+
+  Taught short project-based courses to middle-school and high-school
+  students in a university setting.
+\begin{itemize*}
+\item Summer 2004 (Northwestern University): Various week-long courses
+  on digital music editing and web design.
+
+\item Summer 2003 (UT Austin): Various week-long courses on digital
+  music editing, web design, and stop-motion animation.
+\end{itemize*}
+\end{itemize*}
+
+\section*{Service}
+
+\subsection*{Research community service}
+\begin{itemize*}
+\item Program chair:
+  \begin{itemize*}
+  \item
+    \href{http://conf.researchr.org/track/POPL-2016/OBT-2016-talks}{Off
+      the Beaten Track (OBT) 2016}.
+  \end{itemize*}
+
+\item Program committees:
+  \begin{itemize*}
+  \item
+    \href{http://2016.ecoop.org/committee/ecoop-2016-papers-external-review-committee}{ECOOP
+      2016}, external review committee.
+
+  \item
+    \href{http://conf.researchr.org/committee/POPL-2016/}{POPL 2016}, external review
+    committee.
+
+  \item \href{http://ifl2015.wikidot.com/}{IFL 2015}.
+
+  \item
+    \href{http://2015.splashcon.org/track/onward2015-papers}{Onward!
+      Papers 2015}.
+
+  \item \href{http://papoc.di.uminho.pt}{Workshop on Principles and
+    Practice of Consistency for Distributed Data (PaPoC) 2015}.
+
+  \item \href{http://www.cs.rice.edu/~sc40/obt15/}{Off the Beaten
+    Track (OBT) 2015}.
+
+  \item \href{http://ifl2014.github.io/}{IFL 2014}.
+
+  \item \href{http://www.haskell.org/haskell-symposium/2014/}{Haskell
+    Symposium 2014}.
+  \end{itemize*}
+
+\item Journal reviewing:
+  \href{http://link.springer.com/journal/446}{Distributed Computing}, 2015;
+  \href{http://compilers.cs.ucla.edu/toplas/}{ACM Transactions on
+    Programming Languages and Systems (TOPLAS)}, 2012.
+
+\item Conference and workshop reviewing:
+  \href{http://conf.researchr.org/home/pldi2015/}{PLDI 2015};
+  \href{http://icfpconference.org/icfp2013/}{ICFP 2013};
+  \href{http://ppopp2013.ics.uci.edu/}{PPoPP 2013};
+  \href{http://research.microsoft.com/en-us/um/people/nswamy/plpv12/}{PLPV
+    2012}.
+\end{itemize*}
+
+\subsection*{Departmental service}
+
+\begin{itemize*}
+\item Graduate Education Committee, Indiana University Computer
+  Science Program, 2013--2014.
+  
+\item Website and mailing list administrator,
+  \href{http://lambda.soic.indiana.edu}{Indiana University Programming
+    Languages Group}, 2010--2014.
+
+\item Officer, \href{http://csclub.soic.indiana.edu}{Indiana
+  University Computer Science Club}, 2011--2013.
+
+\item Organizer, \href{http://lambda.soic.indiana.edu/talks}{Indiana
+  University PL Colloquium Series}, 2010--2012.  Coordinated speakers
+  for weekly talk series.
+
+\item Co-organizer and program committee member,
+  \href{http://www.cs.indiana.edu/inwic/}{Indiana Celebration of Women
+    in Computing (InWIC) 2012}.
+
+\item President, Indiana University Computer Science Graduate
+  Student Association, 2010--2011.
+
+\item Steering Committee member,
+  \href{http://wic.soic.indiana.edu/}{Indiana University Women in
+    Informatics and Computing}, 2010--2011.
+\end{itemize*}
+
+\subsection*{Outreach activities}
+
+\begin{itemize*}
+\item Co-founder and co-organizer,
+  \href{http://www.bangbangcon.com}{!!Con}, 2014--present.  !!Con is
+  an annual volunteer-run conference consisting of ten-minute talks on
+  the joy, excitement, and surprise of programming.
+
+\item Program committee member,
+  \href{http://tinytocs.org/vol3/}{\emph{Tiny Transactions on Computer
+      Science} volume 3}, 2015. Tiny ToCS is the premier venue for
+  peer-reviewed computer science research of $\leq$140 characters.
+
+\item \href{http://www.recurse.com/residents}{Resident} at the
+  \href{http://www.recurse.com}{Recurse Center}, New York, NY, summer
+  2013, fall 2013, winter 2014.  The Recurse Center is a free,
+  self-directed, educational retreat for programmers.
+\end{itemize*}
+
+\section*{Open source software contributions}
+\begin{itemize*}
+
+\item Contributor to
+  \href{http://github.com/IntelLabs/RiverTrail}{River Trail}, a
+  library, JIT compiler, and web browser extension to enable parallel
+  programming in JavaScript, September 2014--February 2015.
+
+\item Contributor to
+  \href{http://hackage.haskell.org/package/lvish}{LVish}, the Haskell
+  library for deterministic and quasi-deterministic parallel
+  programming based on my dissertation work on LVars, February
+  2013--present.
+
+\item Contributor to the first ten releases of
+  \href{http://rust-lang.org}{the Rust programming language},
+  %% (\href{http://mail.mozilla.org/pipermail/rust-dev/2012-January/001256.html}{0.1},
+  %% \href{http://mail.mozilla.org/pipermail/rust-dev/2012-March/001511.html}{0.2},
+  %% \href{http://mail.mozilla.org/pipermail/rust-dev/2012-July/002087.html}{0.3},
+  %% \href{http://mail.mozilla.org/pipermail/rust-dev/2012-October/002489.html}{0.4},
+  %% \href{http://mail.mozilla.org/pipermail/rust-dev/2012-December/002787.html}{0.5},
+  %% \href{http://mail.mozilla.org/pipermail/rust-dev/2013-April/003427.html}{0.6},
+  %% \href{http://mail.mozilla.org/pipermail/rust-dev/2013-July/004667.html}{0.7},
+  %% \href{http://mail.mozilla.org/pipermail/rust-dev/2013-September/005804.html}{0.8},
+  %% \href{https://mail.mozilla.org/pipermail/rust-dev/2014-January/007753.html}{0.9},
+  %% \href{https://mail.mozilla.org/pipermail/rust-dev/2014-April/009387.html}{0.10})
+  as well as various pre-release versions, 2011--2014.  Contributions
+  include work on extending the Rust typeclass system to support
+  Haskell-style default methods; integer-literal suffix inference; and
+  the self-dispatch, object extension, and method overriding features
+  of the object system in a pre-release version of the language.
+\end{itemize*}
+
+\section*{Awards and fellowships}
+
+\begin{itemize*}
+
+\item
+  Indiana University
+  \href{http://www.indiana.edu/~grdschl/graduate-women-in-science.php}{Graduate
+    Women in Science Fellowship}, 2008--2009.
+
+\item National Merit Scholarship, 2000--2004.
+
+\item Travel funding:
+  \begin{itemize*}
+  \item
+    \href{http://www.doc.ic.ac.uk/~gds/PLMW/}{PLMW 2013} and
+    \href{http://www.cis.upenn.edu/~sweirich/plmw12/}{PLMW 2012}
+    travel awards for POPL, January 2013, January 2012.
+
+  \item \href{http://cra-w.org/gradcohort}{CRA-W Graduate Cohort
+    Workshop}, invitations and travel awards, March 2010, March 2009.
+
+  \item
+    \href{http://googleforstudents.blogspot.com/2008/12/google-workshop-for-women-engineers.html}{Google
+      Workshop for Women Engineers}, invitation and travel award,
+    January 2009.
+  \end{itemize*}
+
+\end{itemize*}
+
+\section*{Other activities}
+
+\begin{itemize*}
+
+\item Competed (with Recurse Center staff and students) as {\em Hacker
+  School batch[6]} in the \href{http://www.icfpcontest.org}{ICFP
+  Programming Contest}, 2013.
+
+\item Competed (with Alex Rudnick) as {\em Team K\&R} in the
+  \href{http://www.icfpcontest.org}{ICFP Programming Contest}, 2011,
+  2009, 2008.
+
+\item Member of the
+  \href{http://www.music.indiana.edu/departments/ensembles/cve.shtml}{Contemporary
+    Vocal Ensemble}, Indiana University Jacobs School of Music, 2009.
+
+\item Member of the
+  \href{http://www.music.indiana.edu/departments/ensembles/university-chorale.shtml}{University
+    Chorale}, Indiana University Jacobs School of Music, 2008--2009.
+
+\item Member of the
+  \href{http://www.grinnell.edu/academic/music/ensembles/singers}{Grinnell
+    Singers}, Grinnell College Department of Music, 2000--2004.
+
+\item Completed seven marathons since 2004, most recently in May 2012.
+
+\end{itemize*}
+
+\end{document}

@@ -1,4 +1,4 @@
-\documentclass[12pt,twoside,final]{iuthesis-alt}
+\documentclass[12pt,final]{iuthesis-alt}
 
 % This is the dissertation, not the article
 \newcommand{\DISSERTATION}{}
@@ -16,6 +16,7 @@
 \usepackage{multirow}
 \usepackage{tabularx}
 \usepackage{wrapfig}
+\usepackage{pdfpages}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \renewcommand{\algorithmicforall}{\textbf{for each}}
@@ -85,17 +86,14 @@
 \renewcommand{\thefigure}{\thechapter.\arabic{figure}}
 \renewcommand{\thetable}{\thechapter.\arabic{table}}
 
-% Set TOC depth to the subsubsection level.
-%\setcounter{tocdepth}{2}
-
 % Seutup for hyperref.
 \hypersetup{
     pdftitle={Lattice-based Data Structures for Deterministic Parallel and Distributed Programming},
     pdfauthor={Lindsey Kuper},
     colorlinks=true,
-    linkcolor=blue,
-    citecolor=blue,
-    urlcolor=blue,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=black,
 }
 
 \title{Lattice-based Data Structures for Deterministic Parallel and
@@ -110,7 +108,7 @@
 \departmentname{School}
 \department{Informatics and Computing}
 \copyrightyear{2015}
-\submitdate{August 2015}
+\submitdate{September 2015}
 \acceptdate{09/08/2014}
 
 % For use with iuthesis-alt.cls.
@@ -162,5 +160,10 @@
 \input{appendix-proofs/main}
 
 \input{appendix-redex/main}
+
+% Force CV to appear in TOC, but with no page number
+\addtocontents{toc}{\bigskip Curriculum Vitae\par}
+
+\includepdf[pages=-]{lindsey_kuper_cv.pdf}
 
 \end{document}

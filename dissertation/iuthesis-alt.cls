@@ -261,24 +261,17 @@
       \IUT@dbgmsg{makeabstract: Setting abstract pagestyle empty}%
       \pagestyle{empty}\thispagestyle{empty}%
     \else%
-      \IUT@dbgmsg{makeabstract: Setting abstract pagestlye plain}%
+      \IUT@dbgmsg{makeabstract: Setting abstract pagestyle plain}%
     \fi%
-    \ifnum\IUT@abstype>0%
-      \IUT@dbgmsg{makeabstract: Setting title}%
-      \begin{center}%
-      \check@val\@author \\[.5\baselineskip]
+
+    % Try to use approved formatting for abstract author/title.
+    \IUT@dbgmsg{makeabstract: Setting title}%
+    \begin{center}%
+      \check@val\vskip-10in\@author \\[.5\baselineskip]
       \check@val\@title
-      \end{center}%
-      \vskip\baselineskip
-      \IUT@dbgmsg{makeabstract: Done}%
-    \else%
-      \IUT@dbgmsg{makeabstract: Setting title}%
-      %\@makeschapterhead{Abstract}
-      \@makeschapterhead{\@title}
-      \vspace{-20pt}
-      \begin{flushright}\@author\end{flushright}
-      \vspace{20pt}
-    \fi%
+    \end{center}%
+    \vskip\baselineskip
+
     \IUT@dbgmsg{makeabstract: Setting abstract}%
     \unvbox\abstractbox
     \ifnum\IUT@abstype=\IUT@umiabstract%

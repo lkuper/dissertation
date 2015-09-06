@@ -1,5 +1,6 @@
 NAME := dissertation
 LATEX := xelatex
+CV := lindsey_kuper_cv
 UNAME := $(shell uname)
 SOURCES := $(wildcard *.tex *.bib) $(wildcard */*.tex) $(wildcard */figures/*.pdf) $(wildcard */code/*) $(wildcard ../latex_common/*.tex)
 PROSE_SOURCES := abstract.tex acks.tex $(wildcard chapter*/*.tex)
@@ -9,7 +10,7 @@ JFP_NAME := jfp
 quick:
 	pdflatex jfp
 
-$(NAME).pdf: $(SOURCES)
+$(NAME).pdf: $(SOURCES) cv
 	$(LATEX) $(NAME).tex
 	bibtex $(NAME)
 	$(LATEX) $(NAME).tex
@@ -20,6 +21,9 @@ $(JFP_NAME).pdf: $(SOURCES)
 	bibtex $(JFP_NAME)
 	$(LATEX) $(JFP_NAME).tex
 	$(LATEX) $(JFP_NAME).tex
+
+cv:
+	${LATEX} ${CV}.tex
 
 #-----------------------------------------------
 # These targets actually change the build state:
@@ -62,4 +66,4 @@ ifeq ($(UNAME), Linux)
 endif
 
 clean:
-	rm -f *.blg *.bbl *.brf *.aux *.log $(NAME).pdf $(JFP_NAME).pdf *.out *.toc chapter*/main.aux
+	rm -f *.blg *.bbl *.brf *.aux *.log $(NAME).pdf $(JFP_NAME).pdf $(CV).pdf *.out *.toc chapter*/main.aux
