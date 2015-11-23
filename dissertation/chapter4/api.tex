@@ -82,7 +82,7 @@ import the @Control.LVish@ module rather than @Control.Monad.Par@
 specifically import @Data.LVar.IVar@ in order to specify which LVar
 data structure we want to work with (since we are no longer limited to
 IVars).  Just as with monad-par, the LVish @runPar@ function is a
-global barrier: both @fork@s must compete before @runPar@ can return.
+global barrier: both @fork@s must complete before @runPar@ can return.
 Also,\either{as before}{as in monad-par}, we have @new@, @put@, and
 @get@ operations that respectively create, update, and read from
 @num@.  However, these operations now have LVar semantics: the @put@

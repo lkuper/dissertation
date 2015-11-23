@@ -414,10 +414,18 @@ modifying different parts of it.
 > clear at this point why it should be unique. If Top is written
 > to the LVar, then Top dominates every value in the threshold set.
 
+If the threshold set contains Top, then Top has to be the *only* value
+in the threshold set.  I think the problem here is that we haven't
+explained yet that threshold sets have to be pairwise incompatible.
+But I think that's okay; we have a forward reference to section 2,
+where we'll explain that.
+
 > p.5, "if we can ensure [...]" and p.6, "if a freeze is guaranteed to be the
 > last effect [...]". It is not very clear at this point in which situations
 > this static guarantee holds. Maybe a little bit of extra intuition and/or a
 > forward pointer to the place where runParThenFreeze is explained would help.
+
+A forward pointer is a good idea.
 
 > p.7, not sure what the "connected component containing a vertex v" means in a
 > directed graph. Is it the set of vertices reachable from v? the set of
@@ -425,9 +433,13 @@ modifying different parts of it.
 > component of v? Or (as suggested by the following paragraph) are you looking
 > only for the set of "[vertices] connected to v"? (the successors of v?)
 
+We mean the set of vertices that's reachable from v.  We could clarify this.
+
 > p.8, "Streams [...] impose an excessively strict ordering". I am not sure in
 > what way you are proposing that streams be used here. (Hence, no idea why it
 > would be excessively strict.)
+
+Ryan, you're the streaming language expert.  How might streams be used here?
 
 > p.8, "We could manually push [...] but doing so just passes the problem to the
 > downstream consumer [...]". 1- I am not sure exactly how analyze would be
@@ -456,14 +468,28 @@ modifying different parts of it.
 > don't think you have explicitly indicated yet that this operation is
 > disallowed.
 
+Good point; you're allowed to explicitly write Top to the LVar
+(although you wouldn't, because by doing so you would cause the
+program to step to the error state right away).  I think what we mean
+here is that you cannot *unintentionally* reach Top.  We can reword
+this.
+
 > Definition 2.3, lub of stores: I would be interesting to know where this
 > definition is used. Apparently not in the operational semantics (good). I am
 > curious about some details (e.g. why you allow taking the lub of two stores
 > with distinct domains) but cannot tell why this is reasonable/required if I
 > don't know where this notion is used.
 
+It's used in various parts of the proof of determinism; it'll show up
+a few pages later in the Independence lemma, for instance.  We can
+point that out.
+
 > Definition 2.4, equality of stores: it seems to be "just equality". Is this
 > definition really needed?
+
+We can probably skip it, but I should look back at the proofs; I think
+there were some places where I used store equality, and others where I
+didn't bother and assumed that everyone would know what "=" meant.
 
 > Lemma 2.2, I would expect the conclusion of the lemma to also state, "and
 > pi(sigma) = sigma". Is this not needed?
@@ -521,10 +547,20 @@ modifying different parts of it.
 
 > p.31, is it OK to freeze an already-frozen LVar?
 
+Yep, that's no problem.  It's a no-op.
+
 > p.34, Definition 3.4 seems to indicate that a "write" (an operation) applied
 > to a frozen LVar does *not* cause an error if the operation does not affect
 > the LVar. Why this decision? Wouldn't it be more natural to consider that any
 > operation performed after a freeze is an error?
+
+The way I see it is this: because the operation doesn't change the
+contents of the LVar, the contents of the frozen LVar are the same as
+they would have been had the operation happened before the freeze.
+So, when the operation happens, it's fine to "pretend that it already
+happened" and just ignore it.  I think that raising an error would
+introduce nondeterminism in a place where it doesn't need to be.  I'd
+rather avoid raising an error if we can.
 
 > p.35, it seems a pity that a lot of definitions and lemmas have to be
 > duplicated for lambda_LVar and lambda_LVish. One wonders whether one could
@@ -740,34 +776,61 @@ modifying different parts of it.
 
 > p.4, "an specific"
 
+Fixed in an earlier edit.
+
 > p.9, "Tesler & Enea, 1968 (Spring)". Maybe (Spring) is unneeded :-)
+
+I've thought this was odd for a while.  Yeah, we can change it.
 
 > p.30, should addInPool be addHandlerInPool? or addHandler? confused.
 
+Fixed in an earlier edit.
+
 > p.30, "Early quiescence no risk"
 
+Fixed in an earlier edit.
+
 > p.31, "the [...] pattern I described above": who is "I"?
+
+Fixed in an earlier edit.
 
 > p.34, "in lambda_LVish, the put operations took two arguments": do you
 > mean lambda_LVar?
 
+Good catch!  Fixed now.
+
 > p.48, "both forks must compete" -> "complete"?
 
+Good catch!  Fixed now.
+
 > p.49, "Section ??"
+
+Fixed in an earlier edit.
 
 > p.51, "we are [...] calling getKey on the Book key, as before": are
 > we? the code does not seem to contain a call to getKey.
 
+Fixed in an earlier edit.
+
 > p.56 and 57, should "ellipses" be "..."?
 > should "DOT" be "."?
 
+Fixed in an earlier edit.
+
 > p.66, "handler events" : do you mean "event handlers"?
+
+I think that by "handler events" we must have meant "events that occur
+because of executing a handler's callback".  But I think it's okay to
+just say "events" here.
 
 > p.69, "psuedocode"
 
+Good catch!  Fixed.  (This didn't even look wrong to me!  I'm slipping
+off my game...)
+
 > p.76, "a more manageable" : missing word?
 
-
+Fixed in an earlier edit.
 
 > Referee: 2
 
