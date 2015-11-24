@@ -917,6 +917,11 @@ Fixed in an earlier edit.
 > two finite sequences of updates from the same starting point, must
 > necessarily have a lub in the order.
 
+There are two key points here: first, that the way we have to handle
+the top element clutters things up a little, and second, that lub
+updates are something of a red herring.  I think they're both good
+points.
+
 > What I would therefore concretely suggest is to first move the
 > generalization to non-put updates (as already described once in 2.6)
 > into the section on lambda-LVar, and immediately characterize the
@@ -933,6 +938,13 @@ Fixed in an earlier edit.
 > (If it is desirable for consistency with the authors' previous work to
 > still refer to the put-based language as lambda-LVar, the variant with
 > generalized updates could be called lambda-LVar+, or similar.)
+
+I like this concrete suggestion of having arbitrary updates be part of
+lambdaLVar, for the reasons reviewer 2 gives as well as the reasons I
+gave above in response to reviewer 1.  (And there's no need to worry
+about consistency with previous work, because lambdaLVar in this paper
+is already pretty different from what appeared in our FHPC '13 paper.)
+Let's do it.
 
 > Second, with the lubs on D no longer directly present in the
 > operational semantics, it should be possible to cleanly reconsider
@@ -951,6 +963,35 @@ Fixed in an earlier edit.
 > since no meets are required) in the title is misleading, and would be
 > more accurately named "poset-based" or similar. This really needs to
 > be resolved.
+
+I think requiring a partial function that takes a pair of states,
+instead of requiring a join-semilattice with lubs, would mean a
+fundamental change to the flavor and focus of the work.  In the
+distributed systems community, the work on CRDTs made the observation
+that the "conflict resolution functions" that Dynamo called for could
+in fact often be seen as least upper bounds in a lattice.  This work
+is continuing in that tradition.  A big part of the point of this work
+is to exploit join-semilattice properties to get determinism.  Indeed,
+a join-semilattice isn't always the most natural fit for the data.
+But, excitingly, it often is!  And those are the cases where I think
+LVars shine.
+
+We see arbitrary updates are an interesting generalization that allows
+us to conveniently handle more data structures.  I can't help feeling
+a bit like we're being punished for having added that generalization.
+If the model still lacked arbitrary update operations (as was the case
+in our POPL paper), maybe the reviewer would not have minded our use
+of lubs.  But, since we took a step toward generalizing things, the
+reviewer is unhappy that we haven't gone even further.
+
+Furthermore, in the common case where all updates *are* least upper
+bounds, we enjoy idempotence of updates -- which makes possible some
+clever implementation tricks, as discussed in our POPL paper.  In any
+case, the name LVars is pretty entrenched!
+
+All that said, I am perfectly fine with taking some emphasis off lubs,
+and I think that moving the arbitrary update capability to lambdaLVar
+would accomplish that.
 
 > --
 
@@ -975,6 +1016,9 @@ Fixed in an earlier edit.
 > particularly unlikely that one could construct a scenario in which one
 > run terminates successfully after n transition steps, while another
 > performs even n+1, let alone infinitely many, such steps.
+
+I think the reviewer has a good point.  I'll need to think a little
+more about this termination thing.  Maybe Neel has thoughts on this?
 
 > --
 
@@ -1012,6 +1056,16 @@ Fixed in an earlier edit.
 > parallel" landscape, and whether/how they could be accommodated in the
 > LVar/LVish model, or a plausible extension thereof.
 
+Ah.  I talk about early quiescence and "parallel or" in my
+dissertation, in section 2.6.2.  In order to implement
+short-circuiting parallel or in our model, we need to slightly
+generalize the notion of threshold sets.  This section was left out of
+our JFP submission for lack of space (and I left out yet another
+section of my dissertation that generalizes threshold sets even
+further, to "threshold functions").  I'd like to include this section
+in the JFP paper, as long as we can cut the material on implementation
+of LVish internals.
+
 > --
 
 > 4. Also in relation to the comparison with other models, the assertion
@@ -1048,6 +1102,11 @@ Fixed in an earlier edit.
 
 > These issues should be convincingly addressed, or the assertion that
 > LVar/LVish subsume dataflow models should be removed or rephrased.
+
+Both reviewers have now made the point that the claim that we subsume
+KPNs is too strong, and I'm convinced that they're right and that we
+should tone down the claim a lot.  We should think about what exactly
+it is that we can say instead.
 
 > --
 
