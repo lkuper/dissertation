@@ -278,10 +278,12 @@ there now is much nicer.  It is not, however, a systematic
 presentation of the LVish API.  It's merely a cleaner and
 better-explained series of examples.
 
-I would argue that the right place for a systematic presentation of
-the LVish API is not this paper, but rather, the LVish package
-documentation.  It's still in flux, and I'm not sure it belongs in an
-archival paper.  But we should talk about that.
+I was going to argue that the right place for a systematic
+presentation of the LVish API is not this paper, but rather, the LVish
+package documentation -- but on second thought, I think we should in
+fact document the key stuff here.  (Besides, if we're going to leave
+out the LVish internals stuff, we should at least do this, to throw
+this poor reviewer a bone!)
 
 > I find the description of the LVish implementation (Section 4.4) to be rather
 > unsatisfactory as well. I don't really understand which pre-existing libraries
@@ -318,6 +320,8 @@ long.
 >     consuming extra space;
 
 >  3. A fuller presentation and a better explanation of the LVish implementation.
+
+Decision: yes on 1 and 2, no on 3 (details above).
 
 > MISCELLANEOUS COMMENTS (HIGH-LEVEL)
 
@@ -1175,6 +1179,8 @@ it is that we can say instead.
 > the program text, that would not necessarily invalidate the basic
 > model, but it would make it much clearer exactly what it assumes, and
 > what might be the issues in scaling it up.
+
+I'm still thinking about how to summarize and respond to this point.
 
 > -- Comparatively minor issues and misprints:
 
