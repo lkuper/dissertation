@@ -43,15 +43,16 @@
 \newcommand{\E}[1]{\ensuremath{\evalctxt{E}{#1}}}
 
 %%% Stores and store operations
+\newcommand{\storeS}{\ensuremath{\mathrm{S}}}
 \newcommand{\StoreVal}{\ensuremath{\mathit{StoreVal}}}
 \newcommand{\fmap}{\ensuremath{\stackrel{\textrm{fin}}{\rightarrow}}}
-\newcommand{\eqstore}[2]{\ensuremath{#1 =_S #2}}
-\newcommand{\leqstore}[2]{\ensuremath{#1 \userleq_S #2}}
-\newcommand{\neqstore}[2]{\ensuremath{#1 \not =_S #2}}
-\newcommand{\nleqstore}[2]{\ensuremath{#1 \not \userleq_S #2}}
-\newcommand{\ltstore}[2]{\ensuremath{#1 \userlt_S #2}}
-\newcommand{\lubstore}[2]{\ensuremath{#1 \sqcup_{S} #2}}
-\newcommand{\glbstore}[2]{\ensuremath{#1 \sqcap_{S} #2}}
+\newcommand{\eqstore}[2]{\ensuremath{#1 =_{\storeS} #2}}
+\newcommand{\leqstore}[2]{\ensuremath{#1 \userleq_{\storeS} #2}}
+\newcommand{\neqstore}[2]{\ensuremath{#1 \not =_{\storeS} #2}}
+\newcommand{\nleqstore}[2]{\ensuremath{#1 \not \userleq_{\storeS} #2}}
+\newcommand{\ltstore}[2]{\ensuremath{#1 \userlt_{\storeS} #2}}
+\newcommand{\lubstore}[2]{\ensuremath{#1 \sqcup_{\storeS} #2}}
+\newcommand{\glbstore}[2]{\ensuremath{#1 \sqcap_{\storeS} #2}}
 \newcommand{\storebindingRaw}[2]{\ensuremath{#1 \mapsto #2}}
 \newcommand{\storebinding}[3]{\storebindingRaw{#1}{\state{#2}{#3}}}
 \newcommand{\state}[2]{\ensuremath{(#1, #2)}}
@@ -63,7 +64,7 @@
 \newcommand{\frozentrue}{\ensuremath{\textsf{true}}}
 \newcommand{\frozenfalse}{\ensuremath{\textsf{false}}}
 \newcommand{\Loc}{\mathit{Loc}}
-\newcommand{\topS}{\ensuremath{\top\hspace{-0.85mm}_{S}}}
+\newcommand{\topS}{\ensuremath{\top\hspace{-0.85mm}_{\storeS}}}
 \newcommand{\LVar}{\mathit{LVar}}
 
 %% It would be really nice to be able to typeset stores like

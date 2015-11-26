@@ -171,7 +171,7 @@ separate it.
 Presentation-wise, I agree with the reviewer that it's not necessary
 to go through all the steps of the proof twice, once for lambdaLVar
 and once for lambdaLVish.  We can improve the paper by getting rid of
-the more repetitive bits.
+the more repetitive bits. [TODO]
 
 > If D is the lattice chosen by the end user, then we can work
 > in the lattice D_p (as defined on page 32). There, we find that "freeze" is
@@ -429,7 +429,7 @@ where we'll explain that.
 > this static guarantee holds. Maybe a little bit of extra intuition and/or a
 > forward pointer to the place where runParThenFreeze is explained would help.
 
-A forward pointer is a good idea.
+A forward pointer is a good idea. [TODO]
 
 > p.7, not sure what the "connected component containing a vertex v" means in a
 > directed graph. Is it the set of vertices reachable from v? the set of
@@ -437,7 +437,7 @@ A forward pointer is a good idea.
 > component of v? Or (as suggested by the following paragraph) are you looking
 > only for the set of "[vertices] connected to v"? (the successors of v?)
 
-We mean the set of vertices that's reachable from v.  We could clarify this.
+We mean the set of vertices that's reachable from v.  We could clarify this. [TODO]
 
 > p.8, "Streams [...] impose an excessively strict ordering". I am not sure in
 > what way you are proposing that streams be used here. (Hence, no idea why it
@@ -475,8 +475,7 @@ Ryan, you're the streaming language expert.  How might streams be used here?
 Good point; you're allowed to explicitly write Top to the LVar
 (although you wouldn't, because by doing so you would cause the
 program to step to the error state right away).  I think what we mean
-here is that you cannot *unintentionally* reach Top.  We can reword
-this.
+here is that you cannot *unintentionally* reach Top.  I've reworded this.
 
 > Definition 2.3, lub of stores: I would be interesting to know where this
 > definition is used. Apparently not in the operational semantics (good). I am
@@ -1188,7 +1187,11 @@ I'm still thinking about how to summarize and respond to this point.
 > If Top is by definition a proper element of D, this could technically
 > happen.
 
+The other reviewer brought this up as well; it's fixed.
+
 > - p.14, 2.3.2, l.2. "countable" -> "countably infinite".
+
+Fixed.
 
 > - p.14. It is rather unfortunate to use the notations "Top_S" and
 > "\sqcup_S", where the subscript S looks just like a metavariable
@@ -1196,12 +1199,19 @@ I'm still thinking about how to summarize and respond to this point.
 > for any "S" that is part of an operator name, as opposed to a
 > parameter.
 
+Fixed.
+
 > - p.14, footnote 6. Avoid "I", especially in a multiple-authored
 > paper.
+
+Fixed.
 
 > - p.15, Def. 2.4. Does equality on stores need to be explicitly
 > defined at all? It's just the normal equality relation on the
 > set "(Loc -> D-{Top}) U {Top_S}".
+
+The other reviewer brought this up as well; I'll check whether we
+actually use \eqstore anywhere or if we need it. [TODO]
 
 > - p.15, 2.3.3, l.13. Can a threshold set contain Top? Nothing seems to
 > explicitly prohibit it, but without such a a restriction, the
@@ -1210,16 +1220,31 @@ I'm still thinking about how to summarize and respond to this point.
 > incomp(T)), and let d1=Top.  Then a threshold read could legitimately
 > return either d2=Top or d2'=3.
 
+This couldn't happen, because there can't be a value of Top in S
+(because any write that would go to Top would instead step to error).
+Although we don't explicitly prohibit putting a Top element in a
+threshold set, there's no point in ever doing it, because the LVar
+could never reach Top and unblock at that element.
+
 > - p.15, l.-9. The reference to Figure 2(b) should presumably be 2(c),
 > since the example talks about pairs of integers.
+
+Fixed.
 
 > - p.15, l.-3. The forward reference to 2.6 says that it will discuss a
 > generalization of threshold sets, but the actual 2.6 doesn't talk
 > about threshold sets at all, only about generalized updates.
 
+Ah!  Good catch.  That forward reference should point to the new
+section we're about to add there. [TODO]
+
 > - p.16, 2.4. Both lambda-LVar and lambda-LVish are CBV languages, but
 > the LVish library is ultimately embedded in Haskell, a CBN language.
 > At least a few words of explanation are needed.
+
+Ah.  We can mention that we use strictness annotations all over the
+place in the LVish library.  The monad-par library, its predecessor,
+did that too.  [TODO]
 
 > - p.20, l.-11. It's not really Def. 2.6 of permutations that's being
 > "lifted" to expressions, stores, and configurations, but rather the
@@ -1227,10 +1252,20 @@ I'm still thinking about how to summarize and respond to this point.
 > and pi(sigma). I think it would be useful to actually write out the
 > relevant definitions.
 
+Hmm.  They're in my dissertation, but I specifically left them out
+here, because I thought they were pretty boring!  But I'll revisit
+this. [TODO]
+
 > - p.21, l.3. Don't overload the word "value" (which already has a
 > precise definition in the grammar) to also mean "a configuration that
 > cannot step".  For the latter, use "result", "final outcome",
 > "terminal configuration" or similar.
+
+What I was trying to do here is explain what the definition in section
+1, which said that deterministic programs always evaluate to the same
+value, means in the context of lambdaLVar.  But perhaps a better thing
+to do would be to just say "result" in section 1 and then I don't have
+to play that game here.  Fixed.
 
 > In fact, a bit more precision may be in order. There are conceptually
 > 5 observably different possible outcomes of a lambda-LVar computation:
@@ -1250,6 +1285,8 @@ I'm still thinking about how to summarize and respond to this point.
 > formalized, e.g. by the primitive functions suggested above) to
 > construct threshold sets.
 
+I'm okay with the level of precision that we have here.
+
 > - p.23, Lemma 2.5. The paper gives absolutely no indication of where
 > and how the Independence property is used in the proof of
 > determinism. It is formulated in terms of "lub-ing on" some other
@@ -1262,6 +1299,11 @@ I'm still thinking about how to summarize and respond to this point.
 
 > Footnote 13 is not helpful in this regard, since 5.6 just talks more
 > about Hoare-like notation and doesn't really talk about LVars at all.
+
+The reviewer has a good point.  These proof sketches appear in my
+dissertation but not in this paper.  I'll add them.  (For this case in
+particular, it's the proof sketch for Strong Local Confluence that
+mentions Independence.)  [TODO]
 
 > - p.25, Theorem 2.1 (Determinism). No proof of this theorem (or most
 > of its key lemmas) is given, but evidently it does not hold as
@@ -1283,6 +1325,14 @@ I'm still thinking about how to summarize and respond to this point.
 > configuration <S;e>, all locations occurring in e are also in the
 > domain of S. It would actually be useful to know which of the lemmas
 > need this extra property, and for which ones it doesn't matter.
+
+That's right; if a location hasn't been allocated yet, then we can't
+refer to it in the program.  In fact, the only way to get a location
+name is by calling `new` and saving the result in a variable.  I
+thought we already noted this explicitly, but it seems that we don't,
+and we should! [TODO]
+
+[TODO: everything after this.]
 
 > - p.25, l-4. "Figure 2(c)" should presumably be "Figure 2(a)" (the
 > lattice of vertical numbers, not of number pairs).

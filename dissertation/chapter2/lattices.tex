@@ -85,11 +85,10 @@ and another writes $1$ to an IVar (in arbitrary order), the second of
 the two writes would result in an error because $2 \sqcup 1 = \top$.
 
 In the lattice of Figure~\ref{f:lvars-example-lattices}(a), on the
-other hand, the $\top$ state is unreachable, because the lub of any
-two writes is just the maximum of the two.  If one thread writes $2$
-and another writes $1$, the resulting state will be $2$, since $2
-\sqcup 1 = 2$.  Here, the unreachability of $\top$ models the fact
-that no conflicting updates can occur to the LVar.
+other hand, the $\top$ state is unreachable unless $\top$ is
+explicitly written to the LVar, because the lub of any two writes is
+just the maximum of the two.  If one thread writes $2$ and another
+writes $1$, the resulting state will be $2$, since $2 \sqcup 1 = 2$.
 
 \ifdefined\DISSERTATION
 \begin{wrapfigure}{r}{2.3in}
@@ -105,7 +104,7 @@ that no conflicting updates can occur to the LVar.
 
 During the evaluation of a $\lambdaLVar$ program, a \emph{store} $S$
 keeps track of the states of LVars.  Each LVar is represented by a
-\emph{binding} that maps a location $l$, drawn from a countable
+\emph{binding} that maps a location $l$, drawn from a countably infinite
 set $\Loc$, to a \emph{state}, which is some element $d \in D$.
 Although each LVar in a program has its own state, the states of all
 the LVars are drawn from the same lattice $D$.\footnote{In practice,
