@@ -1059,15 +1059,15 @@ more about this termination thing.  Maybe Neel has thoughts on this?
 > parallel" landscape, and whether/how they could be accommodated in the
 > LVar/LVish model, or a plausible extension thereof.
 
-Ah.  I talk about early quiescence and "parallel or" in my
-dissertation, in section 2.6.2.  In order to implement
-short-circuiting parallel or in our model, we need to slightly
-generalize the notion of threshold sets.  This section was left out of
-our JFP submission for lack of space (and I left out yet another
-section of my dissertation that generalizes threshold sets even
-further, to "threshold functions").  I'd like to include this section
-in the JFP paper, as long as we can cut the material on implementation
-of LVish internals.
+Ah.  I talk about early quiescence in my dissertation, in section
+2.6.2 -- I use parallel "and" instead of parallel "or", but the idea
+is the same.  In order to implement short-circuiting parallel "and" in
+our model, we need to slightly generalize the notion of threshold
+sets.  This section was left out of our JFP submission for lack of
+space (and I left out yet another section of my dissertation that
+generalizes threshold sets even further, to "threshold functions").
+I'd like to include this section in the JFP paper, as long as we can
+cut the material on implementation of LVish internals.
 
 > --
 
@@ -1235,8 +1235,8 @@ Fixed.
 > generalization of threshold sets, but the actual 2.6 doesn't talk
 > about threshold sets at all, only about generalized updates.
 
-Ah!  Good catch.  That forward reference should point to the new
-section we're about to add there. [TODO]
+Good catch.  That forward reference makes sense now that we've added
+more material to 2.6.
 
 > - p.16, 2.4. Both lambda-LVar and lambda-LVish are CBV languages, but
 > the LVish library is ultimately embedded in Haskell, a CBN language.
