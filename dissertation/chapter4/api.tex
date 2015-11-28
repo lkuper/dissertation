@@ -230,8 +230,8 @@ case, the set of all @Int@s.  This is a legal threshold set because
 @IMap@ entries are \emph{immutable}: we cannot, for instance, insert a
 key of @Book@ with a quantity of @2@ and then later change the @2@ to
 @3@.  In a more realistic shopping cart, the values in the cart could
-themselves be LVars representing incrementable counters, as in the
-previous section.  However, a shopping cart from which we can
+themselves be LVars representing incrementable counters.
+However, a shopping cart from which we can
 \emph{delete} items is not possible with LVars, because it would go
 against the principle of monotonic growth.\footnote{On the other hand,
   one way to implement a container that allows both insertion and

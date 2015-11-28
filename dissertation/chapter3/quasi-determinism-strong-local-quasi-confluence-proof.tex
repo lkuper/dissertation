@@ -158,7 +158,7 @@
       \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.
 
       For the second, consider that $S_b =
-      \extS{S}{l}{\bot}{\frozenfalse} = U_S(S)$, where $U_S$ is the
+      \extS{S}{l}{\bot}{\frozenfalse} = \Ustore(S)$, where $\Ustore$ is the
       store update operation that acts as the identity on the contents
       of all existing locations, and adds the binding
       $\storebinding{l}{\bot}{\frozenfalse}$ if no binding for $l$
@@ -166,12 +166,12 @@
 
       Note that:
       \begin{itemize}
-      \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+      \item $\Ustore$ is non-conflicting with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
         allocated in the transition;
-      \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
+      \item $\Ustore(S_a) \neq \topS$, since $\Ustore(S_a) = \Ustore(S) = S_b$
         and we know that $\conf_b \neq \error$; and
-      \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+      \item $\Ustore$ is freeze-safe with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since $S_a = S$, so
         there are no locations whose contents differ in status
         between them.
@@ -180,8 +180,8 @@
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
 
-      $\config{U_S(S)}{e_{a_1}} \parstepsto
-      \config{U_S(S_a)}{e_{a_2}}$.
+      $\config{\Ustore(S)}{e_{a_1}} \parstepsto
+      \config{\Ustore(S_a)}{e_{a_2}}$.
 
       Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
 
@@ -206,18 +206,18 @@
       The first of these follows immediately from $\config{S}{e_{b_1}}
       \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.
 
-      For the second, consider that $S_b = U_S(S)$, where $U_S$ is the
+      For the second, consider that $S_b = \Ustore(S)$, where $\Ustore$ is the
       store update operation that applies $u_{p_i}$ to the contents of
       $l$ and acts as the identity on all other locations.
 
       Note that:
       \begin{itemize}
-      \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+      \item $\Ustore$ is non-conflicting with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
         allocated in the transition;
-      \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
+      \item $\Ustore(S_a) \neq \topS$, since $\Ustore(S_a) = \Ustore(S) = S_b$
         and we know that $\conf_b \neq \error$; and
-      \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+      \item $\Ustore$ is freeze-safe with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since $S_a = S$, so
         there are no locations whose contents differ in status
         between them.
@@ -226,8 +226,8 @@
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
 
-      $\config{U_S(S)}{e_{a_1}} \parstepsto
-      \config{U_S(S_a)}{e_{a_2}}$.
+      $\config{\Ustore(S)}{e_{a_1}} \parstepsto
+      \config{\Ustore(S_a)}{e_{a_2}}$.
 
       Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
 
@@ -286,18 +286,18 @@
       The first of these follows immediately from $\config{S}{e_{b_1}}
       \parstepsto \config{S_b}{e_{b_2}}$ and {\sc E-Eval-Ctxt}.
 
-      For the second, note that $S_b = U_S(S)$, where $U_S$ is the
+      For the second, note that $S_b = \Ustore(S)$, where $\Ustore$ is the
       store update operation that freezes the contents of $l$ and acts
       as the identity on the contents of all other locations.
 
       Note that:
       \begin{itemize}
-      \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+      \item $\Ustore$ is non-conflicting with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since no locations are
         allocated in the transition;
-      \item $U_S(S_a) \neq \topS$, since $U_S(S_a) = U_S(S) = S_b$
+      \item $\Ustore(S_a) \neq \topS$, since $\Ustore(S_a) = \Ustore(S) = S_b$
         and we know that $\conf_b \neq \error$; and
-      \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+      \item $\Ustore$ is freeze-safe with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since $S_a = S$, so
         there are no locations whose contents differ in status
         between them.
@@ -306,8 +306,8 @@
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
 
-      $\config{U_S(S)}{e_{a_1}} \parstepsto
-      \config{U_S(S_a)}{e_{a_2}}$.
+      $\config{\Ustore(S)}{e_{a_1}} \parstepsto
+      \config{\Ustore(S_a)}{e_{a_2}}$.
 
       Hence $\config{S_b}{e_{a_1}} \parstepsto \config{S_b}{e_{a_2}}$.
 
@@ -353,7 +353,7 @@
         \end{itemize}
 
         For the first of these, consider that $S_a =
-        \extS{S}{l}{\bot}{\frozenfalse} = U_S(S)$, where $U_S$ is
+        \extS{S}{l}{\bot}{\frozenfalse} = \Ustore(S)$, where $\Ustore$ is
         the store update operation that acts as the identity on the
         contents of all existing locations, and adds the binding
         $\storebinding{l}{\bot}{\frozenfalse}$ if no binding for $l$
@@ -361,17 +361,17 @@
 
         Note that:
         \begin{itemize}
-        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is non-conflicting with $\config{S}{e_{b_1}}
           \parstepsto \config{S_b}{e_{b_2}}$, since the only
           location allocated in the transition is $l'$, and $l
           \neq l'$ in this case;
-        \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
+        \item $\Ustore(S_b) \neq \topS$, since $\Ustore(S_b) =
           \extS{\extS{S}{l'}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
           and we know $S \neq \topS$ and the addition of new
           bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
           $\storebinding{l'}{\bot}{\frozenfalse}$ cannot cause it to
           become $\topS$; and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is freeze-safe with $\config{S}{e_{b_1}}
           \parstepsto \config{S_b}{e_{b_2}}$, since $S_b =
           \extS{S}{l'}{\bot}{\frozenfalse}$ and $l' \notin \dom{S}$,
           so there are no locations whose contents differ in status
@@ -381,8 +381,8 @@
         Therefore, by Lemma~\ref{lem:generalized-independence}
         (Generalized Independence), we have that
 
-        $\config{U_S(S)}{e_{b_1}} \parstepsto
-        \config{U_S(S_b)}{e_{b_2}}$.
+        $\config{\Ustore(S)}{e_{b_1}} \parstepsto
+        \config{\Ustore(S_b)}{e_{b_2}}$.
 
         Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
         \parstepsto
@@ -455,26 +455,26 @@
         Hence $\config{S}{e_{b_1}} \parstepsto
         \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$.
 
-        Let $U_S$ be the store update operation that acts as the
+        Let $\Ustore$ be the store update operation that acts as the
         identity on the contents of all existing locations, and adds
         the binding $\storebinding{l}{\bot}{\frozenfalse}$ if no
         binding for $l$ exists.
 
         Note that:
         \begin{itemize}
-        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is non-conflicting with $\config{S}{e_{b_1}}
           \parstepsto
           \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$,
           since the only location allocated in the transition is
           $l''$;
-        \item $U_S(\extS{S}{l''}{\bot}{\frozenfalse}) \neq \topS$,
-          since $U_S(\extS{S}{l''}{\bot}{\frozenfalse}) = \\
+        \item $\Ustore(\extS{S}{l''}{\bot}{\frozenfalse}) \neq \topS$,
+          since $\Ustore(\extS{S}{l''}{\bot}{\frozenfalse}) = \\
           \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
           and we know $S \neq \topS$ and the addition of new
           bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
           $\storebinding{l''}{\bot}{\frozenfalse}$ cannot cause it
           to become $\topS$; and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is freeze-safe with $\config{S}{e_{b_1}}
           \parstepsto
           \config{\extS{S}{l''}{\bot}{\frozenfalse}}{\pi(e_{b_2})}$,
           since $l'' \notin \dom{S}$, so there are no locations
@@ -485,8 +485,8 @@
         Therefore, by Lemma~\ref{lem:generalized-independence}
         (Generalized Independence), we have that
 
-        $\config{U_S(S)}{e_{b_1}} \parstepsto
-        \config{U_S(\extS{S}{l''}{\bot}{\frozenfalse})}{\pi(e_{b_2})}$.
+        $\config{\Ustore(S)}{e_{b_1}} \parstepsto
+        \config{\Ustore(\extS{S}{l''}{\bot}{\frozenfalse})}{\pi(e_{b_2})}$.
 
         Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
         \parstepsto
@@ -515,23 +515,23 @@
         \ctxstepsto \\
         \config{\extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}}{\evalctxt{E'_b}{\pi(e_{b_2})}}$.
 
-        Let $U_S$ be the store update operation that acts as the
+        Let $\Ustore$ be the store update operation that acts as the
         identity on the contents of all existing locations, and adds
         the binding $\storebinding{l''}{\bot}{\frozenfalse}$ if no
         binding for $l''$ exists.
 
         Note that:
         \begin{itemize}
-        \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+        \item $\Ustore$ is non-conflicting with $\config{S}{e_{a_1}}
           \parstepsto \config{S_a}{e_{a_2}}$, since the only
           location allocated in the transition is $l$;
-        \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
+        \item $\Ustore(S_a) \neq \topS$, since $\Ustore(S_a) =
           \extS{\extS{S}{l''}{\bot}{\frozenfalse}}{l}{\bot}{\frozenfalse}$
           and we know $S \neq \topS$ and the addition of new
           bindings $\storebinding{l}{\bot}{\frozenfalse}$ and
           $\storebinding{l''}{\bot}{\frozenfalse}$ cannot cause it
           to become $\topS$; and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+        \item $\Ustore$ is freeze-safe with $\config{S}{e_{a_1}}
           \parstepsto \config{S_a}{e_{a_2}}$, since $S_a =
           \extS{S}{l}{\bot}{\frozenfalse}$ and $l \notin \dom{S}$,
           so there are no locations whose contents differ in status
@@ -541,8 +541,8 @@
         Therefore, by Lemma~\ref{lem:generalized-independence}
         (Generalized Independence), we have that
 
-        $\config{U_S(S)}{e_{a_1}} \parstepsto
-        \config{U_S(S_a)}{e_{a_2}}$.
+        $\config{\Ustore(S)}{e_{a_1}} \parstepsto
+        \config{\Ustore(S_a)}{e_{a_2}}$.
 
         Hence $\config{\extS{S}{l''}{\bot}{\frozenfalse}}{e_{a_1}}
         \parstepsto
@@ -578,7 +578,7 @@
       \end{itemize}
 
       For the first of these, consider that $S_a =
-      \extS{S}{l}{\bot}{\frozenfalse} = U_S(S)$, where $U_S$ is the
+      \extS{S}{l}{\bot}{\frozenfalse} = \Ustore(S)$, where $\Ustore$ is the
       store update operation that acts as the identity on the contents
       of all existing locations, and adds the binding
       $\storebinding{l}{\bot}{\frozenfalse}$ if no binding for $l$
@@ -586,15 +586,15 @@
 
       Note that:
       \begin{itemize}
-      \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+      \item $\Ustore$ is non-conflicting with $\config{S}{e_{b_1}}
         \parstepsto \config{S_b}{e_{b_2}}$, since no locations are
         allocated in the transition;
-      \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
+      \item $\Ustore(S_b) \neq \topS$, since $\Ustore(S_b) =
         \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
         \topS$ and the addition of a new binding
         $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
         become $\topS$; and
-      \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}} \parstepsto
+      \item $\Ustore$ is freeze-safe with $\config{S}{e_{b_1}} \parstepsto
         \config{S_b}{e_{b_2}}$, since $S_b =
         \extSRaw{S}{l'}{u_{p_i}(p_1)}$ and $u_{p_i}$ does not alter
         the status of $p_1$.
@@ -611,8 +611,8 @@
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
 
-      $\config{U_S(S)}{e_{b_1}} \parstepsto
-      \config{U_S(S_b)}{e_{b_2}}$.
+      $\config{\Ustore(S)}{e_{b_1}} \parstepsto
+      \config{\Ustore(S_b)}{e_{b_2}}$.
 
       Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
       \parstepsto
@@ -627,21 +627,21 @@
       which, since $S_a = \extS{S}{l}{\bot}{\frozenfalse}$, is what we
       were required to show.
 
-      For the second, let $U_S$ be the store update operation that
+      For the second, let $\Ustore$ be the store update operation that
       applies $u_{p_i}$ to the contents of $l'$ if it exists, and adds
       a binding $\storebindingRaw{l'}{u_{p_i}(p_1)}$ if no binding for
       $l'$ exists.
 
-      Consider that $S_b = U_S(S)$, and
+      Consider that $S_b = \Ustore(S)$, and
       $\extS{S_b}{l}{\bot}{\frozenfalse} =
-      \extSRaw{S_a}{l'}{u_{p_i}(p_1)} = U_S(S_a)$.
+      \extSRaw{S_a}{l'}{u_{p_i}(p_1)} = \Ustore(S_a)$.
 
       Note that:
       \begin{itemize}
-      \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+      \item $\Ustore$ is non-conflicting with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since the only location
         allocated in the transition is $l$;
-      \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
+      \item $\Ustore(S_a) \neq \topS$, since $\Ustore(S_a) =
         \extSRaw{\extS{S}{l}{\bot}{\frozenfalse}}{l'}{u_{p_i}(p_1)}$
         and we know $S \neq \topS$ and the addition of a new binding
         $\storebinding{l}{\bot}{\frozenfalse}$ and updating the
@@ -649,7 +649,7 @@
         cause it to become $\topS$ (since if $u_{p_i}(p_1) = \topp$,
         $\config{S}{e_{b_1}}$ would not have been able to step by {\sc
           E-Put}); and
-      \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}} \parstepsto
+      \item $\Ustore$ is freeze-safe with $\config{S}{e_{a_1}} \parstepsto
         \config{S_a}{e_{a_2}}$, since $S_a =
         \extS{S}{l}{\bot}{\frozenfalse}$ and $l \notin \dom{S}$, so
         there are no locations whose contents differ in status between
@@ -659,8 +659,8 @@
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
 
-      $\config{U_S(S)}{e_{a_1}} \parstepsto
-      \config{U_S(S_a)}{e_{a_2}}$.
+      $\config{\Ustore(S)}{e_{a_1}} \parstepsto
+      \config{\Ustore(S_a)}{e_{a_2}}$.
 
       Hence $\config{S_b}{e_{a_1}}
       \parstepsto
@@ -744,7 +744,7 @@
       \end{itemize}
 
       For the first of these, consider that
-      $\extS{S}{l}{\bot}{\frozenfalse} = U_S(S)$, where $U_S$ is the
+      $\extS{S}{l}{\bot}{\frozenfalse} = \Ustore(S)$, where $\Ustore$ is the
       store update operation that acts as the identity on the contents
       of all existing locations, and adds the binding
       $\storebinding{l}{\bot}{\frozenfalse}$ if no binding for $l$
@@ -752,25 +752,25 @@
 
       Note that:
       \begin{itemize}
-      \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+      \item $\Ustore$ is non-conflicting with $\config{S}{e_{b_1}}
         \parstepsto \config{S_b}{e_{b_2}}$, since no locations are
         allocated in the transition;
-      \item $U_S(S_b) \neq \topS$, since $U_S(S_b) =
+      \item $\Ustore(S_b) \neq \topS$, since $\Ustore(S_b) =
         \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
         \topS$ and the addition of a new binding
         $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
         become $\topS$; and
-      \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+      \item $\Ustore$ is freeze-safe with $\config{S}{e_{b_1}}
         \parstepsto \config{S_b}{e_{b_2}}$, since $S_b =
         \extS{S}{l'}{d_1}{\frozentrue}$ and so the only location
         that can change in status between $S$ and $S_b$ is $l'$, and
-        $U_S$ acts as the identity on $l'$.
+        $\Ustore$ acts as the identity on $l'$.
       \end{itemize}
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
 
-      $\config{U_S(S)}{e_{b_1}} \parstepsto
-      \config{U_S(S_b)}{e_{b_2}}$.
+      $\config{\Ustore(S)}{e_{b_1}} \parstepsto
+      \config{\Ustore(S_b)}{e_{b_2}}$.
 
       Hence $\config{\extS{S}{l}{\bot}{\frozenfalse}}{e_{b_1}}
       \parstepsto
@@ -785,22 +785,22 @@
       as we were required to show.
 
       For the second, consider that $\extS{S}{l'}{d_1}{\frozentrue} =
-      U_S(S)$, where $U_S$ is the store update operation that freezes
+      \Ustore(S)$, where $\Ustore$ is the store update operation that freezes
       the contents of $l'$ and acts as the identity on the contents of
       all other locations.
 
       Note that:
       \begin{itemize}
-      \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+      \item $\Ustore$ is non-conflicting with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since the only location
         allocated in the transition is $l$, and $l \neq l'$;
-      \item $U_S(S_a) \neq \topS$, since $U_S(S_a) =
+      \item $\Ustore(S_a) \neq \topS$, since $\Ustore(S_a) =
         \extS{S_a}{l'}{d_1}{\frozentrue} =
         \extS{S_b}{l}{\bot}{\frozenfalse}$, and we know $S_b \neq
         \topS$ and the addition of a new binding
         $\storebinding{l}{\bot}{\frozenfalse}$ cannot cause it to
         become $\topS$; and
-      \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+      \item $\Ustore$ is freeze-safe with $\config{S}{e_{a_1}}
         \parstepsto \config{S_a}{e_{a_2}}$, since $S_a =
         \extS{S}{l}{\bot}{\frozenfalse}$ and $l \notin \dom{S}$, so
         there are no locations whose contents differ in status
@@ -810,8 +810,8 @@
       Therefore, by Lemma~\ref{lem:generalized-independence}
       (Generalized Independence), we have that
 
-      $\config{U_S(S)}{e_{a_1}} \parstepsto
-      \config{U_S(S_a)}{e_{a_2}}$.
+      $\config{\Ustore(S)}{e_{a_1}} \parstepsto
+      \config{\Ustore(S_a)}{e_{a_2}}$.
 
       Hence $\config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{a_1}}
       \parstepsto
@@ -870,7 +870,7 @@
         \end{itemize}
 
         For the first of these, consider that
-        $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
+        $\extSRaw{S}{l}{u_{p_i}(p_1)} = \Ustore(S)$, where $\Ustore$ is the
         store update operation that applies $u_{p_i}$ to the
         contents of $l$ if it exists, and adds a binding
         $\storebindingRaw{l}{u_{p_i}(p_1)}$ if no binding for $l$
@@ -878,12 +878,12 @@
 
         Note that:
         \begin{itemize}
-        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is non-conflicting with $\config{S}{e_{b_1}}
           \parstepsto
           \config{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{e_{b_2}}$, since
           no locations are allocated in the transition;
-        \item $U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) \neq \topS$,
-          since $U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) =
+        \item $\Ustore(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) \neq \topS$,
+          since $\Ustore(\extSRaw{S}{l'}{u_{p_j}(p'_1)}) =
           \extSRaw{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{l}{u_{p_i}(p_1)}$
           and we know $S \neq \topS$ and updating the contents of
           location $l$ to $u_{p_i}(p_1)$ and the contents of
@@ -891,7 +891,7 @@
           become $\topS$ (because if so, then we would have $S_a =
           \topS$ or $S_b = \topS$, which we know are not the case);
           and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is freeze-safe with $\config{S}{e_{b_1}}
           \parstepsto
           \config{\extSRaw{S}{l'}{u_{p_j}(p'_1)}}{e_{b_2}}$, since
           $u_{p_j}$ does not alter the status of $p'_1$.
@@ -908,8 +908,8 @@
         Therefore, by Lemma~\ref{lem:generalized-independence}
         (Generalized Independence), we have that
 
-        $\config{U_S(S)}{e_{b_1}} \parstepsto
-        \config{U_S(\extSRaw{S}{l'}{u_{p_j}(p'_1)})}{e_{b_2}}$.
+        $\config{\Ustore(S)}{e_{b_1}} \parstepsto
+        \config{\Ustore(\extSRaw{S}{l'}{u_{p_j}(p'_1)})}{e_{b_2}}$.
 
         Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
         \parstepsto
@@ -947,21 +947,21 @@
           \end{itemize}
 
           For the first of these, consider that
-          $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
+          $\extSRaw{S}{l}{u_{p_i}(p_1)} = \Ustore(S)$, where $\Ustore$ is the
           store update operation that applies $u_{p_i}$ to the
           contents of $l$ if it exists.
 
           Note that:
           \begin{itemize}
-          \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+          \item $\Ustore$ is non-conflicting with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
             no locations are allocated in the transition;
-          \item $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) = \topS$, since
-            $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
+          \item $\Ustore(\extSRaw{S}{l}{u_{p_j}(p_1)}) = \topS$, since
+            $\Ustore(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
             \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$ and we know
             $u_{p_i}(u_{p_j}(p_1)) = \topp$ in this case;
-          \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+          \item $\Ustore$ is freeze-safe with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
             $u_{p_j}$ does not alter the status of $p_1$.
@@ -977,7 +977,7 @@
 
           Therefore, by Lemma~\ref{lem:generalized-clash}
           (Generalized Clash), we have that there exists $i' \leq 1$
-          such that $\config{U_S(S)}{e_{b_1}} \parstepsto^{i'}
+          such that $\config{\Ustore(S)}{e_{b_1}} \parstepsto^{i'}
           \error$.
 
           Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
@@ -1028,22 +1028,22 @@
           \end{itemize}
 
           For the first of these, consider that
-          $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
+          $\extSRaw{S}{l}{u_{p_i}(p_1)} = \Ustore(S)$, where $\Ustore$ is the
           store update operation that applies $u_{p_i}$ to the
           contents of $l$ if it exists.
 
           Note that:
           \begin{itemize}
-          \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+          \item $\Ustore$ is non-conflicting with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since no
             locations are allocated in the transition;
-          \item $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) \neq \topS$, since
-            $U_S(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
+          \item $\Ustore(\extSRaw{S}{l}{u_{p_j}(p_1)}) \neq \topS$, since
+            $\Ustore(\extSRaw{S}{l}{u_{p_j}(p_1)}) =
             \extSRaw{S}{l}{u_{p_i}(u_{p_j}(p_1))}$ and we know $S \neq
             \topS$ and $u_{p_i}(u_{p_j}(p_1)) \neq \topp$ in this
             case;
-          \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+          \item $\Ustore$ is freeze-safe with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extSRaw{S}{l}{u_{p_j}(p_1)}}{e_{b_2}}$, since
             $u_{p_j}$ does not alter the status of $p_1$.
@@ -1060,8 +1060,8 @@
           Therefore, by Lemma~\ref{lem:generalized-independence}
           (Generalized Independence), we have that
 
-          $\config{U_S(S)}{e_{b_1}} \parstepsto
-          \config{U_S(\extSRaw{S}{l}{u_{p_j}(p_1)})}{e_{b_2}}$.
+          $\config{\Ustore(S)}{e_{b_1}} \parstepsto
+          \config{\Ustore(\extSRaw{S}{l}{u_{p_j}(p_1)})}{e_{b_2}}$.
 
           Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
           \parstepsto
@@ -1155,7 +1155,7 @@
         \end{itemize}
 
         For the first of these, consider that
-        $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is the
+        $\extSRaw{S}{l}{u_{p_i}(p_1)} = \Ustore(S)$, where $\Ustore$ is the
         store update operation that applies $u_{p_i}$ to the
         contents of $l$ if it exists, and adds a binding
         $\storebindingRaw{l}{u_{p_i}(p_1)}$ if no binding for $l$
@@ -1163,31 +1163,31 @@
 
         Note that:
         \begin{itemize}
-        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is non-conflicting with $\config{S}{e_{b_1}}
           \parstepsto
           \config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{b_2}}$, since
           no locations are allocated in the transition;
-        \item $U_S(\extS{S}{l'}{d_1}{\frozentrue}) \neq \topS$,
+        \item $\Ustore(\extS{S}{l'}{d_1}{\frozentrue}) \neq \topS$,
 
-          since $U_S(\extS{S}{l'}{d_1}{\frozentrue}) =
+          since $\Ustore(\extS{S}{l'}{d_1}{\frozentrue}) =
           \extSRaw{\extS{S}{l'}{d_1}{\frozentrue}}{l}{u_{p_i}(p_1)}$
           and we know $S \neq \topS$ and updating the contents of
           location $l$ to $u_{p_i}(p_1)$ and freezing the contents
           of location $l'$ in $S$ cannot cause it to become $\topS$
           (because if so, then we would have $S_a = \topS$ or $S_b =
           \topS$, which we know are not the case); and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is freeze-safe with $\config{S}{e_{b_1}}
           \parstepsto
           \config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{b_2}}$, since
           the only location that can change in status between $S$
-          and $\extS{S}{l'}{d_1}{\frozentrue}$ is $l'$, and $U_S$
+          and $\extS{S}{l'}{d_1}{\frozentrue}$ is $l'$, and $\Ustore$
           acts as the identity on $l'$.
         \end{itemize}
         Therefore, by Lemma~\ref{lem:generalized-independence}
         (Generalized Independence), we have that
 
-        $\config{U_S(S)}{e_{b_1}} \parstepsto
-        \config{U_S(\extS{S}{l'}{d_1}{\frozentrue})}{e_{b_2}}$.
+        $\config{\Ustore(S)}{e_{b_1}} \parstepsto
+        \config{\Ustore(\extS{S}{l'}{d_1}{\frozentrue})}{e_{b_2}}$.
 
         Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
         \parstepsto
@@ -1202,26 +1202,26 @@
         as we were required to show.
 
         For the second, consider that
-        $\extS{S}{l'}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is
+        $\extS{S}{l'}{d_1}{\frozentrue} = \Ustore(S)$, where $\Ustore$ is
         the store update operation that freezes the contents of $l'$
         and acts as the identity on the contents of all other
         locations.
 
         Note that:
         \begin{itemize}
-        \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+        \item $\Ustore$ is non-conflicting with $\config{S}{e_{a_1}}
           \parstepsto
           \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since no
           locations are allocated in the transition;
-        \item $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$, since
-          $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) =
+        \item $\Ustore(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$, since
+          $\Ustore(\extSRaw{S}{l}{u_{p_i}(p_1)}) =
           \extS{\extSRaw{S}{l}{u_{p_i}(p_1)}}{l'}{d_1}{\frozentrue}$,
           and we know $S \neq \topS$ and updating the contents of
           location $l$ to $u_{p_i}(p_1)$ and freezing the contents
           of location $l$ in $S$ cannot cause it to become $\topS$
           (because if so, then we would have $S_a = \topS$ or $S_b =
           \topS$, which we know are not the case); and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+        \item $\Ustore$ is freeze-safe with $\config{S}{e_{a_1}}
           \parstepsto
           \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since
           $u_{p_i}$ does not alter the status of $p_1$.
@@ -1237,8 +1237,8 @@
         Therefore, by Lemma~\ref{lem:generalized-independence}
         (Generalized Independence), we have that
 
-        $\config{U_S(S)}{e_{a_1}} \parstepsto
-        \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{e_{a_2}}$.
+        $\config{\Ustore(S)}{e_{a_1}} \parstepsto
+        \config{\Ustore(\extSRaw{S}{l}{u_{p_i}(p_1)})}{e_{a_2}}$.
 
         Hence $\config{\extS{S}{l'}{d_1}{\frozentrue}}{e_{a_1}}
         \parstepsto
@@ -1330,7 +1330,7 @@
           \end{itemize}
 
           For the first of these, consider that
-          $\extSRaw{S}{l}{u_{p_i}(p_1)} = U_S(S)$, where $U_S$ is
+          $\extSRaw{S}{l}{u_{p_i}(p_1)} = \Ustore(S)$, where $\Ustore$ is
           the store update operation that applies $u_{p_i}$ to the
           contents of $l$ if it exists, and adds a binding
           $\storebindingRaw{l}{u_{p_i}(p_1)}$ if no binding for
@@ -1339,29 +1339,29 @@
 
           Note that:
           \begin{itemize}
-          \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+          \item $\Ustore$ is non-conflicting with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$,
             since no locations are allocated in the
             transition;
-          \item $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$,
+          \item $\Ustore(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$,
             
-            since $U_S(\extS{S}{l}{d_1}{\frozentrue}) =
+            since $\Ustore(\extS{S}{l}{d_1}{\frozentrue}) =
             \extSRaw{S}{l}{u_{p_i}(\state{d_1}{\frozentrue})}$ and
             we know $S \neq \topS$ and
             $u_{p_i}(\state{d_1}{\frozentrue}) \neq \topp$; and
-          \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+          \item $\Ustore$ is freeze-safe with $\config{S}{e_{b_1}}
             \parstepsto
             \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$, since
             the only location that can change in status between $S$
-            and $\extS{S}{l}{d_1}{\frozentrue}$ is $l$, and $U_S$
+            and $\extS{S}{l}{d_1}{\frozentrue}$ is $l$, and $\Ustore$
             acts as the identity on $l$.
           \end{itemize}
           Therefore, by Lemma~\ref{lem:generalized-independence}
           (Generalized Independence), we have that
 
-          $\config{U_S(S)}{e_{b_1}} \parstepsto
-          \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{e_{b_2}}$.
+          $\config{\Ustore(S)}{e_{b_1}} \parstepsto
+          \config{\Ustore(\extS{S}{l}{d_1}{\frozentrue})}{e_{b_2}}$.
 
           Hence $\config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{b_1}}
           \parstepsto
@@ -1384,19 +1384,19 @@
           as we were required to show.
 
           For the second, consider that
-          $\extS{S}{l}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is
+          $\extS{S}{l}{d_1}{\frozentrue} = \Ustore(S)$, where $\Ustore$ is
           the store update operation that freezes the contents of $l$
           and acts as the identity on the contents of all other
           locations.
 
           Note that:
           \begin{itemize}
-          \item $U_S$ is non-conflicting with $\config{S}{e_{a_1}}
+          \item $\Ustore$ is non-conflicting with $\config{S}{e_{a_1}}
             \parstepsto
             \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since no
             locations are allocated in the transition;
-          \item $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$,
-            since $U_S(\extSRaw{S}{l}{u_{p_i}(p_1)}) =
+          \item $\Ustore(\extSRaw{S}{l}{u_{p_i}(p_1)}) \neq \topS$,
+            since $\Ustore(\extSRaw{S}{l}{u_{p_i}(p_1)}) =
             \extS{S}{l}{d_1}{\frozentrue}$ (since, by
             Definition~\ref{def:set-of-state-update-operations},
             $u_i(d_1) = d_1$; otherwise we would have
@@ -1404,7 +1404,7 @@
             contradiction), and we know $S \neq \topS$ and
             freezing the contents of location $l$ in $S$ cannot
             cause it to become $\topS$; and
-          \item $U_S$ is freeze-safe with $\config{S}{e_{a_1}}
+          \item $\Ustore$ is freeze-safe with $\config{S}{e_{a_1}}
             \parstepsto
             \config{\extSRaw{S}{l}{u_{p_i}(p_1)}}{e_{a_2}}$, since
             $u_{p_i}$ does not alter the status of $p_1$.
@@ -1421,8 +1421,8 @@
           Therefore, by Lemma~\ref{lem:generalized-independence}
           (Generalized Independence), we have that
 
-          $\config{U_S(S)}{e_{a_1}} \parstepsto
-          \config{U_S(\extSRaw{S}{l}{u_{p_i}(p_1)})}{e_{a_2}}$.
+          $\config{\Ustore(S)}{e_{a_1}} \parstepsto
+          \config{\Ustore(\extSRaw{S}{l}{u_{p_i}(p_1)})}{e_{a_2}}$.
 
           Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{a_1}}
           \parstepsto
@@ -1651,37 +1651,37 @@
         \end{itemize}
 
         For the first of these, consider that
-        $\extS{S}{l}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is the
+        $\extS{S}{l}{d_1}{\frozentrue} = \Ustore(S)$, where $\Ustore$ is the
         store update operation that freezes the contents of $l$
         and acts as the identity on the contents of all other
         locations.
 
         Note that:
         \begin{itemize}
-        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is non-conflicting with $\config{S}{e_{b_1}}
           \parstepsto
           \config{\extS{S}{l'}{d'_1}{\frozentrue}}{e_{b_2}}$, since
           no locations are allocated in the transition;
-        \item $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) \neq \topS$,
+        \item $\Ustore(\extS{S}{l'}{d'_1}{\frozentrue}) \neq \topS$,
 
-          since $U_S(\extS{S}{l'}{d'_1}{\frozentrue}) =
+          since $\Ustore(\extS{S}{l'}{d'_1}{\frozentrue}) =
           \extS{\extS{S}{l'}{d'_1}{\frozentrue}}{l}{d_1}{\frozentrue}$
           and we know $S \neq \topS$ and freezing the contents of
           locations $l$ and $l'$ in $S$ cannot cause it to become
           $\topS$ (because if so, then we would have $S_a = \topS$
           or $S_b = \topS$, which we know are not the case); and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is freeze-safe with $\config{S}{e_{b_1}}
           \parstepsto
           \config{\extS{S}{l'}{d'_1}{\frozentrue}}{e_{b_2}}$, since
           the only location that can change in status between $S$
-          and $\extS{S}{l'}{d'_1}{\frozentrue}$ is $l'$, and $U_S$
+          and $\extS{S}{l'}{d'_1}{\frozentrue}$ is $l'$, and $\Ustore$
           acts as the identity on $l'$.
         \end{itemize}
         Therefore, by Lemma~\ref{lem:generalized-independence}
         (Generalized Independence), we have that
 
-        $\config{U_S(S)}{e_{b_1}} \parstepsto
-        \config{U_S(\extS{S}{l'}{d'_1}{\frozentrue})}{e_{b_2}}$.
+        $\config{\Ustore(S)}{e_{b_1}} \parstepsto
+        \config{\Ustore(\extS{S}{l'}{d'_1}{\frozentrue})}{e_{b_2}}$.
 
         Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_1}}
         \parstepsto
@@ -1721,26 +1721,26 @@
         \end{itemize}
 
         For the first of these, consider that
-        $\extS{S}{l}{d_1}{\frozentrue} = U_S(S)$, where $U_S$ is the
+        $\extS{S}{l}{d_1}{\frozentrue} = \Ustore(S)$, where $\Ustore$ is the
         store update operation that freezes the contents of $l$ and
         acts as the identity on the contents of all other locations.
 
         Note that:
         \begin{itemize}
-        \item $U_S$ is non-conflicting with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is non-conflicting with $\config{S}{e_{b_1}}
           \parstepsto
           \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$, since no
           locations are allocated in the transition;
-        \item $U_S(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$, since
-          $U_S(\extS{S}{l}{d_1}{\frozentrue}) =
+        \item $\Ustore(\extS{S}{l}{d_1}{\frozentrue}) \neq \topS$, since
+          $\Ustore(\extS{S}{l}{d_1}{\frozentrue}) =
           \extS{S}{l}{d_1}{\frozentrue}$, and we know $S \neq \topS$
           and freezing the contents of location $l$ in $S$ cannot
           cause it to become $\topS$; and
-        \item $U_S$ is freeze-safe with $\config{S}{e_{b_1}}
+        \item $\Ustore$ is freeze-safe with $\config{S}{e_{b_1}}
           \parstepsto
           \config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_2}}$, since
           the only location that can change in status between $S$
-          and $\extS{S}{l}{d_1}{\frozentrue}$ is $l$, and $U_S$
+          and $\extS{S}{l}{d_1}{\frozentrue}$ is $l$, and $\Ustore$
           freezes the contents of $l$ but has no other effect on
           them.
         \end{itemize}
@@ -1748,8 +1748,8 @@
         Therefore, by Lemma~\ref{lem:generalized-independence}
         (Generalized Independence), we have that
 
-        $\config{U_S(S)}{e_{b_1}} \parstepsto
-        \config{U_S(\extS{S}{l}{d_1}{\frozentrue})}{e_{b_2}}$.
+        $\config{\Ustore(S)}{e_{b_1}} \parstepsto
+        \config{\Ustore(\extS{S}{l}{d_1}{\frozentrue})}{e_{b_2}}$.
 
         Hence $\config{\extS{S}{l}{d_1}{\frozentrue}}{e_{b_1}}
         \parstepsto

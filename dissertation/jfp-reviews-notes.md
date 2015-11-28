@@ -1387,9 +1387,10 @@ Fixed in an earlier edit.
 > denotable as a single put_i function, so this is meant more as a
 > semantic completeness property.)
 
-That's a good point about termination arguments.  I don't actually
-remember why we required that the identity function be part of every
-set U; maybe it makes things easier in the metatheory later.
+That's a good point about termination arguments.  We required that the
+identity function be part of every set U because it made it easier to
+write the definition of the store update operation U_S.  But, we
+should revisit that anyway. [TODO]
 
 > - p.36, Fig.8. In the grammar, the syntactic form "freeze l after Q
 > with \x.e0, {e..}, H" is presumably not meant to be writable directly
@@ -1440,13 +1441,14 @@ have E-Freeze-Simple or `freeze e` explicitly.
 Good catch -- changed to "the contents of the LVar after all updates
 have been applied."
 
-[TODO: everything after this.]
-
 > - p.40, 3.3. Unlike for lambda-LVar, a consistent-termination property
 > for lambda-LVish is not even conjectured. However, given the same
 > tight correspondence between successful final results (in particular,
 > the same number of allocations), presumably the proof would not be
 > significantly complicated by freezing and/or generalized updates.
+
+That's right -- we don't bring up consistent termination again because
+there is nothing new to say.
 
 > - p.40-41. The formal parts of sections 3.3.1-3.3.4 seem to exact
 > copies of the corresponding definitions and lemmas from the LVar
@@ -1456,6 +1458,12 @@ have been applied."
 > between lambda-LVar and lambda-LVish, such as Fig.10 on p.38, but here
 > it's particularly egregious.)
 
+It's true, this part is really repetitive and we can probably
+eliminate a lot of that.  In fact, we can probably replace the
+repeated definitions and lemmas with a couple sentences, phrased
+something like how the reviewer has: these definitions are the same as
+before, but meaning something slightly different. [TODO]
+
 > - p.43, l.2. If U is a set of update functions u_i on D, and U_p is a
 > set of update functions u_{p_i} on P (= D x {true,false}), one would
 > logically expect U_S to be a set of update functions on stores (finite
@@ -1463,6 +1471,11 @@ have been applied."
 > such mapping. Please use a more consistent naming convention.  (And
 > it's particularly confusing that in "u_i", i is a variable/parameter,
 > with i ranging over some set I, while in "U_S", S is part of the name.
+
+As the reviewer suggested doing earlier, I updated all the notation
+that had S as part of the name to use a non-italic S to make it more
+clear that it's not a parameter; U_S is one of those.  I hope that
+helps make this more clear.
 
 > More problematically, however, the whole definition of a "store update
 > operation" is formulated in such a way that the intended mathematical
@@ -1490,36 +1503,70 @@ have been applied."
 >   is the clause really requiring, i.e., how could the condition
 >   possibly fail at all?
 
+OK, I think the reviewer makes a good point that the definition of
+store update operation is mathematically sloppy.  All we are really
+trying to do here is generalize `S \lub_S S''` to the case of non-lub
+writes.  If S is a store, `U_S(S)` is a store that is at least as
+"big" as S, and possibly bigger, because some of the elements may have
+had non-identity state update operations U_p applied to them.  We
+can't just say that `U_S(S)` is just S but with one state update
+operation to everything in S, because `U_S(S)` may also contain new
+bindings.  I'm not sure what the cleanest way is to say this
+mathematically is, but I'll think about it some more. [TODO]
+
 > - p.43, Lemma 3.7. It's hard on the reader that the statement of the
 > lemma refers to the notions of non-conflicting updates and
 > freeze-safety, both of which are only defined later (in Def. 3.10 and
 > 3.11).
 
+Hm -- I actually thought it was easier on the reader this way, because
+the definitions are quite technical and I thought it would be nice to
+present the overall theorem first and then explain the fiddly bits
+second.  But, I'm okay either way; we can change it. [TODO]
+
 > - p.43, Def. 3.10. The last part, "U_S neither creates ..." should
 > preferably be expressed in symbols, like in the textual explanation
 > above the definition, rather than the other way around.
 
+Fixed.
+
 > - p.44, Def. 3.11. Likewise, express the requirement in symbols, in
 > addition to (or instead of) textually.
+
+Yeah, that's a good idea. [TODO]
 
 > - p.48, 4.2.1, l.1, "one of our previous IVar programs". What does
 > this refer to?
 
+Fixed in an earlier edit.
+
 > - p.50, l.-3. "incrementable counters, as in the previous section".
 > Which section is this, exactly?
+
+Oops, that's a mistake -- an artifact of an old version.  Removed the
+"as in the previous section".
 
 > - p.51, 4.2.4, just below the code snippet: "... and then calling
 > getKey on the Book key". This does not refer to anything identifiable
 > in the code.
 
+Fixed in an earlier edit.
+
 > - p.56, bottom. Too much context is missing to allow the reader to
 > make much sense out of the code snippet. (And should "ellipses" in the
 > last line have been "...")?
 
+I agree, the old code snippet was bad! This part's been entirely
+rewritten with a different code example.
+
 > - p.57, l.5. "(We will see shortly how this generalizes.)". This does
 > not seem to refer to anything in the following text.
 
+Fixed in an earlier rewrite of this section.
+
 > - p.57, footnote 27. Should "DOT" and "ellipses" have been "." and "..."?
+
+Fixed in an earlier rewrite of this section.
 
 > - p.71, section 5. It might be relevant to also mention Concurrent
 > Constraint Programming [e.g., Saraswat et al., POPL'91], which
@@ -1527,3 +1574,7 @@ have been applied."
 > information (but in a general constraint domain, not just about a
 > single cell value), and quiescence detection as a synchronization
 > mechanism.
+
+I've actually meant to mention this in related work for some time but
+didn't dig in and learn enough about it to be able to know what to
+say.  We should definitely say *something* about it.  [TODO]

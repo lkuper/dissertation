@@ -207,7 +207,7 @@ $\lambdaLVish$, though, we need to state our frame property in a way
 that will allow it to accommodate any update operation from the given
 set $U$.
 
-Therefore, \either{I}{we} define a \emph{store update operation} $U_S$ to be a
+Therefore, \either{I}{we} define a \emph{store update operation} $\Ustore$ to be a
 function from stores to stores that can add new bindings, update the
 contents of existing locations using operations $u_i$ from the given
 set $U$ of update operations (or, more specifically, their lifted
@@ -215,11 +215,11 @@ versions $u_{p_i}$), or freeze the contents of existing locations.
 
 \DefStoreUpdateOperation
 
-\noindent Definition~\ref{def:store-update-operation} says that applying $U_S$
+\noindent Definition~\ref{def:store-update-operation} says that applying $\Ustore$
 to $S$ either updates (using some $u_{p_i} \in U_p$) or freezes the
 contents of each $l \in \dom{S}$.  Since the identity function is
-always implicitly a member of $U_p$, $U_S$ can act as the identity on
-the contents of locations.  $U_S$ can also add new bindings to the
+always implicitly a member of $U_p$, $\Ustore$ can act as the identity on
+the contents of locations.  $\Ustore$ can also add new bindings to the
 store it operates on; however, it cannot change existing location
 names.
 
@@ -238,20 +238,20 @@ a more general version of the Independence lemma:
 \fi
 
 Lemma~\ref{lem:generalized-independence} has three preconditions on
-the store update operation $U_S$, two of which mirror the two
+the store update operation $\Ustore$, two of which mirror the two
 preconditions on $S''$ from the original Independence lemma: the
-requirement that $U_S(S') \neq \topS$, and the requirement that $U_S$
+requirement that $\Ustore(S') \neq \topS$, and the requirement that $\Ustore$
 is non-conflicting with the transition from $\config{S}{e}$ to
 $\config{S'}{e'}$.
 Definition~\ref{def:non-conflicting-store-update-operation} revises
 our previous definition of ``non-conflicting'' to apply to store update
-operations.  It says that $U_S$ is non-conflicting with the transition
+operations.  It says that $\Ustore$ is non-conflicting with the transition
 $\config{S}{e} \parstepsto \config{S'}{e'}$ if, for all locations
-allocated in the transition, $U_S$ does not interfere with those
+allocated in the transition, $\Ustore$ does not interfere with those
 locations.  For instance, if $l$ is allocated in the transition from
-$\config{S}{e}$ to $\config{S'}{e'}$, then $l \notin \dom{U_S(S)}$
-(that is, $U_S$ cannot add a binding at $l$ to $S$), and $(U_S(S'))(l)
-= S'(l)$ (that is, $U_S$ cannot update the contents of $l$ in $S'$).
+$\config{S}{e}$ to $\config{S'}{e'}$, then $l \notin \dom{\Ustore(S)}$
+(that is, $\Ustore$ cannot add a binding at $l$ to $S$), and $(\Ustore(S'))(l)
+= S'(l)$ (that is, $\Ustore$ cannot update the contents of $l$ in $S'$).
 
 \DefNonConflictingStoreUpdateOperation
 
@@ -265,14 +265,14 @@ $\config{S}{e}$ to $\config{S'}{e'}$, then $l \notin \dom{U_S(S)}$
 \end{wrapfigure}
 \fi
 
-The third precondition on $U_S$ has to do with freezing: $U_S$ must be
+The third precondition on $\Ustore$ has to do with freezing: $\Ustore$ must be
 \emph{freeze-safe} with the transition $\config{S}{e} \parstepsto
 \config{S'}{e'}$, which means that, for any locations that change in
-status (that is, become frozen) during the transition, $U_S$ cannot
+status (that is, become frozen) during the transition, $\Ustore$ cannot
 update the contents of those locations.  This precondition is only
 needed in the {\sc E-Freeze-Final} and {\sc E-Freeze-Simple} cases,
 and it has the effect of ruling out interference from freezing.  (Note
-that $U_S$ need not avoid updating the contents of locations that are
+that $\Ustore$ need not avoid updating the contents of locations that are
 \emph{already} frozen before the transition takes place.  This
 corresponds to the fact that, if an LVar is already frozen, arbitrary
 updates to it \emph{do}, in fact, commute with freeze operations on
@@ -282,7 +282,7 @@ updates will either have no effect or raise an error.)
 \DefFreezeSafe
 
 The two changes we have made to the Independence lemma---the use of
-$U_S$, and the requirement that $U_S$ be freeze-safe with the
+$\Ustore$, and the requirement that $\Ustore$ be freeze-safe with the
 transition in question---are orthogonal to each other, in accordance
 with the fact that \emph{arbitrary update operations} are an
 orthogonal language feature to \emph{freezing}.  A version of
@@ -292,7 +292,7 @@ Independence lemma, taking the lub of the original stores and a frame
 store $S''$, but it would still need to have a requirement on $S''$ to
 rule out interference from freezing.  On the other hand, a version of
 the language \emph{without} freezing, but \emph{with} arbitrary
-updates, would still use $U_S$ but could leave out the requirement
+updates, would still use $\Ustore$ but could leave out the requirement
 that it be freeze-safe (since the requirement would be vacuously true
 anyway).  \either{I}{We} make particular note of the orthogonality of freezing and
 arbitrary updates because freezing introduces quasi-determinism, while
@@ -314,8 +314,8 @@ in Section~\ref{s:related-frame-properties-and-separation-logics}.
 
 The Generalized Clash lemma, Lemma~\ref{lem:generalized-clash}, is
 similar to the Generalized Independence lemma, but handles the case
-where $U_S(S') = \topS$.  It establishes that, in that case,
-$\config{U_S(S)}{e}$ steps to $\error$ in at most one step.
+where $\Ustore(S') = \topS$.  It establishes that, in that case,
+$\config{\Ustore(S)}{e}$ steps to $\error$ in at most one step.
 
 \LemGeneralizedClash
 \ifdefined\DISSERTATION

@@ -217,17 +217,17 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 \begin{definition}[store update operation]\label{def:store-update-operation}
   Given a lattice $(D, \userleq, \top, \bot)$ and a set of state
   update operations $U_p$, a \emph{store update operation} is a
-  function $U_S$ from stores to stores such that:
+  function $\Ustore$ from stores to stores such that:
   \begin{itemize}
-    \item $\dom{U_S(S)} \supseteq \dom{S}$;
+    \item $\dom{\Ustore(S)} \supseteq \dom{S}$;
     \item for each $l \in \dom{S}$, either:
       \begin{itemize}
-        \item $(U_S(S))(l) = u_{p_i}(S(l))$, where $u_{p_i} \in U_p$, or
-        \item $(U_S(S))(l) = \state{d}{\frozentrue}$, where $S(l) =
+        \item $(\Ustore(S))(l) = u_{p_i}(S(l))$, where $u_{p_i} \in U_p$, or
+        \item $(\Ustore(S))(l) = \state{d}{\frozentrue}$, where $S(l) =
           \state{d}{\status}$; and
       \end{itemize}
-    \item for each $l \in \dom{U_S(S)}$ that is not a member of
-      $\dom{S}$, $(U_S(S))(l) = \state{d}{\status}$ for some $d \in
+    \item for each $l \in \dom{\Ustore(S)}$ that is not a member of
+      $\dom{S}$, $(\Ustore(S))(l) = \state{d}{\status}$ for some $d \in
       D$.
   \end{itemize}
 \end{definition}
@@ -235,10 +235,10 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 
 \newcommand{\DefFreezeSafe}{
 \begin{definition}[freeze-safe store update operation]\label{def:freeze-safe-store-update-operation}
-  A store update operation $U_S$ is \emph{freeze-safe} with the
+  A store update operation $\Ustore$ is \emph{freeze-safe} with the
   transition $\config{S}{e} \parstepsto \config{S'}{e'}$ iff, for all
   locations $l$ such that $S(l) = \state{d_1}{\status_1}$ and $S'(l) =
-  \state{d_2}{\status_2}$ and $\status_1 \neq \status_2$, $U_S$ does
+  \state{d_2}{\status_2}$ and $\status_1 \neq \status_2$, $\Ustore$ does
   not update the contents of $l$ (that is, either it freezes the
   contents of $l$ but has no other effect on them, or it acts as the
   identity on the contents of $l$).
@@ -247,9 +247,9 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 
 \newcommand{\DefNonConflictingStoreUpdateOperation}{
 \begin{definition}[non-conflicting store update operation]\label{def:non-conflicting-store-update-operation}
-  A store update operation $U_S$ is \emph{non-conflicting} with the
-  transition $\config{S}{e} \parstepsto \config{S'}{e'}$ iff, for all
-  $l \in (\dom{S'} - \dom{S})$, $U_S$ neither creates new bindings at
-  $l$ nor updates existing bindings at $l$.
+  A store update operation $\Ustore$ is \emph{non-conflicting} with
+  the transition $\config{S}{e} \parstepsto \config{S'}{e'}$ iff, for
+  all $l \in (\dom{S'} - \dom{S})$, $l \notin \dom{\Ustore(S)}$ and
+  $(\Ustore(S'))(l) = S'(l)$.
 \end{definition}
 }
