@@ -28,13 +28,13 @@ lattice.  The expression
 \vspace{-8mm}
 \singlespacing
 \begin{equation}
-  \ADDHANDLER~\mathit{lv}~\{ 1, 3, 5, \dots \}~(\lam{x}{\putexp{\mathit{lv}}{x+1}})
+  \ADDHANDLER~\mathit{lv}~\{ 1, 3, 5, \dots \}~(\lam{x}{\putexp{\mathit{lv}}{(x+1)}})
 \label{e:lvish-example-1}
 \end{equation}
 \doublespacing
 
 \noindent registers a handler for $\mathit{lv}$ that executes the callback
-function $\lam{x}{\putexp{\mathit{lv}}{x+1}}$ for each odd number that
+function $\lam{x}{\putexp{\mathit{lv}}{(x+1)}}$ for each odd number that
 $\mathit{lv}$ is at or above.  When \eref{e:lvish-example-1} is
 finished evaluating, $\mathit{lv}$ will contain the smallest even
 number that is at or above what its original value was.  For instance,

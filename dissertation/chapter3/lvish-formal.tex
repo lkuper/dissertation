@@ -186,9 +186,9 @@ operational semantics.  As with $\lambdaLVar$ in
 parameterized by the lattice $(D, \userleq, \bot, \top)$, and the
 operational semantics is split into two parts, a \emph{reduction
   semantics}, shown in
-Figure~\ref{f:lvars-lambdaLVar-reduction-semantics}, and a
+Figure~\ref{f:lambdaLVish-reduction-semantics}, and a
 \emph{context semantics}, shown in
-Figure~\ref{f:lvars-lambdaLVar-context-semantics}.  The reduction
+Figure~\ref{f:lambdaLVish-context-semantics}.  The reduction
 semantics is also parameterized by the set $U$ of update operations.
 
 \FigLambdaLVishGrammar
@@ -325,10 +325,11 @@ Therefore, freezing is a way of ``betting'' that once a collection of
 callbacks have completed, no further updates that change the LVar's
 value will occur.  For a given run of a program, either all updates to
 an LVar arrive before it has been frozen, in which case the value
-returned by $\FAW$ is the lub of those values, or some update arrives
-after the LVar has been frozen, in which case the program will fault.
-And thus we have arrived at \emph{quasi-determinism}: a program will
-always either evaluate to the same answer or it will fault.
+returned by $\FAW$ is the contents of the LVar after all updates have
+been applied, or some update arrives after the LVar has been frozen,
+in which case the program will fault.  And thus we have arrived at
+\emph{quasi-determinism}: a program will always either evaluate to the
+same answer or it will fault.
 
 To ensure that we will win our bet, we need to guarantee that
 quiescence is a \emph{permanent} state, rather than a transient

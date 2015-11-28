@@ -1332,29 +1332,43 @@ name is by calling `new` and saving the result in a variable.  I
 thought we already noted this explicitly, but it seems that we don't,
 and we should! [TODO]
 
-[TODO: everything after this.]
-
 > - p.25, l-4. "Figure 2(c)" should presumably be "Figure 2(a)" (the
 > lattice of vertical numbers, not of number pairs).
 
+Fixed in an earlier edit.
+
 > - p.29, Ex. 3.5. Add parentheses around "x+1" for disambiguation.
+
+Fixed.
 
 > - p.31, l.-12. This is another instance where the lattice of sets,
 > with set union as lub, does not quite give the correct results,
 > because the top element of the lattice does not represent an
 > inconsistency.
 
+I think that by "does not quite give the correct results" the reviewer
+must mean that lattices are not quite the right abstraction, but I
+think that's addressed above.
+
 > - p.31, l.-9. "I" -> "we".
+
+Fixed in an earlier edit.
 
 > - p.32, 3.2.1. This is virtually identical to the previous definition.
 > Is it really necessary to repeat it?
+
+No, it isn't.  This section was removed in an earlier edit.
 
 > - p.33, Lemma 3.2. Formally, properties 2 and 3 could be joined into
 > simply "every finite subset of D_p has a lub" (since Bot is precisely
 > the lub of the empty set). I'm not sure if this is easier to work
 > with, though.
 
+I don't think this is a big deal; let's leave it as it is.
+
 > - p.34, l.-15. "lambda-LVish" -> "lambda-LVar".
+
+Fixed in an earlier edit.
 
 > - p.34, l.-4: "Every set of updates implicitly contains identity".
 > While identity can obviously be added to any family U of updates,
@@ -1373,6 +1387,10 @@ and we should! [TODO]
 > denotable as a single put_i function, so this is meant more as a
 > semantic completeness property.)
 
+That's a good point about termination arguments.  I don't actually
+remember why we required that the identity function be part of every
+set U; maybe it makes things easier in the metatheory later.
+
 > - p.36, Fig.8. In the grammar, the syntactic form "freeze l after Q
 > with \x.e0, {e..}, H" is presumably not meant to be writable directly
 > by a programmer, but only arises by the transition E-Freeze-Init, and
@@ -1384,6 +1402,12 @@ and we should! [TODO]
 > "proper" configurations needed, for example that H is always a subset
 > of Q?
 
+That's right; that syntactic form only comes about via E-Freeze-Init.
+Section 3.2.6 explains more about its semantics; there, we say, "The
+set H (a subset of the lattice D) represents those values in Q for
+which callbacks have already been launched".  In other worse, yes, H
+is a subset of Q.
+
 > Also, the notation used for the set of running handlers strongly
 > suggests that this set could be infinite - like, e.g. threshold sets
 > P, and unlike handled sets H. Presumably this is not intended (what
@@ -1393,15 +1417,30 @@ and we should! [TODO]
 > juxtaposition, since this overlaps with the notation for function
 > applications).
 
+Yes, the reviewer is correct that the notation should suggest that Q
+is a finite set.  We should fix this. [TODO]
+
+The missing commas were added in an earlier edit.
+
 > - p.36, l,-2. The references should be to Figures 9 and 10, not 4 and 5.
+
+Oops!  Fixed.
 
 > - p.37. It appears that "freeze e" can be seen as just syntactic sugar
 > for "freeze e after {} with \x.x". Is there any need to treat it
 > explicitly in the grammar or operational semantics?
 
+That's a great point!  I think the reviewer is right; we don't have to
+have E-Freeze-Simple or `freeze e` explicitly.
+
 > - p.40, l.7. "the lub of those values" does not refer to anything
 > identifiable in the preceding text. It should presumably "the LVar's
 > value after the last update" or similar.
+
+Good catch -- changed to "the contents of the LVar after all updates
+have been applied."
+
+[TODO: everything after this.]
 
 > - p.40, 3.3. Unlike for lambda-LVar, a consistent-termination property
 > for lambda-LVish is not even conjectured. However, given the same
