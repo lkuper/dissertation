@@ -137,7 +137,7 @@ work.
 > be achieved, I believe (perhaps naively), by viewing "freeze" as just another
 > update operation.
 
-I think it would be very hard to have our cake and eat it too, here.
+We think it would be very hard to have our cake and eat it too, here.
 The main thing that complicates the definition of lambdaLVish is the
 addition of handlers/quiescence, and that's also the thing that makes
 it more expressive.
@@ -146,8 +146,8 @@ What we've done to simplify matters, though, is add arbitrary update
 operations to the original calculus, lambdaLVar.  This makes
 lambdaLVar a tiny bit more complicated, since we have to parameterize
 the calculus by U.  But it makes for a smaller leap from lambdaLVar to
-lambdaLVish, and it demonstrate that the arbitrary update operations
-in lambdaLVish are not the source of nondeterminism.
+lambdaLVish, and it helps illustrate that the arbitrary update
+operations in lambdaLVish are not the source of nondeterminism.
 
 The way things are set up in the paper now are something of an
 accident of history.  When we developed LVars, we first came up with
@@ -174,9 +174,10 @@ nondeterminism, but we want to spare dragging the reader through yet
 another intermediate step.
 
 Viewing freeze as just another update operation is an interesting
-idea.  But, unlike other update operations, freeze returns a value.
-Moreover, since it's the one feature that introduces nondeterminism,
-we think it makes sense to separate it.
+idea.  But, unlike other update operations, freeze returns a value
+(it's a read as well as a write).  Moreover, since it's the one
+feature that introduces nondeterminism, we think it makes sense to
+separate it.
 
 Presentation-wise, we agree with the reviewer that it's not necessary
 to go through all the steps of the proof twice, once for lambdaLVar
