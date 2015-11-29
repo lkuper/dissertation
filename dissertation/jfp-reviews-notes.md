@@ -969,9 +969,9 @@ points.
 > still refer to the put-based language as lambda-LVar, the variant with
 > generalized updates could be called lambda-LVar+, or similar.)
 
-We've adopted the reviewer's suggestion of having arbitrary updates be
-part of lambdaLVar, for the reasons reviewer 2 gives as well as the
-reasons I gave above in response to reviewer 1.  (As far as
+We've happily adopted the reviewer's suggestion of having arbitrary
+updates be part of lambdaLVar, for the reasons reviewer 2 gives as
+well as the reasons given above in response to reviewer 1.  (As far as
 consistency with previous work, that ship has already sailed; what we
 presented in the first submitted version was already very different
 from the version of lambdaLVar that appeared in our FHPC '13 paper.)
@@ -1000,7 +1000,7 @@ a fundamental change to the flavor and focus of the work.  In the
 distributed systems community, the work on conflict-free replicated
 data types that we cite in section 5 made the observation that the
 "conflict resolution functions" that Dynamo called for could in fact
-often be seen as least upper bounds in a join-semilattice, and explot
+often be seen as least upper bounds in a join-semilattice, and exploit
 join-semilattice properties to get distributed consistency.
 Similarly, we want to exploit join-semilattice properties to get
 determinism.  Indeed, a join-semilattice isn't always the most natural
@@ -1012,9 +1012,8 @@ us to conveniently handle more kinds of data.  If we hadn't added that
 generalization, and the model still lacked arbitrary update operations
 (as was the case in our POPL '14 paper), maybe the reviewer would not
 have minded our focus on lubs.  Rather than engendering disappointment
-that we haven't taken the generalization even further, we hope that
-this paper will engender enthusiasm that such a generalization to
-LVars (which this paper is presenting for the first time) is possible.
+that we haven't taken the generalization even further, we hope to
+engender enthusiasm that such a generalization is possible.
 
 Furthermore, in the common case where all updates *are* least upper
 bounds, we enjoy idempotence of updates -- which makes possible some
@@ -1023,7 +1022,7 @@ case, the name "LVars" is pretty entrenched.
 
 All that said, we are happy to take some of the emphasis off lubs, and
 we hope to accomplish that by moving the arbitrary update feature to
-lambdaLVar.
+lambdaLVar instead of waiting until lambdaLVish to introduce it.
 
 > --
 
@@ -1088,17 +1087,17 @@ more about this termination thing.  Maybe Neel has thoughts on this?
 > parallel" landscape, and whether/how they could be accommodated in the
 > LVar/LVish model, or a plausible extension thereof.
 
-This is a great question.  We've added a section in 2.6 discussing how
-to express short-circuiting parallel "and" in our model,.  To do so,
-we need to slightly generalize the notion of threshold sets.  Along
-with that, we've included another section that discusses generalizing
-threshold sets even further, to "threshold functions" -- this section
-has something of the flavor of the partial functions that the reviewer
-mentions above.  This material all appeared in Kuper's dissertation
-but was left out of our original submission as a way to save space.
-Now that we are cutting some implementation-focused material and some
-of the repetitive material in chapter 3, some space has been freed up
-to include it.
+This is a great question.  We've added a section to 2.6 that discusses
+how to express short-circuiting parallel-and in our model.  (The idea
+for parallel-or is essentially the same.)  To do so, we need to
+slightly generalize the notion of threshold sets.  Along with that,
+we've included another section that discusses generalizing threshold
+sets even further, to "threshold functions".  (This material all
+appeared in the first author's dissertation, but was left out of our
+original submission as a way to save space.  Now that some space has
+been freed up by cutting some implementation-focused material and some
+of the more repetitive parts of the proof in chapter 3, space has been
+freed up to include it.)
 
 > --
 
