@@ -1,6 +1,8 @@
 > Referees' Comments to Author:
 > Referee: 1
 
+<!--
+
 > Comments to the Author
 > SUMMARY
 
@@ -23,6 +25,8 @@
 > result is proved, in Section 2, in the setting of a concurrent call-by-value
 > lambda-calculus, equipped with an interleaving semantics, where put and get
 > are atomic operations.
+
+-->
 
 > The programming model is then extended, for greater expressiveness,
 > with the following operations:
@@ -57,6 +61,8 @@ The reviewer is right that arbitrary update, handlers/quiescence, and
 freezing are independent from each other and it is only freezing that
 actually introduces any nondeterminism.
 
+<--
+
 > This programming model has been implemented in Haskell as a library, called
 > LVish. The library is presented informally in Section 4. Its API is not shown
 > explicitly; instead, a few examples of use are shown. Part of the
@@ -72,6 +78,8 @@ actually introduces any nondeterminism.
 > elegant programming model here. It is declarative in style, deterministic or
 > quasi-deterministic, yet potentially allows exploiting parallel hardware.
 
+-->
+
 > The manner in which this model subsumes Kahn networks and IVars is
 > interesting. (As far as I understand, the claim that LVars subsume Kahn
 > networks is of a rather theoretical nature, since in practice, a Kahn network
@@ -79,8 +87,10 @@ actually introduces any nondeterminism.
 > passing, without storing channel histories; I don't see how it could/would be
 > implemented on top of LVars.)
 
-I think the reviewer has a fair point about the claim about Kahn
-networks being theoretical.  We should be forthcoming about this.
+The reviewer has a fair point about the claim about Kahn networks
+being theoretical.  We should be forthcoming about this.
+
+<!--
 
 > Regardless of whether the reported parallel speedups are convincing, this
 > paper reports on an impressive amount of work, which deserves being recorded
@@ -90,6 +100,8 @@ networks being theoretical.  We should be forthcoming about this.
 > code, which seems a regrettable omission.)
 
 > EVALUATION : CONS, CRITICISMS, SUGGESTIONS, etc.
+
+-->
 
 > One may argue that the results that *are* proven in the paper are relatively
 > easy / intuitively clear: that is, provided updates are inflationary and
@@ -107,12 +119,12 @@ networks being theoretical.  We should be forthcoming about this.
 > is a little bit frustrating -- although I understand that proving the validity
 > of the low-level implementation would probably warrant another paper.
 
-The reviewer is right that we didn't tackle this question.  Actually,
-the loose correspondence between the LVish Haskell implementation and
-the paper specification is something that's always frustrated me.
-Ryan's view, though, is that this would be not just *one* more paper,
-but "more like years of work before GHC is actually in a state where
-we can prove the implementation valid."
+The reviewer is right that we don't tackle this question.  Indeed, the
+correspondence between the LVish Haskell library and the lambdaLVish
+calculus is loose.  Actually proving that the low-level scheduler code
+is valid with respect to the paper semantics, though, would probably
+require not just *one* more paper.  It would more likely take years of
+work.
 
 > The duplication between the two lambda-calculi, lambda_LVar and lambda_LVish,
 > bothers me. The basic intuitions seem to be the same, and the series of lemmas
@@ -130,13 +142,12 @@ The main thing that complicates the definition of lambdaLVish is the
 addition of handlers/quiescence, and that's also the thing that makes
 it more expressive.
 
-However, what we *could* do to simplify matters is use arbitrary
-update operations in the original calculus, lambdaLVar.  This would
-make lambdaLVar a tiny bit more complicated, since we would have to
-parameterize the calculus by U.  But, it would make for a smaller leap
-from lambdaLVar to lambdaLVish.  Also, showing determinismn for
-lambdaLVar plus arbitrary update would show that it's not the
-arbitrary update in lambdaLVish that's the source of nondeterminism.
+What we've done to simplify matters, though, is add arbitrary update
+operations to the original calculus, lambdaLVar.  This makes
+lambdaLVar a tiny bit more complicated, since we have to parameterize
+the calculus by U.  But it makes for a smaller leap from lambdaLVar to
+lambdaLVish, and it demonstrate that the arbitrary update operations
+in lambdaLVish are not the source of nondeterminism.
 
 The way things are set up in the paper now are something of an
 accident of history.  When we developed LVars, we first came up with
@@ -145,33 +156,31 @@ came up with the addition of handlers/quiescence and freezing (POPL
 '14); and then, finally, later, we added arbitrary update (which it
 turned out was necessary to model a number of real problems, but which
 was never written up until now, although we discussed it informally in
-our PLDI '14 paper).  When I finally added arbitrary update and wrote
-up the quasi-determinism proof, it was lambdaLVish that I added it to,
-because lambdaLVish was the most recent iteration of the calculus.
+our PLDI '14 paper).  When we finally added arbitrary update and wrote
+up the quasi-determinism proof, it was lambdaLVish that we added it
+to, because lambdaLVish was the most recent iteration of the calculus.
 But it makes sense pedagogically and technically to have it added to
 lambdaLVar.
 
-I think it also makes sense to add handlers/quiescence and freezing
-(and nothing else) to the model at the same time, because
-handlers/quiescence and freezing are two features that are especially
-useful in combination.  So we propose having two calculi: the first
-lambdaLVar plus arbitrary update, and the second lambdaLVish which
-adds add handlers/quiescence and freezing on top of that.  This still
-leaves the paper with the problem that we are not adding
-handlers/quiescence in isolation and showing that it doesn't introduce
-nondeterminism by itself.  But, we think dragging the reader through
-another intermediate step would just make the repetiveness problem
-work.
+It also makes sense from a language-design perspective to add
+handlers/quiescence and freezing (and nothing else) to the model at
+the same time, because handlers/quiescence and freezing are two
+features that are especially useful in combination.  So the revised
+version of the paper has two calculi: lambdaLVar with arbitrary
+update, and lambdaLVish, which adds handlers/quiescence and freezing
+on top of that.  We are still not adding handlers/quiescence in
+isolation and proving that that feature does not by itself introduce
+nondeterminism, but we want to spare dragging the reader through yet
+another intermediate step.
 
 Viewing freeze as just another update operation is an interesting
-idea, but I'd have to think about how it would work.  Freeze is the
-one thing that introduces nondeterminism.  To me, it makes sense to
-separate it.
+idea.  But, unlike other update operations, freeze returns a value.
+Moreover, since it's the one feature that introduces nondeterminism,
+we think it makes sense to separate it.
 
-Presentation-wise, I agree with the reviewer that it's not necessary
+Presentation-wise, we agree with the reviewer that it's not necessary
 to go through all the steps of the proof twice, once for lambdaLVar
-and once for lambdaLVish.  We can improve the paper by getting rid of
-the more repetitive bits. [TODO]
+and once for lambdaLVish.  We've made section 3 less repetitive. [TODO]
 
 > If D is the lattice chosen by the end user, then we can work
 > in the lattice D_p (as defined on page 32). There, we find that "freeze" is
@@ -191,7 +200,7 @@ that tell you whether an LVar is frozen or not.  An example in PLT
 Redex is here:
 https://github.com/lkuper/lvar-semantics/blob/f1f3597299bcf9f47f87d60845bbc8d168387a84/lambdaLVish/nat.rkt#L625.
 More generally, the threshold set could be { (d, frz) | frz = true }.
-It's a perfectly fine threshold set since any two frozen states have
+It's a perfectly fine threshold set, since any two frozen states have
 Top as their lub.
 
 > Concerning "freeze/after/with", I am not sure why the authors choose to
@@ -213,6 +222,8 @@ because it is how we intend handlers, quiescence, and freezing to be
 used.  The LVish API in fact provides just such a freezeAfterWith
 operation, but it also provides the individual building blocks.
 
+<!--
+
 > Concerning handlers and pools, one would like to know whether they are just "a
 > mechanism for (parallel) least fixed point computations". Are they expressive
 > enough to compute the least fixed point of an arbitrary monotonic function f
@@ -229,9 +240,6 @@ operation, but it also provides the individual building blocks.
 > denotational semantics? where hopefully it would be clear *what* pools and
 > handlers compute -- namely, a least fixed point, I suppose -- as opposed to
 > *how* they compute it.
-
-I don't know the answers to these two questions.  We should discuss
-them.
 
 > The authors go to the trouble of defining calculi where dynamic allocation of
 > LVars is supported. This creates some complication (e.g., one must reason up
@@ -255,6 +263,8 @@ things that we can model; I think that a number of real use cases do
 require nested LVars. I'm not sure what should be done about this,
 really.  I don't want to add more complicated machinery around
 renaming.
+
+-->
 
 > I find the description of the LVish API (Sections 4.1-4.3) to be really
 > unsatisfactory. In fact, this description is absent. Examples of use are
@@ -296,14 +306,20 @@ this poor reviewer a bone!)
 > of the code is shown; e.g., the code for addHandler is missing. I would
 > suggest showing the missing code, and trying to improve the explanations.
 
-My suggestion here is to fix the problem by simply leaving out the
-explanation of the guts of the LVish implementation.  For one thing,
-it is already out of date, and the implementation is likely to
-continue to evolve.  And it doesn't do anyone any good to simply
-repeat the implementation section that appeared in our POPL paper.
-The internals of LVish are more complicated than they used to be, and
-my view is that properly explaining them would make this paper too
-long.
+We agree with the reviewer that this section of the originally
+submitted paper was hard to understand.  Our proposed solution is to
+fix the problem by simply leaving out the details of the LVish
+internals.  For one thing, the code presented there is already out of
+date, and the implementation is likely to continue to evolve.  It
+doesn't do anyone any good to simply repeat the now-outdated
+implementation section that appeared in our POPL '14 paper.  (For
+example, the material in that paper about leveraging idempotency is
+out of date, now that we allow non-idempotent updates.)  We believe
+the best place to go to read up-to-date LVish scheduler code is the
+open-source LVish repository (which is linked from the paper), not the
+paper itself.
+
+<!--
 
 > EVALUATION : SUMMARY
 
@@ -321,8 +337,6 @@ long.
 
 >  3. A fuller presentation and a better explanation of the LVish implementation.
 
-Decision: yes on 1 and 2, no on 3 (details above).
-
 > MISCELLANEOUS COMMENTS (HIGH-LEVEL)
 
 > Are there examples of "typical" mistakes that lead to a deadlock or livelock?
@@ -338,6 +352,8 @@ sentences referencing some of those works, as a way of saying, "Hey,
 if this is what you want, you'd be better served by looking at these
 other papers", but I confess I don't know what the important ones are.
 
+-->
+
 > The comparison with the frame rule in Figure 7 is interesting. In fact, one
 > may wonder: what would be a suitable set of Hoare-logic-like rules for
 > reasoning about LVish programs? I assume that assertions would have to be
@@ -347,11 +363,13 @@ other papers", but I confess I don't know what the important ones are.
 > kind of LUB. The paper `heap-monotonic typestate' comes to mind along these
 > lines.
 
-This is a great question.  Thinking about separation logic for
+This is a good question; indeed, thinking about separation logic for
 deterministic parallelism is what led us to develop LVish in the first
-place.  I think it would be interesting to see how LVars might fit
-into, say, the Views framework.  We could suggest this as an avenue
-for future work.
+place.  It would be interesting to see how LVars might fit into, say,
+the Views framework mentioned in section 5.  We've added a sentence
+suggesting that as an avenue for future work. [TODO]
+
+<!--
 
 > In a sequential setting, there has been work on lattice-independent least
 > fixed point algorithms. These algorithms are based on propagating differences
@@ -370,6 +388,8 @@ could instead say something brief about the general shape of the LVish
 scheduler code.  But someone who wants to read the code can look at
 the open-source implementation of LVish.
 
+-->
+
 > The code in Figures 11-13 is tricky and interesting. How would you approach
 > the task of proving its correctness? The last paragraph of the paper mentions
 > "a dependently-typed programming language". I can see how dependent types
@@ -378,18 +398,21 @@ the open-source implementation of LVish.
 > relaxed memory, etc. Could one instead envision an approach based on
 > a concurrent program logic? or on model-checking? ...
 
-I'd like to know Aaron's answer to that question, because not only was
-he the original author of that code, he also knows more about
-concurrent program logics than I do.  But I will say that, when I
-wrote the bit about a dependently-typed programming languages, I was
-thinking only about a way to ensure that the states of an LVar data
-structure do in fact form a join-semilattice, since Haskell's type
-system isn't powerful enough to guarantee that a lattice is actually a
-lattice, at least not without a whole lot of pain.  I was *not*
-thinking about verifying properties of the *scheduler* implementation,
-which seems like an even harder problem.
+A dependently typed langauge could help ensure that the states of an
+LVar data structure do in fact form a join-semilattice, since
+Haskell's type system is not powerful enough to guarantee such a
+property, at least not without a great deal of pain.  Here we were
+*not* thinking about verifying properties of the *scheduler*
+implementation, which seems like an even harder problem (and, as
+mentioned above, we propose leaving the referred-to code out of the
+paper entirely).  We've added a clarifying comment about what we think
+the role of dependent types could be. [TODO]
+
+<!--
 
 > MISCELLANEOUS COMMENTS (AS I READ)
+
+-->
 
 > p.3, it is not entirely clear to me what difference there is between "no
 > shared state parallelism" and "disjoint state parallelism". Apparently,
@@ -397,15 +420,17 @@ which seems like an even harder problem.
 > Do the two approaches differ in the restrictions that they use? Does one
 > of them subsume the other?
 
-Indeed, I think that part of the point of all this work is to show
-that these things aren't so different after all.  I see the difference
-as largely a matter of user interface.  In no-shared-state
-parallelism, you cannot write code where different threads modify the
-same data structure concurrently; there's not any way to represent
-that in the model.  With disjoint imperative parallelism, you can
-write code where two threads modify the same data structure and it is
-then up to the system to do some analysis to ensure that they are
-modifying different parts of it.
+Indeed, part of the point of all this work is to demonastrate that
+these things aren't so different after all.  We see the difference as
+largely a matter of user interface.  In no-shared-state parallelism,
+you cannot write code where different threads modify the same data
+structure concurrently; there's not any way to represent that in the
+model.  With disjoint imperative parallelism, you can write code where
+two threads modify the same data structure, and it is then up to the
+system to do some analysis to ensure that they are modifying different
+parts of it.
+
+<!--
 
 > p.3, as a non-Haskell-expert, I am not completely clear about the status of
 > Haskell's primitive thunks (i.e., unevaluated computations) in a parallel
@@ -414,23 +439,25 @@ modifying different parts of it.
 > and can be demanded several times (possibly concurrently). To what extent does
 > this comparison make sense?
 
+-->
+
 > p.4, "until the LVar in question reaches a (unique) value". Not
 > clear at this point why it should be unique. If Top is written
 > to the LVar, then Top dominates every value in the threshold set.
 
 If the threshold set contains Top, then Top has to be the *only* value
-in the threshold set.  I think the problem here is that we haven't
-explained yet that threshold sets have to be pairwise incompatible.
-But I think that's okay; we have a forward reference to section 2,
-where we'll explain that.
+in the threshold set.  The reviewer's confusion is probably because we
+haven't explained yet that threshold sets have to be pairwise
+incompatible.  But we have a forward reference to section 2, where
+that is explained.
 
 > p.5, "if we can ensure [...]" and p.6, "if a freeze is guaranteed to be the
 > last effect [...]". It is not very clear at this point in which situations
 > this static guarantee holds. Maybe a little bit of extra intuition and/or a
 > forward pointer to the place where runParThenFreeze is explained would help.
 
-A forward pointer is a good idea.  There was one at the end of section
-1.3, but it makes more sense to put it in 1.4; I've moved it.
+There was such a forward pointer at the end of section 1.3, but it
+makes more sense to put it in 1.4; we've moved it.  Thanks!
 
 > p.7, not sure what the "connected component containing a vertex v" means in a
 > directed graph. Is it the set of vertices reachable from v? the set of
@@ -438,8 +465,10 @@ A forward pointer is a good idea.  There was one at the end of section
 > component of v? Or (as suggested by the following paragraph) are you looking
 > only for the set of "[vertices] connected to v"? (the successors of v?)
 
-We mean the set of vertices that's reachable from v.  I've tweaked the
-wording.
+Yes, mean the set of vertices that's reachable from v.  We've tweaked
+the wording in this section.
+
+<!--
 
 > p.8, "Streams [...] impose an excessively strict ordering". I am not sure in
 > what way you are proposing that streams be used here. (Hence, no idea why it
@@ -468,18 +497,16 @@ wording.
 > implicitly taking D to be the coalesced sum of all these domains? -- Footnote
 > 6 confirms this, but comes a little late.
 
-I haven't responded to the above five points yet, because they don't
-seem as high a priority as some of the others; but it might be good to
-go back and address them later, if there's time. [TODO]
+-->
 
 > p.14, "the Top state is unreachable": unless one writes Top to the LVar. I
 > don't think you have explicitly indicated yet that this operation is
 > disallowed.
 
-Good point; you're allowed to explicitly write Top to the LVar
-(although you wouldn't, because by doing so you would cause the
-program to step to the error state right away).  I think what we mean
-here is that you cannot *unintentionally* reach Top.  I've reworded this.
+This is a good point; one is allowed to explicitly write Top to the
+LVar (although by doing so, one would cause the program to step to the
+error state right away).  What we really mean here is that one cannot
+*unintentionally* reach Top.  We've reworded this.
 
 > Definition 2.3, lub of stores: I would be interesting to know where this
 > definition is used. Apparently not in the operational semantics (good). I am
@@ -487,14 +514,16 @@ here is that you cannot *unintentionally* reach Top.  I've reworded this.
 > with distinct domains) but cannot tell why this is reasonable/required if I
 > don't know where this notion is used.
 
-It's used in various parts of the proof of determinism; it'll show up
-a few pages later in the Independence lemma, for instance.  We can
-point that out.
+We use this definition in parts of the proof of determinism; in the
+Independence lemma, for example.
 
 > Definition 2.4, equality of stores: it seems to be "just equality". Is this
 > definition really needed?
 
-Nope, and we don't actually use it anywhere anyway!  Removed.
+It is not -- and we don't actually use it anywhere anyway.  Removed;
+thanks.
+
+<--
 
 > Lemma 2.2, I would expect the conclusion of the lemma to also state, "and
 > pi(sigma) = sigma". Is this not needed?
@@ -546,26 +575,31 @@ Nope, and we don't actually use it anywhere anyway!  Removed.
 > p.30, "quiesce is almost always used together with freezing". Do you have
 > examples where quiesce is *not* followed with freezing?
 
+-->
+
 > p.31, it is not clear to me how freezeSetAfter differs from freezeAfter.
 > The one difference I can see is that the parameter Q has disappeared and
 > has presumably been instantiated to the infinite set of all singletons.
 
+We've revised this example so that it no longer uses freezeSetAfter.
+
 > p.31, is it OK to freeze an already-frozen LVar?
 
-Yep, that's no problem.  It's a no-op.
+Yes, it is -- freezing a frozen LVar is a no-op.
 
 > p.34, Definition 3.4 seems to indicate that a "write" (an operation) applied
 > to a frozen LVar does *not* cause an error if the operation does not affect
 > the LVar. Why this decision? Wouldn't it be more natural to consider that any
 > operation performed after a freeze is an error?
 
-The way I see it is this: because the operation doesn't change the
-contents of the LVar, the contents of the frozen LVar are the same as
-they would have been had the operation happened before the freeze.
-So, when the operation happens, it's fine to "pretend that it already
-happened" and just ignore it.  I think that raising an error would
-introduce nondeterminism in a place where it doesn't need to be.  I'd
-rather avoid raising an error if we can.
+One way to look at it is this: because the operation does not change
+the contents of the LVar, the contents of the frozen LVar are the same
+as they would have been had the operation already happened before the
+freeze.  So, when the operation happens, it's fine to "pretend that it
+already happened" and simply ignore it.  Raising an error would
+introduce unnecessary nondeterminism.
+
+<!--
 
 > p.35, it seems a pity that a lot of definitions and lemmas have to be
 > duplicated for lambda_LVar and lambda_LVish. One wonders whether one could
@@ -580,11 +614,17 @@ rather avoid raising an error if we can.
 > then the calculus is deterministic and if the monoid is quasi-commutative then
 > the calculus is quasi-deterministic.
 
+-->
+
 > Figure 8. I thought the point of introducing "freezing" was to allow normal
 > (non-blocking) reads. But I don't see a new "normal read" operation in the
 > syntax of lambda_LVish. Was it omitted from the calculus? Or is there no such
 > operation in LVish, perhaps because it is built into combinators such as
 > runParThenFreeze?
+
+The freeze operation is itself a read operation.
+
+<!--
 
 > p.37, "freeze-after-with" seems to be a rather ad-hoc construct. One wonders
 > whether it could be replaced (at least in theory) with something much simpler.
@@ -779,65 +819,47 @@ rather avoid raising an error if we can.
 
 > TYPOS
 
-> p.4, "an specific"
+-->
 
-Fixed in an earlier edit.
+> p.4, "an specific"
 
 > p.9, "Tesler & Enea, 1968 (Spring)". Maybe (Spring) is unneeded :-)
 
-I've thought this was odd for a while.  Yeah, we can change it.
-
 > p.30, should addInPool be addHandlerInPool? or addHandler? confused.
-
-Fixed in an earlier edit.
 
 > p.30, "Early quiescence no risk"
 
-Fixed in an earlier edit.
-
 > p.31, "the [...] pattern I described above": who is "I"?
-
-Fixed in an earlier edit.
 
 > p.34, "in lambda_LVish, the put operations took two arguments": do you
 > mean lambda_LVar?
 
-Good catch!  Fixed now.
-
 > p.48, "both forks must compete" -> "complete"?
 
-Good catch!  Fixed now.
-
 > p.49, "Section ??"
-
-Fixed in an earlier edit.
 
 > p.51, "we are [...] calling getKey on the Book key, as before": are
 > we? the code does not seem to contain a call to getKey.
 
-Fixed in an earlier edit.
-
 > p.56 and 57, should "ellipses" be "..."?
 > should "DOT" be "."?
 
-Fixed in an earlier edit.
+All of these are fixed -- thank you!
 
 > p.66, "handler events" : do you mean "event handlers"?
 
-I think that by "handler events" we must have meant "events that occur
-because of executing a handler's callback".  But I think it's okay to
-just say "events" here.
+By "handler events", we meant "events that occur because of executing
+a handler's callback".  We've changed it to simply "events".
 
 > p.69, "psuedocode"
 
-Good catch!  Fixed.  (This didn't even look wrong to me!  I'm slipping
-off my game...)
-
 > p.76, "a more manageable" : missing word?
 
-Fixed in an earlier edit.
+Fixed; thanks!
 
 > Referee: 2
+
+<--
 
 > Comments to the Author
 > The paper proposes a useful generalization of the write-once variables
@@ -861,7 +883,9 @@ Fixed in an earlier edit.
 
 > --
 
-> 1. In my opinion, the key definitions are considerably uglified by the
+-->
+
+> 1\. In my opinion, the key definitions are considerably uglified by the
 > insistence on the ordered set D being a "lattice" (actually, a bounded
 > join-semilattice), and specifically the requirement that any two
 > elements of D must have a designated least upper bound, possibly Top.
@@ -922,9 +946,9 @@ Fixed in an earlier edit.
 > two finite sequences of updates from the same starting point, must
 > necessarily have a lub in the order.
 
-There are two key points here: first, that the way we have to handle
-the top element clutters things up a little, and second, that lub
-updates are something of a red herring.  I think they're both good
+The reviewer makes two key points here: first, that the way we have to
+handle the top element clutters things up a little, and second, that
+lub updates are something of a red herring.  These are both good
 points.
 
 > What I would therefore concretely suggest is to first move the
@@ -944,12 +968,12 @@ points.
 > still refer to the put-based language as lambda-LVar, the variant with
 > generalized updates could be called lambda-LVar+, or similar.)
 
-I like this concrete suggestion of having arbitrary updates be part of
-lambdaLVar, for the reasons reviewer 2 gives as well as the reasons I
-gave above in response to reviewer 1.  (And there's no need to worry
-about consistency with previous work, because lambdaLVar in this paper
-is already pretty different from what appeared in our FHPC '13 paper.)
-Let's do it.
+We've adopted the reviewer's suggestion of having arbitrary updates be
+part of lambdaLVar, for the reasons reviewer 2 gives as well as the
+reasons I gave above in response to reviewer 1.  (As far as
+consistency with previous work, that ship has already sailed; what we
+presented in the first submitted version was already very different
+from the version of lambdaLVar that appeared in our FHPC '13 paper.)
 
 > Second, with the lubs on D no longer directly present in the
 > operational semantics, it should be possible to cleanly reconsider
@@ -969,38 +993,40 @@ Let's do it.
 > more accurately named "poset-based" or similar. This really needs to
 > be resolved.
 
-I think requiring a partial function that takes a pair of states,
-instead of requiring a join-semilattice with lubs, would mean a
-fundamental change to the flavor and focus of the work.  In the
-distributed systems community, the work on CRDTs made the observation
-that the "conflict resolution functions" that Dynamo called for could
-in fact often be seen as least upper bounds in a lattice.  This work
-is continuing in that tradition.  A big part of the point of this work
-is to exploit join-semilattice properties to get determinism.  Indeed,
-a join-semilattice isn't always the most natural fit for the data.
-But, excitingly, it often is!  And those are the cases where I think
-LVars shine.
+We think that requiring a partial function that takes a pair of
+states, instead of requiring a join-semilattice with lubs, would mean
+a fundamental change to the flavor and focus of the work.  In the
+distributed systems community, the work on conflict-free replicated
+data types that we cite in section 5 made the observation that the
+"conflict resolution functions" that Dynamo called for could in fact
+often be seen as least upper bounds in a join-semilattice, and explot
+join-semilattice properties to get distributed consistency.
+Similarly, we want to exploit join-semilattice properties to get
+determinism.  Indeed, a join-semilattice isn't always the most natural
+fit for the data.  But, excitingly, it often is, and it's in those
+situations where LVars really shine.
 
-We see arbitrary updates are an interesting generalization that allows
-us to conveniently handle more data structures.  I can't help feeling
-a bit like we're being punished for having added that generalization.
-If the model still lacked arbitrary update operations (as was the case
-in our POPL paper), maybe the reviewer would not have minded our use
-of lubs.  But, since we took a step toward generalizing things, the
-reviewer is unhappy that we haven't gone even further.
+We see arbitrary updates as an interesting generalization that allows
+us to conveniently handle more kinds of data.  If we hadn't added that
+generalization, and the model still lacked arbitrary update operations
+(as was the case in our POPL '14 paper), maybe the reviewer would not
+have minded our focus on lubs.  Rather than engendering disappointment
+that we haven't taken the generalization even further, we hope that
+this paper will engender enthusiasm that such a generalization to
+LVars (which this paper is presenting for the first time) is possible.
 
 Furthermore, in the common case where all updates *are* least upper
 bounds, we enjoy idempotence of updates -- which makes possible some
 clever implementation tricks, as discussed in our POPL paper.  In any
-case, the name LVars is pretty entrenched!
+case, the name "LVars" is pretty entrenched.
 
-All that said, I am perfectly fine with taking some emphasis off lubs,
-and I think that moving the arbitrary update capability to lambdaLVar
-would accomplish that.
+All that said, we are happy to take some of the emphasis off lubs, and
+we hope to accomplish that by moving the arbitrary update feature to
+lambdaLVar.
 
 > --
 
-> 2. It is rather unfortunate that the determinism result (Theorem 2.1)
+> 2\. It is rather unfortunate that the determinism result (Theorem 2.1)
 > specifically does not address consistent termination (i.e., that if
 > one run terminates with a non-error result, another run cannot
 > diverge), but that this is only left as a conjecture. I think that,
@@ -1061,15 +1087,17 @@ more about this termination thing.  Maybe Neel has thoughts on this?
 > parallel" landscape, and whether/how they could be accommodated in the
 > LVar/LVish model, or a plausible extension thereof.
 
-Ah.  I talk about early quiescence in my dissertation, in section
-2.6.2 -- I use parallel "and" instead of parallel "or", but the idea
-is the same.  In order to implement short-circuiting parallel "and" in
-our model, we need to slightly generalize the notion of threshold
-sets.  This section was left out of our JFP submission for lack of
-space (and I left out yet another section of my dissertation that
-generalizes threshold sets even further, to "threshold functions").
-I'd like to include this section in the JFP paper, as long as we can
-cut the material on implementation of LVish internals.
+This is a great question.  We've added a section in 2.6 discussing how
+to express short-circuiting parallel "and" in our model,.  To do so,
+we need to slightly generalize the notion of threshold sets.  Along
+with that, we've included another section that discusses generalizing
+threshold sets even further, to "threshold functions" -- this section
+has something of the flavor of the partial functions that the reviewer
+mentions above.  This material all appeared in Kuper's dissertation
+but was left out of our original submission as a way to save space.
+Now that we are cutting some implementation-focused material and some
+of the repetitive material in chapter 3, some space has been freed up
+to include it.
 
 > --
 
@@ -1108,10 +1136,9 @@ cut the material on implementation of LVish internals.
 > These issues should be convincingly addressed, or the assertion that
 > LVar/LVish subsume dataflow models should be removed or rephrased.
 
-Both reviewers have now made the point that the claim that we subsume
-KPNs is too strong, and I'm convinced that they're right and that we
-should tone down the claim a lot.  We should think about what exactly
-it is that we can say instead.
+This echoes the point that reviewer 1 made that our claim that we
+subsume KPNs is too strong, and we agree.  We've toned down that
+claim.
 
 > --
 
@@ -1183,17 +1210,17 @@ it is that we can say instead.
 
 I'm still thinking about how to summarize and respond to this point.
 
+<!--
+
 > -- Comparatively minor issues and misprints:
+
+-->
 
 > - p.14, l.6. What happens if a thread explicitly "put"s a Top value?
 > If Top is by definition a proper element of D, this could technically
 > happen.
 
-The other reviewer brought this up as well; it's fixed.
-
 > - p.14, 2.3.2, l.2. "countable" -> "countably infinite".
-
-Fixed.
 
 > - p.14. It is rather unfortunate to use the notations "Top_S" and
 > "\sqcup_S", where the subscript S looks just like a metavariable
@@ -1201,18 +1228,14 @@ Fixed.
 > for any "S" that is part of an operator name, as opposed to a
 > parameter.
 
-Fixed.
-
 > - p.14, footnote 6. Avoid "I", especially in a multiple-authored
 > paper.
-
-Fixed.
 
 > - p.15, Def. 2.4. Does equality on stores need to be explicitly
 > defined at all? It's just the normal equality relation on the
 > set "(Loc -> D-{Top}) U {Top_S}".
 
-Sure enough, we don't actually need or use this anywhere.  Fixed!
+All of the above are fixed -- thanks!
 
 > - p.15, 2.3.3, l.13. Can a threshold set contain Top? Nothing seems to
 > explicitly prohibit it, but without such a a restriction, the
@@ -1230,20 +1253,20 @@ could never reach Top and unblock at that element.
 > - p.15, l.-9. The reference to Figure 2(b) should presumably be 2(c),
 > since the example talks about pairs of integers.
 
-Fixed.
+Fixed; thanks!
 
 > - p.15, l.-3. The forward reference to 2.6 says that it will discuss a
 > generalization of threshold sets, but the actual 2.6 doesn't talk
 > about threshold sets at all, only about generalized updates.
 
-Good catch.  That forward reference makes sense now that we've added
-more material to 2.6.
+Thanks; that forward reference makes sense now that we've added more
+material to 2.6.
 
 > - p.16, 2.4. Both lambda-LVar and lambda-LVish are CBV languages, but
 > the LVish library is ultimately embedded in Haskell, a CBN language.
 > At least a few words of explanation are needed.
 
-Ah.  I've added a footnote to section 2.4 where we discuss the
+We've added a footnote to the part of section 2.4 that discusses the
 CBV-ness of lambdaLVar to explain that we accomplish this with
 strictness annotations in LVish.
 
@@ -1262,11 +1285,9 @@ this. [TODO]
 > cannot step".  For the latter, use "result", "final outcome",
 > "terminal configuration" or similar.
 
-What I was trying to do here is explain what the definition in section
-1, which said that deterministic programs always evaluate to the same
-value, means in the context of lambdaLVar.  But perhaps a better thing
-to do would be to just say "result" in section 1 and then I don't have
-to play that game here.  Fixed.
+Thanks; we've changed this to "result".
+
+<!--
 
 > In fact, a bit more precision may be in order. There are conceptually
 > 5 observably different possible outcomes of a lambda-LVar computation:
@@ -1286,7 +1307,7 @@ to play that game here.  Fixed.
 > formalized, e.g. by the primitive functions suggested above) to
 > construct threshold sets.
 
-I'm okay with the level of precision that we have here.
+-->
 
 > - p.23, Lemma 2.5. The paper gives absolutely no indication of where
 > and how the Independence property is used in the proof of
@@ -1336,40 +1357,37 @@ and we should! [TODO]
 > - p.25, l-4. "Figure 2(c)" should presumably be "Figure 2(a)" (the
 > lattice of vertical numbers, not of number pairs).
 
-Fixed in an earlier edit.
-
 > - p.29, Ex. 3.5. Add parentheses around "x+1" for disambiguation.
 
-Fixed.
+These are both fixed.
 
 > - p.31, l.-12. This is another instance where the lattice of sets,
 > with set union as lub, does not quite give the correct results,
 > because the top element of the lattice does not represent an
 > inconsistency.
 
-I think that by "does not quite give the correct results" the reviewer
-must mean that lattices are not quite the right abstraction, but I
-think that's addressed above.
+We're not sure what the reviewer means here by "does not quite give
+the correct results".
 
 > - p.31, l.-9. "I" -> "we".
-
-Fixed in an earlier edit.
 
 > - p.32, 3.2.1. This is virtually identical to the previous definition.
 > Is it really necessary to repeat it?
 
-No, it isn't.  This section was removed in an earlier edit.
+These are fixed; thanks!
+
+<!--
 
 > - p.33, Lemma 3.2. Formally, properties 2 and 3 could be joined into
 > simply "every finite subset of D_p has a lub" (since Bot is precisely
 > the lub of the empty set). I'm not sure if this is easier to work
 > with, though.
 
-I don't think this is a big deal; let's leave it as it is.
+-->
 
 > - p.34, l.-15. "lambda-LVish" -> "lambda-LVar".
 
-Fixed in an earlier edit.
+Fixed; thanks.
 
 > - p.34, l.-4: "Every set of updates implicitly contains identity".
 > While identity can obviously be added to any family U of updates,
@@ -1433,14 +1451,14 @@ Oops!  Fixed.
 > explicitly in the grammar or operational semantics?
 
 That's a great point!  I think the reviewer is right; we don't have to
-have E-Freeze-Simple or `freeze e` explicitly.
+have E-Freeze-Simple or `freeze e` explicitly. [TODO]
 
 > - p.40, l.7. "the lub of those values" does not refer to anything
 > identifiable in the preceding text. It should presumably "the LVar's
 > value after the last update" or similar.
 
-Good catch -- changed to "the contents of the LVar after all updates
-have been applied."
+Good catch; we've changed this to "the contents of the LVar after all
+updates have been applied."
 
 > - p.40, 3.3. Unlike for lambda-LVar, a consistent-termination property
 > for lambda-LVish is not even conjectured. However, given the same
@@ -1448,8 +1466,8 @@ have been applied."
 > the same number of allocations), presumably the proof would not be
 > significantly complicated by freezing and/or generalized updates.
 
-That's right -- we don't bring up consistent termination again because
-there is nothing new to say.
+That's correct -- we don't bring up consistent termination again,
+because there is nothing new to say in the lambdaLVish setting.
 
 > - p.40-41. The formal parts of sections 3.3.1-3.3.4 seem to exact
 > copies of the corresponding definitions and lemmas from the LVar
@@ -1473,10 +1491,10 @@ before, but meaning something slightly different. [TODO]
 > it's particularly confusing that in "u_i", i is a variable/parameter,
 > with i ranging over some set I, while in "U_S", S is part of the name.
 
-As the reviewer suggested doing earlier, I updated all the notation
+As the reviewer suggested doing earlier, we updated all the notation
 that had S as part of the name to use a non-italic S to make it more
-clear that it's not a parameter; U_S is one of those.  I hope that
-helps make this more clear.
+clear that it's not a parameter; U_S is one of those.  That should
+help make this more clear.
 
 > More problematically, however, the whole definition of a "store update
 > operation" is formulated in such a way that the intended mathematical
@@ -1504,16 +1522,16 @@ helps make this more clear.
 >   is the clause really requiring, i.e., how could the condition
 >   possibly fail at all?
 
-OK, I think the reviewer makes a good point that the definition of
-store update operation is mathematically sloppy.  All we are really
-trying to do here is generalize `S \lub_S S''` to the case of non-lub
-writes.  If S is a store, `U_S(S)` is a store that is at least as
-"big" as S, and possibly bigger, because some of the elements may have
-had non-identity state update operations U_p applied to them.  We
-can't just say that `U_S(S)` is just S but with one state update
-operation to everything in S, because `U_S(S)` may also contain new
-bindings.  I'm not sure what the cleanest way is to say this
-mathematically is, but I'll think about it some more. [TODO]
+The reviewer makes a good point that the definition of store update
+operation is mathematically sloppy.  All we are really trying to do
+here is generalize `S \lub_S S''` to the case of non-lub writes.  If S
+is a store, `U_S(S)` is a store that is at least as "big" as S, and
+possibly bigger, because some of the elements may have had
+non-identity state update operations U_p applied to them.  We can't
+just say that `U_S(S)` is just S but with one state update operation
+to everything in S, because `U_S(S)` may also contain new bindings.
+I'm not sure what the cleanest way is to say this mathematically is,
+but I'll think about it some more. [TODO]
 
 > - p.43, Lemma 3.7. It's hard on the reader that the statement of the
 > lemma refers to the notions of non-conflicting updates and
@@ -1529,7 +1547,7 @@ second.  But, I'm okay either way; we can change it. [TODO]
 > preferably be expressed in symbols, like in the textual explanation
 > above the definition, rather than the other way around.
 
-Fixed.
+Fixed; thanks!
 
 > - p.44, Def. 3.11. Likewise, express the requirement in symbols, in
 > addition to (or instead of) textually.
@@ -1539,35 +1557,30 @@ Yeah, that's a good idea. [TODO]
 > - p.48, 4.2.1, l.1, "one of our previous IVar programs". What does
 > this refer to?
 
-Fixed in an earlier edit.
-
 > - p.50, l.-3. "incrementable counters, as in the previous section".
 > Which section is this, exactly?
-
-Oops, that's a mistake -- an artifact of an old version.  Removed the
-"as in the previous section".
 
 > - p.51, 4.2.4, just below the code snippet: "... and then calling
 > getKey on the Book key". This does not refer to anything identifiable
 > in the code.
 
-Fixed in an earlier edit.
+These are all fixed; thanks!
 
 > - p.56, bottom. Too much context is missing to allow the reader to
 > make much sense out of the code snippet. (And should "ellipses" in the
 > last line have been "...")?
 
-I agree, the old code snippet was bad! This part's been entirely
-rewritten with a different code example.
+Indeed, the old code snippet was a bit nonsensical! This section's
+been entirely rewritten with a different code example.
 
 > - p.57, l.5. "(We will see shortly how this generalizes.)". This does
 > not seem to refer to anything in the following text.
 
-Fixed in an earlier rewrite of this section.
-
 > - p.57, footnote 27. Should "DOT" and "ellipses" have been "." and "..."?
 
-Fixed in an earlier rewrite of this section.
+These are fixed; thanks!
+
+<!--
 
 > - p.71, section 5. It might be relevant to also mention Concurrent
 > Constraint Programming [e.g., Saraswat et al., POPL'91], which
@@ -1576,6 +1589,4 @@ Fixed in an earlier rewrite of this section.
 > single cell value), and quiescence detection as a synchronization
 > mechanism.
 
-I've actually meant to mention this in related work for some time but
-didn't dig in and learn enough about it to be able to know what to
-say.  We should definitely say *something* about it.  [TODO]
+-->
