@@ -53,9 +53,9 @@
 > succeeds, then its final result is always the same. This is a modified version
 > of the determinism theorem of Section 2.
 
-> The reviewer is right that arbitrary update, handlers/quiescence, and
-> freezing are independent from each other and it is only freezing that
-> actually introduces any nondeterminism.
+The reviewer is right that arbitrary update, handlers/quiescence, and
+freezing are independent from each other and it is only freezing that
+actually introduces any nondeterminism.
 
 > This programming model has been implemented in Haskell as a library, called
 > LVish. The library is presented informally in Section 4. Its API is not shown
