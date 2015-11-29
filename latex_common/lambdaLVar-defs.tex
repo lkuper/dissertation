@@ -5,17 +5,6 @@
 \end{definition}
 }
 
-\newcommand{\LVarsDefEqStore}{
-\begin{definition}[equality of stores, $\lambdaLVar$]\label{def:lvars-eqstore}
-  Two stores $S$ and $S'$ are \emph{equal} iff:
-  \begin{enumerate}
-    \item $S = \topS$ and $S' = \topS$, or
-    \item $\dom{S} = \dom{S'}$ and for all $l \in \dom{S}$, $S(l) =
-      S'(l)$.
-  \end{enumerate}
-\end{definition}
-}
-
 \newcommand{\LVarsDefLeqStore}{
 \begin{definition}[store ordering, $\lambdaLVar$]\label{def:lvars-leqstore}
   A store $S$ is \emph{less than or equal to} a store $S'$ (written

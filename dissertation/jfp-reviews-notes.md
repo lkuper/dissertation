@@ -429,7 +429,8 @@ where we'll explain that.
 > this static guarantee holds. Maybe a little bit of extra intuition and/or a
 > forward pointer to the place where runParThenFreeze is explained would help.
 
-A forward pointer is a good idea. [TODO]
+A forward pointer is a good idea.  There was one at the end of section
+1.3, but it makes more sense to put it in 1.4; I've moved it.
 
 > p.7, not sure what the "connected component containing a vertex v" means in a
 > directed graph. Is it the set of vertices reachable from v? the set of
@@ -437,13 +438,12 @@ A forward pointer is a good idea. [TODO]
 > component of v? Or (as suggested by the following paragraph) are you looking
 > only for the set of "[vertices] connected to v"? (the successors of v?)
 
-We mean the set of vertices that's reachable from v.  We could clarify this. [TODO]
+We mean the set of vertices that's reachable from v.  I've tweaked the
+wording.
 
 > p.8, "Streams [...] impose an excessively strict ordering". I am not sure in
 > what way you are proposing that streams be used here. (Hence, no idea why it
 > would be excessively strict.)
-
-Ryan, you're the streaming language expert.  How might streams be used here?
 
 > p.8, "We could manually push [...] but doing so just passes the problem to the
 > downstream consumer [...]". 1- I am not sure exactly how analyze would be
@@ -468,6 +468,10 @@ Ryan, you're the streaming language expert.  How might streams be used here?
 > implicitly taking D to be the coalesced sum of all these domains? -- Footnote
 > 6 confirms this, but comes a little late.
 
+I haven't responded to the above five points yet, because they don't
+seem as high a priority as some of the others; but it might be good to
+go back and address them later, if there's time. [TODO]
+
 > p.14, "the Top state is unreachable": unless one writes Top to the LVar. I
 > don't think you have explicitly indicated yet that this operation is
 > disallowed.
@@ -490,9 +494,7 @@ point that out.
 > Definition 2.4, equality of stores: it seems to be "just equality". Is this
 > definition really needed?
 
-We can probably skip it, but I should look back at the proofs; I think
-there were some places where I used store equality, and others where I
-didn't bother and assumed that everyone would know what "=" meant.
+Nope, and we don't actually use it anywhere anyway!  Removed.
 
 > Lemma 2.2, I would expect the conclusion of the lemma to also state, "and
 > pi(sigma) = sigma". Is this not needed?
@@ -1210,8 +1212,7 @@ Fixed.
 > defined at all? It's just the normal equality relation on the
 > set "(Loc -> D-{Top}) U {Top_S}".
 
-The other reviewer brought this up as well; I'll check whether we
-actually use \eqstore anywhere or if we need it. [TODO]
+Sure enough, we don't actually need or use this anywhere.  Fixed!
 
 > - p.15, 2.3.3, l.13. Can a threshold set contain Top? Nothing seems to
 > explicitly prohibit it, but without such a a restriction, the
@@ -1242,9 +1243,9 @@ more material to 2.6.
 > the LVish library is ultimately embedded in Haskell, a CBN language.
 > At least a few words of explanation are needed.
 
-Ah.  We can mention that we use strictness annotations all over the
-place in the LVish library.  The monad-par library, its predecessor,
-did that too.  [TODO]
+Ah.  I've added a footnote to section 2.4 where we discuss the
+CBV-ness of lambdaLVar to explain that we accomplish this with
+strictness annotations in LVish.
 
 > - p.20, l.-11. It's not really Def. 2.6 of permutations that's being
 > "lifted" to expressions, stores, and configurations, but rather the

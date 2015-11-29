@@ -67,17 +67,6 @@ A \emph{store} is either a finite partial mapping $S : \Loc \fmap (D_p
 \end{definition}
 }
 
-\newcommand{\DefEqStore}{
-\begin{definition}[equality of stores, $\lambdaLVish$]\label{def:eqstore}
-  Two stores $S$ and $S'$ are \emph{equal} iff:
-  \begin{enumerate}
-    \item $S = \topS$ and $S' = \topS$, or
-    \item $\dom{S} = \dom{S'}$ and for all $l \in \dom{S}$, $S(l) =
-      S'(l)$.
-  \end{enumerate}
-\end{definition}
-}
-
 \newcommand{\DefLeqStore}{
 \begin{definition}[store ordering, $\lambdaLVish$]\label{def:leqstore}
   A store $S$ is \emph{less than or equal to} a store $S'$ (written

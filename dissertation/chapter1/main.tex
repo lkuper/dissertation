@@ -276,8 +276,7 @@ computations like the graph traversal described above.  Moreover, if
 we can ensure that a freeze does indeed happen after all writes to the LVar in question have
 completed, then we can ensure that the entire computation is deterministic,
 and it is possible to enforce this ``freeze-last'' idiom at the
-implementation level, as \either{I}{we} discuss below (and, in more detail, in
-Section~\ref{subsection:lvish-regaining-full-determinism-with-runparthenfreeze}).
+implementation level, as \either{I}{we} discuss below.
 
 \section{The LVish library}\label{s:intro-lvish}
 
@@ -306,7 +305,9 @@ determinism or quasi-determinism guarantee.  Furthermore, if a
 @freeze@ is guaranteed to be the \emph{last} effect that occurs in a
 computation, then it is impossible for that @freeze@ to race with a
 write, ruling out the possibility of a runtime write-after-freeze
-exception.  LVish exposes a @runParThenFreeze@ operation that captures
+exception.  LVish exposes a @runParThenFreeze@ operation 
+(see Section~\ref{subsection:lvish-regaining-full-determinism-with-runparthenfreeze})
+that captures
 this ``freeze-last'' idiom and has a deterministic effect level.
 
 LVish also provides a variety of lattice-based data structures (\eg,
