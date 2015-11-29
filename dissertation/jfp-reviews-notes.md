@@ -61,7 +61,7 @@ The reviewer is right that arbitrary update, handlers/quiescence, and
 freezing are independent from each other and it is only freezing that
 actually introduces any nondeterminism.
 
-<--
+<!--
 
 > This programming model has been implemented in Haskell as a library, called
 > LVish. The library is presented informally in Section 4. Its API is not shown
@@ -523,7 +523,7 @@ Independence lemma, for example.
 It is not -- and we don't actually use it anywhere anyway.  Removed;
 thanks.
 
-<--
+<!--
 
 > Lemma 2.2, I would expect the conclusion of the lemma to also state, "and
 > pi(sigma) = sigma". Is this not needed?
@@ -859,7 +859,7 @@ Fixed; thanks!
 
 > Referee: 2
 
-<--
+<!--
 
 > Comments to the Author
 > The paper proposes a useful generalization of the write-once variables
