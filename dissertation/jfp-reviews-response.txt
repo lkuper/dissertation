@@ -1,23 +1,28 @@
 Thanks to both reviewers for their detailed reading of the paper and
 suggestions for improving it.  We've incorporated many of the
-reviewers' suggestions.  Here we briefly outline the changes we made.
+reviewers' suggestions.  Here we briefly outline the changes we made
+and respond to the reviewer's major points.
+
+(In addition to the major suggestions, we also incorporated a great
+many relatively minor suggestions that the reviewers made; we won't
+enumerate all of them here, but can provide a list if requested.)
 
 Reviewer 1 made three major suggestions:
 
->  1\. Serious thought given to the suggestion of merging lambda_LVar and
+>  1. Serious thought given to the suggestion of merging lambda_LVar and
 >     lambda_LVish into just one calculus, so as to reduce duplication and
 >     shorten the paper. The new calculus should be as simple as lambda_LVar and
 >     as powerful as lambda_LVish. Is it possible? I would like to think so, but
 >     perhaps I am being naive.
 
->  2\. An explicit presentation of the LVish API, possibly at the cost of
+>  2. An explicit presentation of the LVish API, possibly at the cost of
 >     consuming extra space;
 
->  3\. A fuller presentation and a better explanation of the LVish implementation.
+>  3. A fuller presentation and a better explanation of the LVish implementation.
 
 Addressing these points one at a time:
 
->  1\. Serious thought given to the suggestion of merging lambda_LVar and
+>  1. Serious thought given to the suggestion of merging lambda_LVar and
 >     lambda_LVish into just one calculus, so as to reduce duplication and
 >     shorten the paper. The new calculus should be as simple as lambda_LVar and
 >     as powerful as lambda_LVish. Is it possible? I would like to think so, but
@@ -57,16 +62,14 @@ that it should be kept separate.  Moreover, it is the one feature that
 introduces nondeterminism.  Therefore, we think it makes sense to keep
 it separate.
 
->  2\. An explicit presentation of the LVish API, possibly at the cost of
+>  2. An explicit presentation of the LVish API, possibly at the cost of
 >     consuming extra space;
 
 We've adopted this suggestion; section 4.2 of the paper now begins
 with an explicit presentation of the essential LVish API operations
 and types.
 
-TODO.  Issue #
-
->  3\. A fuller presentation and a better explanation of the LVish implementation.
+>  3. A fuller presentation and a better explanation of the LVish implementation.
 
 We agree with the reviewer that this section of the originally
 submitted paper was hard to understand.  After putting some thought
@@ -87,24 +90,30 @@ reviewer is satisfied with this decision, which also helps make up for
 the additional space that adding a full presentation of the API takes
 up.
 
-Reviewer 2 made five major suggestions.  We will try to summarize each
-of these suggestions briefly.
+Reviewer 2 made five major suggestions; we will try to summarize each
+of these suggestions briefly;
 
-> 1\. *Rather than join-semiattices and lub updates, focus on posets
-> and a more general form of update, starting from early in the
-> paper.*
+  1. Rather than join-semiattices and lub updates, focus on posets
+     and a more general form of update, starting from early in the
+     paper.
 
-> 2\. *Give an answer to the question about consistent termination.*
+  2. Give an answer to the question about consistent termination.
 
-> 3\. *Give an account of how we deal with early termination and parallel-or.*
+  3. Give an account of how we deal with early termination and
+     parallel-or.
 
-> 4\. *Either substantiate or remove the claim that we subsume Kahn process networks.*
+  4. Either substantiate or remove the claim that we subsume Kahn
+     process networks.
+
+  5. Have lattice elements and threshold sets belong to the same
+     semantic category as ordinary program expressions, and make it
+     possible to do, for example, conditional branching on them.
 
 We address each of these in order as well:
 
-> 1\. *Rather than join-semiattices and lub updates, focus on posets
-> and a more general form of update, starting from early in the
-> paper.*
+  1. Rather than join-semiattices and lub updates, focus on posets
+     and a more general form of update, starting from early in the
+     paper.
 
 As noted above, we've adopted the reviewer's suggestion of introducing
 non-idempotent updates early in the paper as part of lambdaLVar.
@@ -122,11 +131,12 @@ the emphasis off least-upper-bound updates, and we hope to accomplish
 that by allowing non-idempotent updates in lambdaLVar instead of
 waiting until lambdaLVish to introduce them.
 
-> 2\. *Give an answer to the question about consistent termination.*
+  2. Give an answer to the question about consistent termination.
 
-TODO.  Issue #7.
+[TODO -- issue #7]
 
-> 3\. *Give an account of how we deal with early termination and parallel-or.*
+  3. Give an account of how we deal with early termination and
+     parallel-or.
 
 We are glad that the reviewer raises this point.  We've added a new
 subsection to section 2 that discusses how to express a
@@ -141,17 +151,16 @@ up by cutting some implementation-focused material and some of the
 more repetitive parts of the proof in chapter 3,  freed
 up to include it.)
 
-> 4\. *Either substantiate or remove the claim that we subsume Kahn process networks.*
+  4. Either substantiate or remove the claim that we subsume Kahn
+     process networks.
 
 We agree with the reviewer that this claim was too strong (and
 reviewer 1 commented on this as well), and we've toned down the claim
 in the couple of places where it appears in the paper.
 
-TODO.  Issue #5.
-
-> 5\. *Have lattice elements and threshold sets belong to the same
-> semantic category as ordinary program expressions, and make it
-> possible to do, for example, conditional branching on them.*
+  5. Have lattice elements and threshold sets belong to the same
+     semantic category as ordinary program expressions, and make it
+     possible to do, for example, conditional branching on them.
 
 To summarize the reviewer's complaints about the current design:
 
@@ -208,3 +217,7 @@ cannot do that without admitting schedule nondeterminism.  Rather than
 doing that, the programmer would register a handler on the LVar and
 then write a callback function that would run in response to LVar
 events.  Many of the examples in section 4 do this.)
+
+We wish to thank the reviewers again for their close attention to our
+paper and for helping us improve it.  We look forward to your
+response.
