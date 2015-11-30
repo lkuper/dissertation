@@ -64,6 +64,8 @@ We've adopted this suggestion; section 4.2 of the paper now begins
 with an explicit presentation of the essential LVish API operations
 and types.
 
+TODO.  Issue #
+
 >  3\. A fuller presentation and a better explanation of the LVish implementation.
 
 We agree with the reviewer that this section of the originally
@@ -88,17 +90,19 @@ up.
 Reviewer 2 made five major suggestions.  We will try to summarize each
 of these suggestions briefly.
 
-> 1\. *Rather than join-semiattices and lub updates, a focus on posets
+> 1\. *Rather than join-semiattices and lub updates, focus on posets
 > and a more general form of update, starting from early in the
 > paper.*
 
-> 2\. *An answer to the question about consistent termination.*
+> 2\. *Give an answer to the question about consistent termination.*
 
-> 3\. *An account of how we deal with early termination and parallel-or.*
+> 3\. *Give an account of how we deal with early termination and parallel-or.*
+
+> 4\. *Either substantiate or remove the claim that we subsume Kahn process networks.*
 
 We address each of these in order as well:
 
-> 1\. *Rather than join-semiattices and lub updates, a focus on posets
+> 1\. *Rather than join-semiattices and lub updates, focus on posets
 > and a more general form of update, starting from early in the
 > paper.*
 
@@ -118,11 +122,11 @@ the emphasis off least-upper-bound updates, and we hope to accomplish
 that by allowing non-idempotent updates in lambdaLVar instead of
 waiting until lambdaLVish to introduce them.
 
-> 2\. *An answer to the question about consistent termination.*
+> 2\. *Give an answer to the question about consistent termination.*
 
 TODO.  Issue #7.
 
-> 3\. *An account of how we deal with early termination and parallel-or.*
+> 3\. *Give an account of how we deal with early termination and parallel-or.*
 
 We are glad that the reviewer raises this point.  We've added a new
 subsection to section 2 that discusses how to express a
@@ -145,4 +149,62 @@ in the couple of places where it appears in the paper.
 
 TODO.  Issue #5.
 
-> 5\. I'm still thinking about how to summarize and respond to point 5.
+> 5\. *Have lattice elements and threshold sets belong to the same
+> semantic category as ordinary program expressions, and make it
+> possible to do, for example, conditional branching on them.*
+
+To summarize the reviewer's complaints about the current design:
+
+  * You can only write down lattice elements and threshold sets as
+    literals in the program text, not as the result of a non-trivial
+    computation;
+  * moreover, you can't do a conditional branch on the result of a get
+    operation;
+  * and the determinism of the system seems to hinge on these
+    restrictions -- or one might worry that it does.
+
+The reviewer is correct that lambdaLVar/lambdaLVish offer a very
+restricted programming model.  We want to be clear about what exactly
+these calculi are and are not meant to model.  lambdaLVar/lambdaLVish
+are intended to demonstrate that it is possible to do
+guaranteed-deterministic shared-memory parallel programming, by
+restricting what kinds of updates can be made by a write and what
+kinds of observations can be made by a read.  The calculi can be
+thought of as modeling the kinds of operations that can take place
+inside a Par computation in the LVish library.  Such a computation
+might be just one part of an overall program -- just as ordinary
+Haskell values are returned when one runs a Par computation, and the
+rest of the program can manipulate or compute with them however one
+wishes, the result of evaluating a lambdaLVar/lambdaLVish expression
+could be passed to another program to be manipulated.  Adding this
+capability to lambdaLVar/lambdaLVish would, we think, be a distraction
+from what they are meant to demonstrate.
+
+A threshold set is a way of expressing what kinds of values can be
+gotten back from a particular kind of LVar read.  In that sense, it is
+more like a type than an ordinary program expression.  The lambdaLVar
+and lambdaLVish operational semantics describe an execution phase
+during which LVars are modified and read.  Threshold sets are not
+actually manipulated during that phase; rather, they would have been
+decided upon beforehand, perhaps by a human data structure implementor
+who decides what the API to a particular data structure should be,
+perhaps by some language operating over lambdaLVar.  Furthermore, we
+want to reiterate that threshold sets do not appear anywhere in the
+actual LVish library implementation -- not in the program text and not
+as runtime data structures.  Rather, they are a mathematical tool for
+reasoning about what kinds of LVar reads are safe to do.  Therefore,
+we feel that adding machinery for manipulating threshold sets to
+lambdaLVar and lambdaLVish would be a distraction.
+
+Finally, we think it is clear that the lack of conditional branching
+is not the fundamental reason for the determinism guarantee: if it
+were possible for a get operation to return a nondeterministic result,
+then a program that simply performed a get operation and returned its
+result would be nondeterministic.  No conditional branching would be
+necessary to expose the nondeterminism.  (In any case, conditional
+branching that would allow one to ask whether a particular LVar write
+has happened yet is of course not allowed, and this is by design; we
+cannot do that without admitting schedule nondeterminism.  Rather than
+doing that, the programmer would register a handler on the LVar and
+then write a callback function that would run in response to LVar
+events.  Many of the examples in section 4 do this.)

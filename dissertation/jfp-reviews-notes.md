@@ -1208,37 +1208,7 @@ claim.
 > model, but it would make it much clearer exactly what it assumes, and
 > what might be the issues in scaling it up.
 
-I'm not sure I completely understand this, but let me try to sort it
-out.  The reviewer's complaints seem to be:
-
-  * You can only write down lattice elements and threshold sets as
-    literals in the program text, not as the result of a non-trivial
-  * worse, you can't do a conditional branch on the result of a get
-    operation;
-  * and the determinism of the system seems to hinge on these
-    restrictions.
-
-As for the second complaint, the way you would express such a thing in
-lambdaLVish is not by reading the contents of an LVar with a get
-operation, but instead by registering a handler on the LVar; when an
-event (that is, a write to the LVar) occurs, it becomes the argument
-to a callback function that can then do any computation you like,
-depending on what event occurred.  I don't know what the reviewer
-means by "almost all the non-trivial examples in Section 4 do rely on
-run-time branching, or other computations on D-elements".  The
-examples in section 4 use handlers, just like the model language does.
-
-If by "conditional branch on the result of a get operation" the
-reviewer means asking whether a particular write has happened yet to
-the LVar in question, well, no, you can't do that, and *of course* the
-determinism of the system hinges on that restriction.  How could it be
-otherwise?
-
-The reviewer also seems preoccupied with the fact that threshold sets
-have to be given as literals in the program text.  I think we need to
-reiterate that threshold sets don't appear anywhere in the actual
-LVish library implementation -- not in the program text and not at
-runtime.  They are only a mathematical modeling tool.
+We've responded to the reviewer's points here in our response letter.
 
 <!--
 
