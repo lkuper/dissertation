@@ -162,21 +162,20 @@ semantics of the @put@ and @get@ operations that comprise the
 interface to LVars (which \either{I}{we} will explain in detail in
 \either{Chapter}{Section}~\ref{ch:lvars}):
 \begin{itemize}
-\item The @put@ operation can only make the state of an LVar ``grow''
-  with respect to the lattice, because it updates the LVar to the
-  \emph{least upper bound} of the current state and the new state.
-  For example, on LVars of collection type, such as sets, the @put@ operation
-  typically inserts an element.
-
-\item The @get@ operation allows only limited observations of the
-  contents of an LVar.  It requires the user to specify a
-  \emph{threshold set} of minimum values that can be read from the
-  LVar, where every two elements in the threshold set must have the
-  lattice's greatest element $\top$ as their least upper bound.  A
-  call to @get@ blocks until the LVar in question reaches a (unique)
-  value in the threshold set, then unblocks and returns that value.
+\item @put@ operations can only make the state of an LVar ``grow''
+  with respect to the lattice; formally, they are \emph{inflationary}
+  with respect to the lattice, as well as commutative with each other.
+  For example, on LVars of collection type, such as sets, the @put@
+  operation typically inserts an element.
+\item @get@ operations allow only limited observations of the contents
+  of an LVar.  They require the user to specify a \emph{threshold set}
+  of minimum values that can be read from the LVar, where every two
+  elements in the threshold set must have the lattice's greatest
+  element $\top$ as their least upper bound.  A call to @get@ blocks
+  until the LVar in question reaches a (unique) value in the threshold
+  set, then unblocks and returns that value.
 \end{itemize}
-Together, least-upper-bound writes via @put@ and threshold reads via
+Together, inflationary and commutative writes via @put@ and threshold reads via
 @get@ yield a programming model that is deterministic by construction.  That
 is, a program in which @put@ and @get@ operations on LVars are the
 only side effects will have the same observable result every time it is run, regardless of
@@ -185,33 +184,10 @@ parallelism and single-assignment parallelism are all subsumed by the
 LVars programming model, and as we will see in
 Section~\ref{s:lvish-disjoint}, imperative disjoint parallel updates
 are compatible with LVars as well.
-
 Furthermore, as \either{I}{we} show in
 Section~\ref{s:lvars-generalizing}, 
-\ifdefined\DISSERTATION
-we can generalize the behavior of
-the @put@ and @get@ operations while retaining determinism: we can
-generalize from the least-upper-bound @put@ operation to a set of
-arbitrary \emph{update operations} that are not necessarily idempotent
-(but are still inflationary and commutative), and we can generalize
+we can generalize
 the @get@ operation to allow a more general form of threshold reads.
-Generalizing from @put@ to arbitrary inflationary and commutative
-updates turns out to be a particularly useful extension to the LVars
-model; \either{I}{we} formally extend the model to support these update operations
-in \either{Chapter}{Section}~\ref{ch:quasi}, and in \either{Chapter}{Section}~\ref{ch:lvish} \either{I}{we} discuss how
-arbitrary update operations are useful in practice.
-\fi
-\ifdefined\JOURNAL
-we can generalize from the least-upper-bound @put@ operation to a set
-of arbitrary \emph{update operations} that are not necessarily
-idempotent (but are still inflationary and commutative), while
-retaining determinism.  This generalization turns out to be a
-particularly useful extension to the LVars model; \either{I}{we}
-formally extend the model to support these arbitrary update operations
-in \either{Chapter}{Section}~\ref{ch:quasi}, and in
-\either{Chapter}{Section}~\ref{ch:lvish} \either{I}{we} discuss how
-arbitrary update operations are useful in practice.
-\fi
 
 \section{Quasi-deterministic and event-driven programming with LVars}\label{s:intro-quasi}
 
@@ -224,8 +200,8 @@ nodes''; neighbors of seen nodes are fed back into the set until it
 reaches a fixed point.  Such fixpoint computations are ubiquitous, and
 would seem to be a perfect match for the LVars model due to their use
 of monotonicity.  But they are not expressible using the threshold
-@get@ and least-upper-bound @put@ operations, nor even with the more
-general \either{alternatives to \lstinline|get| and \lstinline|put|}{update operations} mentioned above.
+@get@ and inflationary and commutative @put@ operations, nor even with the more
+general alternatives to @get@ mentioned above.
 
 The problem is that these computations rely on \emph{negative}
 information about a monotonic data structure, \ie, on the
@@ -412,10 +388,10 @@ The rest of this dissertation supports my thesis as follows:
   \item \emph{Lattice-based data structures}: In
     Chapter~\ref{ch:lvars}, I formally define LVars and use them to
     define $\lambdaLVar$, a call-by-value parallel calculus with a
-    store of LVars that support least-upper-bound @put@ and threshold
+    store of LVars that support inflationary and commutative @put@ and threshold
     @get@ operations. In Chapter~\ref{ch:quasi}, I extend
-    $\lambdaLVar$ to add support for arbitrary update operations,
-    event handlers, and the @freeze@ operation, calling the resulting
+    $\lambdaLVar$ to add support for event handlers 
+    and the @freeze@ operation, calling the resulting
     language $\lambdaLVish$.  Appendix~\ref{app:plt-redex} contains
     runnable versions of $\lambdaLVar$ and $\lambdaLVish$ implemented
     using the PLT Redex semantics engineering system~\cite{redex-book}

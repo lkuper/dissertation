@@ -1,107 +1,13 @@
-\section{Generalizing the \il{put} and \il{get} operations}\label{s:lvars-generalizing}
+\section{Generalizing the \il{get} operation}\label{s:lvars-generalizing}
 
 The determinism result for $\lambdaLVar$ shows that adding LVars (with
 their accompanying @new@/@put@/@get@ operations) to an existing
 deterministic parallel language (the $\lambda$-calculus) preserves
-determinism.  But it is not the case that the @put@ and @get@
-operations are \emph{the most general} determinism-preserving
-operations on LVars.  In this section, \either{I}{we} consider some alternative
-semantics for @put@ and @get@ that generalize their behavior while
+determinism.  But it is not the case that the LVar operations we have
+presented so far are the most general determinism-preserving
+operations on LVars.  In this section, \either{I}{we} consider some
+alternative semantics for @get@ that generalize its behavior while
 retaining the determinism of the model.
-
-\subsection{Generalizing from least-upper-bound writes to inflationary, commutative writes}\label{subsection:lvars-generalizing-from-least-upper-bound-writes}
-
-In the LVars model as presented in this \either{chapter}{section} so far, the only way
-for the state of an LVar to evolve over time is through a series of
-@put@ operations.  Unfortunately, this way of updating an LVar
-provides no efficient way to model, for instance, an atomically
-incremented counter that occupies one memory location.  Consider an
-LVar based on the lattice of Figure~\ref{f:lvars-example-lattices}(a).
-Under the semantics of @put@, if two independent writes each take the
-LVar's contents from, say, $1$ to $2$, then after both writes, its
-contents will be $2$, because @put@ takes the maximum of the previous
-value and the current value.  Although this semantics is
-deterministic, it is not the desired semantics for every application.
-Instead, we might want each write to \emph{increment} the contents of
-the LVar by one, resulting in $3$.
-
-\lk{``Although it is tempting to think that LVar writes are always
-  idempotent, there is a \il{Counter} example.''}
-
-To support this alternative semantics in the LVars model, we
-generalize the model as follows.  For an LVar with lattice $(D,
-\userleq, \bot, \top)$, we can define a family of \emph{update
-  operations} $u_i : D \rightarrow D$, which must meet the following
-two conditions:
-\begin{itemize}
-\item $\forall d, i.     \;\; d \userleq u_i(d) $
-\item $\forall d, i, j.  \;\; u_i(u_j(d)) = u_j(u_i(d)) $
-\end{itemize}
-The first of these conditions says that each update operation is
-inflationary with respect to $\userleq$.  The second condition says
-that update operations commute with each other.  These two conditions
-correspond to the two informal criteria that we set forth for
-monotonic data structures at the beginning of this \either{chapter}{section}: the
-requirement that updates be inflationary corresponds to the fact that
-monotonic data structures can only ``grow'', and the requirement that
-updates be commutative corresponds to the fact that the timing of
-updates must not be observable.\footnote{Of course, commutativity of
-  updates alone is not enough to assure that the timing of updates is
-  not observable; for that we also need threshold reads.}
-
-\lk{``update'' used to be called ``bump'', but I think ``update'' is a
-  better name: ``bump'' sounds like something that is
-  specifically \emph{not} idempotent, while ``update'' is merely
-  something that \emph{doesn't have to be} idempotent.}
-
-In fact, the @put@ operation meets the above two conditions, and
-therefore can be viewed as a special case of an update operation that,
-in addition to being inflationary and commutative, also happens to
-compute a lub.  However, when generalizing LVars to support update
-operations, we must keep in mind that @put@ operations do not
-necessarily mix with arbitrary update operations on the same LVar.
-For example, consider a family of update operations $\{ u_{(+1)},
-u_{(+2)}, \dots \}$ for atomically incrementing a counter represented
-by a natural number LVar, with a lattice ordered by the usual $\leq$
-on natural numbers.  The $u_{(+1)}$ operation increments the counter
-by one, $u_{(+2)}$ increments it by two, and so on.  It is easy to see
-that these operations commute.  However, a @put@ of $4$ and a
-$u_{(+1)}$ do not commute: if we start with an initial state of $0$
-and the @put@ occurs first, then the state of the LVar changes to $4$
-since $\max(0, 4) = 4$, and the subsequent $u_{(+1)}$ updates it to
-$5$.  But if the $u_{(+1)}$ happens first, then the final state of the
-LVar will be $\max(1, 4) = 4$.  Furthermore, multiple distinct
-families of update operations only commute among themselves and cannot
-be combined.
-
-In practice, the author of a particular LVar data structure must
-choose which update operations that data structure should provide, and
-it is the data structure author's responsibility to ensure that they
-commute.  For example, the LVish Haskell library of
-\either{Chapter}{Section}~\ref{ch:lvish} provides a set data structure,
-@Data.LVar.Set@, that supports only @put@, whereas the counter data
-structure @Data.LVar.Counter@ supports only increments; an attempt to
-call @put@ on a @Counter@ would be ruled out by the type system.
-However, \emph{composing} LVars that support different families of
-update operations is fine.  For example, an LVar could represent a
-monotonically growing collection (which supports @put@) of counter
-LVars, where each counter is itself monotonically increasing and
-supports only increment.  Indeed, the PhyBin case study that \either{I}{we}
-describe in Section~\ref{s:lvish-phybin} uses just such a collection
-of counters.
-
-In \either{Chapter}{Section}~\ref{ch:quasi}, in addition to extending $\lambdaLVar$ to
-support the new features of \emph{freezing} and \emph{event handlers},
-\either{I}{we} generalize the @put@ operation to allow arbitrary update operations.
-More precisely, \either{I}{we} replace the @put@ operation with a family of operations
-$\PUTi$, with each corresponding to an update operation $u_i$.  The
-resulting generalized language definition is therefore parameterized
-not only by a given lattice, but also by a
-given family of update operations.  Furthermore, as we
-will see in Section~\ref{subsection:quasi-generalized-independence},
-we will need to generalize the Independence lemma
-(Lemma~\ref{lem:lvars-independence}) in order to accommodate this
-change to the language.
 
 \subsection{A more general formulation of threshold sets}\label{subsection:lvars-a-more-general-formulation-of-threshold-sets}
 
