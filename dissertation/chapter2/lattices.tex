@@ -70,7 +70,7 @@ Figure~\ref{f:lvars-example-lattices}(b), that is,
   D = (\lbrace \top, \bot \rbrace \cup \mathbb{N}, \userleq, \bot, \top), 
 \end{displaymath}
 \doublespacing
-
+%
 where the partial order $\userleq$ is defined by setting $\bot
 \userleq d \userleq \top$ and $d \userleq d$ for all $d \in D$.  This
 is a lattice of height three and infinite width, where the naturals
@@ -97,6 +97,75 @@ writes $1$, the resulting state will be $2$, since $2 \sqcup 1 = 2$.
 \end{wrapfigure}
 \fi
 
+\subsection{Inflationary, commutative updates}
+
+For a given lattice $(D, \userleq, \bot, \top)$, we can define a set
+of \emph{update operations} that determine how LVars can be updated:
+
+\DefSetOfUpdateOperations
+%
+The first of the conditions in
+Definition~\ref{def:set-of-update-operations} says that each update
+operation is inflationary with respect to $\userleq$.  The second
+condition says that update operations commute with each other.  These
+two conditions correspond to the two informal criteria that we set
+forth for monotonic data structures at the beginning of this
+\either{chapter}{section}: the requirement that updates be
+inflationary corresponds to the fact that monotonic data structures
+can only ``grow'', and the requirement that updates be commutative
+corresponds to the fact that the timing of updates must not be
+observable.
+
+\lk{``update'' used to be called ``bump'', but I think ``update'' is a
+  better name: ``bump'' sounds like something that is
+  specifically \emph{not} idempotent, while ``update'' is merely
+  something that \emph{doesn't have to be} idempotent.}
+
+In Section~\ref{s:lvars-examples}, we said that the @put@ operation on
+LVars computes a least upper bound.  We can formulate the lub
+operation as a set of update operations where each $u_i$ returns the
+lub of its argument and some element of $D$.  This set of update
+operations meets the above two conditions, but in general, update
+operations need not compute a lub.  The definition of the
+$\lambdaLVar$ language must be parameterized not only by the lattice
+$D$, but also by the set of update operations $U$, and we will write
+$\PUTi$ to denote the the @put@ operation that corresponds to update
+operation $u_i$.  Since lub updates are a common and useful special
+case, we will continue to write @put@ with no subscript (and with an
+additional argument, as in $\putexp{\mathit{lv}}{3}$) to denote
+least-upper-bound update operations.
+
+It is important to keep in mind that least-upper-bound @put@
+operations do not necessarily mix with arbitrary $\PUTi$ operations on
+the same LVar.  For example, consider a family of update operations
+$\{ u_{(+1)}, u_{(+2)}, \dots \}$ for atomically incrementing a
+counter represented by a natural number LVar, with a lattice ordered
+by the usual ordering $\leq$ on natural numbers.  The $u_{(+1)}$
+operation increments the counter by one, $u_{(+2)}$ increments it by
+two, and so on.  It is easy to see that these operations commute.
+However, a @put@ of $4$ and a $u_{(+1)}$ do not commute: if we start
+with an initial state of $0$ and the @put@ occurs first, then the
+state of the LVar changes to $4$ since $\max(0, 4) = 4$, and the
+subsequent $u_{(+1)}$ updates it to $5$.  But if the $u_{(+1)}$
+happens first, then the final state of the LVar will be $\max(1, 4) =
+4$.
+
+In practice, the author of a particular LVar data structure must
+choose which update operations that data structure should provide, and
+it is the data structure author's responsibility to ensure that they
+commute.  For example, the LVish Haskell library of
+\either{Chapter}{Section}~\ref{ch:lvish} provides a set data
+structure, @Data.LVar.Set@, that supports only @put@, whereas the
+counter data structure @Data.LVar.Counter@ supports only increment
+operations; an attempt to call @put@ on a @Counter@ would be ruled out
+by the type system.  However, \emph{composing} LVars that support
+different families of update operations is fine.  For example, an LVar
+could represent a monotonically growing set (that supports @put@) of
+counter LVars, where each counter is itself monotonically increasing
+and supports only increment operations.  Indeed, the PhyBin case study
+that \either{I}{we} describe in Section~\ref{s:lvish-phybin} uses just
+such a collection of counters.
+
 \subsection{Stores}\label{subsection:lvars-stores}
 
 During the evaluation of a $\lambdaLVar$ program, a \emph{store} $S$
@@ -121,7 +190,11 @@ all its bindings, using the notation
 $\store{\storebindingRaw{l_1}{d_1}, \dots,
   \storebindingRaw{l_n}{d_n}}$.  The set of states that a store can take on forms a
 lattice, just as $D$ does, with the empty store $\bot_S$ as its least
-element and $\topS$ as its greatest element.  It is straightforward to
+element and $\topS$ as its greatest element.
+
+\TODO{Update this section to use store update.}
+
+It is straightforward to
 lift the $\userleq$ and $\sqcup$ operations defined on elements of $D$
 to the level of stores:
 
@@ -139,72 +212,6 @@ Section~\ref{s:lvars-lambdalvar}) an attempted write that would take
 the state of some location $l$ to $\top$ would raise an error before the write can
 occur.
 
-\subsection{Inflationary, commutative updates}
-
-For an LVar with lattice $(D, \userleq, \bot, \top)$, we can define a
-family of \emph{update operations} $u_i : D \rightarrow D$, which must
-meet the following two conditions:
-\begin{itemize}
-\item $\forall d, i.     \;\; d \userleq u_i(d) $
-\item $\forall d, i, j.  \;\; u_i(u_j(d)) = u_j(u_i(d)) $
-\end{itemize}
-The first of these conditions says that each update operation is
-inflationary with respect to $\userleq$.  The second condition says
-that update operations commute with each other.  These two conditions
-correspond to the two informal criteria that we set forth for
-monotonic data structures at the beginning of this \either{chapter}{section}: the
-requirement that updates be inflationary corresponds to the fact that
-monotonic data structures can only ``grow'', and the requirement that
-updates be commutative corresponds to the fact that the timing of
-updates must not be observable.
-
-\lk{``update'' used to be called ``bump'', but I think ``update'' is a
-  better name: ``bump'' sounds like something that is
-  specifically \emph{not} idempotent, while ``update'' is merely
-  something that \emph{doesn't have to be} idempotent.}
-
-The least-upper-bound @put@ operation that we used as an example in
-Section~\ref{s:lvars-examples} meets the above two conditions, and
-therefore can be viewed as a special case of an update operation that,
-in addition to being inflationary and commutative, also happens to
-compute a lub.  Since such operations are common and useful, we will
-continue to write @put@ with no subscript to denote a
-least-upper-bound update operation.  In general, though, we have not
-just a single @put@ operation, but a family of operations $\PUTi$,
-with each corresponding to an update operation $u_i$.  The definition
-of $\lambdaLVar$ is therefore parameterized not only by the lattice
-$D$ but also by the family of update operations.
-
-It is important to keep in mind that least-upper-bound @put@
-operations do not necessarily mix with arbitrary $\PUTi$ operations on
-the same LVar.  For example, consider a family of update operations
-$\{ u_{(+1)}, u_{(+2)}, \dots \}$ for atomically incrementing a
-counter represented by a natural number LVar, with a lattice ordered
-by the usual $\leq$ on natural numbers.  The $u_{(+1)}$ operation
-increments the counter by one, $u_{(+2)}$ increments it by two, and so
-on.  It is easy to see that these operations commute.  However, a
-@put@ of $4$ and a $u_{(+1)}$ do not commute: if we start with an
-initial state of $0$ and the @put@ occurs first, then the state of the
-LVar changes to $4$ since $\max(0, 4) = 4$, and the subsequent
-$u_{(+1)}$ updates it to $5$.  But if the $u_{(+1)}$ happens first,
-then the final state of the LVar will be $\max(1, 4) = 4$.
-
-In practice, the author of a particular LVar data structure must
-choose which update operations that data structure should provide, and
-it is the data structure author's responsibility to ensure that they
-commute.  For example, the LVish Haskell library of
-\either{Chapter}{Section}~\ref{ch:lvish} provides a set data
-structure, @Data.LVar.Set@, that supports only @put@, whereas the
-counter data structure @Data.LVar.Counter@ supports only increment
-operations; an attempt to call @put@ on a @Counter@ would be ruled out
-by the type system.  However, \emph{composing} LVars that support
-different families of update operations is fine.  For example, an LVar
-could represent a monotonically growing set (that supports @put@) of
-counter LVars, where each counter is itself monotonically increasing
-and supports only increment operations.  Indeed, the PhyBin case study
-that \either{I}{we} describe in Section~\ref{s:lvish-phybin} uses just
-such a collection of counters.
-
 \subsection{Communication primitives}\label{subsection:lvars-communication-primitives}
 
 The @new@, $\PUTi$, and @get@ operations create, write to, and read
@@ -216,13 +223,9 @@ by mutable references:
   initial state is $\bot$, and returns the location $l$ of that LVar
   (\ie, a pointer to the LVar).
 \item $\PUTi$ takes a pointer to an LVar and updates the LVar's state
-  according to the update operation $u_i$, potentially pushing the
+  according to the update operation $u_i \in U$, potentially pushing the
   state of the LVar upward in the lattice.  Any update that would take
-  the state of an LVar to $\top$ results in an error.\footnote{For the
-    least-upper-bound @put@ operation, we employ some additional
-    syntactic sugar: @put@ takes a new state as a second argument and
-    updates the LVar to the lub of the new state and the current
-    state.}
+  the state of an LVar to $\top$ results in an error.
 \item @get@ performs a blocking ``threshold'' read that allows limited
   observations of the state of an LVar.  It takes a pointer to an LVar
   and a \emph{threshold set} $T$, which is a non-empty subset of $D$
@@ -259,36 +262,9 @@ generalize the definition of threshold sets to allow more programs
 to be expressed.  For now, \either{I}{we} will proceed with the simpler definition
 above.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \subsection{Monotonic store growth and determinism}\label{subsection:lvars-monotonic-store-growth}
+
+\TODO{Update this section to be less lub-y.}
 
 In IVar-based languages, a store can only change in one of two ways: a
 new, empty location (pointing to $\bot$) is created, or a previously

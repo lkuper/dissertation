@@ -25,6 +25,38 @@
 \end{definition}
 }
 
+\newcommand{\DefSetOfUpdateOperations}{
+\begin{definition}[set of update operations]\label{def:set-of-update-operations}
+  Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$,
+  a \emph{set of update operations} $U$ is a set of functions $u_i : D
+  \rightarrow D$ meeting the following conditions:
+  \begin{itemize}
+  \item $\forall d, i.     \;\; d \userleq u_i(d)$, and
+  \item $\forall d, i, j.  \;\; u_i(u_j(d)) = u_j(u_i(d))$.
+  \end{itemize}
+\end{definition}
+}
+
+\newcommand{\LVarsDefStoreUpdateOperation}{
+\begin{definition}[store update operation]\label{def:store-update-operation}
+  Given a lattice $(D, \userleq, \top, \bot)$ and a set of 
+  update operations $U$, a \emph{store update operation} is a
+  function $\Ustore$ from stores to stores such that:
+  \begin{itemize}
+    \item $\dom{\Ustore(S)} \supseteq \dom{S}$;
+    \item for each $l \in \dom{S}$, either:
+      \begin{itemize}
+        \item $(\Ustore(S))(l) = u_i(S(l))$, where $u_i \in U$, or
+        \item $(\Ustore(S))(l) = d$, where $S(l) = d$; and
+      \end{itemize}
+    \item for each $l \in \dom{\Ustore(S)}$ that is not a member of
+      $\dom{S}$, $(\Ustore(S))(l) = d$ for some $d \in D$.
+  \end{itemize}
+\end{definition}
+}
+
+% TODO: store update operation should replace this -- audit for and
+% remove uses of this.
 \newcommand{\LVarsDefLubStore}{
 \begin{definition}[lub of stores, $\lambdaLVar$]\label{def:lvars-lubstore}
 
