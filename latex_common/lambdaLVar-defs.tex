@@ -5,6 +5,8 @@
 \end{definition}
 }
 
+% TODO: Audit whether we really need this for monotonicity.  If we
+% don't, get rid of it; if we do, add it there.
 \newcommand{\LVarsDefLeqStore}{
 \begin{definition}[store ordering, $\lambdaLVar$]\label{def:lvars-leqstore}
   A store $S$ is \emph{less than or equal to} a store $S'$ (written
@@ -14,14 +16,6 @@
   \item $\dom{S} \subseteq \dom{S'}$ and for all $l
     \in \dom{S}$, $S(l) \userleq S'(l)$.
   \end{itemize}
-\end{definition}
-}
-
-\newcommand{\LVarsDefLeqStoreCnC}{
-\begin{definition}[store ordering, Featherweight CnC]\label{def:lvars-leqstore-cnc}
-  A store $S$ is \emph{less than or equal to} a store $S'$ (written
-  $\leqstore{S}{S'}$) iff $\dom{S} \subseteq \dom{S'}$ and for all $l
-  \in \dom{S}$, $S(l) = S'(l)$.
 \end{definition}
 }
 
@@ -40,7 +34,7 @@
 \newcommand{\LVarsDefStoreUpdateOperation}{
 \begin{definition}[store update operation]\label{def:store-update-operation}
   Given a lattice $(D, \userleq, \top, \bot)$ and a set of 
-  update operations $U$, a \emph{store update operation} is a
+  update operations $U$, a \emph{store update} is a
   function $\Ustore$ from stores to stores such that:
   \begin{itemize}
     \item $\dom{\Ustore(S)} \supseteq \dom{S}$;

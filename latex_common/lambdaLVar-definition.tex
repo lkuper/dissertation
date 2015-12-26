@@ -12,7 +12,7 @@
            v \sep 
            \app{e}{e} \sep 
            \getexp{e}{e} \sep 
-           \putexp{e}{e} \sep
+           \putiexp{e} \sep
            \NEW \\
       % N.B. unit and d are part of the set of values because (unlike
       % in the FHPC paper) get and put don't take and return sets.
@@ -34,8 +34,7 @@
            \app{e}{E} \sep
            \getexp{E}{e} \sep
            \getexp{e}{E} \sep 
-           \putexp{E}{e} \sep
-           \putexp{e}{E}
+           \putiexp{E}
     \end{array}
     \]
 }
@@ -46,11 +45,12 @@
 
 \newcommand{\FigLambdaLVarReductionSemantics}[1][t]{
 \begin{figure}[#1]
-  Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$:
-  \bigskip
+  Given a lattice $(D, \userleq, \bot, \top)$ with elements $d \in D$, \\
+  and a set of $U$ of update operations $u_i: D \rightarrow D$: \\
+  \smallskip
   $\incomp{T} \defeq \qforall{d_1,d_2 \in T}{(d_1 \neq d_2 \implies \userlub{d_1}{d_2}
     = \top)}$\hfill \fbox{$\conf \parstepsto \conf'$}
-  \bigskip
+  \smallskip
 {\doublespacing
   \begin{mathpar}
     \inferrule*[lab=E-Beta]
@@ -62,14 +62,13 @@
         {\config{S}{\NEW} \parstepsto \config{\extSRaw{S}{l}{\bot}}{l}}
 
     \inferrule*[lab=E-Put]
-        {S(l) = d_1 \\ \userlub{d_1}{d_2} \neq \top}
-        {\config{S}{\putexp{l}{d_2}} \parstepsto
-          \config{\extSRaw{S}{l}{\userlub{d_1}{d_2}}}{\unit}}
+        {S(l) = d_1 \\ u_{i}(d_1) \neq \top}
+        {\config{S}{\putiexp{l}} \parstepsto
+          \config{\extSRaw{S}{l}{u_{i}(d_1)}}{\unit}}
 
     \inferrule*[lab=E-Put-Err]
-        {S(l) = d_1 \\ \userlub{d_1}{d_2} = \top}
-        {\config{S}{\putexp{l}{d_2}} \parstepsto 
-          \error}
+        {S(l) = d_1 \\ u_{i}(d_1) = \top}
+        {\config{S}{\putexp{l}} \parstepsto \error}
 
     \inferrule*[lab=E-Get]
         {S(l) = d_1 \\ \incomp{T} \\ d_2 \in T \\ d_2 \userleq d_1}

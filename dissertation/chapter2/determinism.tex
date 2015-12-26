@@ -8,38 +8,37 @@ are the same configuration, up to a permutation on locations.  (\either{I}{We}
 discuss permutations in more detail below, in
 Section~\ref{subsection:lvars-permutations}.)
 
-In order to prove determinism for $\lambdaLVar$, \either{I}{we} first prove several
-supporting lemmas.  Lemma~\ref{lem:lvars-permutability}
+In order to prove determinism for $\lambdaLVar$, \either{I}{we} first
+prove several supporting lemmas.  Lemma~\ref{lem:lvars-permutability}
 (Permutability) deals with location names, and
 Lemma~\ref{lem:lvars-locality} (Locality) establishes a useful
 property for dealing with expressions that decompose into redex and
 context in multiple ways.  After that point, the structure of the
-proof is similar to that of the proof of determinism for Featherweight
-CnC given by Budimli\'c \etal~\shortcite{CnC}.  \either{I}{We} reuse the naming
-conventions of Budimli\'c \etal~for
-Lemmas~\ref{lem:lvars-monotonicity} (Monotonicity),
-\ref{lem:lvars-independence} (Independence), \ref{lem:lvars-clash}
-(Clash), \ref{lem:lvars-error-preservation} (Error Preservation), and
-\ref{lem:lvars-strong-local-confluence} (Strong Local
-Confluence). However, the statements and proofs of those properties
-differ considerably in the setting of $\lambdaLVar$, due to the
-generality of LVars and other differences between the $\lambdaLVar$
-language and Featherweight CnC.
-
-On the other hand, Lemmas~\ref{lem:lvars-strong-one-sided-confluence}
-(Strong One-Sided Confluence), \ref{lem:lvars-strong-confluence}
-(Strong Confluence), and \ref{lem:lvars-confluence} (Confluence) are
-nearly identical to the corresponding lemmas in the Featherweight CnC
-determinism proof.  This is the case because, once
-Lemmas~\ref{lem:lvars-monotonicity} through
-\ref{lem:lvars-strong-local-confluence} are established, the remainder
-of the determinism proof does not need to deal specifically with the
-semantics of LVars, lattices, or the store, and instead deals only
-with execution steps at a high level.
+proof is similar to that of the proof of determinism for the
+IVar-based Featherweight CnC language given by Budimli\'c
+\etal~\shortcite{CnC}.  \either{I}{We} reuse the naming conventions of
+Budimli\'c \etal~for Lemmas~\ref{lem:lvars-monotonicity}
+(Monotonicity), \ref{lem:lvars-independence} (Independence),
+\ref{lem:lvars-clash} (Clash), \ref{lem:lvars-error-preservation}
+(Error Preservation), and \ref{lem:lvars-strong-local-confluence}
+(Strong Local Confluence). However, the statements and proofs of those
+properties differ considerably in the setting of $\lambdaLVar$, due to
+the generality of LVars and other differences between the
+$\lambdaLVar$ language and Featherweight CnC.  On the other hand,
+Lemmas~\ref{lem:lvars-strong-one-sided-confluence} (Strong One-Sided
+Confluence), \ref{lem:lvars-strong-confluence} (Strong Confluence),
+and \ref{lem:lvars-confluence} (Confluence) are nearly identical to
+the corresponding lemmas in the Featherweight CnC determinism proof.
+This is the case because, once Lemmas~\ref{lem:lvars-monotonicity}
+through \ref{lem:lvars-strong-local-confluence} are established, the
+remainder of the determinism proof does not need to deal specifically
+with the semantics of LVars, lattices, or the store, and instead deals
+only with execution steps at a high level.
 
 \ifdefined\JOURNAL
 For brevity, we only give the statements of the properties we are
-proving here; their proofs appear in~\cite{lvars-dissertation}.
+proving here and brief proof sketches.  Their proofs appear in the
+appendix of the first author's dissertation~\cite{lvars-dissertation}.
 \fi
 
 \subsection{Permutations and permutability}\label{subsection:lvars-permutations}
@@ -54,44 +53,40 @@ that we care about, we work modulo an arbitrary \emph{permutation} on
 locations.
 
 Recall from Section~\ref{subsection:lvars-stores} that we have a
-countable set of locations $\Loc$.  Then, a permutation is defined as
-follows:
+countably infinite set of locations $\Loc$.  Then, a permutation is
+defined as follows:
+
 \LVarsDefPermutation
+%
 Condition (1) in Definition~\ref{def:lvars-permutation} ensures that
 we only consider location renamings that we can ``undo'', and
 condition (2) ensures that we only consider renamings of a finite
 number of locations.  Equivalently, we can say that $\pi$ is a
 bijection from $\Loc$ to $\Loc$ such that it is the identity on all
 but finitely many elements.
-\ifdefined\JOURNAL
-We can lift Definition~\ref{def:lvars-permutation} to expressions,
-stores, and configurations in the obvious way.
-\fi
 
-\ifdefined\DISSERTATION
 Definitions~\ref{def:lvars-permutation-expression},
 \ref{def:lvars-permutation-store},
-and~\ref{def:lvars-permutation-configuration} lift
-Definition~\ref{def:lvars-permutation} to expressions, stores, and
-configurations, respectively.  There is nothing surprising about these
-definitions: to apply a permutation $\pi$ to an expression, we just
-apply $\pi$ to any locations that occur in the expression.  We can
-also lift $\pi$ to evaluation contexts, structurally: $\pi([~]) =
-[~]$, $\pi(\app{E}{e} = \app{\pi(E)}{\pi(e)}$, and so on.  To lift
-$\pi$ to stores, we apply $\pi$ to all locations in the domain of the
-store.  (We do not have to do any renaming in the codomain of the
-store, since location names cannot occur in elements of the lattice
-$D$ and hence cannot occur in the contents of other store locations.)
-Since $\pi$ is a bijection, it follows that if some location $l$ is
-not in the domain of some store $S$, then $\pi(l) \notin
-\dom{(\pi(S)}$, a fact that will be useful to us shortly.
+and~\ref{def:lvars-permutation-configuration} lift $\pi$ to
+expressions, stores, and configurations, respectively.  There is
+nothing surprising about these definitions: to apply a permutation
+$\pi$ to an expression, we just apply $\pi$ to any locations that
+occur in the expression.  We can also lift $\pi$ to evaluation
+contexts, structurally: $\pi([~]) = [~]$, $\pi(\app{E}{e} =
+\app{\pi(E)}{\pi(e)}$, and so on.  To lift $\pi$ to stores, we apply
+$\pi$ to all locations in the domain of the store.  (We do not have to
+do any renaming in the codomain of the store, since location names
+cannot occur in elements of the lattice $D$ and hence cannot occur in
+the contents of other store locations.)  Since $\pi$ is a bijection,
+it follows that if some location $l$ is not in the domain of some
+store $S$, then $\pi(l) \notin \dom{(\pi(S)}$, a fact that will be
+useful to us shortly.
 
 \LVarsDefPermutationExpression
 
 \LVarsDefPermutationStore
 
 \LVarsDefPermutationConfiguration
-\fi
 
 With these definitions in place, \either{I}{we} can prove
 Lemma~\ref{lem:lvars-permutability}, which says that the names of
@@ -100,20 +95,19 @@ configuration can take a step: a configuration $\conf$ can step to
 $\conf'$ exactly when $\pi(\conf)$ can step to $\pi(\conf')$.
 
 \LVarsLemPermutability
-\ifdefined\DISSERTATION
 \begin{proof}
-  See Section~\ref{section:lvars-permutability-proof}.  The forward
-  direction of part~\ref{thm:permutable-reduction-transitions} is by
-  cases on the rule in the reduction semantics by which $\conf$ steps
-  to $\conf'$; the only interesting case is the {\sc E-New} case, in
-  which we make use of the fact that if $l \notin \dom{S}$, then
-  $\pi(l) \notin \dom{\pi(S)}$. The reverse direction of
+  See \either{Section~\ref{section:lvars-permutability-proof}}{\cite{lvars-dissertation}}.
+  The forward direction of
+  part~\ref{thm:permutable-reduction-transitions} is by cases on the
+  rule in the reduction semantics by which $\conf$ steps to $\conf'$;
+  the only interesting case is the {\sc E-New} case, in which we make
+  use of the fact that if $l \notin \dom{S}$, then $\pi(l) \notin
+  \dom{\pi(S)}$. The reverse direction of
   part~\ref{thm:permutable-reduction-transitions} relies on the fact
   that if $\pi$ is a permutation, then $\piinv$ is also a permutation.
   Part~\ref{thm:permutable-context-transitions} of the proof builds on
   part~\ref{thm:permutable-reduction-transitions}.
 \end{proof}
-\fi
 
 \noindent Because the names of locations in a configuration do not affect
 whether it can step, we can rename locations as needed, which will be

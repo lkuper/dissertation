@@ -5,7 +5,8 @@ Figure~\ref{f:lvars-lambdaLVar-syntax}, and
 Figures~\ref{f:lvars-lambdaLVar-reduction-semantics}
 and~\ref{f:lvars-lambdaLVar-context-semantics} together give the
 operational semantics.  Both the syntax and semantics are
-parameterized by the lattice $(D, \userleq, \bot, \top)$.
+parameterized by the lattice $(D, \userleq, \bot, \top)$, and the
+semantics is also parameterized by the set $U$ of update operations.
 
 A \emph{configuration} $\config{S}{e}$ comprises a store and an
 expression.  The \emph{error configuration}, written $\error$, is a
@@ -15,7 +16,7 @@ metavariable $\conf$ ranges over configurations.
 
 Stores are as described in Section~\ref{subsection:lvars-stores}, and
 expressions may be variables, values, function applications, @get@
-expressions, @put@ expressions, or @new@.  The value forms include the
+expressions, $\PUTi$ expressions, or @new@.  The value forms include the
 unit value $\unit$, elements $d$ of the specified lattice, store
 locations $l$, threshold sets $T$, or $\lambda$-expressions
 $\lam{x}{e}$.  A threshold set is a set $\setof{d_1, d_2, \dots}$ of
@@ -43,7 +44,7 @@ The {\sc E-New} rule creates a new binding in the store and returns a
 pointer to it; the side condition $l \notin \dom{S}$ ensures that $l$
 is a fresh location.  The {\sc E-Put} rule updates the store and
 returns $\unit$, the unit value.  The {\sc E-Put-Err} rule applies
-when a @put@ to a location would take its state to $\top$; in that
+when an update operation would take an LVar's state to $\top$; in that
 case, the semantics steps to $\error$.  The incompatibility of the
 threshold set argument to @get@ is enforced in the {\sc E-Get} rule by
 the $\incomp{T}$ premise, which requires that the lub of any two
@@ -95,7 +96,7 @@ subexpression $e_3$:
 \letparexp{x_1}{e_1}{x_2}{e_2}{e_3} \quad\defeq\quad \app{(\app{(\lam{x_1}{(\lam{x_2}{e_3})})}{e_1})}{e_2}
 \end{displaymath}
 \doublespacing
-
+%
 Although $e_1$ and $e_2$ can be evaluated in parallel, $e_3$ cannot be
 evaluated until both $e_1$ and $e_2$ are values, because the
 call-by-value semantics does not allow $\beta$-reduction until the
@@ -120,8 +121,8 @@ Since @let par@ expresses \emph{fork-join} parallelism, the evaluation
 of a program comprising nested @let par@ expressions would induce a
 runtime dependence graph like that pictured in
 Figure~\ref{f:lvars-series-parallel}(a).  The $\lambdaLVar$ language
-(minus @put@ and @get@) can support any \emph{series-parallel}
-dependence graph.  Adding communication through @put@ and @get@
+(minus $\PUTi$ and @get@) can support any \emph{series-parallel}
+dependence graph.  Adding communication through $\PUTi$ and @get@
 introduces ``lateral'' edges between branches of a parallel
 computation, as in Figure~\ref{f:lvars-series-parallel}(b).  This adds
 the ability to construct arbitrary non-series-parallel dependency
@@ -155,7 +156,7 @@ $lv$:
 \label{e:lvar-example-5}
 \end{equation}
 \doublespacing
-
+%
 Eventually, \eref{e:lvar-example-5} is guaranteed to raise $\error$ by way of the
 {\sc E-Put-Err} rule, because $\userlub{d_1}{d_2} = \top$.  Before
 that happens, though, $\getexp{lv}{\setof{d_1, d_2}}$ could return

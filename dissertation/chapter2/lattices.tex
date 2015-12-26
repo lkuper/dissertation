@@ -89,11 +89,11 @@ writes $1$, the resulting state will be $2$, since $2 \sqcup 1 = 2$.
 
 \ifdefined\DISSERTATION
 \begin{wrapfigure}{r}{2.3in}
-\vspace{-2em}
-\begin{center}
-  \includegraphics[scale=0.15]{../illustrations/store}
-\end{center}
-\vspace{-2em}
+  \vspace{-2em}
+  \begin{center}
+    \includegraphics[scale=0.15]{../illustrations/store}
+  \end{center}
+  \vspace{-2em}
 \end{wrapfigure}
 \fi
 
@@ -181,36 +181,23 @@ the LVars are drawn from the same lattice $D$.\footnote{In practice,
   choice is just to keep the presentation simple.}
 
 \LVarsDefStore
-
-\either{I}{We} use the notation $\extSRaw{S}{l}{d}$ to denote extending $S$ with a
-binding from $l$ to $d$.  If $l \in \dom{S}$, then $\extSRaw{S}{l}{d}$
-denotes an update to the existing binding for $l$, rather than an
-extension.  Another way to denote a store is by explicitly writing out
-all its bindings, using the notation
+%
+\either{I}{We} use the notation $\extSRaw{S}{l}{d}$ to denote
+extending $S$ with a binding from $l$ to $d$.  If $l \in \dom{S}$,
+then $\extSRaw{S}{l}{d}$ denotes an update to the existing binding for
+$l$, rather than an extension.  Another way to denote a store is by
+explicitly writing out all its bindings, using the notation
 $\store{\storebindingRaw{l_1}{d_1}, \dots,
-  \storebindingRaw{l_n}{d_n}}$.  The set of states that a store can take on forms a
-lattice, just as $D$ does, with the empty store $\bot_S$ as its least
-element and $\topS$ as its greatest element.
+  \storebindingRaw{l_n}{d_n}}$.  A store cannot contain a binding
+$\storebindingRaw{l}{\top}$, because (as we will see shortly) any
+write that would take the state of some location $l$ to $\top$ would
+raise an error before the write can occur.
 
-\TODO{Update this section to use store update.}
+A \emph{store update operation} can update the bindings in a store
+according to a specified set of update operations.  It can also add
+new bindings to a store.
 
-It is straightforward to
-lift the $\userleq$ and $\sqcup$ operations defined on elements of $D$
-to the level of stores:
-
-\LVarsDefLeqStore
-
-\LVarsDefLubStore
-
-By Definition~\ref{def:lvars-lubstore}, if $\userlub{d_1}{d_2} =
-\top$, then
-$\lubstore{\store{\storebindingRaw{l}{d_1}}}{\store{\storebindingRaw{l}{d_2}}}
-= \topS$.  Notice that a store containing a binding
-$\storebindingRaw{l}{\top}$ can never arise during the execution of a
-$\lambdaLVar$ program, because (as \either{I}{we} will show in
-Section~\ref{s:lvars-lambdalvar}) an attempted write that would take
-the state of some location $l$ to $\top$ would raise an error before the write can
-occur.
+\LVarsDefStoreUpdateOperation
 
 \subsection{Communication primitives}\label{subsection:lvars-communication-primitives}
 
@@ -239,7 +226,7 @@ by mutable references:
   $\top$, which contradicts the requirement that $T$ be pairwise
   incompatible.
 \end{itemize}
-
+%
 The intuition behind @get@ is that it specifies a subset of the
 lattice that is ``horizontal'': no two elements in the threshold set
 can be above or below one another.  Intuitively, each element in the
@@ -261,46 +248,3 @@ on, in Section~\ref{s:lvars-generalizing}, \either{I}{we} will explain how to
 generalize the definition of threshold sets to allow more programs
 to be expressed.  For now, \either{I}{we} will proceed with the simpler definition
 above.
-
-\subsection{Monotonic store growth and determinism}\label{subsection:lvars-monotonic-store-growth}
-
-\TODO{Update this section to be less lub-y.}
-
-In IVar-based languages, a store can only change in one of two ways: a
-new, empty location (pointing to $\bot$) is created, or a previously
-$\bot$ binding is permanently updated to a meaningful value.  It is
-therefore straightforward in such languages to define an ordering on
-stores and establish determinism based on the fact that stores grow
-monotonically with respect to the ordering. For instance,
-\emph{Featherweight CnC}~\cite{CnC}, a single-assignment imperative
-calculus that models the Intel Concurrent Collections (CnC) system,
-defines ordering on stores as follows:\footnote{A minor difference
-  between $\lambdaLVar$ and Featherweight CnC is that, in
-  Featherweight CnC, no store location is explicitly bound to $\bot$.
-  Instead, if $l \notin \dom{S}$, then $l$ is defined to point to
-  $\bot$.}
-
-\LVarsDefLeqStoreCnC
-
-Our Definition~\ref{def:lvars-leqstore} is reminiscent of
-Definition~\ref{def:lvars-leqstore-cnc}, but
-Definition~\ref{def:lvars-leqstore-cnc} requires that $S(l)$ and
-$S'(l)$ be \emph{equal}, instead of our weaker requirement that $S(l)$
-be \emph{less than or equal to} $S'(l)$ according to the
-given lattice $\userleq$.  In $\lambdaLVar$, stores may
-grow by updating existing bindings via repeated @put@s, so
-Definition~\ref{def:lvars-leqstore-cnc} would be too strong; for
-instance, if $\bot \userlt d_1 \userleq d_2$ for distinct $d_1, d_2
-\in D$, the relationship
-$\leqstore{\store{\storebindingRaw{l}{d_1}}}{\store{\storebindingRaw{l}{d_2}}}$
-holds under Definition~\ref{def:lvars-leqstore}, but would not hold
-under Definition~\ref{def:lvars-leqstore-cnc}.  That is, in
-$\lambdaLVar$ an LVar could take on the state $d_1$, and then later the state $d_2$,
-which would not be possible in Featherweight CnC.
-
-\either{I}{We} establish in Section~\ref{s:lvars-proof} that $\lambdaLVar$ remains
-deterministic despite the relatively weak $\leqstore{}{}$ relation
-given in Definition~\ref{def:lvars-leqstore}.  The key to maintaining
-determinism is the blocking semantics of the @get@ operation and the
-fact that it allows only \emph{limited} observations of the state of
-an LVar.
