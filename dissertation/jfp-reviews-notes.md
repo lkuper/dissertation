@@ -1276,9 +1276,8 @@ strictness annotations in LVish.
 > and pi(sigma). I think it would be useful to actually write out the
 > relevant definitions.
 
-Hmm.  They're in my dissertation, but I specifically left them out
-here, because I thought they were pretty boring!  But I'll revisit
-this. [TODO]
+We left them out intentionally because they're pretty straightforward,
+but we've added them back now.
 
 > - p.21, l.3. Don't overload the word "value" (which already has a
 > precise definition in the grammar) to also mean "a configuration that
