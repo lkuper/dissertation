@@ -153,55 +153,61 @@ structures to which information can only be added and never removed,
 and for which the timing of updates is not observable---emerge as a
 common theme of guaranteed-deterministic programming models.
 
-In this \either{dissertation, I}{paper, we} show that \emph{lattice-based} data
-structures, or \emph{LVars}, offer a general approach to deterministic
-parallel programming that takes monotonicity as a starting point. The
-states an LVar can take on are elements of a given
-\emph{lattice}.  This lattice determines the
-semantics of the @put@ and @get@ operations that comprise the
-interface to LVars (which \either{I}{we} will explain in detail in
-\either{Chapter}{Section}~\ref{ch:lvars}):
+In this \either{dissertation, I}{paper, we} show that data structures
+based on partially ordered sets offer a general approach to
+deterministic parallel programming that takes monotonicity as a
+starting point.  We call these data structures
+\emph{LVars}.\footnote{The name LVars is by analogy with IVars, which
+  LVars generalize (see \either{Section}{Chapter}~\ref{ch:lvars}).
+  The ``L'' originally stood for ``lattice'', although the states of
+  an LVar need not actually form a lattice.  However,
+  join-semilattices are an important special case of posets that we
+  will encounter often with LVars.}  The states an LVar can take on
+are elements of a given partially ordered set, or \emph{poset}.  The
+partial order determines the semantics of the $\PUTi$ and @get@
+operations that comprise the interface to LVars (which \either{I}{we}
+will explain in detail in \either{Chapter}{Section}~\ref{ch:lvars}):
 \begin{itemize}
-\item @put@ operations can only make the state of an LVar ``grow''
-  with respect to the lattice; formally, they are \emph{inflationary}
-  with respect to the lattice, as well as commutative with each other.
-  For example, on LVars of collection type, such as sets, the @put@
-  operation typically inserts an element.
+\item $\PUTi$ operations can only make the state of an LVar ``grow''
+  with respect to the partial order; formally, they are
+  \emph{inflationary} with respect to the partial order, as well as
+  commutative with each other.  For example, on LVars of collection
+  type, such as sets, a $\PUTi$ operation might insert an element.
 \item @get@ operations allow only limited observations of the contents
   of an LVar.  They require the user to specify a \emph{threshold set}
   of minimum values that can be read from the LVar, where every two
-  elements in the threshold set must have the lattice's greatest
-  element $\top$ as their least upper bound.  A call to @get@ blocks
-  until the LVar in question reaches a (unique) value in the threshold
-  set, then unblocks and returns that value.
+  elements in the threshold set must have the poset's greatest element
+  $\top$ as their least upper bound.  A call to @get@ blocks until the
+  LVar in question reaches a (unique) value in the threshold set, then
+  unblocks and returns that value.
 \end{itemize}
-Together, inflationary and commutative writes via @put@ and threshold reads via
-@get@ yield a programming model that is deterministic by construction.  That
-is, a program in which @put@ and @get@ operations on LVars are the
-only side effects will have the same observable result every time it is run, regardless of
-parallel execution and schedule nondeterminism.  As we will see in \either{Chapter}{Section}~\ref{ch:lvars}, no-shared-state parallelism, data-flow
-parallelism and single-assignment parallelism are all subsumed by the
-LVars programming model, and as we will see in
+Together, inflationary and commutative writes via $\PUTi$ and
+threshold reads via @get@ yield a programming model that is
+deterministic by construction.  That is, a program in which $\PUTi$
+and @get@ operations on LVars are the only side effects will have the
+same observable result every time it is run, regardless of parallel
+execution and schedule nondeterminism.  As we will see in
+\either{Chapter}{Section}~\ref{ch:lvars}, no-shared-state parallelism,
+data-flow parallelism and single-assignment parallelism are all
+subsumed by the LVars programming model, and as we will see in
 Section~\ref{s:lvish-disjoint}, imperative disjoint parallel updates
-are compatible with LVars as well.
-Furthermore, as \either{I}{we} show in
-Section~\ref{s:lvars-generalizing}, 
-we can generalize
-the @get@ operation to allow a more general form of threshold reads.
+are compatible with LVars as well.  Furthermore, as \either{I}{we}
+show in Section~\ref{s:lvars-generalizing}, we can generalize the
+@get@ operation to allow a more general form of threshold reads.
 
 \section{Quasi-deterministic and event-driven programming with LVars}\label{s:intro-quasi}
 
 The LVars model described above guarantees determinism and supports an
 unlimited variety of shared data structures: anything viewable as a
-lattice.  However, it is not as general-purpose as one might hope.
+poset.  However, it is not as general-purpose as one might hope.
 Consider, for instance, an algorithm for unordered graph traversal.  A
 typical implementation involves a monotonically growing set of ``seen
 nodes''; neighbors of seen nodes are fed back into the set until it
 reaches a fixed point.  Such fixpoint computations are ubiquitous, and
 would seem to be a perfect match for the LVars model due to their use
 of monotonicity.  But they are not expressible using the threshold
-@get@ and inflationary and commutative @put@ operations, nor even with the more
-general alternatives to @get@ mentioned above.
+@get@ and inflationary and commutative @put@ operations, nor even with
+the more general alternatives to @get@ mentioned above.
 
 The problem is that these computations rely on \emph{negative}
 information about a monotonic data structure, \ie, on the
@@ -286,13 +292,15 @@ exception.  LVish exposes a @runParThenFreeze@ operation
 that captures
 this ``freeze-last'' idiom and has a deterministic effect level.
 
-LVish also provides a variety of lattice-based data structures (\eg,
+LVish also provides a variety of poset-based data structures (\eg,
 sets, maps, arrays) that support concurrent insertion, but not
-deletion, during @Par@ computations.  Users may also implement their own lattice-based data structures,
-and LVish provides tools to facilitate the definition of user-defined
-LVars.  \either{I will describe}{In Section~\ref{ch:lvish}, we describe} the proof obligations for LVar
-implementors and give examples of applications that use user-defined
-LVars as well as those that the library provides.
+deletion, during @Par@ computations.  Users may also implement their
+own poset-based data structures, and LVish provides tools to
+facilitate the definition of user-defined LVars.  \either{I will
+  describe}{In Section~\ref{ch:lvish}, we describe} the proof
+obligations for LVar implementors and give examples of applications
+that use user-defined LVars as well as those that the library
+provides.
 
 Finally, \either{Chapter}{Section}~\ref{ch:lvish}
 illustrates LVish through two case studies, drawn from \either{my
@@ -329,8 +337,8 @@ enforcing \emph{eventual consistency}~\cite{vogels-ec} of replicated
 objects in a distributed system.  In particular, \emph{state-based} or
 \emph{convergent} replicated data types, abbreviated as
 \emph{CvRDTs}~\cite{crdts, crdts-tr}, leverage the mathematical
-properties of lattices to guarantee that all replicas of an object
-(for instance, in a distributed database) eventually agree.
+properties of join-semilattices to guarantee that all replicas of an
+object (for instance, in a distributed database) eventually agree.
 
 Although CvRDTs are provably eventually consistent, queries of CvRDTs
 (unlike threshold reads of LVars) nevertheless allow inconsistent
@@ -340,18 +348,18 @@ replicas may disagree until a (least-upper-bound) \emph{merge}
 operation takes place.
 
 Taking inspiration from LVar-style threshold reads, in
-\either{Chapter}{Section}~\ref{ch:distributed} I show how to extend CvRDTs to support
-deterministic, \emph{strongly consistent} queries using a mechanism
-called \emph{threshold queries} (or, seen from another angle, I show
-how to port threshold reads from a shared-memory setting to a
-distributed one).  The threshold query technique generalizes to any
-lattice, and hence any CvRDT, and allows deterministic observations to
-be made of replicated objects before the replicas' states have
-converged.  This work has practical relevance since, while real
-distributed database applications call for a combination of eventually
-consistent and strongly consistent queries, CvRDTs only support the
-former.  Threshold queries extend the CvRDT model to support both
-kinds of queries within a single, lattice-based reasoning framework.
+\either{Chapter}{Section}~\ref{ch:distributed} I show how to extend
+CvRDTs to support deterministic, \emph{strongly consistent} queries
+using a mechanism called \emph{threshold queries} (or, seen from
+another angle, I show how to port threshold reads from a shared-memory
+setting to a distributed one).  The threshold query technique
+generalizes to any join-semilattice, and hence any CvRDT, and allows
+deterministic observations to be made of replicated objects before the
+replicas' states have converged.  This work has practical relevance
+since, while real distributed database applications call for a
+combination of eventually consistent and strongly consistent queries,
+CvRDTs only support the former.  Threshold queries extend the CvRDT
+model to support both kinds of queries within a single framework.
 Furthermore, since threshold queries behave deterministically
 regardless of whether all replicas agree, they suggest a way to save
 on synchronization costs: existing operations that require all
@@ -379,28 +387,28 @@ avoiding unnecessary synchronization.
 
 With the above background, I can state my thesis:
 \begin{quote}
-  Lattice-based data structures are a general and practical unifying
+  Poset-based data structures are a general and practical unifying
   abstraction for deterministic and quasi-deterministic parallel and
   distributed programming.
 \end{quote}
 The rest of this dissertation supports my thesis as follows:
 \begin{itemize}
-  \item \emph{Lattice-based data structures}: In
-    Chapter~\ref{ch:lvars}, I formally define LVars and use them to
-    define $\lambdaLVar$, a call-by-value parallel calculus with a
-    store of LVars that support inflationary and commutative @put@ and threshold
-    @get@ operations. In Chapter~\ref{ch:quasi}, I extend
-    $\lambdaLVar$ to add support for event handlers 
-    and the @freeze@ operation, calling the resulting
-    language $\lambdaLVish$.  Appendix~\ref{app:plt-redex} contains
-    runnable versions of $\lambdaLVar$ and $\lambdaLVish$ implemented
-    using the PLT Redex semantics engineering system~\cite{redex-book}
-    for interactive experimentation.
+  \item \emph{Poset-based data structures}: In Chapter~\ref{ch:lvars},
+    I formally define LVars and use them to define $\lambdaLVar$, a
+    call-by-value parallel calculus with a store of LVars that support
+    inflationary and commutative @put@ and threshold @get@
+    operations. In Chapter~\ref{ch:quasi}, I extend $\lambdaLVar$ to
+    add support for event handlers and the @freeze@ operation, calling
+    the resulting language $\lambdaLVish$.
+    Appendix~\ref{app:plt-redex} contains runnable versions of
+    $\lambdaLVar$ and $\lambdaLVish$ implemented using the PLT Redex
+    semantics engineering system~\cite{redex-book} for interactive
+    experimentation.
 
   \item \emph{general}: In Chapter~\ref{ch:lvars}, I show how
     previously existing deterministic parallel programming models
     (single-assignment languages, Kahn process networks) are subsumed
-    by the lattice-generic LVars model.  Additionally, I show how to
+    by the poset-generic LVars model.  Additionally, I show how to
     generalize the @put@ and @get@ operations on LVars while
     preserving their determinism.
 
@@ -432,9 +440,9 @@ The rest of this dissertation supports my thesis as follows:
     reads apply to the setting of distributed, replicated data
     structures.  In particular, I extend convergent replicated data
     types (CvRDTs) to support strongly consistent threshold queries,
-    which take advantage of the existing lattice structure of CvRDTs
-    and allow deterministic observations to be made of their contents
-    without requiring all replicas to agree.
+    which take advantage of the existing join-semilattice structure of
+    CvRDTs and allow deterministic observations to be made of their
+    contents without requiring all replicas to agree.
 \end{itemize}
 \fi
 

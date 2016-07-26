@@ -107,21 +107,19 @@ discuss in Section~\ref{s:lvars-motivation}.
 Instead of limiting ourselves to a single type of shared data
 structure, though, we can take the more general notion of monotonic
 data structures as the basis for a new deterministic parallel
-programming model.  In this \either{chapter, I}{section, we} show how to generalize IVars
-to \emph{LVars}, thus named because the states an LVar can take on are
-elements of a given \emph{lattice}.\footnote{This
-``lattice'' need only be a \emph{bounded join-semilattice} augmented
-with a greatest element $\top$, in which every two elements have a
-least upper bound but not necessarily a greatest lower bound; see
-Section~\ref{subsection:lvars-lattices}.  For brevity, \either{I}{we} use the term
-``lattice'' in place of ``bounded join-semilattice with a designated
-greatest element'' throughout this dissertation.}  This lattice determines the semantics of the @put@ and
-@get@ operations that comprise the interface to LVars (which \either{I}{we} will
-explain in detail in \either{the sections that follow}{the rest of this section}): the @put@ operation
-takes the least upper bound of the current state and the new state
-with respect to the lattice, and the @get@ operation performs
-a \emph{threshold read} that blocks until a lower bound in the lattice
-is reached.
+programming model.  In this \either{chapter, I}{section, we} show how
+to generalize IVars to \emph{LVars}.  The states an LVar can take on
+are elements of a given partially ordered set, or poset.\footnote{We
+also require that the poset have a greatest element $\top$.  For
+brevity, we say ``posets'' in place of ``posets with suprema''
+throughout this dissertation.}  The partial order determines the
+semantics of the $\PUTi$ and @get@ operations that comprise the
+interface to LVars (which \either{I}{we} will explain in detail
+in \either{the sections that follow}{the rest of this section}): the
+$\PUTi$ operation takes performs an update that is both commutative
+and inflationary with respect to the partial order, and the @get@
+operation performs a \emph{threshold read} that blocks until a lower
+bound in the poset is reached.
 
 Section~\ref{s:lvars-examples} introduces the concept of LVars through
 a series of small code examples.  Then, in Sections~\ref{s:lvars-lattices}
@@ -129,16 +127,16 @@ and~\ref{s:lvars-lambdalvar} \either{I}{we} formally define $\lambdaLVar$, a
 deterministic parallel calculus with shared state, based on the
 call-by-value $\lambda$-calculus.  The $\lambdaLVar$ language is
 general enough to subsume existing deterministic parallel languages
-because it is parameterized by the choice of lattice.  For example, a
-lattice of channel histories with a prefix ordering allows LVars to
+because it is parameterized by the choice of poset.  For example, a
+poset of channel histories with a prefix ordering allows LVars to
 represent FIFO channels that implement a Kahn process network, whereas
-instantiating $\lambdaLVar$ with a lattice with one ``empty'' state
+instantiating $\lambdaLVar$ with a poset with one ``empty'' state
 and multiple ``full'' states (where $\forall{i}.\; \mathit{empty}
 < \mathit{full_i}$) results in a parallel single-assignment language.
-Different instantiations of the lattice result in a family of
+Different instantiations of the poset result in a family of
 deterministic parallel languages.
 
-Because lattices are composable, any number of diverse monotonic data
+Because posets are composable, any number of diverse monotonic data
 structures can be used together safely.  Moreover, as long as a data
 structure presents the LVar interface, it is fine to wrap an existing,
 optimized concurrent data structure implementation; we need not

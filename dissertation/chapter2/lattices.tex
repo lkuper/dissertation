@@ -1,4 +1,4 @@
-\section{Lattices, stores, and determinism}\label{s:lvars-lattices}
+\section{Posets, stores, and determinism}\label{s:lvars-lattices}
 
 As a minimal substrate for LVars, \either{I}{we} introduce $\lambdaLVar$, a
 parallel call-by-value $\lambda$-calculus extended with a \emph{store}
@@ -9,19 +9,19 @@ shared data structures, in which parallel subcomputations may
 communicate with each other via the @put@ and @get@ operations.
 
 In $\lambdaLVar$, stores contain LVars.  Whereas IVars are
-single-assignment variables---either empty
-or filled with an immutable value---an LVar may have an arbitrary
-number of states forming a set $D$, which is partially ordered by a
-relation $\userleq$.  An LVar can take on any sequence of states from
-$D$, so long as that sequence respects the partial order---that is, so
-long as updates to the LVar (made via the @put@ operation) are
-\emph{inflationary} with respect to $\userleq$.  Moreover, the @get@
-operation allows only limited observations of the LVar's state.  In
-this section, \either{I}{we} discuss how lattices and stores work in $\lambdaLVar$
-and explain how the semantics of @put@ and @get@ together enforce
-determinism in $\lambdaLVar$ programs.
+single-assignment variables---either empty or filled with an immutable
+value---an LVar may have an arbitrary number of states forming a set
+$D$, which is partially ordered by a relation $\userleq$.  An LVar can
+take on any sequence of states from $D$, so long as that sequence
+respects the partial order---that is, so long as updates to the LVar
+(made via the @put@ operation) are \emph{inflationary} with respect to
+$\userleq$.  Moreover, the @get@ operation allows only limited
+observations of the LVar's state.  In this section, \either{I}{we}
+discuss how posets and stores work in $\lambdaLVar$ and explain how
+the semantics of @put@ and @get@ together enforce determinism in
+$\lambdaLVar$ programs.
 
-\subsection{Lattices}\label{subsection:lvars-lattices}
+\subsection{Posets}\label{subsection:lvars-lattices}
 
 The definition of $\lambdaLVar$ is parameterized by $D$: to write
 concrete $\lambdaLVar$ programs, we must specify the set of LVar
@@ -29,8 +29,8 @@ states that we are interested in working with, and an ordering on
 those states.  Therefore $\lambdaLVar$ is actually a \emph{family} of
 languages, rather than a single language.
 
-Formally, $D$ is a \emph{bounded join-semilattice} augmented with a
-greatest element $\top$.  That is, $D$ has the following structure:
+Formally, $D$ is a \emph{bounded partially ordered set}.  That is, $D$ has the following
+structure:
 \begin{itemize}
 \item $D$ has a least element $\bot$, representing the initial
   ``empty'' state of an LVar.
@@ -38,30 +38,24 @@ greatest element $\top$.  That is, $D$ has the following structure:
   state that results from conflicting updates to an LVar.
 \item $D$ comes equipped with a partial order $\userleq$, where $\bot
   \userleq d \userleq \top$ for all $d \in D$.
-\item Every pair of elements in $D$ has a lub, written $\sqcup$.
 \end{itemize}
 We can specify all these components as a 4-tuple $(D, \userleq, \bot,
 \top)$ where $D$ is a set, $\userleq$ is a partial order on the
 elements of $D$, $\bot$ is the least element of $D$ according to
-$\userleq$, and $\top$ is the greatest element.  However, \either{I}{we} use $D$ as a
-shorthand for the entire 4-tuple $(D, \userleq, \bot, \top)$ when its
-meaning is clear from the context.
+$\userleq$, and $\top$ is the greatest element.  However,
+\either{I}{we} use $D$ as a shorthand for the entire 4-tuple $(D,
+\userleq, \bot, \top)$ when its meaning is clear from the context.
 \ifdefined\JOURNAL
-For brevity, we use the term ``lattice'' in place of ``bounded
-join-semilattice with a designated greatest element'' throughout this
-paper.
+For brevity, we say ``poset'' in place of ``bounded poset'' throughout
+this paper.
 \fi
 
 Virtually any data structure to which information is added gradually
-can be represented as a lattice, including pairs, arrays, trees, maps,
-and infinite streams.  In the case of maps or sets, $\sqcup$ could be
-defined as union; for pointer-based data structures like tries, $\sqcup$
-could allow for unification of partially-initialized structures.
-
-The simplest example of a useful $D$ is one that represents the
-states that a single-assignment variable (that is, an IVar) can take
-on.  The states of a natural-number-valued IVar, for instance, are the elements of
-the lattice in
+can be represented as a poset, including pairs, arrays, trees, maps,
+and infinite streams.  The simplest example of a useful $D$ is one
+that represents the states that a single-assignment variable (that is,
+an IVar) can take on.  The states of a natural-number-valued IVar, for
+instance, are the elements of the poset in
 Figure~\ref{f:lvars-example-lattices}(b), that is,
 
 \vspace{-8mm}
@@ -73,14 +67,14 @@ Figure~\ref{f:lvars-example-lattices}(b), that is,
 %
 where the partial order $\userleq$ is defined by setting $\bot
 \userleq d \userleq \top$ and $d \userleq d$ for all $d \in D$.  This
-is a lattice of height three and infinite width, where the naturals
+is a poset of height three and infinite width, where the naturals
 are arranged horizontally.  After the initial write of some $n \in
 \mathbb{N}$, any further conflicting writes would push the state of
 the IVar to $\top$ (an error).  For instance, if one thread writes $2$
 and another writes $1$ to an IVar (in arbitrary order), the second of
 the two writes would result in an error because $2 \sqcup 1 = \top$.
 
-On the other hand, if we have an LVar whose states form the lattice of
+On the other hand, if we have an LVar whose states form the poset of
 Figure~\ref{f:lvars-example-lattices}(a), and if we define @put@ as
 least upper bound, the $\top$ state is unreachable unless we
 explicitly write $\top$ to the LVar, because the lub of any two writes
@@ -97,7 +91,7 @@ writes $1$, the resulting state will be $2$, since $2 \sqcup 1 = 2$.
 \end{wrapfigure}
 \fi
 
-\subsection{Inflationary, commutative updates}
+\subsection{Inflationary, commutative updates}\label{subsection:lvars-inflationary-commutative}
 
 For a given lattice $(D, \userleq, \bot, \top)$, we can define a set
 of \emph{update operations} that determine how LVars can be updated:
@@ -107,14 +101,7 @@ of \emph{update operations} that determine how LVars can be updated:
 The first of the conditions in
 Definition~\ref{def:set-of-update-operations} says that each update
 operation is inflationary with respect to $\userleq$.  The second
-condition says that update operations commute with each other.  These
-two conditions correspond to the two informal criteria that we set
-forth for monotonic data structures at the beginning of this
-\either{chapter}{section}: the requirement that updates be
-inflationary corresponds to the fact that monotonic data structures
-can only ``grow'', and the requirement that updates be commutative
-corresponds to the fact that the timing of updates must not be
-observable.
+condition says that update operations commute with each other.
 
 \lk{``update'' used to be called ``bump'', but I think ``update'' is a
   better name: ``bump'' sounds like something that is
@@ -192,12 +179,6 @@ $\store{\storebindingRaw{l_1}{d_1}, \dots,
 $\storebindingRaw{l}{\top}$, because (as we will see shortly) any
 write that would take the state of some location $l$ to $\top$ would
 raise an error before the write can occur.
-
-A \emph{store update operation} can update the bindings in a store
-according to a specified set of update operations.  It can also add
-new bindings to a store.
-
-\LVarsDefStoreUpdateOperation
 
 \subsection{Communication primitives}\label{subsection:lvars-communication-primitives}
 
