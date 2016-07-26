@@ -1,6 +1,9 @@
 Thanks to both reviewers for their detailed reading of the paper and
-suggestions for improving it.  We've incorporated many of the
-reviewers' suggestions.  Here we briefly outline the changes we made.
+suggestions for improving it.  We have already incorporated many of
+the reviewers' suggestions.  Here we briefly outline the changes we
+have made and plan to make.
+
+## Reviewer 1
 
 Reviewer 1 made three major suggestions:
 
@@ -15,7 +18,7 @@ Reviewer 1 made three major suggestions:
 
 >  3\. A fuller presentation and a better explanation of the LVish implementation.
 
-Addressing these points one at a time:
+We address each of these in order.
 
 >  1\. Serious thought given to the suggestion of merging lambda_LVar and
 >     lambda_LVish into just one calculus, so as to reduce duplication and
@@ -23,28 +26,32 @@ Addressing these points one at a time:
 >     as powerful as lambda_LVish. Is it possible? I would like to think so, but
 >     perhaps I am being naive.
 
-Combining lambdaLVar and lambda LVish into one calculus with the
-simplicity of lambdaLVar and the power of lambdaLVish: having given it
-some serious thought, we don't think it's possible to "have our cake
-and eat it too" here, because the main thing that complicates the
-definition of lambdaLVish is the addition of handlers/quiescence, and
-that's also the thing that makes it more powerful than lambdaLVar.
+One calculus with the simplicity of lambdaLVar and the power of
+lambdaLVish would be great if it were possible.  However, having given
+it some serious thought, we do not think it is possible to "have our
+cake and eat it too" here, because the main thing that complicates the
+definition of lambdaLVish is the addition of handlers/quiescence,
+which is also what makes lambdaLVish more powerful than lambdaLVar.
 
 However, in the interest of reducing duplication and shortening the
-ppaer, we agree the reviewer that presentation-wise, it's not
+ppaer, we agree with the reviewer that presentation-wise, it's not
 necessary to go through all the steps of the (quasi-)determinism proof
 twice, once for lambdaLVar and once for lambdaLVish (and reviewer 2
-made a similar point).  We've therefore made section 3 significantly
+made a similar point).  We have therefore made section 3 significantly
 less repetitive.
 
-Furthermore, we've improved the presentation by adding non-idempotent
-update operations (rather than just least-upper-bound writes) to the
-original calculus, lambdaLVar.  This makes lambdaLVar a little more
-complicated, but it makes for a smaller leap from lambdaLVar to
-lambdaLVish, and it helps illustrate that the non-idempotent update
-operations in lambdaLVish are not the source of its nondeterminism.
+Furthermore, and most importantly, we've improved the presentation by
+adding non-idempotent update operations (rather than just
+least-upper-bound writes) to the original calculus, lambdaLVar.  This
+makes lambdaLVar slightly more complicated, but in return, it means
+that there is a smaller leap from lambdaLVar to lambdaLVish, and it
+helps illustrate that the non-idempotent update operations in
+lambdaLVish are *not* the source of its nondeterminism.  It also
+de-emphasizes least-upper-bound writes in favor of arbitrary
+inflationary-commutative writes (which include, but are not limited
+to, least-upper-bound writes).
 
-lambdaLVish now just adds two new features to the language:
+lambdaLVish now adds only two new features to the language:
 handlers/quiescence, and freezing.  We think this makes sense
 pedagogically, because these two features are especially useful in
 combination.
@@ -52,45 +59,48 @@ combination.
 The reviewer suggested that we could simplify lambdaLVish by viewing
 freeze as just another update operation.  However, since unlike other
 update operations, freeze returns a value (it performs a read as well
-as a write), it seems different enough from other update operations
-that it should be kept separate.  Moreover, it is the one feature that
-introduces nondeterminism.  Therefore, we think it makes sense to keep
-it separate.
+as a write), it is different enough from other update operations that
+we feel it should be kept separate.  Moreover, it is the one feature
+that introduces any form of nondeterminism.  Therefore, we think it
+makes sense to not bundle it in with other udpates.
 
 >  2\. An explicit presentation of the LVish API, possibly at the cost of
 >     consuming extra space;
 
-We've adopted this suggestion; section 4.2 of the paper now begins
+We plan to adopt this suggestion; section 4.2 of the paper will begin
 with an explicit presentation of the essential LVish API operations
 and types.
 
-TODO.  Issue #
+[TODO -- see Issue #6]
 
 >  3\. A fuller presentation and a better explanation of the LVish implementation.
 
-We agree with the reviewer that this section of the originally
-submitted paper was hard to understand.  After putting some thought
-into this, we've decided that the best approach is to leave discussion
-of LVish internals out of this paper entirely.  The code that we
-presented in the original version of the paper submitted in December
-is already out of date, and the implementation is likely to continue
-to evolve. Nor does it do the reader any good to simply repeat the
-now-outdated implementation section that appeared in our POPL '14
-paper. (For example, the material in that paper about leveraging
-idempotency is out of date, now that we allow non-idempotent updates.)
+We completely agree with the reviewer that this section of the
+originally submitted paper was hard to understand.  After putting some
+thought into this, we have decided that the best approach is to leave
+discussion of LVish internals out of this paper entirely.  The space
+we save in doing so can be devoted to a better presentation of the
+API.
+
+The code that we presented in the original version of the paper
+submitted in December is already out of date, and the implementation
+is likely to continue to evolve. Nor does it do the reader any good to
+simply repeat the now-very-outdated implementation section that
+appeared in our POPL '14 paper. (The material in that paper about
+leveraging idempotency is out of date, now that we allow
+non-idempotent updates.)
 
 The internals of LVish are more complicated than they used to be, and
-still in flux.  We believe the best place to go to read up-to-date
-LVish scheduler code is the open-source LVish repository (which is
-linked from the paper), not the paper itself.  We hope that the
-reviewer is satisfied with this decision, which also helps make up for
-the additional space that adding a full presentation of the API takes
-up.
+still in flux.  We expect it to be the case for some time that the
+best place to go to read up-to-date LVish scheduler code is the
+open-source LVish repository, rather than any paper.
+
+## Reviewer 2
 
 Reviewer 2 made five major suggestions.  We will try to summarize each
 of these suggestions briefly.
 
-> 1\. *Rather than join-semiattices and lub updates, focus on posets
+> 1\. *Rather than join-semilattices and lub updates, focus on posets
 > and a more general form of update, starting from early in the
 > paper.*
 
@@ -98,33 +108,43 @@ of these suggestions briefly.
 
 > 3\. *Give an account of how we deal with early termination and parallel-or.*
 
-> 4\. *Either substantiate or remove the claim that we subsume Kahn process networks.*
+> 4\. *Either substantiate or remove the claim that we subsume Kahn
+> process networks.*
 
-We address each of these in order as well:
+> 5\. *Have lattice elements and threshold sets belong to the same
+> semantic category as ordinary program expressions, and make it
+> possible to do, for example, conditional branching on them.*
 
-> 1\. *Rather than join-semiattices and lub updates, focus on posets
+We address each of these in order.
+
+> 1\. *Rather than join-semilattices and lub updates, focus on posets
 > and a more general form of update, starting from early in the
 > paper.*
 
-As noted above, we've adopted the reviewer's suggestion of introducing
-non-idempotent updates early in the paper as part of lambdaLVar.
-However, we think that requiring a partial function that takes a pair
-of states, instead of requiring a join-semilattice with lubs, would
+[LK: I'm now unconvinced about the below.  If lubs are generalized to
+inflationary-commutative writes, why does it need to be a
+join-semilattice at all?  It can just be a partially ordered set.  (It
+still needs a partial order because we need the order to be able to
+define "inflationary".)]
+
+We have adopted the reviewer's suggestion of introducing
+commutative-inflationary updates (which generalize lub updates) early
+in the paper as part of lambdaLVar.
+
+However, lub updates are an important enough special case that we
+prefer to keep the join-semilattice data structure.  Removing it would
 mean a fundamental change to the flavor and focus of the work, which
 is about exploiting join-semilattice properties to get
-(quasi-)determinism.  Indeed, a join-semilattice isn't always the most
-natural fit for the data at hand.  But, excitingly, it often is, and
-it's in those settings where LVars are especially useful.  We see
-non-idempotent update operations as a useful generalization that
-allows us to conveniently handle more kinds of data, such as
-incrementable counters.  All that said, we are happy to take some of
-the emphasis off least-upper-bound updates, and we hope to accomplish
-that by allowing non-idempotent updates in lambdaLVar instead of
-waiting until lambdaLVish to introduce them.
+(quasi-)determinism.  Although a join-semilattice is not always the
+most natural fit for the data at hand.  But, excitingly, it often is,
+and it's in those settings where LVars are especially useful.  We see
+non-lub commutative-inflationary update operations as a useful
+generalization that allows us to conveniently handle more kinds of
+data structures, such as incrementable counters.
 
 > 2\. *Give an answer to the question about consistent termination.*
 
-TODO.  Issue #7.
+[TODO -- see issue #7]
 
 > 3\. *Give an account of how we deal with early termination and parallel-or.*
 
@@ -147,7 +167,7 @@ We agree with the reviewer that this claim was too strong (and
 reviewer 1 commented on this as well), and we've toned down the claim
 in the couple of places where it appears in the paper.
 
-TODO.  Issue #5.
+[TODO -- see issue #5]
 
 > 5\. *Have lattice elements and threshold sets belong to the same
 > semantic category as ordinary program expressions, and make it
@@ -158,8 +178,8 @@ To summarize the reviewer's complaints about the current design:
   * You can only write down lattice elements and threshold sets as
     literals in the program text, not as the result of a non-trivial
     computation;
-  * moreover, you can't do a conditional branch on the result of a get
-    operation;
+  * moreover, you cannot do a conditional branch on the result of a
+    get operation;
   * and the determinism of the system seems to hinge on these
     restrictions -- or one might worry that it does.
 
@@ -196,15 +216,15 @@ reasoning about what kinds of LVar reads are safe to do.  Therefore,
 we feel that adding machinery for manipulating threshold sets to
 lambdaLVar and lambdaLVish would be a distraction.
 
-Finally, we think it is clear that the lack of conditional branching
-is not the fundamental reason for the determinism guarantee: if it
-were possible for a get operation to return a nondeterministic result,
-then a program that simply performed a get operation and returned its
-result would be nondeterministic.  No conditional branching would be
-necessary to expose the nondeterminism.  (In any case, conditional
-branching that would allow one to ask whether a particular LVar write
-has happened yet is of course not allowed, and this is by design; we
-cannot do that without admitting schedule nondeterminism.  Rather than
-doing that, the programmer would register a handler on the LVar and
-then write a callback function that would run in response to LVar
-events.  Many of the examples in section 4 do this.)
+Finally, the lack of conditional branching is not the fundamental
+reason for the determinism guarantee: if it were possible for a get
+operation to return a nondeterministic result, then a program that
+simply performed a get operation and returned its result would be
+nondeterministic.  No conditional branching would be necessary to
+expose the nondeterminism.  (In any case, conditional branching that
+would allow one to ask whether a particular LVar write has happened
+yet is of course not allowed, and this is by design; we cannot do that
+without admitting schedule nondeterminism.  Rather than doing that,
+the programmer would register a handler on the LVar and then write a
+callback function that would run in response to LVar events.  Many of
+the examples in section 4 do this.)
